@@ -70,7 +70,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.2"
-        sha1="df4db56c7c90ffc278f4f0d552d96c354029a26c">
+        sha1="90a55bc87a8235f8c84246701137a11607a691dc">
         <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_d9526bb1e3e0aa75d1c5f40dc22ba91465d9af8c\classes.dex" />
     </item>
     <item
@@ -88,7 +88,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.2"
-        sha1="a25ac8befe02d98a8e40c391ee0a850de395d9fb">
+        sha1="6c8219f3c9489f70c972298cb7d6f4d37a26d1da">
         <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_bb117621a09a5154a7a51ed267eb477d5e138db5\classes.dex" />
     </item>
     <item

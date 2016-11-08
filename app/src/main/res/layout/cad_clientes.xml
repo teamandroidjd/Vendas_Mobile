@@ -30,6 +30,19 @@
                 android:entries="@array/tipo_pessoa">
             </Spinner>
         </LinearLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/EdtNomeCompleto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Nome Completo"
+                    android:inputType="textCapCharacters"
+                    android:maxLines="1"
+                    android:layout_centerHorizontal="true" />
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -70,6 +83,33 @@
                     android:maxLines="1"
                     android:layout_centerHorizontal="true"/>
             </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/EdtRG"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Registro de Identidade"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:layout_centerHorizontal="true"/>
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/Edtcpf"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="CPF"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_weight="1" />
+            </android.support.design.widget.TextInputLayout>
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

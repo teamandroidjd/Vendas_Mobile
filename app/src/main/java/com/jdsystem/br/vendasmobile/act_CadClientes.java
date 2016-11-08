@@ -25,7 +25,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
     ProgressDialog Dialogo;
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
 
-    EditText nomerazao, nomefan, cnpjcpf, ie, endereco, numero, cep, estado, cidade, bairro, tel1, tel2, email;
+    EditText nomerazao, nomefan,nomecompleto,  cnpjcpf, Edtcpf, EdtRG, ie, endereco, numero, cep, estado, cidade, bairro, tel1, tel2, email;
     SQLiteDatabase DB;
 
     @Override
@@ -48,7 +48,25 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         cep         = (EditText) findViewById(R.id.EdtCep);
         tel1        = (EditText) findViewById(R.id.EdtTel1);
         tel2        = (EditText) findViewById(R.id.EdtTel2);
+        Edtcpf = (EditText) findViewById(R.id.Edtcpf);
+        nomecompleto = (EditText) findViewById(R.id.EdtNomeCompleto);
+        EdtRG = (EditText) findViewById(R.id.EdtRG);
 
+
+        final EditText etCNPJ = (EditText) findViewById(R.id.EdtCnpjCpf);
+        etCNPJ.addTextChangedListener(Mask.insert(Mask.CNPJ_MASK, etCNPJ));
+
+        final EditText etCPF = (EditText) findViewById(R.id.Edtcpf);
+        etCPF.addTextChangedListener(Mask.insert(Mask.CPF_MASK, etCPF));
+
+        final EditText etCEP = (EditText) findViewById(R.id.EdtCep);
+        etCEP.addTextChangedListener(Mask.insert(Mask.CEP_MASK, etCEP));
+
+        EditText etTelefone1 = (EditText) findViewById(R.id.EdtTel1);
+        etTelefone1.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone1));
+
+        EditText etTelefone2 = (EditText) findViewById(R.id.EdtTel2);
+        etTelefone2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone1));
 
         spTipoPessoa.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -60,7 +78,25 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         sTipoPessoa = "J";
                         break;
                 }
+                if (sTipoPessoa == "F"){
+                    nomerazao.setVisibility(EditText.GONE);
+                    nomefan.setVisibility(EditText.GONE);
+                    cnpjcpf.setVisibility(EditText.GONE);
+                    ie.setVisibility(EditText.GONE);
+                    Edtcpf.setVisibility(EditText.VISIBLE);
+                    nomecompleto.setVisibility(EditText.VISIBLE);
+                    EdtRG.setVisibility(EditText.VISIBLE);
+                }else {
+                    nomerazao.setVisibility(EditText.VISIBLE);
+                    nomefan.setVisibility(EditText.VISIBLE);
+                    cnpjcpf.setVisibility(EditText.VISIBLE);
+                    ie.setVisibility(EditText.VISIBLE);
+                    Edtcpf.setVisibility(EditText.GONE);
+                    nomecompleto.setVisibility(EditText.GONE);
+                    EdtRG.setVisibility(EditText.GONE);
+                }
             }
+
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
