@@ -13,23 +13,12 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static android.R.id.list;
 
 public class act_ListClientes extends ListActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
@@ -140,7 +129,8 @@ public class act_ListClientes extends ListActivity
     private void CarregarClientes() {
         Cursor CursorClie = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                                         " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE CODVENDEDOR = " + sCodVend,null);
+                                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE CODVENDEDOR = " + sCodVend+
+                                        " ORDER BY NOMEFAN ",null);
         ArrayList<HashMap<String, String>> DadosList = new ArrayList<HashMap<String, String>>();
 
         if(CursorClie.getCount() > 0) {
@@ -164,7 +154,6 @@ public class act_ListClientes extends ListActivity
                 DadosClientes.put("ESTADO", Estado);
                 DadosClientes.put("BAIRRO", Bairro);
                 DadosClientes.put("TELEFONE", Telefone);
-
 
                 DadosList.add(DadosClientes);
             }

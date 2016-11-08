@@ -1,128 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="0dp"
+    android:background="@color/colorCardClie"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/colorCardClie"
-        android:orientation="vertical"
-        android:padding="10dp">
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        app:cardElevation="3dp"
+        app:cardUseCompatPadding="false"
+        app:cardPreventCornerOverlap="false"
+        app:cardMaxElevation="3dp"
+        app:cardCornerRadius="4dp">
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/colorCardClie"
             android:orientation="vertical"
-            android:id="@+id/linearLayout"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CLIENTE"
-                android:id="@+id/lblNomeFanClie"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="normal|bold"
-                android:textSize="16sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CNPJ"
-                android:id="@+id/lblCNPJ"
-                android:textColor="@color/colordescClie"
-                android:textStyle="normal|bold"
-                android:textSize="16sp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Razão Social"
-                android:id="@+id/lblNomerazao"
-                android:textColor="@color/colordescClie"
-                android:textStyle="normal"
-                android:textSize="13sp"/>
+            android:padding="3dp">
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Estado"
-                    android:id="@+id/lblEstado"
-                    android:textColor="@color/colordescClie"
-                    android:textStyle="normal"
-                    android:textSize="13sp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" - "
-                    android:id="@+id/lbl1"
-                    android:textColor="@color/colordescClie"
-                    android:textStyle="normal"
-                    android:textSize="13sp"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/lblEstado"
-                    android:layout_toEndOf="@+id/lblEstado"
-                    android:layout_marginLeft="55dp"
-                    android:layout_marginStart="10dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cidade"
-                    android:id="@+id/lblCidade"
-                    android:textColor="@color/colordescClie"
-                    android:textStyle="normal"
-                    android:textSize="13sp"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/lbl1"
-                    android:layout_toEndOf="@+id/lbl1"
-                    android:layout_marginLeft="40dp"
-                    android:layout_marginStart="10dp" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" - "
-                    android:id="@+id/lbl2"
-                    android:textColor="@color/colordescClie"
-                    android:textStyle="normal"
-                    android:textSize="13sp"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/lblCidade"
-                    android:layout_toEndOf="@+id/lblCidade"
-                    android:layout_marginLeft="55dp"
-                    android:layout_marginStart="10dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Bairro"
-                    android:id="@+id/lblBairro"
-                    android:textColor="@color/colordescClie"
-                    android:textStyle="normal"
-                    android:textSize="13sp"
-                    android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/lbl2"
-                    android:layout_toEndOf="@+id/lbl2"
-                    android:layout_marginLeft="40dp"
-                    android:layout_marginStart="10dp" />
-            </RelativeLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Telefone"
-                android:id="@+id/lblTel"
-                android:textColor="@color/colordescClie"
-                android:textStyle="normal"
-                android:textSize="13sp"/>
-        </LinearLayout>
-    </RelativeLayout>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:orientation="vertical">
 
-</LinearLayout>
+                <TextView
+                    android:id="@+id/lblNomeFanClie"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CLIENTE"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="normal|bold" />
+                <TextView
+                    android:id="@+id/lblCNPJ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CNPJ"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16sp"
+                    android:textStyle="normal|bold" />
+
+                <TextView
+                    android:id="@+id/lblNomerazao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Razão Social"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="12sp"
+                    android:textStyle="normal|bold" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/lblEstado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Estado"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="10sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/lbl1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="55dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/lblEstado"
+                        android:layout_toRightOf="@+id/lblEstado"
+                        android:text=" - "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="10sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/lblCidade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/lbl1"
+                        android:layout_toRightOf="@+id/lbl1"
+                        android:text="Cidade"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="10sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/lbl2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="55dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/lblCidade"
+                        android:layout_toRightOf="@+id/lblCidade"
+                        android:text=" - "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="10sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/lblBairro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/lbl2"
+                        android:layout_toRightOf="@+id/lbl2"
+                        android:text="Bairro"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="10sp"
+                        android:textStyle="normal|bold" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/lblTel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Telefone"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="12sp"
+                    android:textStyle="normal|bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

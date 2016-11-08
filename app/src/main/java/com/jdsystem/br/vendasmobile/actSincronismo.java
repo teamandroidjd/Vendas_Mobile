@@ -212,27 +212,28 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', TEL1 = '" + c.getString(TAG_NOMEROTEL) + "', TEL2 = '', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
                                         "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO) +
                                         "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) + "',CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
+                                        "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
                                         " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
-                                        "', CODVENDEDOR = '" + CodVendedor + "'" +
+                                        ", CODVENDEDOR = " + CodVendedor + ", FLAGINTEGRADO = '2' " +
                                         " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
                             } else {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                                        "CEP,CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO) VALUES(" +
+                                        "CEP,CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, FLAGINTEGRADO) VALUES(" +
                                         "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL) +
                                         "',' " + c.getString(TAG_NOMEFANTASIA) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
                                         "',' " + c.getString(TAG_NOMEROTEL) + "', '', '" + c.getString(TAG_LOGRADOURO) +
                                         "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +
                                         "','" + CodBairro + "',' " + c.getString(TAG_OBS) + "','" + CodCidade + "',' " + CodEstado +
                                         "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
-                                        "','" + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_ATIVO) + "');");
+                                        "'," + CodVendedor + ",'" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_ATIVO)
+                                        + "','" + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
                             }
                             cursor.close();
                         } catch (Exception E) {
                             System.out.println("Error" + E);
                         }
-                    } catch (Exception E) {//InterruptedException e) {
+                    } catch (Exception E) {
                         // TODO Auto-generated catch block
                         E.printStackTrace();
                     }

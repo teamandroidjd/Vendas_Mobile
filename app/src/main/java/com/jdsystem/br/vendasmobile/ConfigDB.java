@@ -25,7 +25,7 @@ public class ConfigDB {
             DB.execSQL("CREATE TABLE IF NOT EXISTS BAIRROS (" +
                     "    CODBAIRRO INTEGER      PRIMARY KEY AUTOINCREMENT," +
                     "    CODCIDADE INTEGER      NOT NULL," +
-                    "    DESCRICAO VARCHAR (30) NOT NULL" +
+                    "    DESCRICAO VARCHAR (30) NOT NULL " +
                     ");");
 
             DB.execSQL("CREATE TABLE IF NOT EXISTS CIDADES (" +

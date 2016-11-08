@@ -11,25 +11,27 @@
     tools:context=".act_CadClientes">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/scrollView">
+        android:layout_height="fill_parent">
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:orientation="vertical"
             android:weightSum="1">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
-            <Spinner
-                android:layout_height="match_parent"
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:id="@+id/spnTipoPessoa"
-                android:entries="@array/tipo_pessoa">
-            </Spinner>
-        </LinearLayout>
+                android:layout_height="60dp">
+
+                <Spinner
+                    android:id="@+id/spnTipoPessoa"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:entries="@array/tipo_pessoa"></Spinner>
+            </LinearLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -38,10 +40,10 @@
                     android:id="@+id/EdtNomeCompleto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Nome Completo"
                     android:inputType="textCapCharacters"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -52,250 +54,259 @@
                     android:id="@+id/EdtNomeRazao"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Razão Social"
                     android:inputType="textCapCharacters"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/EdtNomeFan"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Nome Fantasia"
                     android:inputType="textCapCharacters"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/EdtCnpjCpf"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="CNPJ"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/EdtRG"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Registro de Identidade"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/Edtcpf"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_weight="1"
                     android:hint="CPF"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"
-                    android:layout_weight="1" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/EdtEmail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/EdtIE"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Inscrição Estadual"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3">
+
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <EditText
+                            android:id="@+id/EdtCep"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/EdtCep"
                             android:elevation="1dp"
-                            android:inputType="number"
                             android:hint="CEP"
-                            android:maxLines="1"/>
+                            android:inputType="number"
+                            android:maxLines="1" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
+
                 <Button
+                    android:id="@+id/btnlocaliza"
                     android:layout_width="0dp"
                     android:layout_height="60dp"
-                    android:text="Localizar"
                     android:layout_alignBottom="@id/EdtCep"
                     android:layout_alignTop="@id/EdtCep"
                     android:layout_weight="1"
                     android:background="@color/colorPrimary"
-                    android:textColor="@color/common_google_signin_btn_text_dark_default"
-                    android:id="@+id/btnlocaliza"/>
+                    android:text="Localizar"
+                    android:textColor="@color/common_google_signin_btn_text_dark_default" />
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/EdtEndereco"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
                     android:hint="Endereço"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/EdtNumero"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Número"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/EdtComple"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Complemento"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:inputType="text"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
+
                 <Spinner
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
                     android:id="@+id/spnUF"
-                    android:entries="@array/uf">
-                </Spinner>
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:entries="@array/uf"></Spinner>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
+
                 <Spinner
-                    android:layout_height="match_parent"
+                    android:id="@+id/spnCidade"
                     android:layout_width="match_parent"
-                    android:id="@+id/spnCidade">
-                </Spinner>
+                    android:layout_height="match_parent"></Spinner>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp">
+
                 <Spinner
-                    android:layout_height="match_parent"
+                    android:id="@+id/spnBairro"
                     android:layout_width="match_parent"
-                    android:id="@+id/spnBairro">
-                </Spinner>
+                    android:layout_height="match_parent"></Spinner>
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
-                    android:id="@+id/EdtCidade"
+                    android:id="@+id/EdtTel1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="Cidade"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_centerHorizontal="true"
+                    android:hint="Telefone"
+                    android:inputType="phone"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/EdtBairro"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="Bairro"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
-            </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/EdtTel1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="Telefone"
-                android:inputType="phone"
-                android:maxLines="1"
-                android:layout_centerHorizontal="true"/>
-        </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
                 <EditText
                     android:id="@+id/EdtTel2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
                     android:hint="Telefone 2"
                     android:inputType="phone"
-                    android:maxLines="1"
-                    android:layout_centerHorizontal="true"/>
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/EdtOBS"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_centerHorizontal="true"
+                    android:hint="Observação"
+                    android:inputType="textMultiLine"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+
             <Button
-                android:text="Salvar"
+                android:id="@+id/btnsalvar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/ColorFundo"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:id="@+id/btnsalvar"
-                android:onClick="btnsalvar" />
+                android:onClick="btnsalvar"
+                android:text="Salvar"
+                android:textColor="@color/common_google_signin_btn_text_dark_default" />
         </LinearLayout>
     </ScrollView>
-
-
 
 
 </LinearLayout>
