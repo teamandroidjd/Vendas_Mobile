@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\9.8.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="9f6d236bac26d02b410e4ee186ba517ace5ee661">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-basement-9.8.0_e64d8906cd6ef42c3803576efddbf3a24fb85a3f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.melnykov\floatingactionbutton\1.3.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="8c6ebb7d087d1a30bf84356bd2aecf85309fc024">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.melnykov-floatingactionbutton-1.3.0_357fab12d792fc35bcae23f068ab00bbc1003ed6\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.amulyakhare\com.amulyakhare.textdrawable\1.0.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="d237556caead5b93d97e18a071059a2c0045978e">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.amulyakhare-com.amulyakhare.textdrawable-1.0.1_0758e93a606c25df0e3c798166b51588716ffd3d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="867dad63c33388ff8c7644b236579355036d075f">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_97d9b80cbd9f112732812bf38ed066908a18d585\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-v4\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-24.2.1_3293078ca9033327aaae8f60c30258ccc8aee134\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\libs\ksoap2-android-assembly-3.4.0-jar-with-dependencies.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="45fbaab416fb5cff992e662d1f7a83786f084fc3">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\2\ksoap2-android-assembly-3.4.0-jar-with-dependencies_7e4eb72b2b9445814febf36b5932cb364185f07b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="7e4389bd133359a2ff88623ff1e4ff93d6e6f780">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_b74882fe15a3a091556d52a188772b4a76c611af\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="df4db56c7c90ffc278f4f0d552d96c354029a26c">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_d9526bb1e3e0aa75d1c5f40dc22ba91465d9af8c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="94bc1dfb84dcc8b6f6f8f7cc726d7b2dd39c1574">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-24.2.1_d8a3bf2ee4db33d21f754b94bbf2ee7f9332341e\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="a25ac8befe02d98a8e40c391ee0a850de395d9fb">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_bb117621a09a5154a7a51ed267eb477d5e138db5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="0ecb4b595fa0f0f8018a149ace3ea6525624f94e">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-compat-24.2.1_721034b3867a777ceb479d455dfcd7d263d25b62\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\eduardo.costa\.gradle\caches\modules-2\files-2.1\com.nineoldandroids\library\2.4.0\e9b63380f3a242dbdbf103a2355ad7e43bad17cb\library-2.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="e9b63380f3a242dbdbf103a2355ad7e43bad17cb">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\library-2.4.0_a8a376868ffe8f155bf9f5ea2c0cb80fc011bdbf\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.google.firebase\firebase-common\9.8.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="c61641e333fa88da21758bab8cc28ee16604b05f">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.firebase-firebase-common-9.8.0_688118f7bb7eb1602ef0a646b56a1c878810bdc9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="d5c731fc64c03dfe04d51134955b483551c35849">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-24.2.1_a3ef9b67cad49b6478d5e36b957401d902b7f7fc\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-fragment\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="b9a1ac78ad7ef3abedc4a4b30cd92bcacb939d1f">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-fragment-24.2.1_e25d66bd4049878ef95324de762564d2a385f342\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-tasks\9.8.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="bf2e1838e4428616c1aa26edf43de72b5b99bf84">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-tasks-9.8.0_efabcbc95f8824aa92ec6bf90e7fdf3246801f91\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="fbf8da429efd5ad21e02e3e5ecaa1efc4167878d">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_5d7a942fcab5c1c4e89debb3c690ef377691477a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.1.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="09c5e804bc67fc0580360043dff067df574a60d4">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-recyclerview-v7-23.1.1_542e89fc5ae04104198fab08011f4f10626946d2\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="935a969265b2a166b2d20415423f5f6e90fe16e0">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_f5f96381b6fe7e152ad2e54e12f517f2bf38e8b3\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-fragment\24.2.1\jars\libs\internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="5f64d657e838e8375135c0f6057a7ff8fab6a50e">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-24.2.1_8471dfb5c6b662faf22e6e62b609fbd13735402c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="9c4c3bc902450c39ed54de170db4fb12aea20a35">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-utils-24.2.1_7c158bbe68ce684f102f33845023bd63b3e7df96\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\9.8.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="e3234cd25e23069abd48ecd2117bc0e8011bf45a">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-appindexing-9.8.0_0ec4d7645982ec5178a3aa4ccb982860180aa195\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="e7f3132168957eefc46229fc32c3bd464642b71e">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-ui-24.2.1_c9a3b11f67431670f8e6529efa06c187c4da77cf\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\eduardo.costa\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\24.2.1\support-annotations-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="8de3aafecbdf98a61db6427f008f2d515bcd2544">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-24.2.1_33de054fc959017e0dc30aa9743d2815cfbc3b04\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="43b2dba6b5a0b14527961b75329d0b90025f15ea">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-24.2.1_7c816675107b08b094f1e38334f8f5e7a3b41910\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\9.8.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="7e92aadd0697922316d1395c1887a23aebec640a">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-base-9.8.0_a9b34da5767f97b92a04f888944ca96efa03359e\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.sa90.materialarcmenu\library\1.4\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="e8d63a4db615acc515153328c936a9cd0cb2b3ff">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.sa90.materialarcmenu-library-1.4_1983ec60727ee1326c034a3324d9f1c33f214b27\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="09b462bbcb77650284bd6614f1a32f360ef369f8">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-media-compat-24.2.1_638b39745b700cd9449b09ab4b0810c96efaad96\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\design\23.1.1\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="379471b2bd17d9737c050345c08e8c7d16589784">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-23.1.1_3519b321c74fa64512b3c7bf4c340ae10b54bbf0\classes.dex" />
+    </item>
+
+</items>

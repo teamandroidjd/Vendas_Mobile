@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.jdsystem.br.vendasmobile">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo_ico"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".ctSplash"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".actLogin"
+            android:label="WSGE Vendas Mobile"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+            <action android:name="android.intent.action.MAIN" />
+        </activity>
+        <activity
+            android:name=".act_ListClientes"
+            android:label="Clientes"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"  />
+        <activity
+            android:name=".actListPedidos"
+            android:label="Pedidos"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".act_CadClientes"
+            android:label="Cadastro de Clientes"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".actDadosCliente"
+            android:label="@string/title_activity_act_dados_cliente"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".actSincronismo"
+            android:screenOrientation="portrait"
+            android:label="Sincronização de Dados" />
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".ConfigWeb"
+            android:screenOrientation="portrait">
+
+        </activity>
+    </application>
+
+</manifest>

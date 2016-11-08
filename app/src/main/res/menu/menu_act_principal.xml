@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.jdsystem.br.vendasmobile.actPrincipal">
+    <item
+        android:id="@+id/act_configweb"
+        android:orderInCategory="100"
+        android:title="Configurações"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_config"/>
+</menu>
