@@ -7,5 +7,5 @@
         android:orderInCategory="100"
         android:title="Configurações"
         app:showAsAction="always"
-        android:icon="@drawable/ic_config"/>
+        android:icon="@drawable/ic_config3"/>
 </menu>

@@ -31,7 +31,7 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="52dp"
         android:id="@+id/textView4"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
         android:layout_below="@+id/textView3"
         android:layout_alignParentLeft="true"
@@ -47,7 +47,7 @@
         android:layout_below="@+id/textView4"
         android:layout_alignLeft="@+id/textView4"
         android:layout_alignStart="@+id/textView4"
-        android:textColor="@color/common_google_signin_btn_text_dark_disabled"
+        android:textColor="@color/ColorText"
         android:hint="Caminho do host" />
 
     <Button
@@ -68,14 +68,11 @@
 
     <ImageView
         android:layout_height="150dp"
-        app:srcCompat="@drawable/database"
+        app:srcCompat="@drawable/ic_database"
         android:id="@+id/imageView4"
         android:layout_width="150dp"
-        android:layout_marginBottom="49dp"
+        android:layout_marginBottom="45dp"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/btsalvhost"
-        android:layout_toStartOf="@+id/btsalvhost"
-        android:layout_marginRight="11dp"
-        android:layout_marginEnd="11dp" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

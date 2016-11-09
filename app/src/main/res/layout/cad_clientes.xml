@@ -296,15 +296,14 @@
                     />
             </android.support.design.widget.TextInputLayout>
 
-
             <Button
-                android:id="@+id/btnsalvar"
+                android:text="Salvar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/ColorFundo"
-                android:onClick="btnsalvar"
-                android:text="Salvar"
-                android:textColor="@color/common_google_signin_btn_text_dark_default" />
+                android:background="@color/colorPrimary"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:id="@+id/btnsalvar"
+                android:onClick="btnsalvar" />
         </LinearLayout>
     </ScrollView>
 
