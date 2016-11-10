@@ -19,7 +19,7 @@ public class ConfigDB {
                     " ENDERECO VARCHAR (50) NOT NULL, NUMERO VARCHAR (10) NOT NULL, COMPLEMENT VARCHAR (15), " +
                     " CODBAIRRO INTEGER NOT NULL, OBS TEXT, CODCIDADE INTEGER NOT NULL, UF CHAR (2) NOT NULL, " +
                     " CEP CHAR (8), CODCLIE_INT INTEGER PRIMARY KEY AUTOINCREMENT, CODCLIE_EXT INTEGER, CODVENDEDOR INTEGER, " +
-                    " TIPOPESSOA VARCHAR(1), ATIVO VARCHAR(1), FLAGINTEGRADO VARCHAR(1) " +
+                    " TIPOPESSOA VARCHAR(1), ATIVO VARCHAR(1), FLAGINTEGRADO VARCHAR(1), REGIDENT VARCHAR(18) " +
                     ");");
 
             DB.execSQL("CREATE TABLE IF NOT EXISTS BAIRROS (" +
@@ -39,7 +39,17 @@ public class ConfigDB {
                     "    DESCRICAO VARCHAR (20) NOT NULL" +
                     ");");
 
-            DB.execSQL("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME DEFAULT CURRENT_TIMESTAMP );");
+            DB.execSQL("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME);");
+
+            DB.execSQL(" CREATE TABLE CONTATO (" +
+                    "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
+                    "    CODCLIENTE INTEGER           NOT NULL," +
+                    "    NOME           VARCHAR (60)  NOT NULL," +
+                    "    CARGO          VARCHAR (30)," +
+                    "    EMAIL          VARCHAR (100)," +
+                    "    TEL1           VARCHAR (15)," +
+                    "    TEL2           VARCHAR (15))" +
+                    ";");
 
         } catch (Exception E) {
             return false;

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,10 +30,10 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
     int CodCidade;
     int CodBairro;
 
-    EditText    nomerazao, nomefan,
-                nomecompleto, cnpjcpf,
-                Edtcpf, EdtRG, ie, endereco,
-                numero, cep, estado, cidade, bairro, tel1, tel2, email, edtOBS;
+    EditText nomerazao, nomefan,
+            nomecompleto, cnpjcpf,
+            Edtcpf, EdtRG, ie, endereco,
+            numero, cep, estado, cidade, bairro, tel1, tel2, email, edtOBS, Complemento;
     SQLiteDatabase DB;
 
     @Override
@@ -51,6 +52,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         ie = (EditText) findViewById(R.id.EdtIE);
         endereco = (EditText) findViewById(R.id.EdtEndereco);
         numero = (EditText) findViewById(R.id.EdtNumero);
+        Complemento = (EditText) findViewById(R.id.EdtComple);
         email = (EditText) findViewById(R.id.EdtEmail);
         cep = (EditText) findViewById(R.id.EdtCep);
         tel1 = (EditText) findViewById(R.id.EdtTel1);
@@ -81,7 +83,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         etTelefone1.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone1));
 
         EditText etTelefone2 = (EditText) findViewById(R.id.EdtTel2);
-        etTelefone2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone1));
+        etTelefone2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone2));
 
         spTipoPessoa.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -246,7 +248,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         });
 
         spBairro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String NomeBairro = spBairro.getSelectedItem().toString();
                 try {
                     Cursor CurBai = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
@@ -255,11 +257,12 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         CodBairro = CurBai.getInt(CurBai.getColumnIndex("CODBAIRRO"));
                     }
                     CurBai.close();
-                }catch (Exception E){
+                } catch (Exception E) {
                     System.out.println("Error" + E);
                 }
 
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
@@ -268,57 +271,119 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
 
     public void btnsalvar(View view) {
 
+        String NomePessoa = null;
+        String NomeFantasia = null;
+        String CpfCnpj = null;
+
+        if (sTipoPessoa == "J") {
+            if (nomerazao.getText().length() == 0) {
+                nomerazao.setError("Digite a Razão Social!");
+                nomerazao.requestFocus();
+                return;
+            } else if (nomefan.getText().length() == 0) {
+                nomefan.setError("Digite o nome Fantasia!");
+                nomefan.requestFocus();
+                return;
+            } else if (cnpjcpf.getText().length() == 0) {
+                cnpjcpf.setError("Digite o CNPJ!");
+                cnpjcpf.requestFocus();
+                return;
+            } else if (ie.getText().length() == 0) {
+                ie.setError("Digite a Inscrição Estadual!");
+                ie.requestFocus();
+                return;
+            }
+            NomePessoa = nomerazao.getText().toString();
+            NomeFantasia = nomefan.getText().toString();
+            CpfCnpj = cnpjcpf.getText().toString();
+        } else if (sTipoPessoa == "F") {
+            if (nomecompleto.getText().length() == 0) {
+                nomecompleto.setError("Digite o Nome Completo!");
+                nomecompleto.requestFocus();
+                return;
+            } else if (Edtcpf.getText().length() == 0) {
+                Edtcpf.setError("Digite o CPF!");
+                Edtcpf.requestFocus();
+                return;
+            } else if (EdtRG.getText().length() == 0) {
+                EdtRG.setError("Digite a Identidade!");
+                EdtRG.requestFocus();
+                return;
+            }
+            NomePessoa = nomecompleto.getText().toString();
+            NomeFantasia = NomePessoa;
+            CpfCnpj = Edtcpf.getText().toString();
+        }
+        if (endereco.getText().length() == 0) {
+            endereco.setError("Digite o Logradouro!");
+            endereco.requestFocus();
+            return;
+        } else if (numero.getText().length() == 0) {
+            numero.setError("Digite o número da rua!");
+            numero.requestFocus();
+            return;
+        }
+
         Cursor cursor = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                 " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                " CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO FROM CLIENTES WHERE CNPJ_CPF = '" + cnpjcpf.getText() + "'", null);
+                " CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "'", null);
         try {
             if (cursor.getCount() > 0) {
-                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + nomerazao.getText() +
-                        "', NOMEFAN = '" + nomefan.getText() +
-                        "', INSCREST = '" + ie.getText() + "', EMAIL = '" + email.getText() +
-                        "', TEL1 = '" + tel1.getText() + "', TEL2 = '"+ tel2.getText() + "', ENDERECO = '" + endereco.getText()  +
-                        "', NUMERO = '" +  numero.getText() + "', COMPLEMENT = '" + nomecompleto.getText() +
-                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + edtOBS.getText() + "', CODCIDADE = '" + CodCidade + "', UF = '" + sUF +
-                        "', CEP = '" + cep.getText() +  "', " +
-                        " TIPOPESSOA = '" + sTipoPessoa + "', ATIVO = '" + "S" + "'" +
+                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + NomePessoa +
+                        "', NOMEFAN = '" + NomeFantasia +
+                        "', INSCREST = '" + ie.getText().toString() + "', EMAIL = '" + email.getText().toString() +
+                        "', TEL1 = '" + tel1.getText().toString() + "', TEL2 = '" + tel2.getText().toString() + "', ENDERECO = '" + endereco.getText().toString() +
+                        "', NUMERO = '" + numero.getText().toString() + "', COMPLEMENT = '" + Complemento.getText().toString() +
+                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + edtOBS.getText().toString() + "', CODCIDADE = '" + CodCidade + "', UF = '" + sUF +
+                        "', CEP = '" + cep.getText().toString() + "', " +
+                        " TIPOPESSOA = '" + sTipoPessoa + "', REGIDENT = '" + EdtRG.getText().toString() + "', ATIVO = '" + "S" + "'" +
                         "', CODVENDEDOR = '" + sCodVend + "'" +
-                        " WHERE CNPJ_CPF = '" + cnpjcpf.getText() + "'");
+                        " WHERE CNPJ_CPF = '" + CpfCnpj + "'");
             } else {
                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                         "CEP, CODVENDEDOR, TIPOPESSOA, ATIVO, FLAGINTEGRADO) VALUES(" +
-                        "'" + cnpjcpf.getText() + "','" +  nomerazao.getText() +
-                        "',' " + nomefan.getText() + "',' " + ie.getText() + "',' " + email.getText() +
-                        "',' " + tel1.getText() + "', '"+  tel2.getText() + "', '" + endereco.getText()  +
-                        "',' " +  numero.getText() + "', '" + nomecompleto.getText() +
-                        "'," + CodBairro + ",' " + edtOBS.getText() + "'," + CodCidade + ",' " + sUF +
-                        "',' " + cep.getText() + "'," + sCodVend + ",'" + sTipoPessoa + "','" + "S" + "','"
-                        + "1" + "');"); //
+                        "'" + CpfCnpj + "','" + NomePessoa +
+                        "',' " + NomeFantasia + "',' " + ie.getText().toString() + "',' " + email.getText().toString() +
+                        "',' " + tel1.getText().toString() + "', '" + tel2.getText().toString() + "', '" + endereco.getText().toString() +
+                        "',' " + numero.getText().toString() + "', '" + Complemento.getText().toString() +
+                        "'," + CodBairro + ",' " + edtOBS.getText().toString() + "'," + CodCidade + ",' " + sUF +
+                        "',' " + cep.getText().toString() + "'," + sCodVend + ",'" + sTipoPessoa + "','" + "S" + "','"
+                        + "1" + "');");
             }
             cursor.close();
 
             Toast.makeText(this, "Cliente salvo com sucesso!", Toast.LENGTH_SHORT).show();
             clearText();
         } catch (Exception E) {
-            System.out.println("Error" + E);
             Toast.makeText(this, "Não foi possivel salvar o CLiente!", Toast.LENGTH_SHORT).show();
+            System.out.println("Error" + E);
         }
+        Intent intent = new Intent(act_CadClientes.this, act_ListClientes.class);
+        Bundle params = new Bundle();
+        params.putString("codvendedor", sCodVend);
+        intent.putExtras(params);
+        startActivity(intent);
+        finish();
     }
 
     public void clearText() {
+
         nomerazao.setText("");
         nomefan.setText("");
         cnpjcpf.setText("");
         ie.setText("");
-        email.setText("");
         endereco.setText("");
         numero.setText("");
+        Complemento.setText("");
+        email.setText("");
         cep.setText("");
-        estado.setText("");
-        cidade.setText("");
-        bairro.setText("");
         tel1.setText("");
         tel2.setText("");
+        Edtcpf.setText("");
+        nomecompleto.setText("");
+        EdtRG.setText("");
+        edtOBS.setText("");
     }
 
     @Override

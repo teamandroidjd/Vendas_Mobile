@@ -17,8 +17,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class act_ListClientes extends ListActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
@@ -29,6 +33,7 @@ public class act_ListClientes extends ListActivity
     String sCodVend;
 
     SQLiteDatabase DB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +42,7 @@ public class act_ListClientes extends ListActivity
         //setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        if(intent!=null) {
+        if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
@@ -56,7 +61,7 @@ public class act_ListClientes extends ListActivity
                 params.putString("codvendedor", sCodVend);
                 intent.putExtras(params);
                 startActivity(intent);
-                startActivityForResult(intent, 1);
+                finish();
             }
         });
 
@@ -113,12 +118,14 @@ public class act_ListClientes extends ListActivity
         } else if (id == R.id.nav_pedidos) {
             Intent i = new Intent(act_ListClientes.this, actListPedidos.class);
             startActivity(i);
+            this.finish();
 
         } else if (id == R.id.nav_config) {
 
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListClientes.this, actSincronismo.class);
             startActivity(i);
+            this.finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -128,22 +135,21 @@ public class act_ListClientes extends ListActivity
 
     private void CarregarClientes() {
         Cursor CursorClie = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE CODVENDEDOR = " + sCodVend+
-                                        " ORDER BY NOMEFAN ",null);
+                " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
+                " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE CODVENDEDOR = " + sCodVend +
+                " ORDER BY NOMEFAN, NOMERAZAO ", null);
         ArrayList<HashMap<String, String>> DadosList = new ArrayList<HashMap<String, String>>();
 
-        if(CursorClie.getCount() > 0) {
+        if (CursorClie.getCount() > 0) {
             CursorClie.moveToFirst();
             while (CursorClie.moveToNext()) {
                 String NomeFan      = CursorClie.getString(CursorClie.getColumnIndex("NOMEFAN"));
-                String Cnpj         = CursorClie.getString(CursorClie.getColumnIndex("CNPJ_CPF"));
                 String NomeRazao    = CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO"));
+                String Cnpj         = CursorClie.getString(CursorClie.getColumnIndex("CNPJ_CPF"));
                 String Cidade       = CursorClie.getString(CursorClie.getColumnIndex("CIDADE"));
                 String Estado       = CursorClie.getString(CursorClie.getColumnIndex("UF"));
                 String Bairro       = CursorClie.getString(CursorClie.getColumnIndex("BAIRRO"));
                 String Telefone     = "Telefone Sem Cadastro";//cursor.getString(4);
-
 
                 HashMap<String, String> DadosClientes = new HashMap<String, String>();
 
@@ -159,7 +165,7 @@ public class act_ListClientes extends ListActivity
             }
             CursorClie.close();
             adapter = new ListAdapter(act_ListClientes.this, DadosList, R.layout.lstclientes_card,
-                    new String[]{"NOMEFAN", "CNPJ_CPF", "NOMERAZAO", "CIDADE","ESTADO", "BAIRRO", "TELEFONE"},
+                    new String[]{"NOMEFAN", "CNPJ_CPF", "NOMERAZAO", "CIDADE", "ESTADO", "BAIRRO", "TELEFONE"},
                     new int[]{R.id.lblNomeFanClie, R.id.lblCNPJ, R.id.lblNomerazao, R.id.lblCidade, R.id.lblEstado, R.id.lblBairro, R.id.lblTel});
 
             setListAdapter(adapter);
@@ -169,18 +175,19 @@ public class act_ListClientes extends ListActivity
     @Override
     public void run() {
         handler.post(new Runnable() {
-           @Override
+            @Override
             public void run() {
                 try {
-                     CarregarClientes();
-                }catch (Exception E){
+                    CarregarClientes();
+                } catch (Exception E) {
 
-                }
-                finally {
+                } finally {
                     if (pDialog.isShowing())
                         pDialog.dismiss();
                 }
-            };
+            }
+
+            ;
 
         });
 

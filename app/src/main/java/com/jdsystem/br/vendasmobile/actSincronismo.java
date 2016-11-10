@@ -103,27 +103,26 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         Date DataUlt = null;
         try {
             if (CursosParam.getCount() > 0) {
-                DataUlt = sdf.parse(CursosParam.getString(0));
-            }else{
                 DataUlt = sdf.parse("01/01/2000 12:20:30");
+                //DataUlt = sdf.parse(CursosParam.getString(0));
+            } else {
+                DataUlt = sdf.parse("01/01/2000 12:20:30");
+                DB.execSQL(" INSERT INTO PARAMAPP(DT_ULT_ATU) VALUES(datetime());");
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        
+
         String DataUlt2 = sdf.format(DataUlt);
 
         SharedPreferences prefs = getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
-        DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = " + "DATETIME();");
 
         SincronizarClientes(sCodVend, "9D51E0508F3B9D59F252", "0B65", DataUlt2);
 
         DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = " + "DATETIME();");
     }
-
-
 
     public void SincronizarClientes(String sCodVend, String nUsuario, String nSenha, String DtUlt) {
         String METHOD_NAME = "Carregar";
@@ -147,6 +146,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String TAG_ATIVO = "ativo";
         String TAG_TELEFONES = "telefones";
         String TAG_NOMEROTEL = "numero";
+
+        String TAG_NOMECONTATO = "nome";
+        String TAG_EMAILCONTATO = "email";
+        String TAG_CARGOCONTATO = "cargo";
+        String TAG_TEL1CONTATO = "numero";
 
         String CodVendedor = sCodVend;
 
@@ -219,7 +223,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             } else {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                                        "CEP,CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, FLAGINTEGRADO) VALUES(" +
+                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, FLAGINTEGRADO) VALUES(" +
                                         "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL) +
                                         "',' " + c.getString(TAG_NOMEFANTASIA) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
                                         "',' " + c.getString(TAG_NOMEROTEL) + "', '', '" + c.getString(TAG_LOGRADOURO) +
@@ -233,12 +237,53 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         } catch (Exception E) {
                             System.out.println("Error" + E);
                         }
+                        /*JSONObject jsonObjCont = new JSONObject(ArrayClientes);
+                        JSONArray Contatos = jsonObj.getJSONArray("contatos");
+
+                        int TimeCont = 0;
+                        final int TotalProgTimecont = Contatos.length();
+                        Dialog.setMax(TotalProgTimecont);
+
+                        for (int j = 0; i < Contatos.length(); i++) {
+                            while (TimeCont < TotalProgTimecont) {
+                                try {
+
+                                    JSONObject co = Contatos.getJSONObject(TimeCont);
+                                    TimeCont += 1;
+                                    Dialog.setProgress(TimeCont);
+
+                                    Cursor CursCont = DB.rawQuery(" SELECT CODCONTATO_INT, CODCONTATO_EXT, NOME, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO" +
+                                            " WHERE CODCLIENTE = '" + c.getString(TAG_CODIGO)+"'" , null);
+
+                                    try {
+                                        if (CursCont.getCount() > 0) {
+                                            DB.execSQL("DELETE FROM CONTATO "+
+                                                    " WHERE CODCLIENTE = '" + c.getString(TAG_CODIGO)+"'");
+                                        } else {
+                                            DB.execSQL("INSERT INTO CONTATO (CODCLIENTE, NOME, CARGO, EMAIL, TEL1, TEL2) VALUES(" +
+                                                    "'" + c.getString(TAG_CODIGO) + "','" + co.getString(TAG_NOMECONTATO) +
+                                                    "',' " + co.getString(TAG_CARGOCONTATO) + "',' " + co.getString(TAG_EMAILCONTATO) +
+                                                    "',' " + co.getString(TAG_TELEFONES) + "');");
+                                        }
+                                        cursor.close();
+                                    } catch (Exception E) {
+                                        System.out.println("Error" + E);
+                                    }
+                                } catch (Exception E) {
+                                    // TODO Auto-generated catch block
+                                    E.printStackTrace();
+                                }
+                            }
+                        }*/
+
                     } catch (Exception E) {
                         // TODO Auto-generated catch block
                         E.printStackTrace();
                     }
                 }
             }
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -30,11 +30,8 @@ public class actListPedidos extends AppCompatActivity
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal = params.getString("urlPrincipal");
-
             }
         }
-
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +74,7 @@ public class actListPedidos extends AppCompatActivity
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
             startActivity(intent);
+            this.finish();
 
         } else if (id == R.id.nav_pedidos) {
 
@@ -91,6 +89,7 @@ public class actListPedidos extends AppCompatActivity
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
             startActivity(intent);
+            this.finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

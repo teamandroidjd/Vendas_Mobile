@@ -12,6 +12,8 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -21,20 +23,23 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
 public class actLogin extends AppCompatActivity implements Runnable {
     public static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public static final String CONFIG_HOST = "CONFIG_HOST";
+    private static final String METHOD_NAME = "Login";
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
 
     public void onAttachedToWindow() {
@@ -100,7 +105,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 editor.putString("usuario", edtUsuario.getText().toString());
                 if (cbGravSenha.isChecked()) {
                     editor.putString("senha", edtSenha.getText().toString());
-                }else{
+                } else {
                     editor.putString("senha", null);
                 }
                 editor.commit();
@@ -163,73 +168,73 @@ public class actLogin extends AppCompatActivity implements Runnable {
     @Override
     public void run() {
         handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    /*IValidarUsuario cmd = new IValidarUsuario();
-                    Boolean ConexOk = VerificaConexao();
-                    if (ConexOk == true) {
-                        try {
-                            Retorno = cmd.ValidarUsuario(edtUsuario.getText().toString(), edtSenha.getText().toString());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (XmlPullParserException e) {
-                            e.printStackTrace();
-                        }
+                         @Override
+                         public void run() {
+                             try {
+                                 prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+                                 URLPrincipal = prefs.getString("host", null);
 
-                        if (Retorno > 0) {
-                            Dialogo.dismiss();
-                            Intent intent = new Intent(getApplicationContext(), actPedidoBlq.class);
-                            Bundle params = new Bundle();
-                            params.putInt("codigousuario", Retorno);
-                            intent.putExtras(params);
-                            startActivity(intent);
-                        } else {
-                            Dialogo.dismiss();
-                            Toast.makeText(actLogin.this, "Usuário ou Senha inválidos!", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                    } else {
-                        Dialogo.dismiss();
-                        AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
-                        builder.setTitle(R.string.app_namesair);
-                        builder.setIcon(R.drawable.logo_ico);
-                        builder.setMessage("Sem Conexão com a Internet, Verifique!")
-                                .setCancelable(false)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        return;
-                                    }
-                                })
-                                .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                                        startActivity(intent);
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                    }
-                    */
+                                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                                 StrictMode.setThreadPolicy(policy);
 
-                    Dialogo.dismiss();
+                                 SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                                 soap.addProperty("aUsuario", edtUsuario.getText().toString());
+                                 soap.addProperty("aSenha", edtSenha.getText().toString());
+                                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                 envelope.setOutputSoapObject(soap);
+                                 HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                                 String CodVendedor;
+                                 try {
+                                     Boolean ConexOk = VerificaConexao();
+                                     if (ConexOk == true) {
+                                         Envio.call("", envelope);
 
-                    prefs        = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-                    URLPrincipal = prefs.getString("host", null);
+                                         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
-                    Retorno = "40";
-                    Intent intent = new Intent(getApplicationContext(), actListPedidos.class);
-                    Bundle params = new Bundle();
-                    params.putString("codvendedor", Retorno);
-                    params.putString("urlPrincipal", URLPrincipal);
-                    intent.putExtras(params);
-                    startActivity(intent);
+                                         CodVendedor = (String) envelope.getResponse();
+                                         System.out.println("Response::" + resultsRequestSOAP.toString());
+                                         if (CodVendedor != "0") {
+                                             Intent intent = new Intent(getApplicationContext(), actListPedidos.class);
+                                             Bundle params = new Bundle();
+                                             params.putString("codvendedor", Retorno);
+                                             params.putString("urlPrincipal", URLPrincipal);
+                                             intent.putExtras(params);
+                                             startActivity(intent);
+                                         } else {
+                                             Dialogo.dismiss();
+                                             Toast.makeText(actLogin.this, "Usuário ou Senha inválidos!", Toast.LENGTH_LONG).show();
+                                             return;
+                                         }
+                                     } else {
+                                         Dialogo.dismiss();
+                                         AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+                                         builder.setTitle(R.string.app_namesair);
+                                         builder.setIcon(R.drawable.logo_ico);
+                                         builder.setMessage("Sem Conexão com a Internet, Verifique!")
+                                                 .setCancelable(false)
+                                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                     public void onClick(DialogInterface dialog, int id) {
+                                                         return;
+                                                     }
+                                                 })
+                                                 .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
+                                                     public void onClick(DialogInterface dialog, int id) {
+                                                         Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                                                         startActivity(intent);
+                                                     }
+                                                 });
+                                         AlertDialog alert = builder.create();
+                                         alert.show();
+                                     }
+                                 } catch (Exception E) {
 
-                } catch (Exception E) {
+                                 }
+                             } catch (Exception E) {
 
-                }
-            }
-        });
+                             }
+                         }
+                     }
+        );
 
     }
 
@@ -241,7 +246,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.act_configweb){
+        if (item.getItemId() == R.id.act_configweb) {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
             startActivity(intent);
             return true;

@@ -170,16 +170,7 @@
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/btnlocaliza"
-                    android:layout_width="0dp"
-                    android:layout_height="60dp"
-                    android:layout_alignBottom="@id/EdtCep"
-                    android:layout_alignTop="@id/EdtCep"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
-                    android:text="Localizar"
-                    android:textColor="@color/common_google_signin_btn_text_dark_default" />
+
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
