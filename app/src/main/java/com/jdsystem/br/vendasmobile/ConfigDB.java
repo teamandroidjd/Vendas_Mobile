@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class ConfigDB {
 
-    public static Boolean ConectarBanco(SQLiteDatabase DB){
+    public static Boolean ConectarBanco(SQLiteDatabase DB) {
 
         try {
             DB.execSQL(" CREATE TABLE IF NOT EXISTS CLIENTES ( CNPJ_CPF VARCHAR (14)  NOT NULL, " +

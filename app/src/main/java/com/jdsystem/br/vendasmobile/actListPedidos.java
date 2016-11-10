@@ -25,7 +25,7 @@ public class actListPedidos extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        if(intent!=null) {
+        if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
@@ -74,7 +74,6 @@ public class actListPedidos extends AppCompatActivity
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
             startActivity(intent);
-            this.finish();
 
         } else if (id == R.id.nav_pedidos) {
 
@@ -89,7 +88,6 @@ public class actListPedidos extends AppCompatActivity
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
             startActivity(intent);
-            this.finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

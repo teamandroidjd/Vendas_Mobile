@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.LocalActivityManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TabHost;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,7 +25,7 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-public class actDadosCliente extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class actDadosCliente extends AppCompatActivity {
 
     private String Cnpj;
     String sCodVend;
@@ -35,45 +37,54 @@ public class actDadosCliente extends AppCompatActivity implements NavigationView
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         Intent intent = getIntent();
-        if(intent!=null)
-        {
+        if (intent != null) {
             Bundle params = intent.getExtras();
-            if(params!=null)
-            {
+            if (params != null) {
                 Cnpj = params.getString("cnpj");
-
-
             }
         }
+        try {
+            TabHost tab = (TabHost) findViewById(R.id.tabHost);
+            LocalActivityManager mLam = new LocalActivityManager(this, false);
+            mLam.dispatchCreate(savedInstanceState);
+            tab.setup(mLam);
 
-        FloatingActionButton fabc = (FloatingActionButton) findViewById(R.id.fab);
-        fabc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+            TabHost.TabSpec TabMenu1 = tab.newTabSpec("dadosclie");
+            TabHost.TabSpec TabMenu2 = tab.newTabSpec("contatoclie");
+            TabHost.TabSpec TabMenu3 = tab.newTabSpec("mapaclie");
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+            TabMenu1.setIndicator("Dados");
+            Intent iDadosClie = new Intent(getApplicationContext(), act_TH_dadosclie.class);
+            Bundle params = new Bundle();
+            //params.putString("pedidonum", Pedido);
+            iDadosClie.putExtras(params);
+            TabMenu1.setContent(iDadosClie);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-     navigationView.setNavigationItemSelectedListener(this);
+            TabMenu2.setIndicator("Contatos");
+            Intent iContClie = new Intent(getApplicationContext(), act_TH_contclie.class);
+            Bundle params2 = new Bundle();
+            //params2.putString("obsped", ObsPed);
+            iContClie.putExtras(params2);
+            TabMenu2.setContent(iContClie);
+
+            TabMenu3.setIndicator("Mapa");
+            Intent iMapa = new Intent(getApplicationContext(), act_TH_mapaclie.class);
+            Bundle params3 = new Bundle();
+            //params3.putString("obsped", ObsPed);
+            iMapa.putExtras(params2);
+            TabMenu2.setContent(iMapa);
+
+            tab.addTab(TabMenu1);
+            tab.addTab(TabMenu2);
+            tab.addTab(TabMenu3);
+
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+
+
     }
 
     @Override
@@ -84,38 +95,6 @@ public class actDadosCliente extends AppCompatActivity implements NavigationView
         } else {
             super.onBackPressed();
         }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_clientes) {
-            Intent intent = new Intent(this, act_ListClientes.class);
-            Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            intent.putExtras(params);
-            startActivity(intent);
-
-        } else if (id == R.id.nav_pedidos) {
-
-        } else if (id == R.id.nav_produtos) {
-
-        } else if (id == R.id.nav_config) {
-
-        } else if (id == R.id.nav_sincronismo) {
-            Intent intent = new Intent(this, actSincronismo.class);
-            Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            intent.putExtras(params);
-            startActivity(intent);
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }
 

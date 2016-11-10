@@ -30,6 +30,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -162,7 +164,6 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 });
         AlertDialog alert = builder.create();
         alert.show();
-
     }
 
     @Override
@@ -193,17 +194,18 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
                                          CodVendedor = (String) envelope.getResponse();
                                          System.out.println("Response::" + resultsRequestSOAP.toString());
-                                         if (CodVendedor != "0") {
-                                             Intent intent = new Intent(getApplicationContext(), actListPedidos.class);
-                                             Bundle params = new Bundle();
-                                             params.putString("codvendedor", Retorno);
-                                             params.putString("urlPrincipal", URLPrincipal);
-                                             intent.putExtras(params);
-                                             startActivity(intent);
-                                         } else {
+                                         if (CodVendedor.equals("0")) {
                                              Dialogo.dismiss();
                                              Toast.makeText(actLogin.this, "Usuário ou Senha inválidos!", Toast.LENGTH_LONG).show();
                                              return;
+                                         } else {
+                                             Intent intent = new Intent(getApplicationContext(), actListPedidos.class);
+                                             Bundle params = new Bundle();
+                                             params.putString("codvendedor", CodVendedor);
+                                             params.putString("urlPrincipal", URLPrincipal);
+                                             intent.putExtras(params);
+                                             Dialogo.dismiss();
+                                             startActivity(intent);
                                          }
                                      } else {
                                          Dialogo.dismiss();
@@ -227,10 +229,10 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                          alert.show();
                                      }
                                  } catch (Exception E) {
-
+                                     Dialogo.dismiss();
                                  }
                              } catch (Exception E) {
-
+                                 Dialogo.dismiss();
                              }
                          }
                      }

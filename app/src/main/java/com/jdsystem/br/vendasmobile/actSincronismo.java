@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -119,9 +120,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
 
-        SincronizarClientes(sCodVend, "9D51E0508F3B9D59F252", "0B65", DataUlt2);
+        SincronizarClientes(sCodVend, usuario, senha, DataUlt2);
 
         DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = " + "DATETIME();");
+
+
     }
 
     public void SincronizarClientes(String sCodVend, String nUsuario, String nSenha, String DtUlt) {
@@ -182,10 +185,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
 
         try {
-            String SHA1Ret = RetClientes.substring(0, 40);
-            String ArrayClientes = RetClientes.substring(40, (RetClientes.length()));
+            //String SHA1Ret = RetClientes.substring(0, 40);
+            //String ArrayClientes = RetClientes.substring(40, (RetClientes.length()));
 
-            JSONObject jsonObj = new JSONObject(ArrayClientes);
+            JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
 
             int jumpTime = 0;
@@ -200,9 +203,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         jumpTime += 1;
                         Dialog.setProgress(jumpTime);
 
-                        Cursor cursor = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
-                                " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                                " CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+                        Cursor cursor = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
 
                         String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
                         int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
@@ -218,7 +219,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
                                         "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
                                         " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
-                                        ", CODVENDEDOR = " + CodVendedor + ", FLAGINTEGRADO = '2' " +
+                                        ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
                                         " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
                             } else {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
@@ -230,7 +231,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +
                                         "','" + CodBairro + "',' " + c.getString(TAG_OBS) + "','" + CodCidade + "',' " + CodEstado +
                                         "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
-                                        "'," + CodVendedor + ",'" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_ATIVO)
+                                        "','" + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_ATIVO)
                                         + "','" + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
                             }
                             cursor.close();
@@ -282,17 +283,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     }
                 }
             }
-
-
+            if (Dialog.isShowing())
+                Dialog.dismiss();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        if (Dialog.isShowing())
-            Dialog.dismiss();
     }
-
-
     private int RetornaBairro(String NomeBairro, int CodCidade) {
         int Bairro = 0;
         try {
