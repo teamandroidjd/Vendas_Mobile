@@ -2,31 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#80b6da"
+    android:background="@color/ColorFundo"
     android:layout_gravity="center"
     android:id="@+id/lin_lay"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
        <ImageView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:background="@drawable/logo"
+           android:background="@drawable/logo_app"
            android:id="@+id/splash"
            android:layout_marginTop="100dp" />
-
-       <TextView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:textAppearance="?android:attr/textAppearanceLarge"
-           android:text="WSGE Vendas Mobile"
-           android:id="@+id/titulo"
-           android:layout_gravity="center_horizontal"
-           android:layout_marginTop="100dp"
-           android:textColor="#f4f5f7"
-           android:textStyle="bold"
-           android:textIsSelectable="false"
-           android:textSize="30dp" />
 
        <TextView
            android:text="www.jdsystem.com.br"

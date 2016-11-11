@@ -49,6 +49,16 @@
             android:name=".actSincronismo"
             android:screenOrientation="portrait"
             android:label="Sincronização de Dados" />
+        <activity
+            android:name=".act_TH_contclie"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".act_TH_dadosclie"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".act_TH_mapaclie"
+            android:screenOrientation="portrait" />
+
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.

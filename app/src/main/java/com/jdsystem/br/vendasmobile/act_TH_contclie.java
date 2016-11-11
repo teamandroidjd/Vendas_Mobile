@@ -3,6 +3,7 @@ package com.jdsystem.br.vendasmobile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 /**
  * Created by eduardo.costa on 10/11/2016.
@@ -21,8 +22,5 @@ public class act_TH_contclie extends AppCompatActivity {
                 //Cnpj = params.getString("cnpj");
             }
         }
-
-
-
     }
 }

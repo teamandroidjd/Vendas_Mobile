@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3f51b5</color>
-    <color name="colorPrimaryDark">#303f9f</color>
-    <color name="colorAccent">#16bfd6</color>
+    <color name="colorPrimary">#02a2b6</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#04a3b6</color>
     <color name="botaologar">#7f8de4</color>
-    <color name="ColorFundo">#79a1f1</color>
+    <color name="ColorFundo">#79ccd7</color>
     <color name="ColorText">#000000</color>
-    <color name="colordescClie">#4052b5</color>
+    <color name="colordescClie">#024149</color>
     <color name="colorCardClie">#ffffff</color>
 </resources>

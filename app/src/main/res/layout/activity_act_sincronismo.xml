@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:text="Sincronização"
         android:gravity="center"
-        android:textColor="@color/colordescClie"
+        android:textColor="@color/colorAccent"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <ImageView
@@ -30,7 +30,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#3140a0"
+        android:background="@color/colorAccent"
         android:text="Sincronizar"
         android:layout_alignParentBottom="true"
         android:textAllCaps="false"

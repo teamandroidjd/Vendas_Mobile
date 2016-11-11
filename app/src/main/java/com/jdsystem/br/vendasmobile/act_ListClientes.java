@@ -88,10 +88,10 @@ public class act_ListClientes extends ListActivity
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(getApplicationContext(), actDadosCliente.class);
-        //String Cnpj = (String) adapter.getItem(position);
-        //Bundle params = new Bundle();
-        //params.putString("cnpj", Cnpj);
-        //intent.putExtras(params);
+        String Codclie = (String) adapter.getItem(position);
+        Bundle params = new Bundle();
+        params.putString("cnpj", Codclie);
+        intent.putExtras(params);
         startActivityForResult(intent, 1);
     }
 

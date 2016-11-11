@@ -40,11 +40,6 @@ public class ctSplash extends Activity {
         iv.clearAnimation();
         iv.startAnimation(anim);
 
-        anim = AnimationUtils.loadAnimation(this, R.anim.translate);
-        anim.reset();
-        TextView tv = (TextView) findViewById(R.id.titulo);
-        tv.clearAnimation();
-        tv.startAnimation(anim);
 
         splashTread = new Thread() {
             @Override

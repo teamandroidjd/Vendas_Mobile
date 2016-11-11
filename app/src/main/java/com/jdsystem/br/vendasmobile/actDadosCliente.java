@@ -27,8 +27,7 @@ import org.ksoap2.transport.HttpTransportSE;
 
 public class actDadosCliente extends AppCompatActivity {
 
-    private String Cnpj;
-    String sCodVend;
+    private String CodClie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class actDadosCliente extends AppCompatActivity {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                Cnpj = params.getString("cnpj");
+                CodClie = params.getString("codclie");
             }
         }
         try {
@@ -73,8 +72,8 @@ public class actDadosCliente extends AppCompatActivity {
             Intent iMapa = new Intent(getApplicationContext(), act_TH_mapaclie.class);
             Bundle params3 = new Bundle();
             //params3.putString("obsped", ObsPed);
-            iMapa.putExtras(params2);
-            TabMenu2.setContent(iMapa);
+            iMapa.putExtras(params3);
+            TabMenu3.setContent(iMapa);
 
             tab.addTab(TabMenu1);
             tab.addTab(TabMenu2);
@@ -86,15 +85,13 @@ public class actDadosCliente extends AppCompatActivity {
 
 
     }
-
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        Intent it = new Intent();
+        it.putExtra("param_ped", true);
+        setResult(1, it);
+        finish();
     }
+
 }
 

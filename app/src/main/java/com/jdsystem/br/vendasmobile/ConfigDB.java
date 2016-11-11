@@ -51,6 +51,8 @@ public class ConfigDB {
                     "    TEL2           VARCHAR (15))" +
                     ";");
 
+
+
         } catch (Exception E) {
             return false;
         }

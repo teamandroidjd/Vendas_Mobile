@@ -72,7 +72,8 @@
                 android:textColor="#000000"
                 android:textSize="15dp"
                 android:id="@+id/cbGravSenha"
-                android:layout_gravity="right"/>
+                android:layout_gravity="right"
+                app:buttonTint="@color/colorPrimary"/>
 
             <Button
                 android:layout_width="match_parent"
