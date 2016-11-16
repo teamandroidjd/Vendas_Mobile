@@ -72,6 +72,11 @@
             android:screenOrientation="portrait">
 
         </activity>
+        <activity
+            android:name=".act_ListProdutos"
+            android:label="@string/title_activity_act__list_produtos"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".actDadosProdutos"></activity>
     </application>
 
 </manifest>

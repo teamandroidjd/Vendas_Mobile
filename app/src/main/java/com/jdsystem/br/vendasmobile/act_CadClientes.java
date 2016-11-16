@@ -125,82 +125,85 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 1:
-                        sUF = "AC";
+                        sUF = "AC"; //Acre
                         break;
                     case 2:
-                        sUF = "AL";
+                        sUF = "AL"; // Alagoas
                         break;
                     case 3:
-                        sUF = "AP";
+                        sUF = "AP"; //Amapá
                         break;
                     case 4:
-                        sUF = "AM";
+                        sUF = "AM";//Amazonas
                         break;
                     case 5:
-                        sUF = "BA";
+                        sUF = "BA";//Bahia
                         break;
                     case 6:
-                        sUF = "CE";
+                        sUF = "CE";//Ceará
                         break;
                     case 7:
-                        sUF = "DF";
+                        sUF = "DF";//Distrito Federal
                         break;
                     case 8:
-                        sUF = "ES";
+                        sUF = "ES";//Espírito Santo
                         break;
                     case 9:
-                        sUF = "GO";
+                        sUF = "GO";//Goiás
                         break;
                     case 10:
-                        sUF = "MA";
+                        sUF = "MA";//Maranhão
                         break;
                     case 11:
-                        sUF = "MT";
+                        sUF = "MT";//Mato Grosso
                         break;
                     case 12:
-                        sUF = "MS";
+                        sUF = "MS";//Mato Grosso do Sul
                         break;
                     case 13:
-                        sUF = "MG";
+                        sUF = "MG";//Minas Gerais
                         break;
                     case 14:
-                        sUF = "PA";
+                        sUF = "PA";//Pará
                         break;
                     case 15:
-                        sUF = "PB";
+                        sUF = "PB";//Paraíba
                         break;
                     case 16:
-                        sUF = "PE";
+                        sUF = "PR";//Paraná
                         break;
                     case 17:
-                        sUF = "PI";
+                        sUF = "PE";//Pernambuco
                         break;
                     case 18:
-                        sUF = "RJ";
+                        sUF = "PI";//Piauí
                         break;
                     case 19:
-                        sUF = "RN";
+                        sUF = "RJ";//Rio de Janeiro
                         break;
                     case 20:
-                        sUF = "RS";
+                        sUF = "RN"; //Rio Grande do Norte
                         break;
                     case 21:
-                        sUF = "RO";
+                        sUF = "RS";//Rio Grande do Sul
                         break;
                     case 22:
-                        sUF = "RR";
+                        sUF = "RO"; //Rondônia
                         break;
                     case 23:
-                        sUF = "SC";
+                        sUF = "RR"; //Roraima
                         break;
                     case 24:
-                        sUF = "SP";
+                        sUF = "SC";//Santa Catarina
                         break;
                     case 25:
-                        sUF = "SE";
+                        sUF = "SP";//São Paulo
                         break;
                     case 26:
-                        sUF = "TO";
+                        sUF = "SE";//Sergipe
+                        break;
+                    case 27:
+                        sUF = "TO";//Tocantins
                         break;
                 }
 
@@ -324,11 +327,12 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             return;
         }
 
-        Cursor cursor = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
+        Cursor CursorClieCons = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                 " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                 " CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "'", null);
         try {
-            if (cursor.getCount() > 0) {
+            if (CursorClieCons.getCount() > 0) {
+                CursorClieCons.moveToFirst();
                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + NomePessoa +
                         "', NOMEFAN = '" + NomeFantasia +
                         "', INSCREST = '" + ie.getText().toString() + "', EMAIL = '" + email.getText().toString() +
@@ -351,7 +355,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         "',' " + cep.getText().toString() + "'," + sCodVend + ",'" + sTipoPessoa + "','" + "S" + "','"
                         + "1" + "');");
             }
-            cursor.close();
+            CursorClieCons.close();
 
             Toast.makeText(this, "Cliente salvo com sucesso!", Toast.LENGTH_SHORT).show();
             clearText();

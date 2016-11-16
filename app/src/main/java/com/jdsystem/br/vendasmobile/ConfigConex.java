@@ -9,6 +9,7 @@ public class ConfigConex {
 
     public static String URLCLIENTES = "/webserv/Clientes.exe/soap/IClientes";
     public static String URLUSUARIOS = "/webserv/Usuarios.exe/soap/IUsuarios";
+    public static String URLPRODUTOS = "/webserv/Produtos.exe/soap/IProdutos";
 
     //Padrão http://jdserv.ddns.com.br:8080
 

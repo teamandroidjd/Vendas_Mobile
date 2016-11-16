@@ -1,6 +1,8 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,6 +18,7 @@ import android.view.View;
 public class actListPedidos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     String sCodVend, URLPrincipal;
+    SQLiteDatabase DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,10 @@ public class actListPedidos extends AppCompatActivity
                 URLPrincipal = params.getString("urlPrincipal");
             }
         }
+
+        DB = openOrCreateDatabase("WSGEDB", Context.MODE_PRIVATE, null);
+        ConfigDB.ConectarBanco(DB);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,9 +84,15 @@ public class actListPedidos extends AppCompatActivity
 
         } else if (id == R.id.nav_pedidos) {
 
-        } else if (id == R.id.nav_produtos) {
 
-        } else if (id == R.id.nav_config) {
+        } else if (id == R.id.nav_produtos) {
+            Intent intent = new Intent(actListPedidos.this, act_ListProdutos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            intent.putExtras(params);
+            startActivity(intent);
+            //finish();
 
         } else if (id == R.id.nav_sincronismo) {
             Intent intent = new Intent(actListPedidos.this, actSincronismo.class);

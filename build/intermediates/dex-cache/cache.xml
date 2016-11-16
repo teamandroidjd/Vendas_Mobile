@@ -48,15 +48,6 @@
     </item>
     <item
         is-multidex="true"
-        jar="C:\Wsge(2005)\Vendas_Mobile\app\libs\ksoap2-android-assembly-3.4.0-jar-with-dependencies.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="24.0.2"
-        sha1="45fbaab416fb5cff992e662d1f7a83786f084fc3">
-        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\2\ksoap2-android-assembly-3.4.0-jar-with-dependencies_7e4eb72b2b9445814febf36b5932cb364185f07b\classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\jars\libs\internal_impl-24.2.1.jar"
         jumboMode="true"
         optimize="true"
@@ -66,11 +57,20 @@
     </item>
     <item
         is-multidex="true"
+        jar="C:\Wsge(2005)\Vendas_Mobile\app\libs\ksoap2-android-assembly-3.4.0-jar-with-dependencies.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.2"
+        sha1="45fbaab416fb5cff992e662d1f7a83786f084fc3">
+        <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\2\ksoap2-android-assembly-3.4.0-jar-with-dependencies_7e4eb72b2b9445814febf36b5932cb364185f07b\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
         jar="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         optimize="true"
         revision="24.0.2"
-        sha1="655eab4c461e46514ef03023dbc07d6d2fcb1547">
+        sha1="1f9270ed61a7714efb8c33db01c310e08dc9c6a3">
         <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_d9526bb1e3e0aa75d1c5f40dc22ba91465d9af8c\classes.dex" />
     </item>
     <item
@@ -88,7 +88,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.2"
-        sha1="9a893298dbb6d1bf3f3ea6da3788423296375eb0">
+        sha1="d9dd6aff0df71366f1f833c92a5e53a053c3e538">
         <dex dex="C:\Wsge(2005)\Vendas_Mobile\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_bb117621a09a5154a7a51ed267eb477d5e138db5\classes.dex" />
     </item>
     <item

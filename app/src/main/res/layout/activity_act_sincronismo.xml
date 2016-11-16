@@ -36,7 +36,29 @@
         android:textAllCaps="false"
         android:textColor="#fff"
         android:textSize="18sp"
-        android:id="@+id/btnSincronizar" />
+        android:id="@+id/btnSincronizar"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:id="@+id/prgSinc"
+        android:layout_above="@+id/btnSincronizar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sincronizando - Clientes"
+        android:id="@+id/txtSincro"
+        android:layout_above="@+id/prgSinc"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="12dp" />
 
 
 </RelativeLayout>

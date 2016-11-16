@@ -14,6 +14,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
@@ -23,14 +25,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class act_ListClientes extends ListActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
     ProgressDialog pDialog;
     private Handler handler = new Handler();
-    public ListAdapter adapter;
-    String sCodVend;
+    public ListAdapterClientes adapter;
+    String sCodVend, URLPrincipal;
+    EditText edtCliente;
 
     SQLiteDatabase DB;
 
@@ -41,11 +45,37 @@ public class act_ListClientes extends ListActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
+        edtCliente = (EditText) findViewById(R.id.EdtPesquisa);
+        // Capture Text in EditText
+        edtCliente.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1,
+                                          int arg2, int arg3) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+                                      int arg3) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+                String text = edtCliente.getText().toString().toLowerCase(Locale.getDefault());
+                adapter.getFilter().filter(text);
+            }
+        });
+
+
         Intent intent = getIntent();
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
+                URLPrincipal = params.getString("urlPrincipal");
+
             }
         }
 
@@ -84,7 +114,7 @@ public class act_ListClientes extends ListActivity
         thread.start();
     }
 
-
+/*
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(getApplicationContext(), actDadosCliente.class);
@@ -94,7 +124,7 @@ public class act_ListClientes extends ListActivity
         intent.putExtras(params);
         startActivityForResult(intent, 1);
     }
-
+*/
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -114,13 +144,17 @@ public class act_ListClientes extends ListActivity
         if (id == R.id.nav_clientes) {
 
         } else if (id == R.id.nav_produtos) {
+            //Intent i = new Intent(act_ListClientes.this, Produtos.class);
+            //startActivity(i);
+            //this.finish();
 
         } else if (id == R.id.nav_pedidos) {
-            Intent i = new Intent(act_ListClientes.this, actListPedidos.class);
-            startActivity(i);
-            this.finish();
-
-        } else if (id == R.id.nav_config) {
+            Intent intent = new Intent(act_ListClientes.this, actListPedidos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            intent.putExtras(params);
+            startActivity(intent);
 
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListClientes.this, actSincronismo.class);
@@ -136,24 +170,32 @@ public class act_ListClientes extends ListActivity
     private void CarregarClientes() {
         Cursor CursorClie = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                 " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE CODVENDEDOR = " + sCodVend +
+                " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
+                " WHERE CODVENDEDOR = " + sCodVend +
                 " ORDER BY NOMEFAN, NOMERAZAO ", null);
+        String docFormatado;
         ArrayList<HashMap<String, String>> DadosList = new ArrayList<HashMap<String, String>>();
 
         if (CursorClie.getCount() > 0) {
             CursorClie.moveToFirst();
-            while (CursorClie.moveToNext()) {
-                String NomeFan      = CursorClie.getString(CursorClie.getColumnIndex("NOMEFAN"));
-                String NomeRazao    = CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO"));
-                String Cnpj         = CursorClie.getString(CursorClie.getColumnIndex("CNPJ_CPF"));
-                String Cidade       = CursorClie.getString(CursorClie.getColumnIndex("CIDADE"));
-                String Estado       = CursorClie.getString(CursorClie.getColumnIndex("UF"));
-                String Bairro       = CursorClie.getString(CursorClie.getColumnIndex("BAIRRO"));
-                String Telefone     = "Telefone Sem Cadastro";//cursor.getString(4);
+            do {
+                String NomeFan = CursorClie.getString(CursorClie.getColumnIndex("NOMEFAN"));
+                String NomeRazao = CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO"));
+                String Cnpj = CursorClie.getString(CursorClie.getColumnIndex("CNPJ_CPF"));
+                Cnpj = Cnpj.replaceAll("[^0123456789]", "");
+                if (Cnpj.length() == 14) {
+                    docFormatado = Mask.addMask(Cnpj, "##.###.###/####-##");
+                } else {
+                    docFormatado = Mask.addMask(Cnpj.replaceAll("[^0123456789]", ""), "###.###.###-##");
+                }
+                String Cidade = CursorClie.getString(CursorClie.getColumnIndex("CIDADE"));
+                String Estado = CursorClie.getString(CursorClie.getColumnIndex("UF"));
+                String Bairro = CursorClie.getString(CursorClie.getColumnIndex("BAIRRO"));
+                String Telefone = CursorClie.getString(CursorClie.getColumnIndex("TEL1"));
 
                 HashMap<String, String> DadosClientes = new HashMap<String, String>();
 
-                DadosClientes.put("CNPJ_CPF", Cnpj);
+                DadosClientes.put("CNPJ_CPF", docFormatado);
                 DadosClientes.put("NOMERAZAO", NomeRazao);
                 DadosClientes.put("NOMEFAN", NomeFan);
                 DadosClientes.put("CIDADE", Cidade);
@@ -163,8 +205,10 @@ public class act_ListClientes extends ListActivity
 
                 DadosList.add(DadosClientes);
             }
+            while (CursorClie.moveToNext());
             CursorClie.close();
-            adapter = new ListAdapter(act_ListClientes.this, DadosList, R.layout.lstclientes_card,
+            //adapter = new ListViewAdapter(
+            adapter = new ListAdapterClientes(act_ListClientes.this, DadosList, R.layout.lstclientes_card,
                     new String[]{"NOMEFAN", "CNPJ_CPF", "NOMERAZAO", "CIDADE", "ESTADO", "BAIRRO", "TELEFONE"},
                     new int[]{R.id.lblNomeFanClie, R.id.lblCNPJ, R.id.lblNomerazao, R.id.lblCidade, R.id.lblEstado, R.id.lblBairro, R.id.lblTel});
 

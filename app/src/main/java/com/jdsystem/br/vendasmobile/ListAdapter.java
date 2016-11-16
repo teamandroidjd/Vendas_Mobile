@@ -1,6 +1,7 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -30,5 +31,6 @@ public class ListAdapter extends SimpleAdapter {
         view.setBackgroundColor(colors[colorPos]);
         return view;
     }
+
 
 }
