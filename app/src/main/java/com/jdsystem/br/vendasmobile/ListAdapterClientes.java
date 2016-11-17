@@ -23,7 +23,7 @@ public class ListAdapterClientes extends SimpleAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
 
-        view.setOnClickListener(new View.OnClickListener() {
+        /*view.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
@@ -31,7 +31,7 @@ public class ListAdapterClientes extends SimpleAdapter {
                 Intent intent = new Intent(mContext, actDadosCliente.class);
                 mContext.startActivity(intent);
             }
-        });
+        });*/
         return view;
     }
 }

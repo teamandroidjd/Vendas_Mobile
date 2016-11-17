@@ -6,6 +6,12 @@
         <item>Pessoa Jurídica</item>
     </string-array>
     <string-array
+        name="forma_pgto">
+        <item>Dinheiro</item>
+        <item>Crediário</item>
+        <item>Cartão de Crédito</item>
+    </string-array>
+    <string-array
         name="uf">
         <item>Selecione um estado</item>
         <item>Acre</item>

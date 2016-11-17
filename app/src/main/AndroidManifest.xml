@@ -10,7 +10,8 @@
         android:icon="@drawable/logo_ico"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ctSplash"
+        <activity
+            android:name=".ctSplash"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,14 +23,14 @@
             android:name=".actLogin"
             android:label="WSGE Vendas Mobile"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme">
             <action android:name="android.intent.action.MAIN" />
         </activity>
         <activity
             android:name=".act_ListClientes"
             android:label="Clientes"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"  />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".actListPedidos"
             android:label="Pedidos"
@@ -47,11 +48,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".actSincronismo"
-            android:screenOrientation="portrait"
-            android:label="Sincronização de Dados" />
+            android:label="Sincronização de Dados"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".act_TH_contclie"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".act_TH_dadosclie"
             android:screenOrientation="portrait" />
@@ -69,14 +70,17 @@
 
         <activity
             android:name=".ConfigWeb"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".act_ListProdutos"
             android:label="@string/title_activity_act__list_produtos"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".actDadosProdutos"></activity>
+        <activity android:name=".actDadosProdutos" />
+        <activity
+            android:name=".actCadPedidos"
+            android:label="Pedidos de Venda"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".actListClientPedidos"></activity>
     </application>
 
 </manifest>

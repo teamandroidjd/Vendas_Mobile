@@ -114,7 +114,7 @@ public class act_ListClientes extends ListActivity
         thread.start();
     }
 
-/*
+
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(getApplicationContext(), actDadosCliente.class);
@@ -124,7 +124,7 @@ public class act_ListClientes extends ListActivity
         intent.putExtras(params);
         startActivityForResult(intent, 1);
     }
-*/
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
