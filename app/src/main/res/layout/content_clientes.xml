@@ -20,14 +20,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3">
-            <EditText
-                android:id="@+id/EdtPesquisa"
+            <SearchView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:hint="Localiza Cliente"
-                android:inputType="textCapCharacters"
-                android:maxLines="1" />
+                android:layout_height="wrap_content"
+                android:id="@+id/EdtPesquisa"
+                android:queryHint="Pesquisar cliente"
+                android:inputType="text"/>
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
     <LinearLayout

@@ -19,6 +19,7 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import android.widget.SearchView.OnQueryTextListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +35,8 @@ public class act_ListClientes extends ListActivity
     private Handler handler = new Handler();
     public ListAdapterClientes adapter;
     String sCodVend, URLPrincipal;
-    EditText edtCliente;
+    ListView edtCliente;
+    SearchView sv;
 
     SQLiteDatabase DB;
 
@@ -45,29 +47,21 @@ public class act_ListClientes extends ListActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
-        edtCliente = (EditText) findViewById(R.id.EdtPesquisa);
-        // Capture Text in EditText
-        edtCliente.addTextChangedListener(new TextWatcher() {
+        edtCliente = (ListView) findViewById(android.R.id.list);
+        sv = (SearchView) findViewById(R.id.EdtPesquisa);
+        sv.setOnQueryTextListener(new OnQueryTextListener() {
             @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1,
-                                          int arg2, int arg3) {
+            public boolean onQueryTextSubmit(String text) {
                 // TODO Auto-generated method stub
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                      int arg3) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-                String text = edtCliente.getText().toString().toLowerCase(Locale.getDefault());
+            public boolean onQueryTextChange(String text) {
                 adapter.getFilter().filter(text);
+                return false;
             }
         });
-
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -75,7 +69,6 @@ public class act_ListClientes extends ListActivity
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal = params.getString("urlPrincipal");
-
             }
         }
 

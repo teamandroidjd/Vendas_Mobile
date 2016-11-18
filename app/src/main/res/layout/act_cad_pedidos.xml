@@ -60,6 +60,18 @@
                                 android:layout_height="match_parent"
                                 android:gravity="left"
                                 android:text="10/11/2016" />
+                            <TextView
+                                android:id="@+id/txtSepara"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="left"
+                                android:text="       " />
+                            <TextView
+                                android:id="@+id/txtHrEmis"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="left"
+                                android:text="17:02" />
                         </LinearLayout>
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>
@@ -269,6 +281,7 @@
                                 android:layout_height="wrap_content"
                                 android:singleLine="true"
                                 android:hint="Valor do Frete"
+                                android:enabled="false"
                                 android:textAllCaps="true"/>
                         </android.support.design.widget.TextInputLayout>
                     </RelativeLayout>

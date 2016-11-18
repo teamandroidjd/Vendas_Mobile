@@ -131,7 +131,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         SincronizarProdutos(usuario, senha, DataUlt2);
         SincronizarClientesEnvio();
 
-        DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = " + "DATETIME();");
+        DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
     }
 
     private void SincronizarClientesEnvio() {

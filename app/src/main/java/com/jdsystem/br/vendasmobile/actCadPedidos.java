@@ -15,9 +15,9 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 public class actCadPedidos extends AppCompatActivity {
-    private TextView txtData;
+    private TextView txtData, txtHrEmis;
     private int Ano, Mes, Dia, Hora, Minuto;
-    private DatePicker datePicker;
+    //private DatePicker datePicker;
     private Calendar calendar;
 
     @Override
@@ -25,12 +25,23 @@ public class actCadPedidos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_cad_pedidos);
         txtData = (TextView) findViewById(R.id.txtDtEmis);
+        txtHrEmis = (TextView) findViewById(R.id.txtHrEmis);
+
         calendar = Calendar.getInstance();
         Ano = calendar.get(Calendar.YEAR);
-
         Mes = calendar.get(Calendar.MONTH);
         Dia = calendar.get(Calendar.DAY_OF_MONTH);
+
+        Hora = calendar.get(Calendar.HOUR_OF_DAY);
+        Minuto  = calendar.get(Calendar.MINUTE);
+
         showDate(Ano, Mes+1, Dia);
+        showTime(Hora, Minuto);
+    }
+
+    private void showTime(int hora, int minuto) {
+        txtHrEmis.setText(new StringBuilder().append(hora).append(":").append(minuto));
+
     }
 
     @SuppressWarnings("deprecation")
@@ -64,7 +75,9 @@ public class actCadPedidos extends AppCompatActivity {
     private void showDate(int year, int month, int day) {
         txtData.setText(new StringBuilder().append(day).append("/")
                 .append(month).append("/").append(year));
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

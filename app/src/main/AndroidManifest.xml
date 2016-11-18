@@ -79,8 +79,9 @@
         <activity
             android:name=".actCadPedidos"
             android:label="Pedidos de Venda"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".actListClientPedidos"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".actListClientPedidos" />
+        <activity android:name=".act_ItensPedido"></activity>
     </application>
 
 </manifest>

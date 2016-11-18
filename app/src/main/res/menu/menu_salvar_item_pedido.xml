@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.jdsystem.br.vendasmobile.Produtos">
+    <item
+        android:id="@+id/act_Salvar_Item_Pedido"
+        android:orderInCategory="100"
+        android:title="Salvar"
+        app:showAsAction="ifRoom" />
+</menu>

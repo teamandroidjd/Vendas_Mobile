@@ -20,6 +20,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -31,7 +34,8 @@ public class act_ListProdutos extends ListActivity
     private Handler handlerp = new Handler();
     public ListAdapter adapterp;
     String sCodVend, URLPrincipal;
-    EditText edtProdutos;
+    ListView edtProdutos;
+    SearchView sv;
 
     SQLiteDatabase DB;
 
@@ -41,29 +45,22 @@ public class act_ListProdutos extends ListActivity
         setContentView(R.layout.act_list_produtos);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        edtProdutos = (EditText) findViewById(R.id.EdtPesqItens);
-        // Capture Text in EditText
-        edtProdutos.addTextChangedListener(new TextWatcher() {
+        edtProdutos = (ListView) findViewById(android.R.id.list);
+        sv = (SearchView) findViewById(R.id.EdtPesqItens);
+        sv.setOnQueryTextListener(new OnQueryTextListener() {
             @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1,
-                                          int arg2, int arg3) {
+            public boolean onQueryTextSubmit(String text) {
                 // TODO Auto-generated method stub
+                return false;
             }
 
             @Override
-            public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                      int arg3) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-                String text = edtProdutos.getText().toString().toLowerCase(Locale.getDefault());
+            public boolean onQueryTextChange(String text) {
                 adapterp.getFilter().filter(text);
+
+                return false;
             }
         });
-
 
 
         Intent intent = getIntent();
@@ -219,7 +216,9 @@ public class act_ListProdutos extends ListActivity
                     if (prodDialog.isShowing())
                         prodDialog.dismiss();
                 }
-            };
+            }
+
+            ;
 
         });
 

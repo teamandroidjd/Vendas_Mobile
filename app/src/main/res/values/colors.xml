@@ -8,4 +8,6 @@
     <color name="ColorText">#000000</color>
     <color name="colordescClie">#024149</color>
     <color name="colorCardClie">#ffffff</color>
+    <color name="colorFundoItem">#b8d2e9</color>
+    <color name="colorItemAdd">#9dbdda</color>
 </resources>
