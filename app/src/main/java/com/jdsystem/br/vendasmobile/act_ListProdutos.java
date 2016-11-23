@@ -1,8 +1,10 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,11 +19,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +41,8 @@ public class act_ListProdutos extends ListActivity
     String sCodVend, URLPrincipal;
     ListView edtProdutos;
     SearchView sv;
+
+    Boolean Pedido;
 
     SQLiteDatabase DB;
 
@@ -69,6 +76,7 @@ public class act_ListProdutos extends ListActivity
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal = params.getString("urlPrincipal");
+                Pedido = params.getBoolean("pedido");
             }
         }
 
@@ -94,14 +102,35 @@ public class act_ListProdutos extends ListActivity
         thread.start();
     }
 
+
     @Override
     protected void onListItemClick(ListView lp, View vp, int position, long id) {
-        Intent intentp = new Intent(getApplicationContext(), actDadosProdutos.class);
-        String codprod = (String) adapterp.getItem(position);
-        Bundle params = new Bundle();
-        params.putString("codigo", codprod);
-        intentp.putExtras(params);
-        startActivityForResult(intentp, 1);
+        if (Pedido == true) {
+            AlertDialog.Builder mensagem = new AlertDialog.Builder(act_ListProdutos.this);
+            mensagem.setTitle("Quantidade");
+            mensagem.setMessage("Digite a quantidade do Item");
+            // DECLARACAO DO EDITTEXT
+            final EditText input = new EditText(this);
+            mensagem.setView(input);
+            mensagem.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getApplicationContext(), input.getText().toString().trim(),
+                            Toast.LENGTH_SHORT).show();
+                }
+
+            });
+            mensagem.show();
+            // FORÇA O TECLADO APARECER AO ABRIR O ALERT
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+
+        }else{
+            Intent intentp = new Intent(getApplicationContext(), actDadosProdutos.class);
+            Bundle extras = new Bundle();
+            extras.putLong("position", id);
+            intentp.putExtras(extras);
+            startActivity(intentp);
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ package com.jdsystem.br.vendasmobile;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Locale;
 
 public class ConfigDB {
 
+    @NonNull
     public static Boolean ConectarBanco(SQLiteDatabase DB) {
 
         try {
@@ -75,7 +77,7 @@ public class ConfigDB {
                     "    FORNECEDOR   VARCHAR(30),              " +
                     "    ATIVO        VARCHAR(1),               " +
                     "    OBS          TEXT,                     " +
-                    "    MARCA        VARCHAR(15)               " +
+                    "    MARCA        VARCHAR(15),              " +
                     "    VLICMSST      FLOAT,                   " +
                     "    VLIPI         FLOAT                    " +
                     ");");

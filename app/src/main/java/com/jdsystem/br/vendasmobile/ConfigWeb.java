@@ -28,10 +28,13 @@ public class ConfigWeb extends AppCompatActivity {
         edthost = (EditText) findViewById(R.id.edthost);
 
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        host  = prefs.getString("host", null);
+        host = prefs.getString("host", null);
 
         if (host != null) {
             edthost.setText(host);
+        } else {
+            edthost.setText("http://");
+            edthost.requestFocus();
         }
 
         btsalvhost.setOnClickListener(new View.OnClickListener() {
@@ -50,5 +53,5 @@ public class ConfigWeb extends AppCompatActivity {
                 finish();
             }
         });
-        }
     }
+}

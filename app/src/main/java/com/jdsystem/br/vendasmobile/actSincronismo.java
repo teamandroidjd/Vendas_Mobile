@@ -238,9 +238,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 }
                 while (CursorClieEnv.moveToNext());
                 CursorClieEnv.close();
-                if (Dialog.isShowing())
-                    Dialog.dismiss();
             }
+            if (Dialog.isShowing())
+                Dialog.dismiss();
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
@@ -311,8 +311,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         jumpTime += 1;
                         Dialog.setProgress(jumpTime);
 
-                        Cursor CursItens = DB.rawQuery(" SELECT CODITEMANUAL FROM ITENS WHERE CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL) + "'", null);
-
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL) + "'", null);
                         try {
                             if (CursItens.getCount() > 0) {
                                 DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL) +

@@ -87,7 +87,12 @@ public class actListPedidos extends AppCompatActivity
             startActivity(intent);
 
         } else if (id == R.id.nav_pedidos) {
-
+            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            intent.putExtras(params);
+            startActivity(intent);
 
         } else if (id == R.id.nav_produtos) {
             Intent intent = new Intent(actListPedidos.this, act_ListProdutos.class);

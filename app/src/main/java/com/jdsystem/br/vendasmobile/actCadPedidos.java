@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ public class actCadPedidos extends AppCompatActivity {
     private int Ano, Mes, Dia, Hora, Minuto;
     //private DatePicker datePicker;
     private Calendar calendar;
+    ImageButton ImgAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +30,26 @@ public class actCadPedidos extends AppCompatActivity {
         txtData = (TextView) findViewById(R.id.txtDtEmis);
         txtHrEmis = (TextView) findViewById(R.id.txtHrEmis);
 
+        ImgAdd = (ImageButton) findViewById(R.id.imgAddItem);
+
         calendar = Calendar.getInstance();
         Ano = calendar.get(Calendar.YEAR);
         Mes = calendar.get(Calendar.MONTH);
         Dia = calendar.get(Calendar.DAY_OF_MONTH);
 
         Hora = calendar.get(Calendar.HOUR_OF_DAY);
-        Minuto  = calendar.get(Calendar.MINUTE);
+        Minuto = calendar.get(Calendar.MINUTE);
 
-        showDate(Ano, Mes+1, Dia);
+        showDate(Ano, Mes + 1, Dia);
         showTime(Hora, Minuto);
+
+        ImgAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(actCadPedidos.this, act_ItensPedido.class);
+                startActivityForResult(i, 1);
+            }
+        });
     }
 
     private void showTime(int hora, int minuto) {
@@ -44,7 +57,6 @@ public class actCadPedidos extends AppCompatActivity {
 
     }
 
-    @SuppressWarnings("deprecation")
     public void LocData(View view) {
         showDialog(999);
     }
@@ -68,7 +80,7 @@ public class actCadPedidos extends AppCompatActivity {
                     // arg1 = Ano
                     // arg2 = Mes
                     // arg3 = Dia
-                    showDate(arg1, arg2+1, arg3);
+                    showDate(arg1, arg2 + 1, arg3);
                 }
             };
 
@@ -97,7 +109,7 @@ public class actCadPedidos extends AppCompatActivity {
     private boolean SalvarPedido() {
 
 
-         return true;
+        return true;
 
 
     }
