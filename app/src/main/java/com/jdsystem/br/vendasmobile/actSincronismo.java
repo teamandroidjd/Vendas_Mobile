@@ -1533,7 +1533,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             companyLogo.setAbsolutePosition(25, 700);
             companyLogo.scalePercent(25);
             PedidoPdf.add(companyLogo);
-            rafael*/
+            jefferson rafael*/
 
             generateLayout(PedidoPdf, cb);
 
