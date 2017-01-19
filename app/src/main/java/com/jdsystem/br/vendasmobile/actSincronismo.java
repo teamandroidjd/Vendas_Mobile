@@ -1528,11 +1528,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             fout.write(barr);
 
 
+
             Image companyLogo = Image.getInstance(Caminho + byteArray + ".jpg");
             companyLogo.setAbsolutePosition(25, 700);
             companyLogo.scalePercent(25);
-            PedidoPdf.add(companyLogo);
-            Bunda suja*/
+            PedidoPdf.add(companyLogo);*/
 
             generateLayout(PedidoPdf, cb);
 
