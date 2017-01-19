@@ -1532,7 +1532,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             Image companyLogo = Image.getInstance(Caminho + byteArray + ".jpg");
             companyLogo.setAbsolutePosition(25, 700);
             companyLogo.scalePercent(25);
-            PedidoPdf.add(companyLogo);*/
+            PedidoPdf.add(companyLogo);
+            rafael*/
 
             generateLayout(PedidoPdf, cb);
 
