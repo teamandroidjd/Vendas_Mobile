@@ -1517,9 +1517,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
             String Caminho = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf/";
 
-            File arquivo =
-
-            new File(Caminho + byteArray + ".jpg");
+            File arquivo = new File(Caminho + byteArray + ".jpg");
             Uri localFotoUri = Uri.fromFile(arquivo);
 
             Blob b = CursPedido.getBlob(2);
