@@ -1,9 +1,13 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -12,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ctSplash extends Activity {
+    private static final int REQUEST_READ_PHONE_STATE = 0 ;
+
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         Window window = getWindow();

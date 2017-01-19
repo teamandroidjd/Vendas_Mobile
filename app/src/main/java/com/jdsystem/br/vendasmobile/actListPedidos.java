@@ -1,24 +1,65 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
+import com.jdsystem.br.vendasmobile.domain.Pedidos;
+import com.jdsystem.br.vendasmobile.fragments.FragmentPedido;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class actListPedidos extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, Runnable {
+
+    private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
+    ProgressDialog pDialog;
+    private Handler handler = new Handler();
+    public ListAdapterPedidos adapter;
+    SearchView sv;
+    Pedidos lstpedidos;
+    String UsuarioLogado;
+    LinearLayout lnenhum;
+
     String sCodVend, URLPrincipal;
     SQLiteDatabase DB;
+    private Context ctx;
+    private AlertDialog dlg;
+
+    private GoogleApiClient client;
+    private static String sCodEmpresa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +67,14 @@ public class actListPedidos extends AppCompatActivity
         setContentView(R.layout.activity_act_listpedidos);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
+        if (frag == null) {
+            frag = new FragmentPedido();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
+            ft.commit();
+        }
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -36,20 +85,76 @@ public class actListPedidos extends AppCompatActivity
             }
         }
 
-        DB = openOrCreateDatabase("WSGEDB", Context.MODE_PRIVATE, null);
-        ConfigDB.ConectarBanco(DB);
+        DB = new ConfigDB(this).getReadableDatabase();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(actListPedidos.this, actCadPedidos.class);
-                Bundle params = new Bundle();
-                params.putString("codvendedor", sCodVend);
-                params.putString("urlPrincipal", URLPrincipal);
-                intent.putExtras(params);
-                startActivity(intent);
+                sCodEmpresa = "0";
+                try {
+                    Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+                    CursEmpr.moveToFirst();
+                    if (CursEmpr.getCount() > 1) {
+                        List<String> DadosListEmpresa = new ArrayList<String>();
+                        do {
+                            DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
+                        } while (CursEmpr.moveToNext());
+
+                        View viewEmp = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+
+                        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
+                        alertBuilder.setView(viewEmp);
+                        final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+
+                        ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(actListPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                        ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
+                        spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                        spEmpresaInput.setAdapter(spArrayEmpresa);
+
+                        alertBuilder.setCancelable(true)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
+                                        try {
+                                            Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
+                                            CursEmpr2.moveToFirst();
+                                            if (CursEmpr2.getCount() > 0) {
+                                                sCodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
+                                            }
+                                            CursEmpr2.close();
+                                            Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
+                                            Bundle params = new Bundle();
+                                            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                                            params.putString("CodVendedor", sCodVend);
+                                            params.putString("codempresa", sCodEmpresa);
+                                            intent.putExtras(params);
+                                            startActivityForResult(intent, 1);
+                                        } catch (Exception E) {
+                                            System.out.println("Error" + E);
+                                        }
+                                    }
+                                });
+                        Dialog dialog = alertBuilder.create();
+                        dialog.show();
+
+                    } else {
+                        sCodEmpresa = CursEmpr.getString(CursEmpr.getColumnIndex("CODEMPRESA"));
+                        Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
+                        Bundle params = new Bundle();
+                        params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                        params.putString("CodVendedor", sCodVend);
+                        params.putString("codempresa", sCodEmpresa);
+                        intent.putExtras(params);
+                        startActivityForResult(intent, 1);
+                    }
+                } catch (Exception E) {
+                    E.toString();
+                }
+
             }
+
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -60,6 +165,25 @@ public class actListPedidos extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View header = navigationView.getHeaderView(0);
+        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
+        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        UsuarioLogado = prefs.getString("usuario", null);
+        usuariologado.setText(UsuarioLogado);
+
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        pDialog = new ProgressDialog(actListPedidos.this);
+        pDialog.setTitle("Aguarde...");
+        pDialog.setMessage("Carregando Pedidos");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        Thread thread = new Thread(actListPedidos.this);
+        thread.start();
+
+        lnenhum = (LinearLayout) findViewById(R.id.lnenhum);
     }
 
     @Override
@@ -70,6 +194,27 @@ public class actListPedidos extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Boolean Resultado;
+        switch (requestCode) {
+            case 1: {
+                try {
+                    //Resultado = data.getExtras().getBoolean("atualizalista");
+                    Resultado = true;
+                    if (Resultado == true) {
+                        Intent intent = getIntent();
+                        finish();
+                        startActivity(intent);
+                    }
+                } catch (Exception E) {
+                    //
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -83,16 +228,11 @@ public class actListPedidos extends AppCompatActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putBoolean("fazpedido", false);
             intent.putExtras(params);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
 
         } else if (id == R.id.nav_pedidos) {
-            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
-            Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            intent.putExtras(params);
-            startActivity(intent);
 
         } else if (id == R.id.nav_produtos) {
             Intent intent = new Intent(actListPedidos.this, act_ListProdutos.class);
@@ -100,7 +240,7 @@ public class actListPedidos extends AppCompatActivity
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
             //finish();
 
         } else if (id == R.id.nav_sincronismo) {
@@ -109,11 +249,110 @@ public class actListPedidos extends AppCompatActivity
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    @Override
+    public void run() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    CarregarPedidos();
+                } catch (Exception E) {
+
+                } finally {
+                    if (pDialog.isShowing())
+                        pDialog.dismiss();
+                }
+            }
+
+            ;
+
+        });
+    }
+
+    public List<Pedidos> CarregarPedidos() {
+        ArrayList<Pedidos> DadosList = new ArrayList<Pedidos>();
+        try {
+            Cursor CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
+                    " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
+                    " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
+                    " WHERE PEDOPER.CODVENDEDOR = " + sCodVend, null);
+
+            String Situacao = null;
+            if (CursorPed.getCount() > 0) {
+                lnenhum.setVisibility(View.GONE);
+                CursorPed.moveToFirst();
+                do {
+                    try {
+                        String SitPed = CursorPed.getString(CursorPed.getColumnIndex("FLAGINTEGRADO"));
+                        if (SitPed.equals("1")) {
+                            Situacao = "Orçamento";
+                        }
+                        if (SitPed.equals("2")) {
+                            Situacao = "#";
+                        }
+                        if (SitPed.equals("3")) {
+                            Situacao = "Faturado";
+                        }
+                        if (SitPed.equals("4")) {
+                            Situacao = "Cancelado";
+                        }
+                        if (SitPed.equals("5")) {
+                            Situacao = "Gerar Venda";
+                        }
+
+                        String NomeCliente = CursorPed.getString(CursorPed.getColumnIndex("NOMECLIE"));
+
+                        Double VlTotal = (CursorPed.getDouble(CursorPed.getColumnIndex("VALORTOTAL")) -
+                                CursorPed.getDouble(CursorPed.getColumnIndex("VLPERCACRES")));
+
+                        String valor = String.valueOf(VlTotal);
+                        java.math.BigDecimal venda = new java.math.BigDecimal(Double.parseDouble(valor.replace(',', '.')));
+                        String ValorTotal = venda.setScale(2, java.math.BigDecimal.ROUND_UP).toString();
+                        ValorTotal = ValorTotal.replace('.', ',');
+
+                        String NumPedido = CursorPed.getString(CursorPed.getColumnIndex("NUMPED"));
+                        String NumPedidoExt = CursorPed.getString(CursorPed.getColumnIndex("NUMPEDIDOERP"));
+                        String NumFiscal = CursorPed.getString(CursorPed.getColumnIndex("NUMFISCAL"));
+
+                        String Empresa = CursorPed.getString(CursorPed.getColumnIndex("NOMEABREV"));
+
+                        String Vendedor = UsuarioLogado;
+
+                        String dataEmUmFormato = CursorPed.getString(CursorPed.getColumnIndex("DATAEMIS"));
+                        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+                        Date data = formato.parse(dataEmUmFormato);
+                        formato.applyPattern("dd/MM/yyyy");
+                        String sDataVenda = formato.format(data);
+
+                        lstpedidos = new Pedidos(Situacao, NomeCliente, ValorTotal, Vendedor, sDataVenda, NumPedido, NumPedidoExt, NumFiscal, Empresa);
+                        DadosList.add(lstpedidos);
+                    } catch (Exception E) {
+                        Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+                while (CursorPed.moveToNext());
+                CursorPed.close();
+
+            } else {
+                lnenhum.setVisibility(View.VISIBLE);
+            }
+
+
+        } catch (Exception E) {
+            E.toString();
+        }
+        return DadosList;
+    }
+
+
 }

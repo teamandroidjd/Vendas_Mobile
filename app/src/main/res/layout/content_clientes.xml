@@ -15,30 +15,39 @@
     tools:showIn="@layout/app_bar_clientes">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3">
-            <SearchView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/EdtPesquisa"
-                android:queryHint="Pesquisar cliente"
-                android:inputType="text"/>
-        </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/adm_sp_filtrarcliente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </Spinner>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/adm_txt_pesquisacliente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Pesquisa" />
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <ListView
-            android:id="@android:id/list"
+            android:id="@+id/adm_listview_cliente"
             android:layout_width="match_parent"
-            android:layout_height="437dp"
+            android:layout_height="wrap_content"
+            android:fastScrollEnabled="true"
             android:fastScrollAlwaysVisible="true"
-            android:fastScrollEnabled="true"></ListView>
-
+            android:cacheColorHint="@color/colorAccent"></ListView>
     </LinearLayout>
-
 
 </LinearLayout>

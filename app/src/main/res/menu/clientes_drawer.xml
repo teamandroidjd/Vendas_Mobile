@@ -8,7 +8,7 @@
             android:title="Clientes" />
         <item
             android:id="@+id/nav_produtos"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_produto"
             android:title="Produtos" />
         <item
             android:id="@+id/nav_pedidos"
@@ -20,7 +20,7 @@
         <menu>
             <item
                 android:id="@+id/nav_sincronismo"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_sincronizacao"
                 android:title="Sincronização de Dados" />
         </menu>
     </item>

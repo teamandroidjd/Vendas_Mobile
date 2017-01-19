@@ -15,10 +15,9 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="210dp"
-        android:layout_height="75dp"
-        android:src="@drawable/logo_app"
-        android:layout_gravity="left"
-        android:layout_weight="0.16" />
+        android:layout_height="90dp"
+        android:src="@drawable/ico_logo_fv"
+        android:layout_gravity="left" />
 
     <TextView
         android:layout_width="match_parent"

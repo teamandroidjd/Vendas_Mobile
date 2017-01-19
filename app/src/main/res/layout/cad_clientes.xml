@@ -102,6 +102,7 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -144,31 +145,43 @@
                     android:hint="Inscrição Estadual"
                     android:inputType="number"
                     android:maxLines="1" />
+
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3">
+                    android:layout_weight="3"
+                    >
 
                     <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_width="251dp"
+                        android:layout_height="52dp"
+                        android:id="@+id/textInputLayout2">
 
                         <EditText
                             android:id="@+id/EdtCep"
-                            android:layout_width="match_parent"
+                            android:layout_width="251dp"
                             android:layout_height="wrap_content"
                             android:elevation="1dp"
                             android:hint="CEP"
                             android:inputType="number"
                             android:maxLines="1" />
                     </android.support.design.widget.TextInputLayout>
-                </LinearLayout>
+
+                    <ImageButton
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/busca_cep"
+                        android:id="@+id/btnBuscaCep"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/textInputLayout2"
+                        android:layout_toEndOf="@+id/textInputLayout2" />
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -272,6 +285,7 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -280,20 +294,19 @@
                     android:id="@+id/EdtOBS"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
-                    android:layout_centerHorizontal="true"
+                    android:gravity="start"
                     android:hint="Observação"
-                    android:inputType="textMultiLine"
-                    />
+                    android:inputType="textMultiLine" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:text="Salvar"
+                android:id="@+id/btnsalvar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:id="@+id/btnsalvar"
-                android:onClick="btnsalvar" />
+                android:onClick="btnsalvar"
+                android:text="Salvar"
+                android:textColor="@color/common_google_signin_btn_text_dark_default" />
         </LinearLayout>
     </ScrollView>
 

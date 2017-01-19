@@ -1,21 +1,25 @@
 package com.jdsystem.br.vendasmobile;
 
-import android.app.Activity;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PixelFormat;
 import android.net.ConnectivityManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,12 +27,13 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jdsystem.br.vendasmobile.Util.PDF;
+import com.jdsystem.br.vendasmobile.Util.Util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,8 +44,12 @@ import org.ksoap2.transport.HttpTransportSE;
 
 public class actLogin extends AppCompatActivity implements Runnable {
     public static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
+    public static final String COD_EMPRESA = "CODIGO_EMPRESA";
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String METHOD_NAME = "Login";
+    private static final int REQUEST_READ_PHONE_STATE = 0;
+
+    private SQLiteDatabase DB;
 
     private GoogleApiClient client;
 
@@ -57,7 +66,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
     private EditText edtUsuario;
     private EditText edtSenha;
-    private Button btnEntrar;
+    private Button btnEntrar, pdf;
     private CheckBox cbGravSenha;
     private ProgressDialog Dialogo;
     private Handler handler = new Handler();
@@ -66,6 +75,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
     public String usuario;
     public String senha;
     public String URLPrincipal;
+    public String sCodVend;
+    public TextView copyright;
 
 
     @Override
@@ -74,7 +85,10 @@ public class actLogin extends AppCompatActivity implements Runnable {
 //        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_act_login);
 
+        DB = new ConfigDB(this).getReadableDatabase();
+
         btnEntrar = (Button) findViewById(R.id.btnEntrar);
+
         edtUsuario = (EditText) findViewById(R.id.edtUsuario);
         edtSenha = (EditText) findViewById(R.id.edtSenha);
         cbGravSenha = (CheckBox) findViewById(R.id.cbGravSenha);
@@ -82,6 +96,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
         prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
+        URLPrincipal = prefs.getString("host", null);
+
         if (usuario != null) {
             edtUsuario.setText(usuario);
         }
@@ -90,9 +106,17 @@ public class actLogin extends AppCompatActivity implements Runnable {
             cbGravSenha.setChecked(true);
         }
 
+        copyright = (TextView) findViewById(R.id.textView2);
+        copyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
+
+
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                prefs = getSharedPreferences("CONFIG_HOST", MODE_PRIVATE);
+                URLPrincipal = prefs.getString("host", null);
+
+
                 if (edtUsuario.getText().length() == 0) {
                     edtUsuario.setError("Digite o nome do Usuário!");
                     edtUsuario.requestFocus();
@@ -118,6 +142,47 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 Dialogo.setTitle("Aguarde");
                 Dialogo.show();
 
+                 /*
+                Verificar a Internet, se nao tiver acesso
+                Deverá fazer o login pela base local
+                 */
+                String user = edtUsuario.getText().toString();
+                String pass = edtSenha.getText().toString();
+                Boolean ConexOk = VerificaConexao();
+                if (ConexOk == false) {
+                    Dialogo.dismiss();
+                    sCodVend = ValidarLogin(user, pass); // verifica se o usuário e senha  existe na base local do dispositivo
+                    if (sCodVend != null) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+                        builder.setTitle(R.string.app_namesair);
+                        builder.setIcon(R.drawable.logo_ico);
+                        builder.setMessage("Sem conexão com a Internet! O Usuário será autenticado localmente. Não havendo possibilidade de" +
+                                " sincronização de " +
+                                "informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo.")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent intent = new Intent(actLogin.this, actListPedidos.class);
+                                        Bundle params = new Bundle();
+                                        params.putString("codvendedor", sCodVend);
+                                        //params.putString("urlPrincipal", URLPrincipal);
+                                        intent.putExtras(params);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                })
+                                .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                                        startActivity(intent);
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                        return;
+                    }
+                }
+
                 Thread thread = new Thread(actLogin.this);
                 thread.start();
             }
@@ -131,6 +196,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
             startActivity(intent);
         }
     }
+
 
     public boolean VerificaConexao() {
         boolean conectado;
@@ -172,8 +238,12 @@ public class actLogin extends AppCompatActivity implements Runnable {
                          @Override
                          public void run() {
                              try {
-                                 prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-                                 URLPrincipal = prefs.getString("host", null);
+                                 int permissionCheck = ContextCompat.checkSelfPermission(actLogin.this, Manifest.permission.READ_PHONE_STATE);
+                                 if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                                     ActivityCompat.requestPermissions(actLogin.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+                                     Dialogo.dismiss();
+                                     return;
+                                 }
 
                                  StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                                  StrictMode.setThreadPolicy(policy);
@@ -184,28 +254,112 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                  SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
                                  envelope.setOutputSoapObject(soap);
                                  HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-                                 String CodVendedor;
+                                 final String CodVendedor;
+                                 String CodEmpresa = null;
+                                 String UFVendedor = null;
+                                 String usuario = edtUsuario.getText().toString();
+                                 String pass = edtSenha.getText().toString();
                                  try {
-                                     Boolean ConexOk = VerificaConexao();
+                                     Boolean ConexOk = Util.checarConexaoCelular(actLogin.this);
                                      if (ConexOk == true) {
                                          Envio.call("", envelope);
 
                                          SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                                         CodVendedor = (String) envelope.getResponse();
+                                         String sUsuario = (String) envelope.getResponse();
                                          System.out.println("Response::" + resultsRequestSOAP.toString());
+
+                                         JSONObject jsonObj = new JSONObject(sUsuario);
+                                         JSONArray JUsuario = jsonObj.getJSONArray("usuario");
+
+                                         JSONObject user = JUsuario.getJSONObject(0);
+
+                                         CodVendedor = user.getString("codvend");
+                                         CodEmpresa = user.getString("codempresa");
+                                         UFVendedor = user.getString("uf");
+
                                          if (CodVendedor.equals("0")) {
                                              Dialogo.dismiss();
                                              Toast.makeText(actLogin.this, "Usuário ou Senha inválidos!", Toast.LENGTH_LONG).show();
                                              return;
                                          } else {
-                                             Intent intent = new Intent(getApplicationContext(), actListPedidos.class);
-                                             Bundle params = new Bundle();
-                                             params.putString("codvendedor", CodVendedor);
-                                             params.putString("urlPrincipal", URLPrincipal);
-                                             intent.putExtras(params);
-                                             Dialogo.dismiss();
-                                             startActivity(intent);
+                                             SharedPreferences.Editor edtEmp = getSharedPreferences(COD_EMPRESA, MODE_PRIVATE).edit();
+                                             edtEmp.putString("codempresa", CodEmpresa);
+                                             edtEmp.commit();
+
+                                             DB = new ConfigDB(actLogin.this).getReadableDatabase();
+                                             Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
+                                             if (!(CursorUser.getCount() > 0)) {
+                                                 DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + CodVendedor + ", CODEMPRESA = " + CodEmpresa +
+                                                         " WHERE CODVEND = " + CodVendedor);
+                                                 //CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa , null);
+                                                 CursorUser.close();
+                                             }
+
+                                             CadastrarLogin(usuario, pass, CodVendedor, CodEmpresa); // Cadastra usuário, senha e código do vendedor
+
+                                             String IMEI = "";
+                                             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                                             IMEI = telephonyManager.getDeviceId();
+
+                                             SoapObject soapValida = new SoapObject(ConfigConex.NAMESPACE, "VerificaUsuario");
+                                             soapValida.addProperty("aUsuario", edtUsuario.getText().toString());
+                                             soapValida.addProperty("aEndMac", IMEI);
+
+                                             SoapSerializationEnvelope envelopeValida = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                             envelopeValida.setOutputSoapObject(soapValida);
+                                             HttpTransportSE Envio2 = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                                             String HabUsuarioApp = "";
+                                             try {
+                                                 Envio2.call("", envelopeValida);
+                                                 SoapObject resultsRequestSOAP2 = (SoapObject) envelopeValida.bodyIn;
+
+                                                 HabUsuarioApp = (String) envelopeValida.getResponse();
+                                                 System.out.println("Response::" + resultsRequestSOAP2.toString());
+
+                                                 if (HabUsuarioApp.equals("True")) {
+                                                     handler.post(new Runnable() {
+                                                         @Override
+                                                         public void run() {
+                                                             Dialogo.setMessage("Sincronizando Empresas");
+                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             handler.post(new Runnable() {
+                                                                 @Override
+                                                                 public void run() {
+                                                                     Dialogo.setMessage("Atualizando Cadastro de Clientes");
+                                                                     actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true);
+                                                                     handler.post(new Runnable() {
+                                                                         @Override
+                                                                         public void run() {
+                                                                             Dialogo.setMessage("Enviando pedidos...");
+                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                             Dialogo.dismiss();
+                                                                             handler.post(new Runnable() {
+                                                                                 @Override
+                                                                                 public void run() {
+                                                                                     Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
+                                                                                     Bundle params = new Bundle();
+                                                                                     params.putString("codvendedor", CodVendedor);
+                                                                                     params.putString("urlPrincipal", URLPrincipal);
+                                                                                     IntVend.putExtras(params);
+                                                                                     startActivity(IntVend);
+                                                                                 }
+                                                                             });
+                                                                         }
+                                                                     });
+                                                                 }
+                                                             });
+                                                         }
+                                                     });
+                                                 } else {
+                                                     Dialogo.dismiss();
+                                                     Toast.makeText(actLogin.this, "Limite de Usuários Atingido!", Toast.LENGTH_LONG).show();
+                                                     return;
+                                                 }
+
+                                             } catch (Exception E) {
+
+                                             }
                                          }
                                      } else {
                                          Dialogo.dismiss();
@@ -230,6 +384,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                      }
                                  } catch (Exception E) {
                                      Dialogo.dismiss();
+                                     Toast.makeText(actLogin.this, "Sem conexão com o webservice!", Toast.LENGTH_LONG).show();
+                                     return;
                                  }
                              } catch (Exception E) {
                                  Dialogo.dismiss();
@@ -238,6 +394,43 @@ public class actLogin extends AppCompatActivity implements Runnable {
                      }
         );
 
+    }
+
+    private int CadastrarLogin(String NomeUsuario, String Senha, String CodVendedor, String CodEmpresa) {
+        int CodVend;
+        try {
+            Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODEMPRESA = " + CodEmpresa, null);
+            if (CursorLogin.getCount() > 0) {
+                CursorLogin.moveToFirst();
+                CodVend = CursorLogin.getInt(CursorLogin.getColumnIndex("CODVEND"));
+            } else {
+                DB.execSQL("INSERT INTO USUARIOS VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + ");");
+                Cursor cursor1 = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
+                cursor1.moveToFirst();
+                CodVend = cursor1.getInt(cursor1.getColumnIndex("CODVEND"));
+                cursor1.close();
+            }
+            CursorLogin.close();
+
+            return CodVend;
+        } catch (Exception E) {
+            return 0;
+        }
+    }
+
+    private String ValidarLogin(String NomeUsuario, String Senha) {
+
+        Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "'", null);
+        if (CursorLogin.getCount() > 0) {
+            CursorLogin.moveToFirst();
+            String sCodVend = CursorLogin.getString(CursorLogin.getColumnIndex("CODVEND"));
+            CursorLogin.close();
+            return sCodVend;
+        } else {
+            Dialogo.dismiss();
+            Toast.makeText(actLogin.this, "Usuário ou Senha inválidos!", Toast.LENGTH_LONG).show();
+            return null;
+        }
     }
 
     @Override
@@ -256,35 +449,4 @@ public class actLogin extends AppCompatActivity implements Runnable {
         return super.onOptionsItemSelected(item);
     }
 
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("actLogin Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-    }
 }

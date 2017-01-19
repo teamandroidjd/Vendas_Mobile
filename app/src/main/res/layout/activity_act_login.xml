@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,84 +11,6 @@
     android:orientation="vertical"
     android:scrollbarAlwaysDrawVerticalTrack="true"
     tools:context=".actLogin">
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff"
-        android:elevation="7dp"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="30dp"
-            android:id="@+id/linearLayout">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/login"
-                android:textSize="20sp"
-                android:textColor="#14bfd6"
-                android:id="@+id/txt_login"
-                android:textStyle="normal|bold"
-                android:textAlignment="center" />
-
-            <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/edtUsuario"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/icon_user"
-                    android:singleLine="true"
-                    android:hint="Usuário"
-                    android:textAllCaps="true" />
-        </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/edtSenha"
-                android:singleLine="true"
-                android:layout_width="match_parent"
-                android:drawableRight="@drawable/icn_block"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="Senha"
-                android:ems="10"/>
-        </android.support.design.widget.TextInputLayout>
-
-            <CheckBox
-                android:text="Salvar Senha?"
-                android:layout_width="133dp"
-                android:layout_height="wrap_content"
-                android:textColor="#000000"
-                android:textSize="15dp"
-                android:id="@+id/cbGravSenha"
-                android:layout_gravity="right"
-                app:buttonTint="@color/colorPrimary"/>
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:background="#14bfd6"
-                android:text="Entrar"
-                android:textAllCaps="false"
-                android:textColor="#fff"
-                android:textSize="18sp"
-                android:id="@+id/btnEntrar" />
-        </LinearLayout>
-
-    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -107,7 +30,89 @@
         android:textAllCaps="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-         />
+        />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:elevation="7dp"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="30dp"
+            android:id="@+id/linearLayout">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/login"
+                android:textSize="20sp"
+                android:textColor="#14bfd6"
+                android:id="@+id/txt_login"
+                android:textStyle="normal|bold"
+                android:textAlignment="center" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/edtUsuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableRight="@drawable/icon_user"
+                    android:singleLine="true"
+                    android:hint="Usuário"
+                    android:textAllCaps="true"
+                    android:inputType="textCapCharacters"/>
+            </android.support.design.widget.TextInputLayout>
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:passwordToggleEnabled="false">
+
+                <EditText
+                    android:id="@+id/edtSenha"
+                    android:singleLine="true"
+                    android:layout_width="match_parent"
+                    android:drawableRight="@drawable/icn_block"
+                    android:layout_height="wrap_content"
+
+                    android:hint="Senha"
+                    android:ems="10"
+                    android:inputType="textWebPassword" />
+            </android.support.design.widget.TextInputLayout>
+
+            <CheckBox
+                android:text="Salvar Senha?"
+                android:layout_width="133dp"
+                android:layout_height="wrap_content"
+                android:textColor="#4d4d4d"
+                android:textSize="15dp"
+                android:id="@+id/cbGravSenha"
+                android:layout_gravity="right"
+                android:buttonTint="@color/colorPrimary"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:background="#14bfd6"
+                android:text="Entrar"
+                android:textAllCaps="false"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:id="@+id/btnEntrar" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

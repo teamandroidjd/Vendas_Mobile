@@ -10,46 +10,41 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.jdsystem.br.vendasmobile.actSincronismo">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sincronização"
-        android:gravity="center"
-        android:textColor="@color/colorAccent"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/sincronismo"
-        android:id="@+id/imageView2"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="71dp"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:text="Sincronizar"
-        android:layout_alignParentBottom="true"
         android:textAllCaps="false"
         android:textColor="#fff"
         android:textSize="18sp"
-        android:id="@+id/btnSincronizar"/>
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
-        android:id="@+id/prgSinc"
-        android:layout_above="@+id/btnSincronizar"
+        android:id="@+id/btnSincronizar"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_marginBottom="13dp" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sincronização"
+        android:gravity="center"
+        android:textColor="@color/colorAccent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView5" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/sincronismo"
+        android:id="@+id/imageView2"
+        android:layout_marginTop="52dp"
+        android:layout_below="@+id/textView5"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

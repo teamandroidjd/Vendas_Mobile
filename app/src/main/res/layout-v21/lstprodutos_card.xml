@@ -6,7 +6,7 @@
     android:layout_marginLeft="0dp"
     android:layout_marginRight="0dp"
     android:layout_marginTop="0dp"
-    android:background="@color/colorCardClie"
+
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -179,7 +179,7 @@
                         android:id="@+id/lbl7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda: "
+                        android:text="Preço de venda: R$ "
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />

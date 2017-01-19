@@ -4,15 +4,18 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/logo_ico"
+        android:icon="@drawable/ic_app"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ctSplash"
-            android:screenOrientation="portrait">
+            android:name=".ctSplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,7 +24,7 @@
         </activity>
         <activity
             android:name=".actLogin"
-            android:label="WSGE Vendas Mobile"
+            android:label="Força de Vendas"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <action android:name="android.intent.action.MAIN" />
@@ -30,11 +33,12 @@
             android:name=".act_ListClientes"
             android:label="Clientes"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".actListPedidos"
-            android:label="Pedidos"
             android:screenOrientation="portrait"
+            android:label="Pedidos"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".act_CadClientes"
@@ -43,45 +47,61 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".actDadosCliente"
-            android:label="@string/title_activity_act_dados_cliente"
             android:screenOrientation="portrait"
+            android:label="@string/title_activity_act_dados_cliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".actSincronismo"
-            android:label="Sincronização de Dados"
-            android:screenOrientation="portrait" />
+            android:label="Sincronização de Dados"/>
         <activity
             android:name=".act_TH_contclie"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".act_TH_dadosclie"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".act_TH_mapaclie"
-            android:screenOrientation="portrait" />
-
-        <!--
- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
-        -->
+            android:name=".act_TH_obsclie"
+            android:screenOrientation="portrait"/>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".ConfigWeb"
-            android:screenOrientation="portrait" />
+            android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".act_ListProdutos"
-            android:label="@string/title_activity_act__list_produtos"
+            android:label="Catálogo de Produtos"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".actDadosProdutos" />
-        <activity
-            android:name=".actCadPedidos"
-            android:label="Pedidos de Venda"
-            android:screenOrientation="portrait" />
-        <activity android:name=".actListClientPedidos" />
-        <activity android:name=".act_ItensPedido"></activity>
+        <activity android:name=".actDadosProdutos"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".actListClientPedidos"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".act_ListClientesPedidos"
+            android:label="Catálogo de Clientes"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Controller.Lista_clientes"
+            android:windowSoftInputMode="stateHidden"
+            android:label="Catálogo de Clientes"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Controller.VenderProdutos"
+            android:windowSoftInputMode="stateHidden"
+            android:label="Cadastrar Pedido"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Controller.Lista_produtos"
+            android:windowSoftInputMode="stateHidden"
+            android:label="Cadastrar Pedido"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".Controller.ConfPagamento"
+            android:label="Formas de Pagamento"
+            android:screenOrientation="portrait"></activity>
+
     </application>
+    <supports-screens
+        android:normalScreens="true"
+        />
 
 </manifest>

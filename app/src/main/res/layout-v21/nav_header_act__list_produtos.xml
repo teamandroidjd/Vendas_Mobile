@@ -15,15 +15,15 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="210dp"
-        android:layout_height="68dp"
-        android:src="@drawable/logo_app"
+        android:layout_height="90dp"
+        android:src="@drawable/ico_logo_fv"
         android:layout_gravity="left" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Vendedor"
+        android:text="JD System"
         android:id="@+id/lblUsuarioLogado"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 

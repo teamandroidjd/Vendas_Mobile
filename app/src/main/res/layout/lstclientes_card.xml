@@ -2,21 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="0dp"
-    android:layout_marginLeft="0dp"
-    android:layout_marginRight="0dp"
-    android:layout_marginTop="0dp"
-    android:background="@color/colorCardClie"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="6dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="3dp"
@@ -25,57 +19,99 @@
         app:cardUseCompatPadding="false">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
             android:background="@color/colorCardClie"
-            android:orientation="vertical"
-            android:padding="3dp">
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/linearLayout"
-                android:layout_width="match_parent"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:orientation="vertical">
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:orientation="vertical"
+
+                android:padding="2dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/lblNomeFanClie"
+
+                    <LinearLayout
+                        android:id="@+id/lnome"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CLIENTE"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="normal|bold" />
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/lblCodClie"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="11435"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="16sp"
+
+                            android:textStyle="normal|bold" />
+
+                        <TextView
+                            android:id="@+id/traco"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginLeft="80dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_toEndOf="@+id/lblCodClie"
+                            android:layout_toRightOf="@+id/lblCodClie"
+                            android:text=" - "
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="16sp"
+                            android:textStyle="normal|bold" />
+
+                        <TextView
+                            android:id="@+id/lblNomeFanClie"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_toEndOf="@+id/traco"
+                            android:layout_toRightOf="@+id/traco"
+                            android:layout_weight="1"
+                            android:text="CLIENTE COM NOME GRANDE QUE DA TRABALHO "
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="16sp"
+                            android:textStyle="normal|bold" />
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/lblCNPJ"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CNPJ"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="16sp"
-                    android:textStyle="normal|bold" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/lblNomerazao"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Razão Social"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="12sp"
-                    android:textStyle="normal|bold" />
+                    <TextView
+                        android:id="@+id/lblCNPJ"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CNPJ"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="16sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/lblNomerazao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Razão Social"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="12sp"
+                        android:textStyle="normal|bold" />
+                </LinearLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -147,14 +183,34 @@
                         android:textStyle="normal|bold" />
                 </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/lblTel"
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Telefone"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="12sp"
-                    android:textStyle="normal|bold" />
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/lblTel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Telefone"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="12sp"
+                        android:textStyle="normal|bold" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+                <ImageView
+                    android:id="@+id/imgStatus"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:visibility="invisible"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/bola_vermelha" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
