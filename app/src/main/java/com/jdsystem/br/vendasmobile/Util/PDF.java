@@ -139,7 +139,7 @@ public class PDF {
             cb.stroke();
 
             // Invoice Detail box Text Headings
-            createHeadings(cb, 22, 633, "Qty");
+            createHeadings(cb, 22, 633, "qtd");
             createHeadings(cb, 52, 633, "Item Number");
             createHeadings(cb, 152, 633, "Item Description");
             createHeadings(cb, 432, 633, "Price");
