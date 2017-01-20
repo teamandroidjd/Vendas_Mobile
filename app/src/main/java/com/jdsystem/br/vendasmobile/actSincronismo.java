@@ -2777,3 +2777,5 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
     }
 }
+
+//comentario
