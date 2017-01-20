@@ -44,8 +44,8 @@
       <file leaf-file-name="actSincronismo.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="470">
-              <caret line="2780" column="12" selection-start-line="2780" selection-start-column="12" selection-end-line="2780" selection-end-column="12" />
+            <state relative-caret-position="487">
+              <caret line="2781" column="0" selection-start-line="2781" selection-start-column="0" selection-end-line="2781" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#SincronizarClientesEnvio#0;class#actSincronismo#0" expanded="false" />
@@ -2220,7 +2220,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+    <property name="settings.editor.selected.configurable" value="settings.github" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/sdk" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../PS_Solucoes_Parceiros" />
@@ -2602,7 +2602,14 @@
       <option name="project" value="LOCAL" />
       <updated>1484920561933</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="teste">
+      <created>1484920990685</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1484920990716</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -2691,7 +2698,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="11" />
     <MESSAGE value="Acertado Layout dos tablets referente a classe VenderProdutos" />
-    <option name="LAST_COMMIT_MESSAGE" value="Acertado Layout dos tablets referente a classe VenderProdutos" />
+    <MESSAGE value="teste" />
+    <option name="LAST_COMMIT_MESSAGE" value="teste" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -3206,8 +3214,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="470">
-          <caret line="2780" column="12" selection-start-line="2780" selection-start-column="12" selection-end-line="2780" selection-end-column="12" />
+        <state relative-caret-position="487">
+          <caret line="2781" column="0" selection-start-line="2781" selection-start-column="0" selection-end-line="2781" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#SincronizarClientesEnvio#0;class#actSincronismo#0" expanded="false" />
