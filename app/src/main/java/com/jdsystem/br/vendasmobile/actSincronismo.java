@@ -2779,4 +2779,4 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 }
 
 //comentario2
-//um outro comentário 3
+//um outro comentário 2

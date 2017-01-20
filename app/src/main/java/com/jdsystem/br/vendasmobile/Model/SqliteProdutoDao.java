@@ -227,7 +227,7 @@ public class SqliteProdutoDao {
                             "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS " , null);
                 } else {
                     cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, CLASSE, " +
-                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE ATIVO = '1'", null);
+                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS WHERE ATIVO = '1'", null);
                 }
             } else {
                 switch (field) {

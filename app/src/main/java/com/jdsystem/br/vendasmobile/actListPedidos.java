@@ -284,7 +284,8 @@ public class actListPedidos extends AppCompatActivity
             Cursor CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                     " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                     " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                    " WHERE PEDOPER.CODVENDEDOR = " + sCodVend, null);
+                    " WHERE PEDOPER.CODVENDEDOR = " + sCodVend +
+                    " ORDER BY PEDOPER.DATAEMIS DESC ", null);
 
             String Situacao = null;
             if (CursorPed.getCount() > 0) {
