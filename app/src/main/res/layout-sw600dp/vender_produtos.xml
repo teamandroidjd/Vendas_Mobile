@@ -47,60 +47,6 @@
             android:textSize="25dp"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="2dp">
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:gravity="center|left"
-            android:paddingLeft="4dp"
-            android:text="Descrição"
-            android:textColor="@color/colordescClie"
-            android:textSize="25dp"
-            android:textStyle="bold"
-            />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.01"
-            android:gravity="center|right"
-            android:text="Quant"
-            android:textColor="@color/colordescClie"
-            android:textSize="25dp"
-            android:textStyle="bold"
-            />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.33"
-            android:gravity="center|right"
-            android:text="Val Unit"
-            android:textColor="@color/colordescClie"
-            android:textSize="25dp"
-            android:textStyle="bold"
-            />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:paddingRight="4dp"
-            android:text="Total"
-            android:textColor="@color/colordescClie"
-            android:textSize="25dp"
-            android:textStyle="bold"
-            />
-    </LinearLayout>
-
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/LinearLayoutMeio"
         android:layout_width="match_parent"
@@ -112,7 +58,7 @@
         <ListView
             android:id="@+id/ListView_ItensVendidos"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:cacheColorHint="@color/colorAccent"
             android:fastScrollAlwaysVisible="true"
@@ -134,6 +80,46 @@
 
 
     </android.support.design.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <TextView
+            android:id="@+id/venda_txv_desconto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Informar desconto na venda :"
+            android:textColor="@color/colordescClie"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/venda_txt_desconto"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:gravity="right"
+            android:inputType="numberDecimal"
+            android:text="0"
+            android:textColor="@color/colordescClie"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/venda_perc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="%"
+            android:textColor="@color/colordescClie"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
