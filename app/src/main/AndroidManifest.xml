@@ -48,7 +48,7 @@
         <activity
             android:name=".actDadosCliente"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_act_dados_cliente"
+            android:label="Dados do Cliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".actSincronismo"

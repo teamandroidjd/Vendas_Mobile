@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 
 import com.jdsystem.br.vendasmobile.Util.SlidingTabLayout;
 import com.jdsystem.br.vendasmobile.adapter.ViewPagerAdapter;
+
 
 public class actDadosCliente extends ActionBarActivity {
 
@@ -28,7 +30,9 @@ public class actDadosCliente extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_dados_cliente);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs);
