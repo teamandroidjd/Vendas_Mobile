@@ -122,8 +122,8 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_inclui_produto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="106dp"
+            android:layout_height="93dp"
             android:layout_gravity="top|center_horizontal"
             android:layout_marginBottom="8dp"
             android:layout_marginRight="12dp"

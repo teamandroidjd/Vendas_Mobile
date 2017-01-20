@@ -11,6 +11,7 @@ import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.domain.ItensPedido;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +44,8 @@ public class SqliteVendaD_TempDao {
                 stmt.bindString(1, item.getVendad_prd_codigoTEMP());
                 stmt.bindString(2, item.getVendad_prd_descricaoTEMP());
                 stmt.bindDouble(3, item.getVendad_quantidadeTEMP().doubleValue());
-                stmt.bindDouble(4, item.getVendad_preco_vendaTEMP().doubleValue());
-                stmt.bindDouble(5, item.getVendad_totalTEMP().doubleValue());
+                stmt.bindDouble(4, item.getVendad_preco_vendaTEMP().setScale(4,BigDecimal.ROUND_UP).doubleValue());
+                stmt.bindDouble(5, item.getVendad_totalTEMP().setScale(2,BigDecimal.ROUND_UP).doubleValue());
                 String und = item.getVendad_prd_unidadeTEMP();
                 stmt.bindString(6, item.getVendad_prd_unidadeTEMP());
                 if (stmt.executeInsert() > 0) {
@@ -99,8 +100,8 @@ public class SqliteVendaD_TempDao {
                 produto.setVendad_prd_descricaoTEMP(cursor.getString(cursor.getColumnIndex(produto.TEMP_DESCRICAOPROD)));
                 produto.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex(produto.TEMP_UNIDADEPRODUTO)));
                 produto.setVendad_quantidadeTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.TEMP_QUANTVENDIDA))));
-                produto.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.TEMP_PRECOPRODUTO))));
-                produto.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.TEMP_TOTALPRODUTO))));
+                produto.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.TEMP_PRECOPRODUTO))).setScale(4,BigDecimal.ROUND_UP));
+                produto.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.TEMP_TOTALPRODUTO))).setScale(2,BigDecimal.ROUND_UP));
             }
         } catch (SQLiteException e) {
             Util.log("SQLiteException buscar_item_na_venda" + e.getMessage());
@@ -122,8 +123,8 @@ public class SqliteVendaD_TempDao {
                 String und = cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO));
                 items.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO)));
                 items.setVendad_quantidadeTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_QUANTVENDIDA))));
-                items.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_PRECOPRODUTO))));
-                items.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_TOTALPRODUTO))));
+                items.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_PRECOPRODUTO))).setScale(4,BigDecimal.ROUND_UP));
+                items.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_TOTALPRODUTO))).setScale(2,BigDecimal.ROUND_UP));
                 lista_de_itens_vendidos.add((SqliteVendaD_TempBean) items);
             }
         } catch (SQLiteException e) {
@@ -148,8 +149,8 @@ public class SqliteVendaD_TempDao {
                 items.setVendad_prd_descricaoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_DESCRICAOPROD)));
                 items.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO)));
                 items.setVendad_quantidadeTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_QUANTVENDIDA))));
-                items.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_PRECOPRODUTO))));
-                items.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_TOTALPRODUTO))));
+                items.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_PRECOPRODUTO))).setScale(4,BigDecimal.ROUND_UP));
+                items.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_TOTALPRODUTO))).setScale(2,BigDecimal.ROUND_UP));
                 lista_de_itens_vendidos.add((SqliteVendaD_TempBean) items);
             }
         } catch (SQLiteException e) {
