@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -29,6 +28,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
@@ -40,6 +41,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+//import android.support.design.widget.FloatingActionButton;
 
 public class actListPedidos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
@@ -61,12 +64,112 @@ public class actListPedidos extends AppCompatActivity
     private GoogleApiClient client;
     private static String sCodEmpresa;
 
+    public static Integer SitPed = 0;
+    public static Integer CodClie = 0;
+    public static String DtInicio = "";
+    public static String DtFinal = "";
+
+
+    FloatingActionMenu mmPrinc_Pedido, mmPrincNovoPed;
+    FloatingActionButton mmSitPedido, mmEmissaoPedido, mmCliePedido, mmNovoPedido;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_listpedidos);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            Bundle params = intent.getExtras();
+            if (params != null) {
+                sCodVend = params.getString("codvendedor");
+                URLPrincipal = params.getString("urlPrincipal");
+                SitPed = params.getInt("SitPedido");
+            }
+        }
+
+
+        try {
+            mmPrinc_Pedido = (FloatingActionMenu) findViewById(R.id.mmPrinc_Pedido);
+            mmSitPedido = (FloatingActionButton) findViewById(R.id.mmSitPedido);
+            mmEmissaoPedido = (FloatingActionButton) findViewById(R.id.mmEmissaoPedido);
+            mmCliePedido = (FloatingActionButton) findViewById(R.id.mmCliePedido);
+
+            mmSitPedido.setOnClickListener(new View.OnClickListener() {
+                                               public void onClick(View v) {
+                                                   View viewSitPed = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
+
+                                                   AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
+                                                   alertBuilder.setView(viewSitPed);
+                                                   final Spinner spSituacaoPedido = (Spinner) viewSitPed.findViewById(R.id.spnSitPedido);
+
+                                                   alertBuilder.setCancelable(true)
+                                                           .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                               @Override
+                                                               public void onClick(DialogInterface dialog, int which) {
+                                                                   String NomeSitPed = spSituacaoPedido.getSelectedItem().toString();
+
+                                                                   if (NomeSitPed.equals("Orçamento")) {
+                                                                       SitPed = 1;
+                                                                   } else if (NomeSitPed.equals("Cancelado")) {
+                                                                       SitPed = 4;
+                                                                   } else if (NomeSitPed.equals("Faturado")) {
+                                                                       SitPed = 3;
+                                                                   } else if (NomeSitPed.equals("Sincronizado")) {
+                                                                       SitPed = 2;
+                                                                   } else if (NomeSitPed.equals("Gerar Venda")) {
+                                                                       SitPed = 5;
+                                                                   } else if (NomeSitPed.equals("Todos")) {
+                                                                       SitPed = 0;
+                                                                   }
+                                                                   try {
+                                                                       Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+                                                                       Bundle params = new Bundle();
+                                                                       params.putString("codvendedor", sCodVend);
+                                                                       params.putString("urlPrincipal", URLPrincipal);
+                                                                       params.putInt("SitPedido", SitPed);
+                                                                       intent.putExtras(params);
+                                                                       finish();
+                                                                       startActivity(intent);
+
+                                                                   } catch (Exception E) {
+                                                                       E.toString();
+                                                                   }
+
+                                                               }
+                                                           });
+                                                   Dialog dialog = alertBuilder.create();
+                                                   dialog.show();
+                                               }
+                                           }
+
+
+            );
+            mmEmissaoPedido.setOnClickListener(new View.OnClickListener()
+
+                                               {
+                                                   public void onClick(View v) {
+                                                       Toast.makeText(actListPedidos.this, "Pesquisa pela Emissão do Pedido", Toast.LENGTH_SHORT).show();
+                                                   }
+                                               }
+
+            );
+            mmCliePedido.setOnClickListener(new View.OnClickListener()
+
+                                            {
+                                                public void onClick(View v) {
+                                                    Toast.makeText(actListPedidos.this, "Pesquisa pelo Cliente do Pedido", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+            );
+        } catch (Exception e) {
+            e.toString();
+        }
+
 
         FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
         if (frag == null) {
@@ -76,86 +179,82 @@ public class actListPedidos extends AppCompatActivity
             ft.commit();
         }
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            Bundle params = intent.getExtras();
-            if (params != null) {
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-            }
-        }
-
         DB = new ConfigDB(this).getReadableDatabase();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sCodEmpresa = "0";
-                try {
-                    Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
-                    CursEmpr.moveToFirst();
-                    if (CursEmpr.getCount() > 1) {
-                        List<String> DadosListEmpresa = new ArrayList<String>();
-                        do {
-                            DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
-                        } while (CursEmpr.moveToNext());
 
-                        View viewEmp = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+        try {
+            mmPrincNovoPed = (FloatingActionMenu) findViewById(R.id.mmPrincNovoPed);
+            mmNovoPedido = (FloatingActionButton) findViewById(R.id.mmNovoPedido);
 
-                        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
-                        alertBuilder.setView(viewEmp);
-                        final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+            mmNovoPedido.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    sCodEmpresa = "0";
+                    try {
+                        Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+                        CursEmpr.moveToFirst();
+                        if (CursEmpr.getCount() > 1) {
+                            List<String> DadosListEmpresa = new ArrayList<String>();
+                            do {
+                                DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
+                            } while (CursEmpr.moveToNext());
 
-                        ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(actListPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
-                        ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
-                        spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
-                        spEmpresaInput.setAdapter(spArrayEmpresa);
+                            View viewEmp = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
 
-                        alertBuilder.setCancelable(true)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
-                                        try {
-                                            Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
-                                            CursEmpr2.moveToFirst();
-                                            if (CursEmpr2.getCount() > 0) {
-                                                sCodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
+                            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
+                            alertBuilder.setView(viewEmp);
+                            final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+
+                            ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(actListPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                            ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
+                            spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                            spEmpresaInput.setAdapter(spArrayEmpresa);
+
+                            alertBuilder.setCancelable(true)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
+                                            try {
+                                                Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
+                                                CursEmpr2.moveToFirst();
+                                                if (CursEmpr2.getCount() > 0) {
+                                                    sCodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
+                                                }
+                                                CursEmpr2.close();
+                                                Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
+                                                Bundle params = new Bundle();
+                                                params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                                                params.putString("CodVendedor", sCodVend);
+                                                params.putString("codempresa", sCodEmpresa);
+                                                intent.putExtras(params);
+                                                startActivityForResult(intent, 1);
+                                            } catch (Exception E) {
+                                                System.out.println("Error" + E);
                                             }
-                                            CursEmpr2.close();
-                                            Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
-                                            Bundle params = new Bundle();
-                                            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                                            params.putString("CodVendedor", sCodVend);
-                                            params.putString("codempresa", sCodEmpresa);
-                                            intent.putExtras(params);
-                                            startActivityForResult(intent, 1);
-                                        } catch (Exception E) {
-                                            System.out.println("Error" + E);
                                         }
-                                    }
-                                });
-                        Dialog dialog = alertBuilder.create();
-                        dialog.show();
+                                    });
+                            Dialog dialog = alertBuilder.create();
+                            dialog.show();
 
-                    } else {
-                        sCodEmpresa = CursEmpr.getString(CursEmpr.getColumnIndex("CODEMPRESA"));
-                        Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
-                        Bundle params = new Bundle();
-                        params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                        params.putString("CodVendedor", sCodVend);
-                        params.putString("codempresa", sCodEmpresa);
-                        intent.putExtras(params);
-                        startActivityForResult(intent, 1);
+                        } else {
+                            sCodEmpresa = CursEmpr.getString(CursEmpr.getColumnIndex("CODEMPRESA"));
+                            Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
+                            Bundle params = new Bundle();
+                            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                            params.putString("CodVendedor", sCodVend);
+                            params.putString("codempresa", sCodEmpresa);
+                            intent.putExtras(params);
+                            startActivityForResult(intent, 1);
+                        }
+                    } catch (Exception E) {
+                        E.toString();
                     }
-                } catch (Exception E) {
-                    E.toString();
                 }
+            });
 
-            }
-
-        });
+        } catch (Exception e) {
+            e.toString();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -205,6 +304,8 @@ public class actListPedidos extends AppCompatActivity
                     //Resultado = data.getExtras().getBoolean("atualizalista");
                     Resultado = true;
                     if (Resultado == true) {
+                        SitPed = 0;
+                        CodClie = 0;
                         Intent intent = getIntent();
                         finish();
                         startActivity(intent);
@@ -281,11 +382,33 @@ public class actListPedidos extends AppCompatActivity
     public List<Pedidos> CarregarPedidos() {
         ArrayList<Pedidos> DadosList = new ArrayList<Pedidos>();
         try {
-            Cursor CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
-                    " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
-                    " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                    " WHERE PEDOPER.CODVENDEDOR = " + sCodVend +
-                    " ORDER BY PEDOPER.DATAEMIS DESC ", null);
+            Cursor CursorPed = null;
+            if (SitPed > 0) {
+                CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
+                        " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
+                        " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND PEDOPER.FLAGINTEGRADO = '" + SitPed + "'" +
+                        " ORDER BY PEDOPER.DATAEMIS DESC ", null);
+            } else if (CodClie > 0) {
+                CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
+                        " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
+                        " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND PEDOPER.CODCLIE = " + CodClie +
+                        " ORDER BY PEDOPER.DATAEMIS DESC ", null);
+            } else if (!DtInicio.equals("")) {
+                CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
+                        " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
+                        " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND PEDOPER.CODCLIE = " + CodClie +
+                        " ORDER BY PEDOPER.DATAEMIS DESC ", null);
+
+            } else {
+                CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
+                        " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
+                        " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend +
+                        " ORDER BY PEDOPER.DATAEMIS DESC ", null);
+            }
 
             String Situacao = null;
             if (CursorPed.getCount() > 0) {

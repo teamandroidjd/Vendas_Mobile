@@ -12,6 +12,15 @@
         <item>Cartão de Crédito</item>
     </string-array>
     <string-array
+        name="situacao_pedido">
+        <item>Todos</item>
+        <item>Orçamento</item>
+        <item>Cancelado</item>
+        <item>Faturado</item>
+        <item>Sincronizado</item>
+        <item>Gerar Venda</item>
+    </string-array>
+    <string-array
         name="uf">
         <item>Selecione um estado</item>
         <item>Acre</item>
