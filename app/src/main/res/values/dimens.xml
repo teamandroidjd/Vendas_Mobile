@@ -9,4 +9,8 @@
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="textsize_legendas_texto_pedidos_sw600">25dp</dimen>
+    <dimen name="textsize_nenhumpedidocadastrado_sw600">40dp</dimen>
+    <dimen name="textsize_legendas_texto_pedidos_sw720">35dp</dimen>
+    <dimen name="textsize_nenhumpedidocadastrado_sw720">50dp</dimen>
 </resources>

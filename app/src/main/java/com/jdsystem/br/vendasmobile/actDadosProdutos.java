@@ -76,7 +76,7 @@ public class actDadosProdutos extends AppCompatActivity {
 
                         String Preco = CursorProd.getString(CursorProd.getColumnIndex("VENDAPADRAO"));
                         BigDecimal venda = new BigDecimal(Double.parseDouble(Preco.replace(',', '.')));
-                        TAG_VLVENDA1.setText("Preço de venda: R$ " + venda.setScale(2, BigDecimal.ROUND_UP).toString().replace('.', ','));
+                        TAG_VLVENDA1.setText("Preço de venda: R$ " + venda.setScale(4, BigDecimal.ROUND_UP).toString().replace('.', ','));
 
                         TAG_FABRICANTE.setText("Fabricante: " + CursorProd.getString(CursorProd.getColumnIndex("FABRICANTE")));
                         TAG_FORNECEDOR.setText("Fornecedor: " + CursorProd.getString(CursorProd.getColumnIndex("FORNECEDOR")));

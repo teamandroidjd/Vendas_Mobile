@@ -246,7 +246,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
         String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PROD_PADRAO));
         BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-        String Preco = venda.setScale(2, BigDecimal.ROUND_UP).toString();
+        String Preco = venda.setScale(4, BigDecimal.ROUND_FLOOR).toString();
         Preco = Preco.replace('.', ',');
 
         info_txv_precoproduto.setText(Preco);

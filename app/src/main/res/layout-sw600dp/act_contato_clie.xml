@@ -10,6 +10,11 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context=".act_TH_contclie">
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/lstcontatos"/>
 
 
 </RelativeLayout>

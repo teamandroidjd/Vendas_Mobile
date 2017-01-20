@@ -452,9 +452,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 }
                 Double ValorVENDA = TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue();
 
-                venda_txv_total_da_Venda.setText("Total da venda = " + new BigDecimal(ValorVENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
+                venda_txv_total_da_Venda.setText("Total da venda = R$ " + new BigDecimal(ValorVENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
             } else {
-                venda_txv_total_da_Venda.setText("Total da venda = " + "0,00");
+                venda_txv_total_da_Venda.setText("Total da venda = R$ " + "0,00");
             }
 
         }
