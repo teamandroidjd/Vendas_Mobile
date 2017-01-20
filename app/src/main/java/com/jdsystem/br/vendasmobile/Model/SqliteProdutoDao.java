@@ -222,12 +222,15 @@ public class SqliteProdutoDao {
         Cursor cursor = null;
         try {
             if (valor_campo == null || valor_campo.length() == 0) {
-                cursor = db.query("PRODUTOS", new String[]{
-                        produto.P_CODIGO_PRODUTO + " as _id", null, produto.P_DESCRICAO_PRODUTO, produto.P_UNIDADE_MEDIDA, null, null, produto.P_PRECO_PROD_PADRAO,
-                        produto.P_CATEGORIA_PRODUTO, produto.P_STATUS_PRODUTO}, null, null, null, null, null);
+                if (Param == 1) {
+                    cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, CLASSE, " +
+                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS " , null);
+                } else {
+                    cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, CLASSE, " +
+                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE ATIVO = '1'", null);
+                }
             } else {
                 switch (field) {
-
                     case DESCRICAO_PRODUTO:
                         if (Param == 1) {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, CLASSE, " +
@@ -253,7 +256,8 @@ public class SqliteProdutoDao {
                     case CODIGO_PRODUTO:
                         if (Param == 1) {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, CLASSE, " +
-                                    "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  CODITEMANUAL LIKE '%" + valor_campo + "%'", null);
+                                    "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS " +
+                                    " WHERE CODITEMANUAL LIKE '%" + valor_campo + "%'", null);
                         } else {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, CLASSE, " +
                                     "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE ATIVO = '1'" +
@@ -262,8 +266,8 @@ public class SqliteProdutoDao {
                         break;
                 }
             }
-        } catch (SQLiteException e) {
-            Util.log("SQLiteException buscar_produto_na_pesquisa_edittext" + e.getMessage());
+        } catch (Exception e) {
+            Util.log("SQLiteException buscar_produto_na_pesquisa_edittext" + e.toString());
         }
         return cursor;
     }

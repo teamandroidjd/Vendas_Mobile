@@ -205,10 +205,12 @@ public class SqliteClienteDao {
         Cursor cursor = null;
         try {
             if (valor_campo == null || valor_campo.length() == 0) {
-                cursor = db.query("CLIENTES", new String[]{clientes.C_CODIGO_CLIENTE + " as _id", clientes.C_NOME_DO_CLIENTE,
-                        clientes.C_NOME_FANTASIA, clientes.C_ENDERECO_CLIENTE, clientes.C_BAIRRO_CLIENTE, clientes.C_CEP_CLIENTE, clientes.C_CIDADE_CLIENTE,
-                        clientes.C_CNPJCPF, clientes.C_RGINSCRICAO_ESTADUAL, clientes.C_EMAIL_CLIENTE, clientes.C_ENVIADO,
-                        clientes.C_CHAVE_DO_CLIENTE, clientes.C_TELEFONE_CLIENTE, clientes.C_UF_CLIENTE}, null, null, null, null, null);
+                cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
+                        " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
+                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
+                        " WHERE CODVENDEDOR = " + CodVendedor +
+                        " ORDER BY NOMEFAN, NOMERAZAO ", null);
             } else {
                 switch (field) {
                     case NOME_DO_CLIENTE:

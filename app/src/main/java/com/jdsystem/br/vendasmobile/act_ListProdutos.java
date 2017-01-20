@@ -37,6 +37,7 @@ import com.jdsystem.br.vendasmobile.Util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class act_ListProdutos extends ActionBarActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
@@ -306,15 +307,19 @@ public class act_ListProdutos extends ActionBarActivity
 
             @Override
             public Cursor runQuery(CharSequence valor) {
-                SqliteProdutoDao prdDao = new SqliteProdutoDao(getApplicationContext());
-                if (selecao_spinner == DESCRICAO_PRODUTO) {
-                    this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.DESCRICAO_PRODUTO, 1);
-                }
-                if (selecao_spinner == CATEGORIA_PRODUTO) {
-                    this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.CATEGORIA_PRODUTO, 1);
-                }
-                if (selecao_spinner == CODIGO_PRODUTO) {
-                    this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.CODIGO_PRODUTO, 1);
+                try {
+                    SqliteProdutoDao prdDao = new SqliteProdutoDao(getApplicationContext());
+                    if (selecao_spinner == DESCRICAO_PRODUTO) {
+                        this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.DESCRICAO_PRODUTO, 1);
+                    }
+                    if (selecao_spinner == CATEGORIA_PRODUTO) {
+                        this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.CATEGORIA_PRODUTO, 1);
+                    }
+                    if (selecao_spinner == CODIGO_PRODUTO) {
+                        this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.CODIGO_PRODUTO, 1);
+                    }
+                }catch (Exception e){
+                    e.toString();
                 }
                 return cursor;
             }

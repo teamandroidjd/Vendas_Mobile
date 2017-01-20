@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -922,7 +921,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    @Nullable
     private static String RetornaEstado(String NomeEstado) {
         String Estado = null;
         try {
@@ -1526,8 +1524,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
             FileOutputStream fout = new FileOutputStream("D:\\sonoo.jpg");
             fout.write(barr);
-
-
 
             Image companyLogo = Image.getInstance(Caminho + byteArray + ".jpg");
             companyLogo.setAbsolutePosition(25, 700);
