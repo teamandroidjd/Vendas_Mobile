@@ -140,8 +140,8 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
 
         final Cursor cursor = cliDao.buscar_todos_cliente(CodVendedor);
 
-        String[] colunas = new String[]{cliBean.C_CODIGO_CLIENTE_CURSOR, cliBean.C_NOME_DO_CLIENTE, cliBean.C_NOME_FANTASIA, cliBean.C_CIDADE_CLIENTE, cliBean.C_BAIRRO_CLIENTE};
-        int[] para = new int[]{R.id.adm_txv_clicodigo, R.id.adm_txv_cli_nome, R.id.adm_txv_cli_fantasia, R.id.adm_txv_cli_cidade, R.id.adm_txv_cli_bairro};
+        String[] colunas = new String[]{cliBean.C_CODIGO_CLIENTE_CURSOR,cliBean.C_NOME_DO_CLIENTE,cliBean.C_NOME_FANTASIA,cliBean.C_CIDADE_CLIENTE,cliBean.C_BAIRRO_CLIENTE};
+        int[] para = new int[]{R.id.adm_txv_clicodigo,R.id.adm_txv_cli_nome,R.id.adm_txv_cli_fantasia,R.id.adm_txv_cli_cidade,R.id.adm_txv_cli_bairro};
 
         AdapterClientes = new SimpleCursorAdapter(this, R.layout.lista_cliente_item, cursor, colunas, para, 0);
         adm_listview_cliente = (ListView) findViewById(R.id.adm_listview_cliente);
