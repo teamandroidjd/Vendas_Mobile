@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -75,6 +76,7 @@ public class act_ListClientes extends AppCompatActivity
     private ImageView imgStatus;
     private String usuario, senha;
     public ProgressDialog dialog;
+    public Boolean ConsultaPedido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +90,8 @@ public class act_ListClientes extends AppCompatActivity
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
+                URLPrincipal   = params.getString("urlPrincipal");
+                ConsultaPedido = params.getBoolean("consultapedido");
             }
         }
 
@@ -196,7 +199,6 @@ public class act_ListClientes extends AppCompatActivity
         } else {
             para = new int[]{R.id.lblCodClie, R.id.lblNomerazao, R.id.lblNomeFanClie, R.id.lblCidade, R.id.lblBairro, R.id.lblEstado,
                     R.id.lblTel, R.id.lblCNPJ, R.drawable.bola_vermelha};
-
         }
 
         //AdapterClientes = new SimpleCursorAdapter(this, R.layout.lstclientes_card, cursor, colunas, para, 0);
@@ -207,13 +209,21 @@ public class act_ListClientes extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> listview, View view, int posicao, long id) {
 
-                Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
-                Intent intent = new Intent(getBaseContext(), actDadosCliente.class);
-                Bundle params = new Bundle();
-                params.putString("codCliente", cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
-                intent.putExtras(params);
-                startActivity(intent);
-                //finish();
+                if (ConsultaPedido.equals(false)) {
+                    Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
+                    Intent intent = new Intent(getBaseContext(), actDadosCliente.class);
+                    Bundle params = new Bundle();
+                    params.putString("codCliente", cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
+                    intent.putExtras(params);
+                    startActivity(intent);
+                    //finish();
+                }else{
+                    Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("codclie",cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                    setResult(2,returnIntent);
+                    finish();
+                }
             }
         });
 
