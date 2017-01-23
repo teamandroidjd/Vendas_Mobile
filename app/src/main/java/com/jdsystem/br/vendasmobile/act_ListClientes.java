@@ -220,7 +220,7 @@ public class act_ListClientes extends AppCompatActivity
                 }else{
                     Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
                     Intent returnIntent = new Intent();
-                    returnIntent.putExtra("codclie",cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                    returnIntent.putExtra("CodCliente",cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
                     setResult(2,returnIntent);
                     finish();
                 }
