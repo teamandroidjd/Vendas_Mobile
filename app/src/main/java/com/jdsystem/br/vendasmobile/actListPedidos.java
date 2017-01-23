@@ -88,6 +88,7 @@ public class actListPedidos extends AppCompatActivity
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal = params.getString("urlPrincipal");
                 SitPed = params.getInt("SitPedido");
+                CodClie =  params.getInt("codclie");
             }
         }
 
@@ -131,6 +132,7 @@ public class actListPedidos extends AppCompatActivity
                                                                        params.putString("codvendedor", sCodVend);
                                                                        params.putString("urlPrincipal", URLPrincipal);
                                                                        params.putInt("SitPedido", SitPed);
+                                                                       params.putInt("codclie", 0);
                                                                        intent.putExtras(params);
                                                                        finish();
                                                                        startActivity(intent);
@@ -157,11 +159,15 @@ public class actListPedidos extends AppCompatActivity
                                                }
 
             );
-            mmCliePedido.setOnClickListener(new View.OnClickListener()
-
-                                            {
+            mmCliePedido.setOnClickListener(new View.OnClickListener() {
                                                 public void onClick(View v) {
-                                                    Toast.makeText(actListPedidos.this, "Pesquisa pelo Cliente do Pedido", Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(actListPedidos.this, act_ListClientes.class);
+                                                    Bundle params = new Bundle();
+                                                    params.putString("codvendedor", sCodVend);
+                                                    params.putString("urlPrincipal", URLPrincipal);
+                                                    params.putBoolean("consultapedido", true);
+                                                    intent.putExtras(params);
+                                                    startActivityForResult(intent, 2);
                                                 }
                                             }
 
@@ -310,6 +316,24 @@ public class actListPedidos extends AppCompatActivity
                         finish();
                         startActivity(intent);
                     }
+                } catch (Exception E) {
+                    //
+                }
+            }
+            case 2: {
+                try {
+                    CodClie = data.getExtras().getInt("codclie");
+                    SitPed = 0;
+                    Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+                    Bundle params = new Bundle();
+                    params.putString("codvendedor", sCodVend);
+                    params.putString("urlPrincipal", URLPrincipal);
+                    params.putInt("SitPedido", SitPed);
+                    params.putInt("codclie", CodClie);
+                    intent.putExtras(params);
+                    finish();
+                    startActivity(intent);
+
                 } catch (Exception E) {
                     //
                 }
