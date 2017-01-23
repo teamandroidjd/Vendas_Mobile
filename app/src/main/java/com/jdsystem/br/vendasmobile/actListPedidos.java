@@ -66,8 +66,8 @@ public class actListPedidos extends AppCompatActivity
 
     public static Integer SitPed = 0;
     public static Integer CodClie = 0;
-    public static String DtInicio = "";
-    public static String DtFinal = "";
+    public static String DtInicio = "0";
+    public static String DtFinal = "0";
 
 
     FloatingActionMenu mmPrinc_Pedido, mmPrincNovoPed;
@@ -88,11 +88,17 @@ public class actListPedidos extends AppCompatActivity
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal = params.getString("urlPrincipal");
                 SitPed = params.getInt("SitPedido");
-                CodClie =  params.getInt("codclie");
+                CodClie = params.getInt("codclie");
+                DtInicio = params.getString("datainicial");
+                DtFinal = params.getString("datafinal");
+            }
+            if (DtInicio == null){
+                DtInicio = "0";
+            }
+            if (DtFinal == null){
+                DtFinal = "0";
             }
         }
-
-
         try {
             mmPrinc_Pedido = (FloatingActionMenu) findViewById(R.id.mmPrinc_Pedido);
             mmSitPedido = (FloatingActionButton) findViewById(R.id.mmSitPedido);
@@ -133,6 +139,9 @@ public class actListPedidos extends AppCompatActivity
                                                                        params.putString("urlPrincipal", URLPrincipal);
                                                                        params.putInt("SitPedido", SitPed);
                                                                        params.putInt("codclie", 0);
+                                                                       params.putString("datainicial", "0");
+                                                                       params.putString("datafinal", "0");
+
                                                                        intent.putExtras(params);
                                                                        finish();
                                                                        startActivity(intent);
@@ -150,11 +159,10 @@ public class actListPedidos extends AppCompatActivity
 
 
             );
-            mmEmissaoPedido.setOnClickListener(new View.OnClickListener()
-
-                                               {
+            mmEmissaoPedido.setOnClickListener(new View.OnClickListener() {
                                                    public void onClick(View v) {
-                                                       Toast.makeText(actListPedidos.this, "Pesquisa pela Emissão do Pedido", Toast.LENGTH_SHORT).show();
+                                                       Intent intent = new Intent(actListPedidos.this, actFiltroPeriodoPedidos.class);
+                                                       startActivityForResult(intent, 3);
                                                    }
                                                }
 
@@ -312,6 +320,8 @@ public class actListPedidos extends AppCompatActivity
                     if (Resultado == true) {
                         SitPed = 0;
                         CodClie = 0;
+                        DtInicio = "0";
+                        DtFinal = "0";
                         Intent intent = getIntent();
                         finish();
                         startActivity(intent);
@@ -324,12 +334,39 @@ public class actListPedidos extends AppCompatActivity
                 try {
                     CodClie = data.getExtras().getInt("codclie");
                     SitPed = 0;
+                    DtInicio = "0";
+                    DtFinal = "0";
                     Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
                     Bundle params = new Bundle();
                     params.putString("codvendedor", sCodVend);
                     params.putString("urlPrincipal", URLPrincipal);
                     params.putInt("SitPedido", SitPed);
                     params.putInt("codclie", CodClie);
+                    params.putString("datainicial", DtInicio);
+                    params.putString("datafinal", DtFinal);
+                    intent.putExtras(params);
+                    finish();
+                    startActivity(intent);
+
+                } catch (Exception E) {
+                    //
+                }
+            }
+            case 3: {
+                try {
+                    CodClie = 0;
+                    SitPed = 0;
+                    DtInicio = data.getExtras().getString("datainicial");
+                    DtFinal = data.getExtras().getString("datafinal");
+                    Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+                    Bundle params = new Bundle();
+                    params.putString("codvendedor", sCodVend);
+                    params.putString("urlPrincipal", URLPrincipal);
+                    params.putString("datainicial", DtInicio);
+                    params.putString("datafinal", DtFinal);
+                    params.putInt("SitPedido", SitPed);
+                    params.putInt("codclie", CodClie);
+
                     intent.putExtras(params);
                     finish();
                     startActivity(intent);
@@ -419,11 +456,11 @@ public class actListPedidos extends AppCompatActivity
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
                         " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND PEDOPER.CODCLIE = " + CodClie +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
-            } else if (!DtInicio.equals("")) {
+            } else if (!DtInicio.equals("0")) {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND PEDOPER.CODCLIE = " + CodClie +
+                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND (PEDOPER.DATAEMIS BETWEEN '" + DtInicio + "' AND '" + DtFinal +"')" +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
 
             } else {
