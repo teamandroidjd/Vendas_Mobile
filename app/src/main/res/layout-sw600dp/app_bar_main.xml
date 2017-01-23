@@ -35,7 +35,7 @@
         android:layout_marginRight="11dp"
         fab:menu_animationDelayPerItem="55"
         fab:menu_backgroundColor="@android:color/transparent"
-        fab:menu_buttonSpacing="10dp"
+        fab:menu_buttonSpacing="5dp"
         fab:menu_colorNormal="@color/colorPrimary"
         fab:menu_colorPressed="@color/colorPrimary"
         fab:menu_fab_size="normal"
@@ -64,9 +64,9 @@
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/mmNovoPedido"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/bola_azul"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/compra"
             fab:fab_label="Novo Pedido"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
@@ -74,7 +74,7 @@
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/mmPrinc_Pedido"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|start"
         android:layout_alignParentRight="true"
@@ -83,11 +83,11 @@
         android:layout_marginRight="11dp"
         fab:menu_animationDelayPerItem="55"
         fab:menu_backgroundColor="@android:color/transparent"
-        fab:menu_buttonSpacing="10dp"
+        fab:menu_buttonSpacing="7dp"
         fab:menu_colorNormal="@color/colorPrimary"
         fab:menu_colorPressed="@color/colorPrimary"
         fab:menu_fab_size="normal"
-        fab:menu_icon="@drawable/ic_obs"
+        fab:menu_icon="@drawable/filtro"
         fab:menu_labels_colorNormal="#333"
         fab:menu_fab_label="Pesquisa"
         fab:menu_labels_colorPressed="#444"
@@ -95,9 +95,9 @@
         fab:menu_labels_cornerRadius="3dp"
         fab:menu_labels_ellipsize="none"
         fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
-        fab:menu_labels_margin="15dp"
+        fab:menu_labels_margin="20dp"
         fab:menu_labels_maxLines="-1"
-        fab:menu_labels_padding="8dp"
+        fab:menu_labels_padding="5dp"
         fab:menu_labels_position="right"
         fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
         fab:menu_labels_showShadow="true"
@@ -114,7 +114,7 @@
             android:id="@+id/mmSitPedido"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/bola_laranja"
+            android:src="@drawable/sit"
             fab:fab_label="Situação"
             fab:fab_size="mini" />
 
@@ -122,15 +122,15 @@
             android:id="@+id/mmCliePedido"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_add_clie"
+            android:src="@drawable/user"
             fab:fab_label="Cliente"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/mmEmissaoPedido"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/bola_azul"
+            android:layout_width="31dp"
+            android:layout_height="28dp"
+            android:src="@drawable/calendar"
             fab:fab_label="Emissão"
             fab:fab_size="mini" />
 
