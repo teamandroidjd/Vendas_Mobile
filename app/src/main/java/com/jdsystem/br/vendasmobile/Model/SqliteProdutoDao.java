@@ -125,7 +125,7 @@ public class SqliteProdutoDao {
                 produto.setPrd_unmedida(cursor.getString(cursor.getColumnIndex(produto.P_UNIDADE_MEDIDA)));
                 //produto.setPrd_custo(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.P_CUSTO_PRODUTO))));
                 //produto.setPrd_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.P_QUANTIDADE_PRODUTO))));
-                produto.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.P_PRECO_PROD_PADRAO))).setScale(4, BigDecimal.ROUND_UP));
+                produto.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.P_PRECO_PROD_PADRAO))).setScale(4, BigDecimal.ROUND_HALF_UP));
                 produto.setPrd_categoria(cursor.getString(cursor.getColumnIndex(produto.P_CATEGORIA_PRODUTO)));
                 produto.setPrd_status(cursor.getString(cursor.getColumnIndex(produto.P_STATUS_PRODUTO)));
                 produto.setPrd_apresentacao(cursor.getString(cursor.getColumnIndex(produto.P_APRESENTACAO_PRODUTO)));
@@ -153,7 +153,7 @@ public class SqliteProdutoDao {
                     prd.setPrd_unmedida(cursor.getString(cursor.getColumnIndex(prd.P_UNIDADE_MEDIDA)));
                     //prd.setPrd_custo(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_CUSTO_PRODUTO))));
                     //prd.setPrd_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_QUANTIDADE_PRODUTO))));
-                    prd.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_PRECO_PROD_PADRAO))).setScale(4,BigDecimal.ROUND_UP));
+                    prd.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_PRECO_PROD_PADRAO))).setScale(4,BigDecimal.ROUND_HALF_UP));
                     prd.setPrd_categoria(cursor.getString(cursor.getColumnIndex(prd.P_CATEGORIA_PRODUTO)));
                     prd.setPrd_status(cursor.getString(cursor.getColumnIndex(prd.P_STATUS_PRODUTO)));
                     prd.setPrd_apresentacao(cursor.getString(cursor.getColumnIndex(prd.P_APRESENTACAO_PRODUTO)));
@@ -177,7 +177,7 @@ public class SqliteProdutoDao {
                     prd.setPrd_unmedida(cursor.getString(cursor.getColumnIndex(prd.P_UNIDADE_MEDIDA)));
                     //prd.setPrd_custo(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_CUSTO_PRODUTO))));
                     //prd.setPrd_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_QUANTIDADE_PRODUTO))));
-                    prd.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_PRECO_PROD_PADRAO))));
+                    prd.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_PRECO_PROD_PADRAO))).setScale(4,BigDecimal.ROUND_HALF_UP));
                     prd.setPrd_categoria(cursor.getString(cursor.getColumnIndex(prd.P_CATEGORIA_PRODUTO)));
                     prd.setPrd_status(cursor.getString(cursor.getColumnIndex(prd.P_STATUS_PRODUTO)));
                     prd.setPrd_apresentacao(cursor.getString(cursor.getColumnIndex(prd.P_APRESENTACAO_PRODUTO)));
