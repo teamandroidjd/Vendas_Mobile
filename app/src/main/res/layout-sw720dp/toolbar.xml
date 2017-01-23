@@ -16,34 +16,34 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
 
-        android:src="@drawable/ic_salvar" />
+        android:src="@drawable/salvar" />
 
     <ImageView
         android:id="@+id/cancel_venda"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginLeft="20dp"
-        android:src="@drawable/ic_cancelar" />
+        android:src="@drawable/cancelar" />
 
     <ImageView
         android:id="@+id/item_obspedido"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="410dp"
-        android:src="@drawable/ic_obs2" />
+        android:src="@drawable/observacao" />
 
     <ImageView
         android:id="@+id/item_formapgto"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
-        android:src="@drawable/ic_pagamento" />
+        android:src="@drawable/pagamento" />
 
     <ImageView
         android:id="@+id/item_dtentrega"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
-        android:src="@drawable/ic_calendario" />
+        android:src="@drawable/calendario" />
 
 </android.support.v7.widget.Toolbar>
