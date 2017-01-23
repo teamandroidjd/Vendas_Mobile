@@ -47,6 +47,56 @@
             android:textSize="25dp"/>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center|left"
+            android:paddingLeft="4dp"
+            android:text="Descrição"
+            android:textColor="@color/colordescClie"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.01"
+            android:gravity="center|right"
+            android:text="Quant"
+            android:textColor="@color/colordescClie"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.33"
+            android:gravity="center|right"
+            android:text="Val Unit"
+            android:textColor="@color/colordescClie"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingRight="4dp"
+            android:text="Total"
+            android:textColor="@color/colordescClie"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/LinearLayoutMeio"
         android:layout_width="match_parent"

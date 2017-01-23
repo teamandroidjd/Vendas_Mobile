@@ -246,7 +246,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
         String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PROD_PADRAO));
         BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-        String Preco = venda.setScale(4, BigDecimal.ROUND_FLOOR).toString();
+        String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
         Preco = Preco.replace('.', ',');
 
         info_txv_precoproduto.setText(Preco);
@@ -284,7 +284,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                             //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
                             String ValorItem = info_txv_precoproduto.getText().toString();
                             BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                            venda.toString().replace('.', ',');
+                            venda.setScale(4,BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
                             itemBean1.setVendad_preco_vendaTEMP(venda);
 
                             //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
