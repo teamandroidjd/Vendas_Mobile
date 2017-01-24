@@ -41,14 +41,16 @@
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Data Inicial"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="16sp"
+                            android:textSize="20sp"
                             android:textStyle="normal|bold" />
                     </LinearLayout>
 
@@ -71,14 +73,16 @@
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Data Final"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="16sp"
+                            android:textSize="20sp"
                             android:textStyle="normal|bold" />
                     </LinearLayout>
 
