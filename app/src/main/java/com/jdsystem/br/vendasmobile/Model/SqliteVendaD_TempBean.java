@@ -33,8 +33,8 @@ public class SqliteVendaD_TempBean {
         this.vendad_prd_codigoTEMP = vendad_prd_codigoTEMP;
         this.vendad_prd_descricaoTEMP = vendad_prd_descricaoTEMP;
         this.vendad_quantidadeTEMP = vendad_quantidadeTEMP;
-        this.vendad_preco_vendaTEMP = vendad_preco_vendaTEMP;
-        this.vendad_totalTEMP = vendad_totalTEMP;
+        this.vendad_preco_vendaTEMP = vendad_preco_vendaTEMP.setScale(4,BigDecimal.ROUND_HALF_UP);
+        this.vendad_totalTEMP = vendad_totalTEMP.setScale(4,BigDecimal.ROUND_HALF_UP);
         this.vendad_prd_unidadeTEMP = vendad_prd_unidadeTEMP;
 
     }

@@ -35,6 +35,8 @@ import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoDao;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -238,6 +240,7 @@ public class act_ListProdutos extends ActionBarActivity
         SqliteProdutoDao prdDao = new SqliteProdutoDao(getApplicationContext());
 
         final Cursor cursor = prdDao.buscar_produtos(1);
+
 
         String[] colunas = new String[]{
                 prdBean.P_PRODUTO_SIMPLECURSOR,

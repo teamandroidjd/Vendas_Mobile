@@ -66,11 +66,11 @@ public class Produtos extends ItensPedido {
     }
 
 
-    public Produtos(String CodigoManual, String Descricao, String UnidVenda, String Preco, String Status, String Apresentacao) {
+    public Produtos(String CodigoManual, String Descricao, String UnidVenda, BigDecimal Preco, String Status, String Apresentacao) {
             this.CodigoManual = CodigoManual;
         this.Descricao = Descricao;
         this.UnidVenda = UnidVenda;
-        this.Preco = Preco;
+        this.Preco = Preco.setScale(2, BigDecimal.ROUND_UP).toString();
         this.Status = Status;
         this.Apresentacao = Apresentacao;
     }

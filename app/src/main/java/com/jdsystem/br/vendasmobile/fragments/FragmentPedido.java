@@ -3,6 +3,7 @@ package com.jdsystem.br.vendasmobile.fragments;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.actListPedidos;

@@ -11,6 +11,7 @@ import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.domain.ItensPedido;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
@@ -55,8 +56,8 @@ public class ListaItensTemporariosAdapter extends BaseAdapter {
         descriacao.setText(item.getVendad_prd_descricaoTEMP().toString());
         quantidade.setText(item.getVendad_quantidadeTEMP().toString());
 
-        preco.setText(item.getVendad_preco_vendaTEMP().setScale(2, RoundingMode.HALF_UP).toString().replace('.',','));
-        total.setText(item.getVendad_totalTEMP().setScale(2,RoundingMode.UP).toString().replace('.',','));
+        preco.setText(item.getVendad_preco_vendaTEMP().setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
+        total.setText(item.getVendad_totalTEMP().setScale(2,BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
 
 
         return v;

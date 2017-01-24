@@ -576,6 +576,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
                             dialog = new ProgressDialog(VenderProdutos.this);
                             dialog.setMessage("Sincronizando pedido nº " + venda_ok);
+                            dialog.setCancelable(false);
                             dialog.setTitle("Aguarde");
                             dialog.show();
 
