@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +36,8 @@ public class act_TH_dadosclie extends Fragment {
         DB = new ConfigDB(ctx).getReadableDatabase();
 
         TextView TAG_NOMEFANTASIA = (TextView) v.findViewById(R.id.txt_nomefantasia);
+        TextView TEXTO_NOMEFANTASIA = (TextView) v.findViewById(R.id.nomefantasia);
+        TextView TEXTO_RAZAOSOCIAL = (TextView) v.findViewById(R.id.nomerazaocliente);
         TextView TAG_RAZAOSOCIAL = (TextView) v.findViewById(R.id.txt_nomerazaocliente);
         TextView TAG_DOCUMENTO = (TextView) v.findViewById(R.id.txt_documento);
         TextView TAG_CIDADE = (TextView) v.findViewById(R.id.txtcidadecliente);
@@ -70,14 +72,17 @@ public class act_TH_dadosclie extends Fragment {
                 CursorClie.moveToFirst();
                 do {
                     String Documento = CursorClie.getString(CursorClie.getColumnIndex("CNPJ_CPF"));
+                    String CEP = CursorClie.getString(CursorClie.getColumnIndex("CEP"));
                     Documento.replaceAll("[^0123456789]", "");
                     if (Documento.length() == 14) {
                         TAG_DOCUMENTO.setText("CNPJ: " + Mask.addMask(Documento, "##.###.###/####-##"));
-                        TAG_NOMEFANTASIA.setText("Nome Fantasia: " + CursorClie.getString(CursorClie.getColumnIndex("NOMEFAN")));
-                        TAG_RAZAOSOCIAL.setText("Razão Social: " + CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO")));
+                        TAG_NOMEFANTASIA.setText(CursorClie.getString(CursorClie.getColumnIndex("NOMEFAN")));
+                        TAG_RAZAOSOCIAL.setText(CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO")));
                         TAG_RG.setVisibility(EditText.GONE);
                         TAG_IE.setText("Inscrição Estadual: " + CursorClie.getString(CursorClie.getColumnIndex("INSCREST")));
                     } else {
+                        TEXTO_NOMEFANTASIA.setVisibility(TextView.GONE);
+                        TEXTO_RAZAOSOCIAL.setVisibility(TextView.GONE);
                         TAG_DOCUMENTO.setText("CPF: " + Mask.addMask(Documento.replaceAll("[^0123456789]", ""), "###.###.###-##"));
                         TAG_RAZAOSOCIAL.setText("Nome Completo: " + CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO")));
                         TAG_NOMEFANTASIA.setVisibility(EditText.GONE);
@@ -89,15 +94,16 @@ public class act_TH_dadosclie extends Fragment {
                     TAG_BAIRRO.setText("Bairro: " + CursorClie.getString(CursorClie.getColumnIndex("BAIRRO")));
                     TAG_ENDERECO.setText("Endereço: " + CursorClie.getString(CursorClie.getColumnIndex("ENDERECO")) + ", " + CursorClie.getString(CursorClie.getColumnIndex("NUMERO")));
                     TAG_COMPLEMENTO.setText("Complemento: " + CursorClie.getString(CursorClie.getColumnIndex("COMPLEMENT")));
-                    TAG_CEP.setText("CEP: " + CursorClie.getString(CursorClie.getColumnIndex("CEP")));
-                    TAG_TELEFONE_1.setText("Telefone 1: " +CursorClie.getString(CursorClie.getColumnIndex("TEL1")));
-                    TAG_TELEFONE_2.setText("Telefone 2: " +CursorClie.getString(CursorClie.getColumnIndex("TEL2")));
-                    TAG_EMAIL.setText("Email: "+CursorClie.getString(CursorClie.getColumnIndex("EMAIL")));
+
+                    TAG_CEP.setText("CEP: " + Mask.addMask(CEP, "##.###-###"));
+                    TAG_TELEFONE_1.setText("Telefone 1: " + CursorClie.getString(CursorClie.getColumnIndex("TEL1")));
+                    TAG_TELEFONE_2.setText("Telefone 2: " + CursorClie.getString(CursorClie.getColumnIndex("TEL2")));
+                    TAG_EMAIL.setText("Email: " + CursorClie.getString(CursorClie.getColumnIndex("EMAIL")));
                 }
                 while (CursorClie.moveToNext());
                 CursorClie.close();
             }
-        }catch (Exception E){
+        } catch (Exception E) {
             Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
         }
 
