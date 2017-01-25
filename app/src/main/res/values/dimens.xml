@@ -13,4 +13,6 @@
     <dimen name="textsize_nenhumpedidocadastrado_sw600">40dp</dimen>
     <dimen name="textsize_legendas_texto_pedidos_sw720">35dp</dimen>
     <dimen name="textsize_nenhumpedidocadastrado_sw720">50dp</dimen>
+    <dimen name="textsize_sw600">25dp</dimen>
+    <dimen name="textsize_sw720">40dp</dimen>
 </resources>

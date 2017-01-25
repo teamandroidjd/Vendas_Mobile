@@ -61,8 +61,8 @@ public class actDadosProdutos extends AppCompatActivity {
                     CursorProd.moveToFirst();
                     do {
 
-                        TAG_CODMANUAL.setText("Código: " + CursorProd.getString(CursorProd.getColumnIndex("CODITEMANUAL")));
-                        TAG_DESCRICAO.setText("Descrição: " + CursorProd.getString(CursorProd.getColumnIndex("DESCRICAO")));
+                        TAG_CODMANUAL.setText(CursorProd.getString(CursorProd.getColumnIndex("CODITEMANUAL")));
+                        TAG_DESCRICAO.setText(CursorProd.getString(CursorProd.getColumnIndex("DESCRICAO")));
                         TAG_UNIVENDA.setText("Unidade de medida: " + CursorProd.getString(CursorProd.getColumnIndex("UNIVENDA")));
                         TAG_APRESENTACAO.setText("Apresentação: " + CursorProd.getString(CursorProd.getColumnIndex("APRESENTACAO")));
                         String Status = CursorProd.getString(CursorProd.getColumnIndex("ATIVO"));
@@ -76,7 +76,7 @@ public class actDadosProdutos extends AppCompatActivity {
 
                         String Preco = CursorProd.getString(CursorProd.getColumnIndex("VENDAPADRAO"));
                         BigDecimal venda = new BigDecimal(Double.parseDouble(Preco.replace(',', '.')));
-                        TAG_VLVENDA1.setText("Preço de venda: R$ " + venda.setScale(4, BigDecimal.ROUND_UP).toString().replace('.', ','));
+                        TAG_VLVENDA1.setText("Preço de venda: R$ " + venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
 
                         TAG_FABRICANTE.setText("Fabricante: " + CursorProd.getString(CursorProd.getColumnIndex("FABRICANTE")));
                         TAG_FORNECEDOR.setText("Fornecedor: " + CursorProd.getString(CursorProd.getColumnIndex("FORNECEDOR")));

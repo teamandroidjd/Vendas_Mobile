@@ -59,7 +59,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="1.26"
             android:gravity="center|left"
             android:paddingLeft="4dp"
             android:text="Descrição"
@@ -70,9 +70,9 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.01"
-            android:gravity="center|right"
-            android:text="Quant"
+            android:layout_weight="0.83"
+            android:gravity="center"
+            android:text="Qtd."
             android:textColor="@color/colordescClie"
             android:textSize="16dp"
             android:textStyle="bold" />
@@ -80,9 +80,9 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.33"
-            android:gravity="center|right"
-            android:text="Val Unit"
+            android:layout_weight="1.07"
+            android:gravity="center"
+            android:text="Vl.Unit."
             android:textColor="@color/colordescClie"
             android:textSize="16dp"
             android:textStyle="bold" />
@@ -93,7 +93,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:paddingRight="4dp"
-            android:text="Total"
+            android:text="Vl.Total"
             android:textColor="@color/colordescClie"
             android:textSize="16dp"
             android:textStyle="bold" />
@@ -150,7 +150,7 @@
 
         <EditText
             android:id="@+id/venda_txt_desconto"
-            android:layout_width="90dp"
+            android:layout_width="82dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginLeft="10dp"

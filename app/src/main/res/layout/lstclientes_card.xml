@@ -19,14 +19,14 @@
         app:cardUseCompatPadding="false">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorCardClie"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:id="@+id/linearLayout"
-                android:layout_width="280dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"
@@ -44,29 +44,15 @@
                     <LinearLayout
                         android:id="@+id/lnome"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/lblCodClie"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="11435"
-                            android:textColor="@color/colorPrimary"
-                            android:textSize="16sp"
-
-                            android:textStyle="normal|bold" />
-
-                        <TextView
-                            android:id="@+id/traco"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginLeft="80dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_toEndOf="@+id/lblCodClie"
-                            android:layout_toRightOf="@+id/lblCodClie"
-                            android:text=" - "
-                            android:textColor="@color/colorPrimary"
+                            android:textColor="@color/colordescClie"
                             android:textSize="16sp"
                             android:textStyle="normal|bold" />
 
@@ -74,11 +60,6 @@
                             android:id="@+id/lblNomeFanClie"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="2dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_toEndOf="@+id/traco"
-                            android:layout_toRightOf="@+id/traco"
-                            android:layout_weight="1"
                             android:text="CLIENTE COM NOME GRANDE QUE DA TRABALHO "
                             android:textColor="@color/colorPrimary"
                             android:textSize="16sp"
@@ -200,17 +181,18 @@
 
             <LinearLayout
                 android:layout_width="25dp"
-                android:layout_marginLeft="5dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp">
+
                 <ImageView
                     android:id="@+id/imgStatus"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:visibility="invisible"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/bola_vermelha" />
+                    android:src="@drawable/bola_vermelha"
+                    android:visibility="invisible" />
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

@@ -22,8 +22,7 @@
             android:layout_marginTop="5dp"
             android:background="@color/colorCardClie"
             android:orientation="vertical"
-            android:padding="3dp"
-            android:weightSum="1">
+            android:padding="3dp">
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -41,26 +40,33 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Data Inicial"
+                            android:textAlignment="center"
+
                             android:textColor="@color/colorPrimary"
-                            android:textSize="20sp"
+                            android:textSize="25sp"
                             android:textStyle="normal|bold" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="277dp">
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center">
 
                         <DatePicker
                             android:id="@+id/dpResult"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="101dp"
+
                             android:elevation="1dp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -68,28 +74,35 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:gravity="center">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        >
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Data Final"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="20sp"
+                            android:textSize="25sp"
                             android:textStyle="normal|bold" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="337dp">
+                        android:layout_height="wrap_content"
+
+                        android:layout_gravity="center"
+                        android:gravity="center">
 
                         <DatePicker
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:textAlignment="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="105dp"
                             android:id="@+id/dpResultFinal" />
 
                     </LinearLayout>
@@ -99,15 +112,14 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="60dp"
                 android:layout_margin="5dp"
                 android:background="#14bfd6"
                 android:text="Confirmar Período"
                 android:textAllCaps="false"
                 android:textColor="#fff"
-                android:textSize="25sp"
-                android:id="@+id/btnConfirmar"
-                android:layout_weight="3.25" />
+                android:textSize="30sp"
+                android:id="@+id/btnConfirmar" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
