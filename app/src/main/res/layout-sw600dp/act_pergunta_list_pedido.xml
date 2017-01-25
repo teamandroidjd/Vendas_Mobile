@@ -59,6 +59,17 @@
                 android:text="Verificar Status"
                 android:textColor="@color/colordescClie"
                 android:textSize="30dp" />
+            <RadioButton
+                android:id="@+id/rbAutoriza"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Gerar Venda"
+                android:textColor="@color/colordescClie"
+                android:textSize="30dp" />
 
         </RadioGroup>
     </LinearLayout>
