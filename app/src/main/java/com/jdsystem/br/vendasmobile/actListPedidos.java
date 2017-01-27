@@ -403,6 +403,7 @@ public class actListPedidos extends AppCompatActivity
             intent.putExtras(params);
             startActivityForResult(intent, 1);
 
+
         } else if (id == R.id.nav_pedidos) {
 
         } else if (id == R.id.nav_produtos) {
@@ -412,7 +413,7 @@ public class actListPedidos extends AppCompatActivity
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
-            //finish();
+
 
         } else if (id == R.id.nav_sincronismo) {
             Intent intent = new Intent(actListPedidos.this, actSincronismo.class);
@@ -421,6 +422,7 @@ public class actListPedidos extends AppCompatActivity
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

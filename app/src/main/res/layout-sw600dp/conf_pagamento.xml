@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Total da venda: R$ 560.60 "
+                android:text="Total da venda: R$ 560,60 "
                 android:textAlignment="center"
                 android:textColor="@color/colorAccent"
                 android:textSize="30dp"

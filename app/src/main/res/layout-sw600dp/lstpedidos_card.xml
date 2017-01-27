@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginBottom="0dp"
@@ -8,20 +9,18 @@
     android:layout_marginTop="0dp">
 
     <android.support.v7.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/CdPedidos"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:layout_marginTop="5dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="2dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="3dp"
         app:cardMaxElevation="3dp"
         app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="false"
-        android:id="@+id/CdPedidos">
+        app:cardUseCompatPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:text="#"
                         android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
+                        android:textSize="30sp"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -67,19 +66,20 @@
                         android:layout_toRightOf="@+id/lblStatusPed"
                         android:text="40"
                         android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
+                        android:textSize="30sp"
                         android:textStyle="normal|bold" />
+
                     <TextView
                         android:id="@+id/lblPed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pedido"
                         android:layout_marginLeft="160dp"
                         android:layout_marginStart="160dp"
                         android:layout_toEndOf="@+id/lblNumPedido"
                         android:layout_toRightOf="@+id/lblNumPedido"
+                        android:text="Pedido"
                         android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
+                        android:textSize="30sp"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -93,34 +93,71 @@
                         android:layout_toRightOf="@+id/lblPed"
                         android:text="40"
                         android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
+                        android:textSize="30sp"
                         android:textStyle="normal|bold" />
 
                     <ImageView
+                        android:id="@+id/imgStatus"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
+
                         android:layout_alignParentRight="true"
-                        android:src="@drawable/bola_vermelha"
-                        android:id="@+id/imgStatus"/>
+                        android:src="@drawable/bola_vermelha" />
                 </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/lblEmpresa"
+                <LinearLayout
+                    android:id="@+id/linearLayout1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Empresa"
-                    android:textSize="25sp"
-                    android:textStyle="normal|bold"
-                    android:textColor="@color/colorAccent"/>
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/dtemissao"
+                    <TextView
+                        android:id="@+id/lbl01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Empresa:"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="30sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/lblEmpresa"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Empresa"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="30sp"
+                        android:textStyle="normal|bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Terça, 06 de Dezembro de 2016"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="25sp"
-                    android:textStyle="normal|bold" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/lbl02"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Data de emissão:"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="30sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/dtemissao"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="01/01/2017 12:00:00"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="30sp"
+                        android:textStyle="normal|bold" />
+
+
+                </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/lblNomeCliente"
@@ -128,9 +165,8 @@
                     android:layout_height="wrap_content"
                     android:text="Cliente da Venda"
                     android:textColor="@color/colorAccent"
-                    android:textSize="25sp"
+                    android:textSize="30sp"
                     android:textStyle="normal|bold" />
-
 
 
                 <RelativeLayout
@@ -143,32 +179,32 @@
                         android:layout_height="wrap_content"
                         android:text="R$ "
                         android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
+                        android:textSize="30sp"
                         android:textStyle="normal|bold" />
 
                     <TextView
                         android:id="@+id/lblValorTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_toRightOf="@+id/lblsimbolo"
                         android:text="2.000,00"
                         android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold"
-                        android:layout_alignParentTop="true"
-                        android:layout_toRightOf="@+id/lblsimbolo" />
+                        android:textSize="30sp"
+                        android:textStyle="normal|bold" />
 
                     <TextView
                         android:id="@+id/lblVendedor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
                         android:gravity="right"
                         android:text="Eduardo"
                         android:textColor="@color/colorAccent"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
+                        android:textSize="30sp"
+                        android:textStyle="normal|bold" />
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

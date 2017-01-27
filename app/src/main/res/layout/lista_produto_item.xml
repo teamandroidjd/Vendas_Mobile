@@ -36,7 +36,17 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:orientation="vertical">
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txv01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Codigo Produto:"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/prod_txv_prd_codigo"
@@ -44,16 +54,44 @@
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:text="Codigo Produto"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textSize="16dp"
                     android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txv02"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrição do Produto:"
+                android:textColor="@color/colordescClie"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/prod_txv_prd_descricaoproduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrição do Produto"
+                android:textColor="@color/colorAccent"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/prod_txv_prd_descricaoproduto"
-                    android:layout_width="match_parent"
+                    android:id="@+id/txv03"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Descrição do Produto"
-                    android:textColor="@color/colorAccent"
+                    android:text="Classe:"
+                    android:textColor="@color/colordescClie"
                     android:textSize="15dp"
                     android:textStyle="bold" />
 
@@ -62,36 +100,45 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Categoria"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="15dp" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_preco"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/prod_txv_prd_preco"
-                        android:text="R$ "
-                        android:textColor="@color/colordescClie"
-                        android:textSize="16dp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/prod_txv_prd_preco"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="Preco"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="16dp"
-                        android:textStyle="bold"/>
-
-                </RelativeLayout>
+                    android:textColor="@color/colorAccent"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
             </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/espaco"
+                    android:text=""
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/prod_txv_simbol_preco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/espaco"
+                    android:text="R$ "
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_preco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_toRightOf="@+id/prod_txv_simbol_preco"
+                    android:text="Preco"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
