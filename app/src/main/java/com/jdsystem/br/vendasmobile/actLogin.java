@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PixelFormat;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -138,7 +139,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
                 Dialogo = new ProgressDialog(actLogin.this);
                 Dialogo.setIndeterminate(true);
-                Dialogo.setMessage("Verificando Usuário");
+                Dialogo.setMessage("Verificando e atualizando informações...");
                 Dialogo.setTitle("Aguarde");
                 Dialogo.show();
 
@@ -211,6 +212,11 @@ public class actLogin extends AppCompatActivity implements Runnable {
         return conectado;
     }
 
+    public boolean VerificaConexaoWifi() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return mWifi.isConnected();
+    }
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
@@ -256,7 +262,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                  HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
                                  final String CodVendedor;
                                  String CodEmpresa = null;
-                                 String UFVendedor = null;
+                                 final String UFVendedor;
                                  String usuario = edtUsuario.getText().toString();
                                  String pass = edtSenha.getText().toString();
                                  try {
@@ -291,10 +297,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                              if (!(CursorUser.getCount() > 0)) {
                                                  DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + CodVendedor + ", CODEMPRESA = " + CodEmpresa +
                                                          " WHERE CODVEND = " + CodVendedor);
-                                                 //CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa , null);
                                                  CursorUser.close();
                                              }
-
                                              CadastrarLogin(usuario, pass, CodVendedor, CodEmpresa); // Cadastra usuário, senha e código do vendedor
 
                                              String IMEI = "";
@@ -315,8 +319,46 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
                                                  HabUsuarioApp = (String) envelopeValida.getResponse();
                                                  System.out.println("Response::" + resultsRequestSOAP2.toString());
+                                                 Boolean ConexOkWifi = VerificaConexaoWifi();
 
-                                                 if (HabUsuarioApp.equals("True")) {
+                                                 if (HabUsuarioApp.equals("True") && ConexOkWifi == true) {
+                                                     handler.post(new Runnable() {
+                                                         @Override
+                                                         public void run() {
+                                                             Dialogo.setMessage("Atualizando cadastro de Cidades/Bairros...");
+                                                             actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this);
+                                                             Dialogo.setMessage("Sincronizando Empresas");
+                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             handler.post(new Runnable() {
+                                                                 @Override
+                                                                 public void run() {
+                                                                     Dialogo.setMessage("Atualizando Cadastro de Clientes");
+                                                                     actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true);
+                                                                     handler.post(new Runnable() {
+                                                                         @Override
+                                                                         public void run() {
+                                                                             Dialogo.setMessage("Enviando pedidos...");
+                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                             Dialogo.dismiss();
+                                                                             handler.post(new Runnable() {
+                                                                                 @Override
+                                                                                 public void run() {
+                                                                                     Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
+                                                                                     Bundle params = new Bundle();
+                                                                                     params.putString("codvendedor", CodVendedor);
+                                                                                     params.putString("urlPrincipal", URLPrincipal);
+                                                                                     IntVend.putExtras(params);
+                                                                                     startActivity(IntVend);
+                                                                                 }
+                                                                             });
+                                                                         }
+                                                                     });
+                                                                 }
+                                                             });
+                                                         }
+                                                     });
+                                                 } else if (HabUsuarioApp.equals("True")) {
                                                      handler.post(new Runnable() {
                                                          @Override
                                                          public void run() {

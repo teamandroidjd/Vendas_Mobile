@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -24,6 +25,7 @@ public class ConfigWeb extends AppCompatActivity {
     private Button btsalvhost;
     public SharedPreferences prefs;
     public String ChaveAcesso;
+    ProgressDialog DialogECB;
 
 
     @Override
@@ -44,8 +46,16 @@ public class ConfigWeb extends AppCompatActivity {
         btsalvhost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DialogECB = new ProgressDialog(ConfigWeb.this);
+                DialogECB.setTitle("Aguarde");
+                DialogECB.setMessage("Validando licença...");
+                DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                DialogECB.setIcon(R.drawable.icon_sync);
+                DialogECB.show();
+
                 String RetHost = null;
                 if (edtChave.getText().length() == 0) {
+                    DialogECB.dismiss();
                     edtChave.setError("Digite o caminho do host!");
                     edtChave.requestFocus();
                     return;
@@ -68,15 +78,17 @@ public class ConfigWeb extends AppCompatActivity {
                             System.out.println("Response :" + resultsRequestSOAP.toString());
 
                             if (RetHost.equals("0")){
+                                DialogECB.dismiss();
                                 Toast.makeText(ConfigWeb.this, "Host não encontrado!", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                         }
                     } catch (Exception e) {
+                        DialogECB.dismiss();
                         System.out.println("Error" + e);
                     }
                 }
-
+                DialogECB.dismiss();
                 SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
                 editorhost.putString("ChaveAcesso", edtChave.getText().toString());
                 editorhost.putString("host", RetHost);
