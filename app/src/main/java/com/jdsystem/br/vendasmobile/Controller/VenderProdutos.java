@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile.Controller;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -13,14 +14,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FilterQueryProvider;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +36,8 @@ import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteParametroDao;
+import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
+import com.jdsystem.br.vendasmobile.Model.SqliteProdutoDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaCBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
@@ -82,6 +90,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     public ProgressDialog dialog;
     public Long venda_ok;
     public AlertDialog alerta;
+    private Builder alerta1;
+
+    private SimpleCursorAdapter adapter;
+    private ListView prod_listview_produtotemp;
+
 
     private SqliteVendaCBean vendaCBean;
     private SqliteVendaDBean vendaDBean;
@@ -279,7 +292,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 dialog.show();
             }
         });
-
     }
 
     private void setDateTimeField() {
@@ -413,7 +425,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         }
     }
 
-
     public void gerar_parcelas_venda() {
 
         if (confBean.isMensal()) {
@@ -465,6 +476,14 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 return false;
             }
         });
+        ListView_ItensVendidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> listview1, View v, int posicao, long m) {
+                alterarproduto(listview1, posicao);
+
+            }
+        });
+
     }
 
     private BigDecimal calculaDesconto() {
@@ -475,7 +494,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
         return VALOR_DESCONTO;
     }
-
 
     private void confirmar_exclusao_do_produto(final AdapterView listview, final int posicao) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -503,6 +521,76 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         dlg.show();
     }
 
+    private void alterarproduto(final AdapterView listview, final int posicao) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Atenção");
+        builder.setMessage("Deseja alterar a quantidade deste produto ?");
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        if (NumPedido.equals("0")) {
+                            SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
+                            new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
+                            if (item != null) {
+                                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                                View view = inflater.inflate(R.layout.info_produto_venda, null);
+                                alerta1 = new Builder(VenderProdutos.this);
+                                alerta1.setCancelable(false);
+                                alerta1.setView(view);
+
+                                final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
+                                final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
+                                final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
+                                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
+
+                                info_txv_codproduto.setText(item.getVendad_prd_codigoTEMP());
+                                info_txv_descricaoproduto.setText(item.getVendad_prd_descricaoTEMP());
+                                info_txv_unmedida.setText(item.getVendad_prd_unidadeTEMP());
+
+                                String ValorItem = String.valueOf(item.getVendad_preco_vendaTEMP());
+                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                Preco = Preco.replace('.', ',');
+                                info_txv_precoproduto.setText(Preco);
+                                info_txt_quantidadecomprada.selectAll();
+
+
+                                alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                alerta1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                alerta1.show();
+                            } else {
+                                SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
+                                new Sqlite_VENDADAO(getApplicationContext(), CodVendedor).excluir_um_item_da_venda(item2);
+                            }
+                            atualiza_listview_e_calcula_total();
+                        }
+                    }
+                }
+
+        );
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener()
+
+                {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        dlg.dismiss();
+                    }
+                }
+
+        );
+        dlg = builder.create();
+        dlg.show();
+
+    }
 
     @Override
     public void onBackPressed() {

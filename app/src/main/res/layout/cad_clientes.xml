@@ -84,6 +84,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="CNPJ"
+                    android:maxLength="19"
                     android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -98,6 +99,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Registro de Identidade"
+                    android:maxLength="15"
                     android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -115,6 +117,7 @@
                     android:layout_weight="1"
                     android:hint="CPF"
                     android:inputType="number"
+                    android:maxLength="15"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -267,6 +270,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Telefone"
+                    android:maxLength="15"
                     android:inputType="phone"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -281,6 +285,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Telefone 2"
+                    android:maxLength="15"
                     android:inputType="phone"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>

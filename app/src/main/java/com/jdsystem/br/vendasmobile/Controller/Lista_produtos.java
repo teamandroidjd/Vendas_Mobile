@@ -252,6 +252,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         info_txv_precoproduto.setText(Preco);
         info_txt_quantidadecomprada.selectAll();
 
+
         alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
