@@ -118,7 +118,7 @@ public class SqliteClienteDao {
                     " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                     " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                    " WHERE CODCLIE_INT = ? ", new String[]{cli_codigo});
+                    " WHERE CODCLIE_INT = ?  ", new String[]{cli_codigo});
             if (cursor.moveToFirst()) {
                 clientes = new SqliteClienteBean();
                 clientes.setCli_codigo(cursor.getInt(cursor.getColumnIndex(clientes.C_CODIGO_CLIENTE)));
@@ -189,7 +189,7 @@ public class SqliteClienteDao {
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                     " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
                     " WHERE CODVENDEDOR = " + CodVendedor +
-                    " ORDER BY NOMEFAN, NOMERAZAO ", null);
+                    " ORDER BY NOMEFAN", null);
             if (cursor != null) {
                 cursor.moveToFirst();
             }

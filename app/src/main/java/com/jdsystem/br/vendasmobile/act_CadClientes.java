@@ -660,7 +660,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 EdtRG.requestFocus();
                 return;
             }
-            NomePessoa = nomecompleto.getText().toString();
+            NomePessoa = nomecompleto.getText().toString().trim();
             NomeFantasia = NomePessoa;
             CpfCnpj = Edtcpf.getText().toString().replaceAll("[^0123456789]", "");
         }
@@ -702,12 +702,12 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                         "CEP, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT, FLAGINTEGRADO) VALUES(" +
-                        "'" + CpfCnpj + "','" + NomePessoa +
-                        "',' " + NomeFantasia + "',' " + ie.getText().toString() + "',' " + email.getText().toString() +
-                        "',' " + tel1.getText().toString() + "', '" + tel2.getText().toString() + "', '" + endereco.getText().toString() +
-                        "',' " + numero.getText().toString() + "', '" + Complemento.getText().toString() +
-                        "'," + CodBairro + ",' " + edtOBS.getText().toString() + "'," + CodCidade + ",' " + sUF +
-                        "',' " + cep.getText().toString() + "'," + sCodVend + ",'" + sTipoPessoa + "','" + "S" + "','" + EdtRG.getText().toString() + "','"
+                        "'" + CpfCnpj + "', '" + NomePessoa +
+                        "','" + NomeFantasia + "', '" + ie.getText().toString() + "', '" + email.getText().toString() +
+                        "','" + tel1.getText().toString() + "', '" + tel2.getText().toString() + "', '" + endereco.getText().toString() +
+                        "','" + numero.getText().toString() + "', '" + Complemento.getText().toString() +
+                        "',"  + CodBairro + ", '" + edtOBS.getText().toString() + "', " + CodCidade + ", '" + sUF +
+                        "','" + cep.getText().toString() + "', " + sCodVend + ", '" + sTipoPessoa + "', '" + "S" + "', '" + EdtRG.getText().toString() + "','"
                         + "1" + "');");
             }
             CursorClieCons.close();
@@ -725,7 +725,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false);
+                            actSincronismo.SincronizarClientesEnvioStatic("0", act_CadClientes.this, false);
                             Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
                             Bundle params = new Bundle();
                             params.putString("codvendedor", sCodVend);

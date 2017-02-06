@@ -38,6 +38,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by eduardo.costa on 10/11/2016.
@@ -63,6 +64,9 @@ public class act_TH_contclie extends Fragment{
 
         DB = new ConfigDB(ctx).getReadableDatabase();
 
+        TextView TAG_TELEFONE_1 = (TextView) v.findViewById(R.id.lblTel1Contato);
+        TextView TAG_TELEFONE_2 = (TextView) v.findViewById(R.id.lblTel2Contato);
+
         Intent intent = ((actDadosCliente) getActivity()).getIntent();
         if (intent != null) {
             Bundle params = intent.getExtras();
@@ -74,6 +78,28 @@ public class act_TH_contclie extends Fragment{
         try {
             Cursor CursorClie = DB.rawQuery(" SELECT CODCONTATO_INT AS _id, NOME, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO WHERE CODCLIENTE = " + sCodCliente, null);
             if (CursorClie.getCount() > 0) {
+                /*CursorClie.moveToFirst();
+                String Tel1 =  CursorClie.getString(CursorClie.getColumnIndex("TEL1"));
+                String Tel2 =  CursorClie.getString(CursorClie.getColumnIndex("TEL2"));
+                Tel1.replaceAll("[^0123456789]", "");
+                if (Tel1.length() == 11) {
+                    TAG_TELEFONE_1.setText("Telefone 1: " + Mask.addMask(Tel1, "(##)#####-####"));
+                } else if (Tel1.length() == 10) {
+                    TAG_TELEFONE_1.setText("Telefone 1: " + Mask.addMask(Tel1, "(##)####-####"));
+                }else  {
+                    TAG_TELEFONE_1.setText("Telefone 1: " + CursorClie.getString(CursorClie.getColumnIndex("TEL1")));
+                }
+
+                Tel2.replaceAll("[^0123456789]", "");
+                if (Tel2.length() == 11) {
+                    TAG_TELEFONE_2.setText("Telefone 1: " + Mask.addMask(Tel2, "(##)#####-####"));
+                } else if (Tel2.length() == 10) {
+                    TAG_TELEFONE_2.setText("Telefone 1: " + Mask.addMask(Tel2, "(##)####-####"));
+                }else  {
+                    TAG_TELEFONE_2.setText("Telefone 2: " + CursorClie.getString(CursorClie.getColumnIndex("TEL2")));
+                }*/
+
+
 
                 String[] colunas = new String[]{"NOME", "CARGO", "EMAIL", "TEL1", "TEL2"};
                 int[] para = new int[]{R.id.lblNomeContato, R.id.lblCargoContato, R.id.lblEmailContato, R.id.lblTel1Contato, R.id.lblTel2Contato};

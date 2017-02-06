@@ -123,7 +123,7 @@ public class act_ListClientes extends AppCompatActivity
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
         UsuarioLogado = prefs.getString("usuario", null);
-        usuariologado.setText(UsuarioLogado);
+        usuariologado.setText("Olá " +UsuarioLogado+"!");
 
         TELA_QUE_CHAMOU_INTENT = getIntent();
         TELA_QUE_CHAMOU = TELA_QUE_CHAMOU_INTENT.getStringExtra("TELA_QUE_CHAMOU");

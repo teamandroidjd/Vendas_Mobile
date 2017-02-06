@@ -304,6 +304,16 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             if (cursor.getCount() > 0) {
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL) +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA) +
+
+
+
+
+
+
+
+
+
+
                                         "', REGIDENT = '" + c.getString(TAG_RG) +
                                         "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
                                         "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
@@ -2199,6 +2209,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
             int jumpTime = 0;
             String CodClie_ext = null;
+            String sexo = null;
             final int totalProgressTime = CursorClieEnv.getCount();
             if (bDialogo == false) {
                 Dialog.setMax(totalProgressTime);
@@ -2217,7 +2228,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                     Dialog.setMessage("Enviado clientes");
                                 }
                                 Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")) + "'," +
-                                        "nome_fantasia: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN")) + "'," +
+                                        "nome_fantasia: '" + (CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN"))).trim() + "'," +
                                         "tipo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) + "'," +
                                         "cnpj_cpf: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'," +
                                         "inscricao_estadual: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")) + "'," +
@@ -2234,6 +2245,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")) + "'}," +
                                         "{email: ''}]," +
                                         "ativo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ATIVO")) + "'," +
+                                        "sexo: '" + "" + "'," +
+                                        "estadocivil: '" + "" + "'," +
+                                        "tipoplano: '" + "" + "'," +
                                         "telefones: [{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL1")) + "'}," +
                                         "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL2")) + "'}," +
                                         "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TELFAX")) + "'}]";
@@ -2312,6 +2326,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             CursClieAtu.close();
                         }
                     } catch (Exception E) {
+                        E.toString();
                     }
                 }
                 while (CursorClieEnv.moveToNext());
@@ -2633,8 +2648,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, REGIDENT, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                                         "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, FLAGINTEGRADO) VALUES(" +
-                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL) + "','" + c.getString(TAG_RG) +
-                                        "',' " + c.getString(TAG_NOMEFANTASIA) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
+                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL) + "','" + c.getString(TAG_NOMEFANTASIA) +
+                                        "',' " + c.getString(TAG_RG) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
                                         "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO) +
                                         "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +
                                         "','" + CodBairro + "',' " + c.getString(TAG_OBS) + "','" + CodCidade + "',' " + CodEstado +

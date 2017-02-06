@@ -2,6 +2,8 @@ package com.jdsystem.br.vendasmobile.Model;
 
 import android.widget.ImageView;
 
+import com.jdsystem.br.vendasmobile.Mask;
+
 /**
  * Created by JAVA on 24/08/2015.
  */

@@ -101,7 +101,7 @@ public class act_ListProdutos extends ActionBarActivity
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
         UsuarioLogado = prefs.getString("usuario", null);
-        usuariologado.setText(UsuarioLogado);
+        usuariologado.setText("Olá " +UsuarioLogado+"!");
 
         // atualiza_listview_com_os_itens_da_venda();
 

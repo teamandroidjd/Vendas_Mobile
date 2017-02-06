@@ -288,7 +288,7 @@ public class actListPedidos extends AppCompatActivity
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
         UsuarioLogado = prefs.getString("usuario", null);
-        usuariologado.setText(UsuarioLogado);
+        usuariologado.setText("Olá " +UsuarioLogado+"!");
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 

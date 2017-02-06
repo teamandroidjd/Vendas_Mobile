@@ -65,11 +65,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         INTENT_CLI_CODIGO = getIntent();
         CLI_CODIGO = INTENT_CLI_CODIGO.getIntExtra("CLI_CODIGO", 0);
 
-        conf_txvvalorvenda.setText("Valor Venda : " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
+        conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
         VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
-        array_forma_pagamento.add("AVISTA");
-        array_forma_pagamento.add("MENSAL");
+        array_forma_pagamento.add("À VISTA");
+        array_forma_pagamento.add("PARCELADO");
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_forma_pagamento);
         conf_spfpgto.setAdapter(arrayAdapter);
     }
@@ -125,7 +125,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         }
 */
 
-        if (TIPO_PAGAMENTO.equals("MENSAL")) {
+        if (TIPO_PAGAMENTO.equals("PARCELADO")) {
 
             // condicao sem entrada
             if (conf_txtqtdparcelas.getText().toString().trim().length() <= 0) {
@@ -144,7 +144,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
         TIPO_PAGAMENTO = spinner.getItemAtPosition(position).toString();
 
-        if (TIPO_PAGAMENTO.equals("AVISTA")) {
+        if (TIPO_PAGAMENTO.equals("À VISTA")) {
 
             conf_txvlabelparcelas.setVisibility(View.GONE);
             conf_txtqtdparcelas.setVisibility(View.GONE);
@@ -156,7 +156,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
         }
 
-        if (TIPO_PAGAMENTO.equals("MENSAL")) {
+        if (TIPO_PAGAMENTO.equals("PARCELADO")) {
 
             conf_txvlabelparcelas.setVisibility(View.VISIBLE);
             conf_rbboleto.setChecked(true);
@@ -200,12 +200,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
                 BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Valor parcela : " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
+                conf_valorparcela.setText("Valor parcela: R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
             } else {
                 BigDecimal divisor = new BigDecimal("1");
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
                 BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Valor parcela : " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
+                conf_valorparcela.setText("Valor parcela: R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
             }
 
         } else {
