@@ -302,18 +302,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                         try {
                             if (cursor.getCount() > 0) {
-                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL) +
-                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA) +
-
-
-
-
-
-
-
-
-
-
+                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim() +
+                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim() +
                                         "', REGIDENT = '" + c.getString(TAG_RG) +
                                         "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
                                         "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
@@ -327,8 +317,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, REGIDENT, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                                         "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, FLAGINTEGRADO) VALUES(" +
-                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL) + "','" + c.getString(TAG_RG) +
-                                        "',' " + c.getString(TAG_NOMEFANTASIA) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
+                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim() + "','" + c.getString(TAG_RG) +
+                                        "',' " + c.getString(TAG_NOMEFANTASIA).trim() + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
                                         "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO) +
                                         "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +
                                         "','" + CodBairro + "',' " + c.getString(TAG_OBS) + "','" + CodCidade + "',' " + CodEstado +
@@ -536,14 +526,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', CLASSE = '" + CItens.getString(TAG_CLASSE) +
                                         "', MARCA = '" + CItens.getString(TAG_MARCA) +
                                         "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA) +
-                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1) +
-                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2) +
-                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3) +
-                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4) +
-                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5) +
-                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1) +
-                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO) +
-                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2) +
+                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO) + "'" +
                                         " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
@@ -558,14 +548,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_CLASSE) +
                                         "',' " + CItens.getString(TAG_MARCA) +
                                         "', '" + CItens.getString(TAG_UNIVENDA) +
-                                        "',' " + CItens.getString(TAG_VLVENDA1) +
-                                        "', '" + CItens.getString(TAG_VLVENDA2) +
-                                        "',' " + CItens.getString(TAG_VLVENDA3) +
-                                        "',' " + CItens.getString(TAG_VLVENDA4) +
-                                        "','" + CItens.getString(TAG_VLVENDA5) +
-                                        "',' " + CItens.getString(TAG_VLVENDAP1) +
-                                        "',' " + CItens.getString(TAG_VLVENDAP2) +
-                                        "', '" + CItens.getString(TAG_VENDAPADRAO) +
+                                        "',' " + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "', '" + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "','" + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
+                                        "', '" + CItens.getString(TAG_VENDAPADRAO).trim() +
                                         "', '" + CItens.getString(TAG_ATIVO) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO) + "');");
                             }
@@ -2227,7 +2217,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                     Dialog.setProgress(jumpTime);
                                     Dialog.setMessage("Enviado clientes");
                                 }
-                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")) + "'," +
+                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")).trim() + "'," +
                                         "nome_fantasia: '" + (CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN"))).trim() + "'," +
                                         "tipo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) + "'," +
                                         "cnpj_cpf: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'," +
@@ -2445,14 +2435,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', CLASSE = '" + CItens.getString(TAG_CLASSE) +
                                         "', MARCA = '" + CItens.getString(TAG_MARCA) +
                                         "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA) +
-                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1) +
-                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2) +
-                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3) +
-                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4) +
-                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5) +
-                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1) +
-                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2) +
-                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO) +
+                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
+                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO) +
                                         "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
@@ -2467,14 +2457,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_CLASSE) +
                                         "',' " + CItens.getString(TAG_MARCA) +
                                         "', '" + CItens.getString(TAG_UNIVENDA) +
-                                        "',' " + CItens.getString(TAG_VLVENDA1) +
-                                        "', '" + CItens.getString(TAG_VLVENDA2) +
-                                        "',' " + CItens.getString(TAG_VLVENDA3) +
-                                        "',' " + CItens.getString(TAG_VLVENDA4) +
-                                        "','" + CItens.getString(TAG_VLVENDA5) +
-                                        "',' " + CItens.getString(TAG_VLVENDAP1) +
-                                        "',' " + CItens.getString(TAG_VLVENDAP2) +
-                                        "', '" + CItens.getString(TAG_VENDAPADRAO) +
+                                        "',' " + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "', '" + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "','" + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
+                                        "', '" + CItens.getString(TAG_VENDAPADRAO).trim() +
                                         "', '" + CItens.getString(TAG_ATIVO) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO) + "');");
                             }
@@ -2633,8 +2623,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                         try {
                             if (cursor.getCount() > 0) {
-                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL) +
-                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA) +
+                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim() +
+                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim() +
                                         "', REGIDENT = '" + c.getString(TAG_RG) +
                                         "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
                                         "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
@@ -2648,7 +2638,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, REGIDENT, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                                         "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, FLAGINTEGRADO) VALUES(" +
-                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL) + "','" + c.getString(TAG_NOMEFANTASIA) +
+                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim() + "','" + c.getString(TAG_NOMEFANTASIA).trim() +
                                         "',' " + c.getString(TAG_RG) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
                                         "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO) +
                                         "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +

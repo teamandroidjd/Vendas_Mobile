@@ -252,7 +252,14 @@ public class act_ListProdutos extends ActionBarActivity
                 //prdBean.P_CATEGORIA_PRODUTO,
                 prdBean.P_STATUS_PRODUTO,
                 prdBean.P_APRESENTACAO_PRODUTO,
-                prdBean.P_PRECO_PROD_PADRAO};
+                prdBean.P_PRECO_PROD_PADRAO,   //VLVENDA1
+                prdBean.P_PRECO_PROD_VLVENDA2, //VLVENDA2
+                prdBean.P_PRECO_PROD_VLVENDA3, //VLVENDA3
+                prdBean.P_PRECO_PROD_VLVENDA4, //VLVENDA4
+                prdBean.P_PRECO_PROD_VLVENDA5, //VLVENDA5
+                prdBean.P_PRECO_PROD_VLVENDAP1,//PROMOCAO_A
+                prdBean.P_PRECO_PROD_VLVENDAP2//PROMOCAO_B
+        };
 
         int[] to = new int[]{
                 R.id.txt_codprod,
@@ -263,7 +270,14 @@ public class act_ListProdutos extends ActionBarActivity
                 //R.id.prod_txv_prd_categoria,
                 R.id.txtStatus,
                 R.id.txtapres,
-                R.id.txtpreco};
+                R.id.txtpreco,
+                R.id.txtprecoauxiliara,
+                R.id.txtprecoauxiliarb,
+                R.id.txtprecoauxiliarc,
+                R.id.txtprecoauxiliard,
+                R.id.txtprecopromocaoa,
+                R.id.txtprecopromocaob
+        };
 
         try {
             adapter = new SimpleCursorAdapter(this, R.layout.lstprodutos_card, cursor, colunas, to, 0);

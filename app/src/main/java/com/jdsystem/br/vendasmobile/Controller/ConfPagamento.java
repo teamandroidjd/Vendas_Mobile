@@ -16,6 +16,10 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import android.widget.HorizontalScrollView;
+import android.widget.ScrollView;
+import android.view.MotionEvent;
+
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoDao;
 import com.jdsystem.br.vendasmobile.R;
@@ -37,7 +41,9 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     private DatePickerDialog datePicker;
     private RadioGroup conf_rgPagamentos;
     private EditText conf_txtqtdparcelas, conf_txtvalorrecebido;
-    private TextView conf_txvvalorvenda, conf_valorparcela, conf_txvlabelvalorrecebido, conf_txvlabelparcelas;
+    private TextView conf_txvvalorvenda, conf_valorparcela, conf_valorparcela2, conf_valorparcela3,
+            conf_valorparcela4, conf_valorparcela5, conf_valorparcela6, conf_valorparcela7, conf_valorparcela8, conf_valorparcela9, conf_valorparcela10,
+            conf_valorparcela11, conf_valorparcela12,conf_txvlabelvalorrecebido, conf_txvlabelparcelas;
     private Spinner conf_spfpgto;
     private List<String> array_forma_pagamento = new ArrayList<String>();
     private ArrayAdapter<String> arrayAdapter;
@@ -46,6 +52,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     private String TIPO_PAGAMENTO = "";
     private Double SUBTOTAL_VENDA;
     private BigDecimal VALORRECEBIDO;
+
+    private ScrollView vScroll;
+    private HorizontalScrollView hScroll;
+    private float mx, my;
+    private float curX, curY;
 
     private Intent INTENT_SOBTOTAL_VENDA, INTENT_CLI_CODIGO;
     private Integer CLI_CODIGO;
@@ -65,7 +76,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         INTENT_CLI_CODIGO = getIntent();
         CLI_CODIGO = INTENT_CLI_CODIGO.getIntExtra("CLI_CODIGO", 0);
 
-        conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
+        conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
         VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
         array_forma_pagamento.add("À VISTA");
@@ -73,6 +84,36 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_forma_pagamento);
         conf_spfpgto.setAdapter(arrayAdapter);
     }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float curX, curY;
+
+        switch (event.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                mx = event.getX();
+                my = event.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                curX = event.getX();
+                curY = event.getY();
+                vScroll.scrollBy((int) (mx - curX), (int) (my - curY));
+                hScroll.scrollBy((int) (mx - curX), (int) (my - curY));
+                mx = curX;
+                my = curY;
+                break;
+            case MotionEvent.ACTION_UP:
+                curX = event.getX();
+                curY = event.getY();
+                vScroll.scrollBy((int) (mx - curX), (int) (my - curY));
+                hScroll.scrollBy((int) (mx - curX), (int) (my - curY));
+                break;
+        }
+
+        return true;
+    }
+
+
 
     public void salvar_fpgto(View v) {
 
@@ -149,6 +190,17 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             conf_txvlabelparcelas.setVisibility(View.GONE);
             conf_txtqtdparcelas.setVisibility(View.GONE);
             conf_valorparcela.setVisibility(View.GONE);
+            conf_valorparcela2.setVisibility(View.GONE);
+            conf_valorparcela3.setVisibility(View.GONE);
+            conf_valorparcela4.setVisibility(View.GONE);
+            conf_valorparcela5.setVisibility(View.GONE);
+            conf_valorparcela6.setVisibility(View.GONE);
+            conf_valorparcela7.setVisibility(View.GONE);
+            conf_valorparcela8.setVisibility(View.GONE);
+            conf_valorparcela9.setVisibility(View.GONE);
+            conf_valorparcela10.setVisibility(View.GONE);
+            conf_valorparcela11.setVisibility(View.GONE);
+            conf_valorparcela12.setVisibility(View.GONE);
             conf_rbdinheiro.setVisibility(View.VISIBLE);
             conf_rgPagamentos.setVisibility(View.VISIBLE);
             conf_txvlabelvalorrecebido.setVisibility(View.GONE);
@@ -196,16 +248,304 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     public void calcular_valor_parcela(CharSequence valor_digitado) {
         if (valor_digitado.length() > 0) {
             String QUANTIDADE_PARCELAS = conf_txtqtdparcelas.getText().toString();
-            if (Integer.parseInt(QUANTIDADE_PARCELAS) > 0) {
+            if (Integer.parseInt(QUANTIDADE_PARCELAS) == 1) {
+                conf_valorparcela2.setVisibility(View.GONE);
+                conf_valorparcela3.setVisibility(View.GONE);
+                conf_valorparcela4.setVisibility(View.GONE);
+                conf_valorparcela5.setVisibility(View.GONE);
+                conf_valorparcela6.setVisibility(View.GONE);
+                conf_valorparcela7.setVisibility(View.GONE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
                 BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Valor parcela: R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
-            } else {
-                BigDecimal divisor = new BigDecimal("1");
+                conf_valorparcela.setText("Parcela 1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 2) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.GONE);
+                conf_valorparcela4.setVisibility(View.GONE);
+                conf_valorparcela5.setVisibility(View.GONE);
+                conf_valorparcela6.setVisibility(View.GONE);
+                conf_valorparcela7.setVisibility(View.GONE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
                 BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Valor parcela: R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.',','));
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 3) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.GONE);
+                conf_valorparcela5.setVisibility(View.GONE);
+                conf_valorparcela6.setVisibility(View.GONE);
+                conf_valorparcela7.setVisibility(View.GONE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 4) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.GONE);
+                conf_valorparcela6.setVisibility(View.GONE);
+                conf_valorparcela7.setVisibility(View.GONE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 5) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.VISIBLE);
+                conf_valorparcela6.setVisibility(View.GONE);
+                conf_valorparcela7.setVisibility(View.GONE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 6) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.VISIBLE);
+                conf_valorparcela6.setVisibility(View.VISIBLE);
+                conf_valorparcela7.setVisibility(View.GONE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            }  else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 7) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.VISIBLE);
+                conf_valorparcela6.setVisibility(View.VISIBLE);
+                conf_valorparcela7.setVisibility(View.VISIBLE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 8) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.VISIBLE);
+                conf_valorparcela6.setVisibility(View.VISIBLE);
+                conf_valorparcela7.setVisibility(View.VISIBLE);
+                conf_valorparcela8.setVisibility(View.VISIBLE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela8.setText("Parc.   8/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 9) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.VISIBLE);
+                conf_valorparcela6.setVisibility(View.VISIBLE);
+                conf_valorparcela7.setVisibility(View.VISIBLE);
+                conf_valorparcela8.setVisibility(View.VISIBLE);
+                conf_valorparcela9.setVisibility(View.VISIBLE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela8.setText("Parc.   8/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela9.setText("Parc.   9/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 10) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.VISIBLE);
+                conf_valorparcela6.setVisibility(View.VISIBLE);
+                conf_valorparcela7.setVisibility(View.VISIBLE);
+                conf_valorparcela8.setVisibility(View.VISIBLE);
+                conf_valorparcela9.setVisibility(View.VISIBLE);
+                conf_valorparcela10.setVisibility(View.VISIBLE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela8.setText("Parc.   8/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela9.setText("Parc.   9/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela10.setText("Parc. 10/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 11) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.VISIBLE);
+                conf_valorparcela6.setVisibility(View.VISIBLE);
+                conf_valorparcela7.setVisibility(View.VISIBLE);
+                conf_valorparcela8.setVisibility(View.VISIBLE);
+                conf_valorparcela9.setVisibility(View.VISIBLE);
+                conf_valorparcela10.setVisibility(View.VISIBLE);
+                conf_valorparcela11.setVisibility(View.VISIBLE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.  1/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.  2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.  3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.  4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela5.setText("Parc.  5/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela6.setText("Parc.  6/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela7.setText("Parc.  7/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela8.setText("Parc.  8/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela9.setText("Parc.  9/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela10.setText("Parc. 10/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela11.setText("Parc. 11/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 12) {
+                conf_valorparcela.setVisibility(View.VISIBLE);
+                conf_valorparcela2.setVisibility(View.VISIBLE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
+                conf_valorparcela4.setVisibility(View.VISIBLE);
+                conf_valorparcela5.setVisibility(View.VISIBLE);
+                conf_valorparcela6.setVisibility(View.VISIBLE);
+                conf_valorparcela7.setVisibility(View.VISIBLE);
+                conf_valorparcela8.setVisibility(View.VISIBLE);
+                conf_valorparcela9.setVisibility(View.VISIBLE);
+                conf_valorparcela10.setVisibility(View.VISIBLE);
+                conf_valorparcela11.setVisibility(View.VISIBLE);
+                conf_valorparcela12.setVisibility(View.VISIBLE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela8.setText("Parc.   8/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela9.setText("Parc.   9/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela10.setText("Parc. 10/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela11.setText("Parc. 11/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela12.setText("Parc. 12/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+            } else {
+                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela.setText("Valor parcela: R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
             }
 
         } else {
@@ -224,9 +564,23 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         conf_txvlabelparcelas = (TextView) findViewById(R.id.conf_txvlabelparcelas);
         conf_txvlabelvalorrecebido = (TextView) findViewById(R.id.conf_txvlabelvalorrecebido);
         conf_valorparcela = (TextView) findViewById(R.id.conf_valorparcela);
+        conf_valorparcela2 = (TextView) findViewById(R.id.conf_valorparcela2);
+        conf_valorparcela3 = (TextView) findViewById(R.id.conf_valorparcela3);
+        conf_valorparcela4 = (TextView) findViewById(R.id.conf_valorparcela4);
+        conf_valorparcela5 = (TextView) findViewById(R.id.conf_valorparcela5);
+        conf_valorparcela6 = (TextView) findViewById(R.id.conf_valorparcela6);
+        conf_valorparcela7 = (TextView) findViewById(R.id.conf_valorparcela7);
+        conf_valorparcela8 = (TextView) findViewById(R.id.conf_valorparcela8);
+        conf_valorparcela9 = (TextView) findViewById(R.id.conf_valorparcela9);
+        conf_valorparcela10 = (TextView) findViewById(R.id.conf_valorparcela10);
+        conf_valorparcela11 = (TextView) findViewById(R.id.conf_valorparcela11);
+        conf_valorparcela12 = (TextView) findViewById(R.id.conf_valorparcela12);
         conf_spfpgto = (Spinner) findViewById(R.id.conf_spfpgto);
         conf_rgPagamentos = (RadioGroup) findViewById(R.id.conf_rgPagamentos);
         conf_txtqtdparcelas = (EditText) findViewById(R.id.conf_txtqtdparcelas);
+
+        vScroll = (ScrollView) findViewById(R.id.scrollView);
+        hScroll = (HorizontalScrollView) findViewById(R.id.scrollViewh);
 
         conf_spfpgto.setOnItemSelectedListener(this);
         conf_rgPagamentos.setOnCheckedChangeListener(this);
