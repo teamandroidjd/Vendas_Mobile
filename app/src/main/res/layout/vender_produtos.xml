@@ -150,13 +150,14 @@
 
         <EditText
             android:id="@+id/venda_txt_desconto"
-            android:layout_width="82dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginLeft="10dp"
             android:gravity="right"
             android:inputType="numberDecimal"
             android:text="0"
+            android:maxLength="3"
             android:textColor="@color/colordescClie"
             android:textSize="16dp"
             android:textStyle="bold" />

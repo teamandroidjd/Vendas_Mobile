@@ -302,6 +302,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                         try {
                             if (cursor.getCount() > 0) {
+                                cursor.moveToFirst();
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim() +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim() +
                                         "', REGIDENT = '" + c.getString(TAG_RG) +
@@ -517,15 +518,15 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         Dialog.setMessage("Sincronizando Tabelas - Produtos");
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
                         try {
-                            CursItens.moveToFirst();
                             if (CursItens.getCount() > 0) {
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL) +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO) +
-                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE) +
-                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR) +
-                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE) +
-                                        "', MARCA = '" + CItens.getString(TAG_MARCA) +
-                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA) +
+                                CursItens.moveToFirst();
+                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
+                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim() +
+                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim() +
+                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim() +
+                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim() +
+                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim() +
+                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
                                         "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
                                         "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
                                         "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
@@ -535,19 +536,19 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO) + "'" +
+                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() + "'" +
                                         " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             } else {
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
                                         "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
                                         "ATIVO, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
-                                        "',' " + CItens.getString(TAG_CODMANUAL) +
-                                        "','" + CItens.getString(TAG_DESCRICAO) +
-                                        "',' " + CItens.getString(TAG_FABRICANTE) +
-                                        "',' " + CItens.getString(TAG_FORNECEDOR) +
-                                        "',' " + CItens.getString(TAG_CLASSE) +
-                                        "',' " + CItens.getString(TAG_MARCA) +
-                                        "', '" + CItens.getString(TAG_UNIVENDA) +
+                                        "',' " + CItens.getString(TAG_CODMANUAL).trim() +
+                                        "','" + CItens.getString(TAG_DESCRICAO).trim() +
+                                        "',' " + CItens.getString(TAG_FABRICANTE).trim() +
+                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim() +
+                                        "',' " + CItens.getString(TAG_CLASSE).trim() +
+                                        "',' " + CItens.getString(TAG_MARCA).trim() +
+                                        "', '" + CItens.getString(TAG_UNIVENDA).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA1).trim() +
                                         "', '" + CItens.getString(TAG_VLVENDA2).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA3).trim() +
@@ -557,7 +558,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', '" + CItens.getString(TAG_VENDAPADRAO).trim() +
                                         "', '" + CItens.getString(TAG_ATIVO) +
-                                        "',' " + CItens.getString(TAG_APRESENTACAO) + "');");
+                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
                             }
                             CursItens.close();
 
@@ -597,7 +598,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             final int totalProgressTime = CursorClieEnv.getCount();
             Dialog.setMax(totalProgressTime);
             Dialog.setProgress(jumpTime);
-            CursorClieEnv.moveToFirst();
             if (CursorClieEnv.getCount() > 0) {
                 CursorClieEnv.moveToFirst();
                 do {
@@ -699,8 +699,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     try {
                         if (!CodClie_ext.equals("0")) {
                             Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'", null);
-                            CursClieAtu.moveToFirst();
                             if (CursClieAtu.getCount() > 0) {
+                                CursClieAtu.moveToFirst();
                                 DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + CodClie_ext + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'");
                             }
                             CursClieAtu.close();
@@ -733,8 +733,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             final int totalProgressTime = CursorPedido.getCount();
             Dialog.setMax(totalProgressTime);
             Dialog.setProgress(jumpTime);
-            CursorPedido.moveToFirst();
-
             if (CursorPedido.getCount() > 0) {
                 CursorPedido.moveToFirst();
                 do {
@@ -844,8 +842,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             try {
                                 DB = new ConfigDB(this).getReadableDatabase();
                                 Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                                CursPedAtu.moveToFirst();
                                 if (CursPedAtu.getCount() > 0) {
+                                    CursPedAtu.moveToFirst();
                                     DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
                                 }
                                 CursPedAtu.close();
@@ -2426,15 +2424,15 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
                         try {
-                            CursItens.moveToFirst();
                             if (CursItens.getCount() > 0) {
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL) +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO) +
-                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE) +
-                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR) +
-                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE) +
-                                        "', MARCA = '" + CItens.getString(TAG_MARCA) +
-                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA) +
+                                CursItens.moveToFirst();
+                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
+                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim() +
+                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim() +
+                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim() +
+                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim() +
+                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim() +
+                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
                                         "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
                                         "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
                                         "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
@@ -2444,19 +2442,19 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO) +
+                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() +
                                         "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             } else {
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
                                         "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
                                         "ATIVO, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
-                                        "',' " + CItens.getString(TAG_CODMANUAL) +
-                                        "','" + CItens.getString(TAG_DESCRICAO) +
-                                        "',' " + CItens.getString(TAG_FABRICANTE) +
-                                        "',' " + CItens.getString(TAG_FORNECEDOR) +
-                                        "',' " + CItens.getString(TAG_CLASSE) +
-                                        "',' " + CItens.getString(TAG_MARCA) +
-                                        "', '" + CItens.getString(TAG_UNIVENDA) +
+                                        "',' " + CItens.getString(TAG_CODMANUAL).trim() +
+                                        "','" + CItens.getString(TAG_DESCRICAO).trim() +
+                                        "',' " + CItens.getString(TAG_FABRICANTE).trim() +
+                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim() +
+                                        "',' " + CItens.getString(TAG_CLASSE).trim() +
+                                        "',' " + CItens.getString(TAG_MARCA).trim() +
+                                        "', '" + CItens.getString(TAG_UNIVENDA).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA1).trim() +
                                         "', '" + CItens.getString(TAG_VLVENDA2).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA3).trim() +
@@ -2466,7 +2464,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', '" + CItens.getString(TAG_VENDAPADRAO).trim() +
                                         "', '" + CItens.getString(TAG_ATIVO) +
-                                        "',' " + CItens.getString(TAG_APRESENTACAO) + "');");
+                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
                             }
                             CursItens.close();
                         } catch (Exception E) {
@@ -2623,6 +2621,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                         try {
                             if (cursor.getCount() > 0) {
+                                cursor.moveToFirst();
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim() +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim() +
                                         "', REGIDENT = '" + c.getString(TAG_RG) +
