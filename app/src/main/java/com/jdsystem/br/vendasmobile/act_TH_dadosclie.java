@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+
 import org.jetbrains.annotations.Nullable;
+
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +75,8 @@ public class act_TH_dadosclie extends Fragment {
                 do {
                     String Documento = CursorClie.getString(CursorClie.getColumnIndex("CNPJ_CPF"));
                     String CEP = CursorClie.getString(CursorClie.getColumnIndex("CEP"));
+                    String Tel1 = CursorClie.getString(CursorClie.getColumnIndex("TEL1"));
+                    String Tel2 = CursorClie.getString(CursorClie.getColumnIndex("TEL2"));
                     Documento.replaceAll("[^0123456789]", "");
                     if (Documento.length() == 14) {
                         TAG_DOCUMENTO.setText("CNPJ: " + Mask.addMask(Documento, "##.###.###/####-##"));
@@ -96,8 +100,24 @@ public class act_TH_dadosclie extends Fragment {
                     TAG_COMPLEMENTO.setText("Complemento: " + CursorClie.getString(CursorClie.getColumnIndex("COMPLEMENT")));
 
                     TAG_CEP.setText("CEP: " + Mask.addMask(CEP, "##.###-###"));
-                    TAG_TELEFONE_1.setText("Telefone 1: " + CursorClie.getString(CursorClie.getColumnIndex("TEL1")));
-                    TAG_TELEFONE_2.setText("Telefone 2: " + CursorClie.getString(CursorClie.getColumnIndex("TEL2")));
+                    Tel1.replaceAll("[^0123456789]", "");
+                    if (Tel1.length() == 11) {
+                        TAG_TELEFONE_1.setText("Telefone 1: " + Mask.addMask(Tel1, "(##)#####-####"));
+                    } else if (Tel1.length() == 10) {
+                        TAG_TELEFONE_1.setText("Telefone 1: " + Mask.addMask(Tel1, "(##)####-####"));
+                    }else  {
+                        TAG_TELEFONE_1.setText("Telefone 1: " + CursorClie.getString(CursorClie.getColumnIndex("TEL1")));
+                    }
+
+                    Tel2.replaceAll("[^0123456789]", "");
+                    if (Tel2.length() == 11) {
+                        TAG_TELEFONE_2.setText("Telefone 1: " + Mask.addMask(Tel2, "(##)#####-####"));
+                    } else if (Tel2.length() == 10) {
+                        TAG_TELEFONE_2.setText("Telefone 1: " + Mask.addMask(Tel2, "(##)####-####"));
+                    }else  {
+                        TAG_TELEFONE_2.setText("Telefone 2: " + CursorClie.getString(CursorClie.getColumnIndex("TEL2")));
+                    }
+
                     TAG_EMAIL.setText("Email: " + CursorClie.getString(CursorClie.getColumnIndex("EMAIL")));
                 }
                 while (CursorClie.moveToNext());

@@ -199,10 +199,10 @@ public class SqliteProdutoDao {
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
             if (Param == 1) {
-                cursor = db.rawQuery("select CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, CLASSE, " +
+                cursor = db.rawQuery("select CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5, VLVENDAP1,VLVENDAP2, CLASSE, " +
                         "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO from ITENS", null);
             } else {
-                cursor = db.rawQuery("select CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, CLASSE, " +
+                cursor = db.rawQuery("select CODITEMANUAL as _id, CODITEMANUAL, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5, VLVENDAP1,VLVENDAP2, CLASSE, " +
                         "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO from ITENS where ATIVO = '1' ", null);
             }
 

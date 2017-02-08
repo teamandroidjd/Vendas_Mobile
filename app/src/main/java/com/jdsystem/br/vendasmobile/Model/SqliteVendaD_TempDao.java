@@ -109,6 +109,38 @@ public class SqliteVendaD_TempDao {
         return produto;
     }
 
+    public boolean atualizar_item_na_venda(SqliteVendaD_TempBean item) {
+        gravacao = false;
+        try {
+            try {
+                db = new ConfigDB(ctx).getWritableDatabase();
+                sql = "UPDATE VENDAD_TEMP SET vendad_prd_codigoTEMP = ?, vendad_prd_descricaoTEMP = ?,vendad_quantidadeTEMP = ?, " +
+                       "vendad_preco_vendaTEMP = ?, vendad_totalTEMP = ?, vendad_prd_unidadeTEMP = ? where vendad_prd_codigoTEMP =  " + item.getVendad_prd_codigoTEMP();
+                stmt = db.compileStatement(sql);
+                //stmt.bindString(1, item.getVendad_eanTEMP());
+                stmt.bindString(1, item.getVendad_prd_codigoTEMP());
+                stmt.bindString(2, item.getVendad_prd_descricaoTEMP());
+                stmt.bindDouble(3, item.getVendad_quantidadeTEMP().doubleValue());
+                stmt.bindDouble(4, item.getVendad_preco_vendaTEMP().setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue());
+                stmt.bindDouble(5, item.getVendad_totalTEMP().setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue());
+                String und = item.getVendad_prd_unidadeTEMP();
+                stmt.bindString(6, item.getVendad_prd_unidadeTEMP());
+                if (stmt.executeUpdateDelete() > 0) {
+                    gravacao = true;
+                }
+            } catch (SQLiteException e) {
+                Util.log("SQLiteException insere_item" + e.getMessage());
+                gravacao = false;
+            } finally {
+                db.close();
+                stmt.close();
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+        return gravacao;
+    }
+
     public List<SqliteVendaD_TempBean> busca_todos_itens_da_venda() {
         List<SqliteVendaD_TempBean> lista_de_itens_vendidos = new ArrayList<SqliteVendaD_TempBean>();
         db = new ConfigDB(ctx).getReadableDatabase();

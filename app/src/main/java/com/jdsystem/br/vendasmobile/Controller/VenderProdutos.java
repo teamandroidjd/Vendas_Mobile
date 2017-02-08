@@ -559,7 +559,57 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
 
+                                        Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
+
+                                        if (TAMANHO_TEXTO > 0) {
+                                            SqliteProdutoBean prdBean = new SqliteProdutoBean();
+                                            Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
+                                            String COD_PRODUTO = info_txv_codproduto.getText().toString();
+                                            String DESCRICAO = info_txv_descricaoproduto.getText().toString();
+                                            String UNIDADE = info_txv_unmedida.getText().toString();
+
+                                            if (QUANTIDADE_DIGITADA > 0) {
+
+                                                SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getApplicationContext());
+
+                                                itemBean2.setVendad_prd_codigoTEMP(COD_PRODUTO);
+                                                itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
+
+                                                if (itemBean3 != null) {
+                                                    itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
+                                                    itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
+                                                    itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
+                                                    itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
+
+                                                    //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
+                                                    String ValorItem = info_txv_precoproduto.getText().toString();
+                                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                                    venda.setScale(4,BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                                    itemBean1.setVendad_preco_vendaTEMP(venda);
+
+                                                    //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                                    itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
+                                                    itemDao.atualizar_item_na_venda(itemBean1);
+                                                    atualiza_listview_e_calcula_total();
+                                                    //finish();
+                                                } else {
+                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                                                }
+
+                                                //}
+                                            } else {
+                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                            }
+
+                                        } else {
+                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                        }
+                                        VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
                                     }
+
                                 });
                                 alerta1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                     @Override
@@ -572,7 +622,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                 SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                                 new Sqlite_VENDADAO(getApplicationContext(), CodVendedor).excluir_um_item_da_venda(item2);
                             }
-                            atualiza_listview_e_calcula_total();
+
                         }
                     }
                 }

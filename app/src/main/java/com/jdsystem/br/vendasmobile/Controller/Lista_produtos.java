@@ -160,7 +160,15 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 prdBean.P_DESCRICAO_PRODUTO,
                 //prdBean.P_QUANTIDADE_PRODUTO,
                 prdBean.P_CATEGORIA_PRODUTO,
-                prdBean.P_PRECO_PROD_PADRAO};
+                //prdBean.P_PRECO_PROD_VLVENDA1,
+                prdBean.P_PRECO_PROD_PADRAO,   //VLVENDA1
+                prdBean.P_PRECO_PROD_VLVENDA2, //VLVENDA2
+                prdBean.P_PRECO_PROD_VLVENDA3, //VLVENDA3
+                prdBean.P_PRECO_PROD_VLVENDA4, //VLVENDA4
+                prdBean.P_PRECO_PROD_VLVENDA5, //VLVENDA5
+                prdBean.P_PRECO_PROD_VLVENDAP1,//PROMOCAO_A
+                prdBean.P_PRECO_PROD_VLVENDAP2,//PROMOCAO_B
+                };
 
         int[] to = new int[]{
                 R.id.prod_txv_prd_codigo,
@@ -168,7 +176,14 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 R.id.prod_txv_prd_descricaoproduto,
                 //R.id.prod_txv_prd_quantidade,
                 R.id.prod_txv_prd_categoria,
-                R.id.prod_txv_prd_preco};
+                R.id.prod_txv_prd_preco,  //VLVENDA1
+                R.id.prod_txv_prd_preco2, //VLVENDA2
+                R.id.prod_txv_prd_preco3, //VLVENDA3
+                R.id.prod_txv_prd_preco4, //VLVENDA4
+                R.id.prod_txv_prd_preco5, //VLVENDA5
+                R.id.prod_txv_prd_preco6, //PROMOCAO_A
+                R.id.prod_txv_prd_preco7, //PROMOCAO_B
+        };
 
         try {
             adapter = new SimpleCursorAdapter(this, R.layout.lista_produto_item, cursor, colunas, to, 0);
@@ -285,7 +300,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                             //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
                             String ValorItem = info_txv_precoproduto.getText().toString();
                             BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                            venda.setScale(4,BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                            venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
                             itemBean1.setVendad_preco_vendaTEMP(venda);
 
                             //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
