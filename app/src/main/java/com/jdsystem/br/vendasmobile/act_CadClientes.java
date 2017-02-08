@@ -250,6 +250,34 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         sUF = "TO";//Tocantins
                         break;
                 }
+                Boolean ConexOk = VerificaConexao();
+                if(ConexOk == false){
+
+                    int CodCidade = 0;
+                    try {
+
+                        Cursor cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
+                        List<String> DadosList = new ArrayList<String>();
+                        if (cursor.getCount() > 0) {
+                            cursor.moveToFirst();
+                            do {
+                                String Cidade = cursor.getString(cursor.getColumnIndex("DESCRICAO"));
+                                CodCidade = cursor.getInt(cursor.getColumnIndex("CODCIDADE_EXT"));
+                                DadosList.add(Cidade);
+                            } while (cursor.moveToNext());
+                            cursor.close();
+
+                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                            ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                            spCidade.setAdapter(spinnerArrayAdapter);
+                        }
+                    } catch (Exception E) {
+                        System.out.println("Error" + E);
+                    }
+
+                }
+
 
                 Thread thread = new Thread(act_CadClientes.this);
                 thread.start();
@@ -263,39 +291,82 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
 
         spCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                NomeCidade = spCidade.getSelectedItem().toString();
-                Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
-                if (CurCidade.getCount() > 0) {
-                    CurCidade.moveToFirst();
-                    CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
-                }
-                CurCidade.close();
-                Cursor CurBairro = null;
-                try {
-                    if (PesqCEP.equals(false)) {
-                        CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
-                    } else {
-                        CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
+
+                Boolean ConexOk = VerificaConexao();
+                if(ConexOk == false){
+
+                    NomeCidade = spCidade.getSelectedItem().toString();
+                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
+                    if (CurCidade.getCount() > 0) {
+                        CurCidade.moveToFirst();
+                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
                     }
-                } catch (Exception e) {
-                    e.toString();
+                    CurCidade.close();
+                    Cursor CurBairro = null;
+                    try {
+                        if (PesqCEP.equals(false)) {
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
+                        } else {
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+
+                    List<String> DadosListBairro = new ArrayList<String>();
+                    if (CurBairro.getCount() > 0) {
+                        CurBairro.moveToFirst();
+                        do {
+                            String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
+                            DadosListBairro.add(Bairro);
+                        } while (CurBairro.moveToNext());
+                    }
+                    CurBairro.close();
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+                    ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                    spBairro.setAdapter(spinnerArrayAdapter);
+
+                }else {
+
+                    NomeCidade = spCidade.getSelectedItem().toString();
+                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
+                    if (CurCidade.getCount() > 0) {
+                        CurCidade.moveToFirst();
+                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
+                    }
+                    CurCidade.close();
+                    Cursor CurBairro = null;
+                    try {
+                        if (PesqCEP.equals(false)) {
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
+                        } else {
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+
+                    List<String> DadosListBairro = new ArrayList<String>();
+                    if (CurBairro.getCount() > 0) {
+                        CurBairro.moveToFirst();
+                        do {
+                            String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
+                            DadosListBairro.add(Bairro);
+                        } while (CurBairro.moveToNext());
+                    }
+                    CurBairro.close();
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+                    ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                    spBairro.setAdapter(spinnerArrayAdapter);
+
                 }
 
-                List<String> DadosListBairro = new ArrayList<String>();
-                if (CurBairro.getCount() > 0) {
-                    CurBairro.moveToFirst();
-                    do {
-                        String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
-                        DadosListBairro.add(Bairro);
-                    } while (CurBairro.moveToNext());
-                }
-                CurBairro.close();
-
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
-                ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
-                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                spBairro.setAdapter(spinnerArrayAdapter);
             }
+
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -431,21 +502,22 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     try {
                         NomeCidade = c.getString("cidade");
                         //int CodCidadeExt = c.getInt("id_cidade");
+                        NomeCidade = NomeCidade.replaceAll("'","");
 
-                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT UF FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                         if (CursorCidade.getCount() > 0) {
                             DB.execSQL(" UPDATE CIDADES SET UF = '" + Estado + "', DESCRICAO = '" + NomeCidade + "' " +//, CODCIDADE_EXT = '" + CodCidadeExt + "'" +
                                     " WHERE DESCRICAO = '" + NomeCidade + "'");
                             Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                             cursor1.moveToFirst();
-                            CodCidade = Integer.parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE")));
+                            CodCidade = Integer.parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE_EXT")));
                             cursor1.close();
                         } else {
                             DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF)" +
                                     " VALUES('" + NomeCidade + "','" + Estado + "');");
                             Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                             cursor1.moveToFirst();
-                            CodCidade = Integer.parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE")));
+                            CodCidade = Integer.parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE_EXT")));
                             cursor1.close();
                         }
                         CursorCidade.close();
@@ -458,10 +530,12 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     try {
                         NomeBairro = c.getString("bairro");
                         int CodBairroExt = c.getInt("id_bairro");
+                        NomeBairro = NomeBairro.replaceAll("'","");
 
                         Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODCIDADE FROM BAIRROS WHERE CODCIDADE = " + CodCidade + " AND DESCRICAO = '" + NomeBairro + "'", null);
                         if (CursorBairro.getCount() > 0) {
-                            DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = '" + Cidade + "', DESCRICAO = '" + NomeBairro + "'" +
+                            CursorBairro.moveToFirst();
+                            DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = " + CodCidade + ", DESCRICAO = '" + NomeBairro + "'" +
                                     " WHERE DESCRICAO = '" + NomeBairro + "' AND CODCIDADE = '" + CodCidade + "'");
                         } else {
                             DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODCIDADE)" +

@@ -49,7 +49,7 @@
                         android:layout_height="wrap_content"
                         android:text="Situação do Pedido"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="25sp"
+                        android:textSize="35sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
 

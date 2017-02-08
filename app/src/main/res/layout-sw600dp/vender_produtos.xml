@@ -59,7 +59,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.26"
+            android:layout_weight="1.17"
             android:gravity="center|left"
             android:paddingLeft="4dp"
             android:text="Descrição"
@@ -80,7 +80,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.07"
+            android:layout_weight="0.87"
             android:gravity="center"
             android:text="Vl.Unit."
             android:textColor="@color/colordescClie"

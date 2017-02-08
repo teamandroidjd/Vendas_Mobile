@@ -104,6 +104,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         btnSinc.setOnClickListener(new View.OnClickListener() {
                                        @Override
                                        public void onClick(View v) {
+
+                                           hd = new Handler();
                                            Dialog = new ProgressDialog(actSincronismo.this);
                                            Dialog.setTitle("Aguarde...");
                                            Dialog.setMessage("");
@@ -111,10 +113,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                            Dialog.setProgress(0);
                                            Dialog.setIcon(R.drawable.icon_sync);
                                            Dialog.setMax(0);
-                                           Dialog.show();
                                            Dialog.setCancelable(false);
-
-                                           hd = new Handler();
+                                           Dialog.show();
                                            if (VerificaConexao()) {
                                                Thread td = new Thread(actSincronismo.this);
                                                td.start();
@@ -195,440 +195,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         finish();
     }
 
-    public boolean VerificaConexao() {
-        boolean conectado;
-        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (conectivtyManager.getActiveNetworkInfo() != null
-                && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-            conectado = true;
-        } else {
-            conectado = false;
-        }
-        return conectado;
-    }
-
-
-    private void SincronizarClientesEnvio() {
-        String Jcliente = null;
-        String METHOD_NAMEENVIO = "Cadastrar";
-        DB = new ConfigDB(this).getReadableDatabase();
-
-        try {
-            Cursor CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                    " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                    " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE FLAGINTEGRADO = '1' " +
-                    " ORDER BY NOMEFAN, NOMERAZAO ", null);
-
-            int jumpTime = 0;
-            String CodClie_ext = null;
-            final int totalProgressTime = CursorClieEnv.getCount();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            CursorClieEnv.moveToFirst();
-            if (CursorClieEnv.getCount() > 0) {
-                CursorClieEnv.moveToFirst();
-                do {
-                    for (int i = 0; i < CursorClieEnv.getCount(); i++) {
-                        do {
-                            try {
-                                jumpTime += 1;
-                                Dialog.setProgress(jumpTime);
-                                //Dialog.setMessage("Enviando clientes");
-                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")) + "'," +
-                                        "nome_fantasia: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN")) + "'," +
-                                        "tipo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) + "'," +
-                                        "cnpj_cpf: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'," +
-                                        "inscricao_estadual: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")) + "'," +
-                                        "Logradouro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ENDERECO")) + "'," +
-                                        "numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NUMERO")) + "'," +
-                                        "codvendedor: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODVENDEDOR")) + "'," +
-                                        "complemento: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("COMPLEMENT")) + "'," +
-                                        "bairro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("BAIRRO")) + "'," +
-                                        "cidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) + "'," +
-                                        "estado: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) + "'," +
-                                        "cep: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) + "'," +
-                                        "sexo: '" + "" + "'," +
-                                        "estadocivil: '" + "" + "'," +
-                                        "tipoplano: '" + "" + "'," +
-                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")) + "'," +
-                                        "identidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) + "'," +
-                                        "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")) + "'}," +
-                                        "{email: ''}]," +
-                                        "ativo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ATIVO")) + "'," +
-                                        "telefones: [{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL1")) + "'}," +
-                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL2")) + "'}," +
-                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TELFAX")) + "'}]";
-
-                                String Contatos = "";
-                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " +
-                                        CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODCLIE_INT")), null);
-
-                                CursorContatosEnv.moveToFirst();
-                                while (CursorContatosEnv.moveToNext()) {
-                                    Contatos = Contatos + "{nome: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("NOME")) + "'," +
-                                            "cargo: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CARGO")) + "'," +
-                                            "emails: [{email: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("EMAIL")) + "'}]," +
-                                            "telefones: [{numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL1")) + "'," +
-                                            "numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL2")) + "'}]},";
-                                }
-
-                                if (Contatos != "") {
-                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
-                                } else {
-                                    Contatos = "{nome: ''," +
-                                            "cargo: ''," +
-                                            "emails: [{email: ''}]," +
-                                            "telefones: [{numero: ''," +
-                                            "numero: ''}]}";
-                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
-                                }
-                                String Dependentes = "{nome: ''," +
-                                        "dataadesao: ''," +
-                                        "datanascimento: ''," +
-                                        "redident: ''," +
-                                        "codclie: ''}";
-                                Jcliente = Jcliente + ",dependentes: " + "[" + Dependentes + "]}";
-
-                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                                StrictMode.setThreadPolicy(policy);
-
-                                SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                                soap.addProperty("aJson", Jcliente);
-                                soap.addProperty("aUsuario", usuario);
-                                soap.addProperty("aSenha", senha);
-                                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                envelope.setOutputSoapObject(soap);
-                                HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
-                                String RetClieEnvio = "0";
-
-                                try {
-                                    //Boolean ConexOk = true;
-                                    Boolean ConexOk = Util.checarConexaoCelular(this);
-                                    if (ConexOk == true) {
-                                        Envio.call("", envelope);
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                                        RetClieEnvio = (String) envelope.getResponse();
-                                        CodClie_ext = RetClieEnvio;
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    }
-                                } catch (Exception e) {
-                                    System.out.println("Error" + e);
-                                }
-                            } catch (Exception E) {
-                                Dialog.dismiss();
-                                Toast.makeText(this, "Cliente não enviado! Verifique.", Toast.LENGTH_SHORT).show();
-                                return;
-                                //E.printStackTrace();
-                            }
-                        }
-                        while (jumpTime < totalProgressTime);
-                    }
-                    try {
-                        if (!CodClie_ext.equals("0")) {
-                            Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'", null);
-                            CursClieAtu.moveToFirst();
-                            if (CursClieAtu.getCount() > 0) {
-                                DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + CodClie_ext + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'");
-                            }
-                            CursClieAtu.close();
-                        }
-                    } catch (Exception E) {
-                    }
-                }
-                while (CursorClieEnv.moveToNext());
-                CursorClieEnv.close();
-            }
-            //  if (Dialog.isShowing())
-            //    Dialog.dismiss();
-        } catch (Exception E) {
-            System.out.println("Error" + E);
-        }
-    }
-
-    public void SincronizarPedidosEnvio() {
-        String JPedidos = null;
-        String METHOD_NAMEENVIO = "CadastrarPedidos";
-        DB = new ConfigDB(this).getReadableDatabase();
-        Cursor CursorPedido;
-        String RetClieEnvio = null;
-        try {
-            CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE FLAGINTEGRADO = '5'", null);
-
-            int jumpTime = 0;
-            final int totalProgressTime = CursorPedido.getCount();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            CursorPedido.moveToFirst();
-
-            if (CursorPedido.getCount() > 0) {
-                CursorPedido.moveToFirst();
-                do {
-                    for (int i = 0; i < CursorPedido.getCount(); i++) {
-                        do try {
-                            jumpTime += 1;
-                            Dialog.setProgress(jumpTime);
-                            Dialog.setMessage("Sincronizando Tabelas - Pedidos");
-
-                            String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
-                            if (Util.isNullOrEmpty(ValorFrete)) {
-                                ValorFrete = "0";
-                            }
-                            String ValorSeguro = CursorPedido.getString(CursorPedido.getColumnIndex("VALORSEGURO"));
-                            if (Util.isNullOrEmpty(ValorSeguro)) {
-                                ValorSeguro = "0";
-                            }
-
-                            String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS"));
-                            String line_separator = System.getProperty("line.separator");
-                            String OBS = Observacao.replaceAll("\n|" + line_separator, "");
-
-
-                            JPedidos = "{codclie_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODCLIE_EXT")) + "'," +
-                                    "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
-                                    "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
-                                    "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
-                                    "valor_frete: '" + ValorFrete + "'," +
-                                    "valor_seguro: '" + ValorSeguro + "'," +
-                                    "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
-                                    "valor_desconto: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLPERCACRES")).replace(".", ",") + "'," +
-                                    "obs_pedido: '" + OBS + "'," +
-                                    "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
-                                    "chavepedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
-                                    "codempresa: '" + 1 + "'," +
-                                    "cod_vendedor: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODVENDEDOR")) + "',";
-
-                            String PedItems = "";
-                            Cursor CursorItensEnv = DB.rawQuery(" SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" +
-                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-
-                            CursorItensEnv.moveToFirst();
-                            do {
-                                PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
-                                        "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
-                                        "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
-                                        "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
-                                        "vlunit: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ",") + "'," +
-                                        "valortotal: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ",") + "'}";
-
-                                if (!CursorItensEnv.isLast()) {
-                                    PedItems = PedItems + ",";
-                                }
-
-                            } while (CursorItensEnv.moveToNext());
-
-                            if (PedItems != "") {
-                                JPedidos = JPedidos + "produtos: " + "[" + PedItems + "]";
-                            }
-                            String PedParcelas = "";
-                            Cursor CursorParcelasEnv = DB.rawQuery(" SELECT * FROM CONREC WHERE vendac_chave = '" +
-                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                            CursorParcelasEnv.moveToFirst();
-                            do {
-                                PedParcelas = PedParcelas + "{chavepedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
-                                        "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
-                                        "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")) + "'," +
-                                        "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
-
-                                if (!CursorParcelasEnv.isLast()) {
-                                    PedParcelas = PedParcelas + ",";
-                                }
-                            } while (CursorParcelasEnv.moveToNext());
-
-                            if (PedParcelas != "") {
-                                JPedidos = JPedidos + ",formapgto: " + "[" + PedParcelas + "]";
-                            }
-
-                            JPedidos = JPedidos + '}';
-
-                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                            StrictMode.setThreadPolicy(policy);
-
-                            SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                            soap.addProperty("aJson", JPedidos);
-                            soap.addProperty("aUsuario", usuario);
-                            soap.addProperty("aSenha", senha);
-                            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                            envelope.setOutputSoapObject(soap);
-                            HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
-
-                            try {
-                                Boolean ConexOk = true;
-                                //Boolean ConexOk = Util.checarConexaoCelular(this);
-                                if (ConexOk == true) {
-                                    Envio.call("", envelope);
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                                    RetClieEnvio = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                }
-                            } catch (Exception e) {
-                                System.out.println("Error" + e);
-                            }
-                            try {
-                                DB = new ConfigDB(this).getReadableDatabase();
-                                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                                CursPedAtu.moveToFirst();
-                                if (CursPedAtu.getCount() > 0) {
-                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
-                                }
-                                CursPedAtu.close();
-                            } catch (Exception E) {
-                                Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception E) {
-                            // TODO Auto-generated catch block
-                            E.printStackTrace();
-                        }
-                        while (jumpTime < totalProgressTime);
-                    }
-
-                    JPedidos = "";
-                }
-                while (CursorPedido.moveToNext());
-                CursorPedido.close();
-            }
-
-            if (Dialog.isShowing())
-                Dialog.dismiss();
-        } catch (Exception E) {
-            System.out.println("Error" + E);
-        }
-    }
-
-    private void SincronizarProdutos(String nUsuario, String nSenha, String DtUlt) {
-        String METHOD_NAME = "Carregar";
-        String TAG_PRODUTOSINFO = "produtos";
-
-        String TAG_CODIGOITEM = "codigoitem";
-        String TAG_CODMANUAL = "coditemanual";
-        String TAG_DESCRICAO = "descricao";
-        String TAG_UNIVENDA = "univenda";
-        String TAG_VLVENDA1 = "vlvenda1";
-        String TAG_VLVENDA2 = "vlvenda2";
-        String TAG_VLVENDA3 = "vlvenda3";
-        String TAG_VLVENDA4 = "vlvenda4";
-        String TAG_VLVENDA5 = "vlvenda5";
-        String TAG_VLVENDAP1 = "vlvendap1";
-        String TAG_VLVENDAP2 = "vlvendap2";
-        String TAG_VENDAPADRAO = "vendapadrao";
-        String TAG_MARCA = "marca";
-        String TAG_CLASSE = "classe";
-        String TAG_FABRICANTE = "fabricante";
-        String TAG_FORNECEDOR = "fornecedor";
-        String TAG_APRESENTACAO = "apresentacao";
-        String TAG_ATIVO = "ativo";
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        soap.addProperty("aParam", "D" + DtUlt);
-        soap.addProperty("aUsuario", nUsuario);
-        soap.addProperty("aSenha", nSenha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
-        String RetProdutos = null;
-
-        try {
-            //Boolean ConexOk = true;
-            Boolean ConexOk = Util.checarConexaoCelular(this);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                RetProdutos = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetProdutos);
-            JSONArray ProdItens = jsonObj.getJSONArray(TAG_PRODUTOSINFO);
-
-            int jumpTime = 0;
-            final int totalProgressTime = ProdItens.length();
-            DB = new ConfigDB(this).getReadableDatabase();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            for (int i = 0; i < ProdItens.length(); i++) {
-                do {
-                    try {
-                        JSONObject CItens = ProdItens.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-
-                        //Dialog.setMessage("Sincronizando Tabelas - Produtos");
-
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
-                        try {
-                            CursItens.moveToFirst();
-                            if (CursItens.getCount() > 0) {
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL) +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO) +
-                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE) +
-                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR) +
-                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE) +
-                                        "', MARCA = '" + CItens.getString(TAG_MARCA) +
-                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA) +
-                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1) +
-                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2) +
-                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3) +
-                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4) +
-                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5) +
-                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1) +
-                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO) +
-                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2) +
-                                        "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO) + "'" +
-                                        " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
-                            } else {
-                                DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
-                                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
-                                        "ATIVO, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
-                                        "',' " + CItens.getString(TAG_CODMANUAL) +
-                                        "','" + CItens.getString(TAG_DESCRICAO) +
-                                        "',' " + CItens.getString(TAG_FABRICANTE) +
-                                        "',' " + CItens.getString(TAG_FORNECEDOR) +
-                                        "',' " + CItens.getString(TAG_CLASSE) +
-                                        "',' " + CItens.getString(TAG_MARCA) +
-                                        "', '" + CItens.getString(TAG_UNIVENDA) +
-                                        "',' " + CItens.getString(TAG_VLVENDA1) +
-                                        "', '" + CItens.getString(TAG_VLVENDA2) +
-                                        "',' " + CItens.getString(TAG_VLVENDA3) +
-                                        "',' " + CItens.getString(TAG_VLVENDA4) +
-                                        "','" + CItens.getString(TAG_VLVENDA5) +
-                                        "',' " + CItens.getString(TAG_VLVENDAP1) +
-                                        "',' " + CItens.getString(TAG_VLVENDAP2) +
-                                        "', '" + CItens.getString(TAG_VENDAPADRAO) +
-                                        "', '" + CItens.getString(TAG_ATIVO) +
-                                        "',' " + CItens.getString(TAG_APRESENTACAO) + "');");
-                            }
-                            CursItens.close();
-                        } catch (Exception E) {
-                            System.out.println("Error" + E);
-                        }
-
-                    } catch (Exception E) {
-                        // TODO Auto-generated catch block
-                        E.printStackTrace();
-                    }
-                }
-                while (jumpTime < totalProgressTime);
-            }
-            //  if (Dialog.isShowing())
-            //     Dialog.dismiss();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     public void SincronizarClientes(String sCodVend, String nUsuario, String nSenha, String DtUlt) {
+
         String METHOD_NAME = "Carregar";
         String TAG_CLIENTESINFO = "clientes";
         String TAG_TELEFONESINFO = "telefones";
@@ -667,23 +235,22 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String RetClientes = null;
 
         try {
-            Boolean ConexOk = true;
-            //Boolean ConexOk =
+            Boolean ConexOk = Util.checarConexaoCelular(this);
             if (ConexOk == true) {
                 Envio.call("", envelope);
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
                 RetClientes = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
+            } else {
+                Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
+                return;
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
         }
 
         try {
-            //String SHA1Ret = RetClientes.substring(0, 40);
-            //String ArrayClientes = RetClientes.substring(40, (RetClientes.length()));
-
             JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
 
@@ -725,7 +292,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                         jumpTime += 1;
                         Dialog.setProgress(jumpTime);
-                        //Dialog.setMessage("Sincronizando Tabelas - Clientes");
+                        Dialog.setMessage("Sincronizando Tabelas - Clientes");
 
                         Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
 
@@ -880,6 +447,445 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
+    private void SincronizarProdutos(String nUsuario, String nSenha, String DtUlt) {
+
+        String METHOD_NAME = "Carregar";
+        String TAG_PRODUTOSINFO = "produtos";
+
+        String TAG_CODIGOITEM = "codigoitem";
+        String TAG_CODMANUAL = "coditemanual";
+        String TAG_DESCRICAO = "descricao";
+        String TAG_UNIVENDA = "univenda";
+        String TAG_VLVENDA1 = "vlvenda1";
+        String TAG_VLVENDA2 = "vlvenda2";
+        String TAG_VLVENDA3 = "vlvenda3";
+        String TAG_VLVENDA4 = "vlvenda4";
+        String TAG_VLVENDA5 = "vlvenda5";
+        String TAG_VLVENDAP1 = "vlvendap1";
+        String TAG_VLVENDAP2 = "vlvendap2";
+        String TAG_VENDAPADRAO = "vendapadrao";
+        String TAG_MARCA = "marca";
+        String TAG_CLASSE = "classe";
+        String TAG_FABRICANTE = "fabricante";
+        String TAG_FORNECEDOR = "fornecedor";
+        String TAG_APRESENTACAO = "apresentacao";
+        String TAG_ATIVO = "ativo";
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+        soap.addProperty("aParam", "D" + DtUlt);
+        soap.addProperty("aUsuario", nUsuario);
+        soap.addProperty("aSenha", nSenha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
+        String RetProdutos = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(this);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetProdutos = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            } else {
+                Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+
+        try {
+            JSONObject jsonObj = new JSONObject(RetProdutos);
+            JSONArray ProdItens = jsonObj.getJSONArray(TAG_PRODUTOSINFO);
+
+            int jumpTime = 0;
+            final int totalProgressTime = ProdItens.length();
+            DB = new ConfigDB(this).getReadableDatabase();
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
+            for (int i = 0; i < ProdItens.length(); i++) {
+                do {
+                    try {
+                        JSONObject CItens = ProdItens.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        Dialog.setProgress(jumpTime);
+                        Dialog.setMessage("Sincronizando Tabelas - Produtos");
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
+                        try {
+                            CursItens.moveToFirst();
+                            if (CursItens.getCount() > 0) {
+                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL) +
+                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO) +
+                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE) +
+                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR) +
+                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE) +
+                                        "', MARCA = '" + CItens.getString(TAG_MARCA) +
+                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA) +
+                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1) +
+                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2) +
+                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3) +
+                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4) +
+                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5) +
+                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1) +
+                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO) +
+                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2) +
+                                        "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
+                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO) + "'" +
+                                        " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
+                            } else {
+                                DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
+                                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
+                                        "ATIVO, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
+                                        "',' " + CItens.getString(TAG_CODMANUAL) +
+                                        "','" + CItens.getString(TAG_DESCRICAO) +
+                                        "',' " + CItens.getString(TAG_FABRICANTE) +
+                                        "',' " + CItens.getString(TAG_FORNECEDOR) +
+                                        "',' " + CItens.getString(TAG_CLASSE) +
+                                        "',' " + CItens.getString(TAG_MARCA) +
+                                        "', '" + CItens.getString(TAG_UNIVENDA) +
+                                        "',' " + CItens.getString(TAG_VLVENDA1) +
+                                        "', '" + CItens.getString(TAG_VLVENDA2) +
+                                        "',' " + CItens.getString(TAG_VLVENDA3) +
+                                        "',' " + CItens.getString(TAG_VLVENDA4) +
+                                        "','" + CItens.getString(TAG_VLVENDA5) +
+                                        "',' " + CItens.getString(TAG_VLVENDAP1) +
+                                        "',' " + CItens.getString(TAG_VLVENDAP2) +
+                                        "', '" + CItens.getString(TAG_VENDAPADRAO) +
+                                        "', '" + CItens.getString(TAG_ATIVO) +
+                                        "',' " + CItens.getString(TAG_APRESENTACAO) + "');");
+                            }
+                            CursItens.close();
+
+                        } catch (Exception E) {
+                            System.out.println("Error" + E);
+                        }
+
+                    } catch (Exception E) {
+                        // TODO Auto-generated catch block
+                        E.printStackTrace();
+                    }
+                }
+                while (jumpTime < totalProgressTime);
+            }
+            //  if (Dialog.isShowing())
+            //     Dialog.dismiss();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void SincronizarClientesEnvio() {
+
+        String Jcliente = null;
+        String METHOD_NAMEENVIO = "Cadastrar";
+        DB = new ConfigDB(this).getReadableDatabase();
+
+        try {
+            Cursor CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                    " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
+                    " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE FLAGINTEGRADO = '1' " +
+                    " ORDER BY NOMEFAN, NOMERAZAO ", null);
+
+            int jumpTime = 0;
+            String CodClie_ext = null;
+            final int totalProgressTime = CursorClieEnv.getCount();
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
+            CursorClieEnv.moveToFirst();
+            if (CursorClieEnv.getCount() > 0) {
+                CursorClieEnv.moveToFirst();
+                do {
+                    for (int i = 0; i < CursorClieEnv.getCount(); i++) {
+                        do {
+                            try {
+                                jumpTime += 1;
+                                Dialog.setProgress(jumpTime);
+                                Dialog.setMessage("Enviando clientes");
+                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")) + "'," +
+                                        "nome_fantasia: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN")) + "'," +
+                                        "tipo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) + "'," +
+                                        "cnpj_cpf: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'," +
+                                        "inscricao_estadual: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")) + "'," +
+                                        "Logradouro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ENDERECO")) + "'," +
+                                        "numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NUMERO")) + "'," +
+                                        "codvendedor: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODVENDEDOR")) + "'," +
+                                        "complemento: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("COMPLEMENT")) + "'," +
+                                        "bairro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("BAIRRO")) + "'," +
+                                        "cidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) + "'," +
+                                        "estado: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) + "'," +
+                                        "cep: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) + "'," +
+                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")) + "'," +
+                                        "identidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) + "'," +
+                                        "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")) + "'}," +
+                                        "{email: ''}]," +
+                                        "ativo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ATIVO")) + "'," +
+                                        "telefones: [{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL1")) + "'}," +
+                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL2")) + "'}," +
+                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TELFAX")) + "'}]";
+
+                                String Contatos = "";
+                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " +
+                                        CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODCLIE_INT")), null);
+
+                                CursorContatosEnv.moveToFirst();
+                                while (CursorContatosEnv.moveToNext()) {
+                                    Contatos = Contatos + "{nome: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("NOME")) + "'," +
+                                            "cargo: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CARGO")) + "'," +
+                                            "emails: [{email: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("EMAIL")) + "'}]," +
+                                            "telefones: [{numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL1")) + "'," +
+                                            "numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL2")) + "'}]},";
+                                }
+
+                                if (Contatos != "") {
+                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
+                                } else {
+                                    Contatos = "{nome: ''," +
+                                            "cargo: ''," +
+                                            "emails: [{email: ''}]," +
+                                            "telefones: [{numero: ''," +
+                                            "numero: ''}]}";
+                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
+                                }
+                                String Dependentes = "{nome: ''," +
+                                        "dataadesao: ''," +
+                                        "datanascimento: ''," +
+                                        "redident: ''," +
+                                        "codclie: ''}";
+                                Jcliente = Jcliente + ",dependentes: " + "[" + Dependentes + "]}";
+
+                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                                StrictMode.setThreadPolicy(policy);
+
+                                SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                                soap.addProperty("aJson", Jcliente);
+                                soap.addProperty("aUsuario", usuario);
+                                soap.addProperty("aSenha", senha);
+                                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                envelope.setOutputSoapObject(soap);
+                                HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
+                                String RetClieEnvio = "0";
+
+                                try {
+                                    Boolean ConexOk = Util.checarConexaoCelular(this);
+                                    if (ConexOk == true) {
+                                        Envio.call("", envelope);
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                                        RetClieEnvio = (String) envelope.getResponse();
+                                        CodClie_ext = RetClieEnvio;
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } else {
+                                        Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println("Error" + e);
+                                }
+                            } catch (Exception E) {
+                                Dialog.dismiss();
+                                Toast.makeText(this, "Cliente não enviado! Verifique.", Toast.LENGTH_SHORT).show();
+                                return;
+                                //E.printStackTrace();
+                            }
+                        }
+                        while (jumpTime < totalProgressTime);
+                    }
+                    try {
+                        if (!CodClie_ext.equals("0")) {
+                            Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'", null);
+                            CursClieAtu.moveToFirst();
+                            if (CursClieAtu.getCount() > 0) {
+                                DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + CodClie_ext + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'");
+                            }
+                            CursClieAtu.close();
+                        }
+                    } catch (Exception E) {
+                    }
+                }
+                while (CursorClieEnv.moveToNext());
+                CursorClieEnv.close();
+                Dialog.dismiss();
+            }
+            //  if (Dialog.isShowing())
+            //    Dialog.dismiss();
+        } catch (Exception E) {
+            System.out.println("Error" + E);
+        }
+    }
+
+    public void SincronizarPedidosEnvio() {
+
+        String JPedidos = null;
+        String METHOD_NAMEENVIO = "CadastrarPedidos";
+        DB = new ConfigDB(this).getReadableDatabase();
+        Cursor CursorPedido;
+        String RetClieEnvio = null;
+        try {
+            CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE FLAGINTEGRADO = '5'", null);
+
+            int jumpTime = 0;
+            final int totalProgressTime = CursorPedido.getCount();
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
+            CursorPedido.moveToFirst();
+
+            if (CursorPedido.getCount() > 0) {
+                CursorPedido.moveToFirst();
+                do {
+                    for (int i = 0; i < CursorPedido.getCount(); i++) {
+                        do try {
+                            jumpTime += 1;
+                            Dialog.setProgress(jumpTime);
+                            Dialog.setMessage("Sincronizando Tabelas - Pedidos");
+
+                            String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
+                            if (Util.isNullOrEmpty(ValorFrete)) {
+                                ValorFrete = "0";
+                            }
+                            String ValorSeguro = CursorPedido.getString(CursorPedido.getColumnIndex("VALORSEGURO"));
+                            if (Util.isNullOrEmpty(ValorSeguro)) {
+                                ValorSeguro = "0";
+                            }
+
+                            String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS"));
+                            String line_separator = System.getProperty("line.separator");
+                            String OBS = Observacao.replaceAll("\n|" + line_separator, "");
+
+
+                            JPedidos = "{codclie_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODCLIE_EXT")) + "'," +
+                                    "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
+                                    "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
+                                    "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
+                                    "valor_frete: '" + ValorFrete + "'," +
+                                    "valor_seguro: '" + ValorSeguro + "'," +
+                                    "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
+                                    "valor_desconto: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLPERCACRES")).replace(".", ",") + "'," +
+                                    "obs_pedido: '" + OBS + "'," +
+                                    "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
+                                    "chavepedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
+                                    "codempresa: '" + 1 + "'," +
+                                    "cod_vendedor: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODVENDEDOR")) + "',";
+
+                            String PedItems = "";
+                            Cursor CursorItensEnv = DB.rawQuery(" SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" +
+                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+
+                            CursorItensEnv.moveToFirst();
+                            do {
+                                PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
+                                        "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
+                                        "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
+                                        "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
+                                        "vlunit: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ",") + "'," +
+                                        "valortotal: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ",") + "'}";
+
+                                if (!CursorItensEnv.isLast()) {
+                                    PedItems = PedItems + ",";
+                                }
+
+                            } while (CursorItensEnv.moveToNext());
+
+                            if (PedItems != "") {
+                                JPedidos = JPedidos + "produtos: " + "[" + PedItems + "]";
+                            }
+                            String PedParcelas = "";
+                            Cursor CursorParcelasEnv = DB.rawQuery(" SELECT * FROM CONREC WHERE vendac_chave = '" +
+                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+                            CursorParcelasEnv.moveToFirst();
+                            do {
+                                PedParcelas = PedParcelas + "{chavepedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
+                                        "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
+                                        "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")) + "'," +
+                                        "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
+
+                                if (!CursorParcelasEnv.isLast()) {
+                                    PedParcelas = PedParcelas + ",";
+                                }
+                            } while (CursorParcelasEnv.moveToNext());
+
+                            if (PedParcelas != "") {
+                                JPedidos = JPedidos + ",formapgto: " + "[" + PedParcelas + "]";
+                            }
+
+                            JPedidos = JPedidos + '}';
+
+                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                            StrictMode.setThreadPolicy(policy);
+
+                            SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                            soap.addProperty("aJson", JPedidos);
+                            soap.addProperty("aUsuario", usuario);
+                            soap.addProperty("aSenha", senha);
+                            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                            envelope.setOutputSoapObject(soap);
+                            HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
+
+                            try {
+                                Boolean ConexOk = Util.checarConexaoCelular(this);
+                                if (ConexOk == true) {
+                                    Envio.call("", envelope);
+                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                                    RetClieEnvio = (String) envelope.getResponse();
+                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                                } else {
+                                    Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Error" + e);
+                            }
+                            try {
+                                DB = new ConfigDB(this).getReadableDatabase();
+                                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+                                CursPedAtu.moveToFirst();
+                                if (CursPedAtu.getCount() > 0) {
+                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
+                                }
+                                CursPedAtu.close();
+                            } catch (Exception E) {
+                                Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception E) {
+                            // TODO Auto-generated catch block
+                            E.printStackTrace();
+                        }
+                        while (jumpTime < totalProgressTime);
+                    }
+
+                    JPedidos = "";
+                }
+                while (CursorPedido.moveToNext());
+                CursorPedido.close();
+                Dialog.dismiss();
+            }
+
+            if (Dialog.isShowing())
+                Dialog.dismiss();
+        } catch (Exception E) {
+            System.out.println("Error" + E);
+        }
+    }
+
+    public boolean VerificaConexao() {
+        boolean conectado;
+        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (conectivtyManager.getActiveNetworkInfo() != null
+                && conectivtyManager.getActiveNetworkInfo().isAvailable()
+                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
+            conectado = true;
+        } else {
+            conectado = false;
+        }
+        return conectado;
+    }
+
     private static int RetornaBairro(String NomeBairro, int CodCidade) {
         int Bairro = 0;
         try {
@@ -957,7 +963,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 .setActionStatus(Action.STATUS_TYPE_COMPLETED)
                 .build();
     }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -967,7 +972,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
-
     @Override
     public void onStop() {
         super.onStop();
@@ -1248,7 +1252,17 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return AtualizaEst;
     }
 
-    private static void SincAtualizaCidade(String UF, Context ctxEnv) {
+    public static void SincAtualizaCidade(String UF, Context ctxEnv) {
+
+        DialogECB = new ProgressDialog(ctxEnv);
+        DialogECB.setTitle("Aguarde...");
+        DialogECB.setMessage("Sincronizando");
+        DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        DialogECB.setProgress(0);
+        DialogECB.setIcon(R.drawable.icon_sync);
+        DialogECB.setMax(0);
+        DialogECB.show();
+
         int CodCidade = 0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -1261,11 +1275,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         soap.addProperty("aUF", UF);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLDADOSCEP);
+        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
         String RetCidades = null;
 
         try {
-            //Boolean ConexOk = true;
             Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
             if (ConexOk == true) {
                 Envio.call("", envelope);
@@ -1297,42 +1310,45 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         DialogECB.setMessage("Sincronizando Tabelas - Cidades");
                         String NomeCidade = c.getString("cidade");
                         int CodCidadeExt = c.getInt("id_cidade");
+                        NomeCidade = NomeCidade.replaceAll("'","");
 
-                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
-                        if (CursorCidade.getCount() > 0) {
-                            DB.execSQL(" UPDATE CIDADES SET UF = '" + UF + "', DESCRICAO = '" + NomeCidade + "', CODCIDADE_EXT = '" + CodCidadeExt + "'" +
-                                    " WHERE DESCRICAO = '" + NomeCidade + "'");
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
-                            cursor1.moveToFirst();
-                            CodCidadeExt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT"));
-                            cursor1.close();
-                        } else {
+                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                        if (!(CursorCidade.getCount() > 0)) {
                             DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODCIDADE_EXT)" +
                                     " VALUES('" + NomeCidade + "','" + UF + "', '" + CodCidadeExt + "');");
                             Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                             cursor1.moveToFirst();
                             CodCidadeExt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT"));
                             cursor1.close();
+                            CursorCidade.close();
+                            SincAtualizaBairro(CodCidadeExt, ctxEnv);
                         }
-                        CursorCidade.close();
-                        SincAtualizaBairro(CodCidadeExt, ctxEnv);
-
                     } catch (Exception E) {
                         // TODO Auto-generated catch block
-                        E.printStackTrace();
+                        E.toString();
                     }
                 }
 
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            e.toString();
         }
-        if (DialogECB.isShowing())
-            DialogECB.dismiss();
+          if (DialogECB.isShowing())
+             DialogECB.dismiss();
 
     }
 
     private static void SincAtualizaBairro(int codCidade, Context ctxEnv) {
+
+        DialogECB = new ProgressDialog(ctxEnv);
+        DialogECB.setTitle("Aguarde...");
+        DialogECB.setMessage("Sincronizando");
+        DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        DialogECB.setProgress(0);
+        DialogECB.setIcon(R.drawable.icon_sync);
+        DialogECB.setMax(0);
+        DialogECB.show();
+
         int CodBairro = 0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -1345,7 +1361,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         soap.addProperty("aIdCidade", codCidade);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLDADOSCEP);
+        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
         String RetBairros = null;
 
         try {
@@ -1373,7 +1389,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             DB = new ConfigDB(ctxEnv).getReadableDatabase();
 
             for (int i = 0; i < JBairros.length(); i++) {
-                do {
+                while (jumpTime < totalProgressTime) {
                     try {
                         JSONObject c = JBairros.getJSONObject(jumpTime);
                         jumpTime += 1;
@@ -1381,6 +1397,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         DialogECB.setMessage("Sincronizando Tabelas - Bairros");
                         String NomeBairro = c.getString("bairro");
                         int CodBairroExt = c.getInt("id_bairro");
+
+                        NomeBairro = NomeBairro.replaceAll("'"," ");
 
                         Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODBAIRRO_EXT, CODCIDADE FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
                         if (CursorBairro.getCount() > 0) {
@@ -1393,7 +1411,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         } else {
                             DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODBAIRRO_EXT, CODCIDADE)" +
                                     " VALUES('" + NomeBairro + "','" + CodBairroExt + "', '" + codCidade + "');");
-                            Cursor cursor1 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
+                            Cursor cursor1 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO =  '" + NomeBairro + "'", null);
                             cursor1.moveToFirst();
                             CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
                             cursor1.close();
@@ -1402,12 +1420,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                     } catch (Exception E) {
                         // TODO Auto-generated catch block
-                        E.printStackTrace();
+                        E.toString();
                     }
-                } while (jumpTime < totalProgressTime);
+                }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            e.toString();
         }
         if (DialogECB.isShowing())
             DialogECB.dismiss();
@@ -1451,7 +1469,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
         return true;
     }
-
 
     public static String GerarPdf(String NumPedido, Context ctxRetPed) {
         DB = new ConfigDB(ctxRetPed).getReadableDatabase();
@@ -1714,7 +1731,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             e.printStackTrace();
         }
     }
-
 
     public static void SincronizarPedidosEnvio(String NumPedido, Context ctxEnv, Boolean bdialog) {
 
@@ -2213,9 +2229,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "cidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) + "'," +
                                         "estado: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) + "'," +
                                         "cep: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) + "'," +
-                                        "sexo: '" + "" + "'," +
-                                        "estadocivil: '" + "" + "'," +
-                                        "tipoplano: '" + "" + "'," +
                                         "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")) + "'," +
                                         "identidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) + "'," +
                                         "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")) + "'}," +
@@ -2783,6 +2796,3 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
     }
 }
-
-//comentario2
-//um outro comentário 2

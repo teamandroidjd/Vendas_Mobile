@@ -56,8 +56,8 @@ public class ListaItensTemporariosAdapter extends BaseAdapter {
         descriacao.setText(item.getVendad_prd_descricaoTEMP().toString());
         quantidade.setText(item.getVendad_quantidadeTEMP().toString());
 
-        preco.setText(item.getVendad_preco_vendaTEMP().setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
-        total.setText(item.getVendad_totalTEMP().setScale(2,BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
+        preco.setText("R$ " + item.getVendad_preco_vendaTEMP().setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
+        total.setText("R$ " + item.getVendad_totalTEMP().setScale(2,BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
 
 
         return v;
