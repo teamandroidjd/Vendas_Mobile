@@ -73,14 +73,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     ProgressBar prgSinc;
     private static String usuario, senha, sCodVend, URLPrincipal;
     private static Context ctx;
-
     private static BaseFont bfBold;
     private static BaseFont bf;
     private static int pageNumber = 0;
-
-
     public static String DataUltSt2 = null;
-
     private GoogleApiClient client;
 
     @Override
@@ -149,6 +145,19 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         );
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    public boolean VerificaConexao() {
+        boolean conectado;
+        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (conectivtyManager.getActiveNetworkInfo() != null
+                && conectivtyManager.getActiveNetworkInfo().isAvailable()
+                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
+            conectado = true;
+        } else {
+            conectado = false;
+        }
+        return conectado;
     }
 
     @Override
@@ -289,26 +298,22 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 Tel3 = tt.getString("numero");
                             }
                         }
-
                         jumpTime += 1;
                         Dialog.setProgress(jumpTime);
-                        Dialog.setMessage("Sincronizando Tabelas - Clientes");
-
+                        //Dialog.setMessage("Sincronizando Tabelas - Clientes");
                         Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
-
+                        cursor.moveToFirst();
                         String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
                         int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
                         int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade);
-
                         try {
                             if (cursor.getCount() > 0) {
-                                cursor.moveToFirst();
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim() +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim() +
-                                        "', REGIDENT = '" + c.getString(TAG_RG) +
+                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
                                         "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO) +
+                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim() +
+                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim() +
                                         "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
                                         "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
                                         " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
@@ -318,20 +323,19 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, REGIDENT, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                                         "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, FLAGINTEGRADO) VALUES(" +
-                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim() + "','" + c.getString(TAG_RG) +
+                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim() + "','" + c.getString(TAG_RG).trim() +
                                         "',' " + c.getString(TAG_NOMEFANTASIA).trim() + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
-                                        "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO) +
-                                        "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +
+                                        "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO).trim() +
+                                        "',' " + c.getString(TAG_NUMERO).trim() + "', '" + c.getString(TAG_COMPLEMENTO).trim() +
                                         "','" + CodBairro + "',' " + c.getString(TAG_OBS) + "','" + CodCidade + "',' " + CodEstado +
                                         "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
                                         "','" + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_ATIVO)
                                         + "','" + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
                             }
 
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
                             cursor1.moveToFirst();
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
-                            CodClienteExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
 
                             cursor.close();
                             cursor1.close();
@@ -341,6 +345,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         }
 
                         Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
+                        CursorContatosEnv.moveToFirst();
                         if ((CursorContatosEnv.getCount() > 0)) {
                             DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente);
                             CursorContatosEnv.close();
@@ -355,6 +360,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         String EmailContato = null;
                         String Tel1Contato = null;
                         String Tel2Contato = null;
+
 
                         try {
                             for (int co = 0; co < Cont.length(); co++) {
@@ -422,8 +428,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                                 try {
                                     DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE ) VALUES(" +
-                                            "'" + NomeContato + "','" + CargoContato +
-                                            "',' " + EmailContato + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
+                                            "'" + NomeContato.trim() + "','" + CargoContato.trim() +
+                                            "',' " + EmailContato.trim() + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
                                             "," + CodCliente + ");");
 
                                 } catch (Exception E) {
@@ -442,7 +448,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 }
             }
             //if (Dialog.isShowing())
-            //   Dialog.dismiss();
+                //Dialog.dismiss();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -452,7 +458,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
         String METHOD_NAME = "Carregar";
         String TAG_PRODUTOSINFO = "produtos";
-
         String TAG_CODIGOITEM = "codigoitem";
         String TAG_CODMANUAL = "coditemanual";
         String TAG_DESCRICAO = "descricao";
@@ -509,13 +514,13 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             DB = new ConfigDB(this).getReadableDatabase();
             Dialog.setMax(totalProgressTime);
             Dialog.setProgress(jumpTime);
+
             for (int i = 0; i < ProdItens.length(); i++) {
-                do {
+                while (jumpTime < totalProgressTime) {
                     try {
                         JSONObject CItens = ProdItens.getJSONObject(jumpTime);
                         jumpTime += 1;
                         Dialog.setProgress(jumpTime);
-                        Dialog.setMessage("Sincronizando Tabelas - Produtos");
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
                         try {
                             if (CursItens.getCount() > 0) {
@@ -571,10 +576,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         E.printStackTrace();
                     }
                 }
-                while (jumpTime < totalProgressTime);
+
             }
-            //  if (Dialog.isShowing())
-            //     Dialog.dismiss();
+            //if (Dialog.isShowing())
+                //Dialog.dismiss();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -607,22 +612,22 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 jumpTime += 1;
                                 Dialog.setProgress(jumpTime);
                                 Dialog.setMessage("Enviando clientes");
-                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")) + "'," +
-                                        "nome_fantasia: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN")) + "'," +
+                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")).trim() + "'," +
+                                        "nome_fantasia: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN")).trim() + "'," +
                                         "tipo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) + "'," +
                                         "cnpj_cpf: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'," +
-                                        "inscricao_estadual: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")) + "'," +
-                                        "Logradouro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ENDERECO")) + "'," +
-                                        "numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NUMERO")) + "'," +
+                                        "inscricao_estadual: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")).trim() + "'," +
+                                        "Logradouro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ENDERECO")).trim() + "'," +
+                                        "numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NUMERO")).trim() + "'," +
                                         "codvendedor: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODVENDEDOR")) + "'," +
-                                        "complemento: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("COMPLEMENT")) + "'," +
+                                        "complemento: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("COMPLEMENT")).trim() + "'," +
                                         "bairro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("BAIRRO")) + "'," +
                                         "cidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) + "'," +
                                         "estado: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) + "'," +
                                         "cep: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) + "'," +
-                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")) + "'," +
+                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")).trim() + "'," +
                                         "identidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) + "'," +
-                                        "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")) + "'}," +
+                                        "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")).trim() + "'}," +
                                         "{email: ''}]," +
                                         "ativo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ATIVO")) + "'," +
                                         "telefones: [{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL1")) + "'}," +
@@ -635,9 +640,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                                 CursorContatosEnv.moveToFirst();
                                 while (CursorContatosEnv.moveToNext()) {
-                                    Contatos = Contatos + "{nome: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("NOME")) + "'," +
-                                            "cargo: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CARGO")) + "'," +
-                                            "emails: [{email: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("EMAIL")) + "'}]," +
+                                    Contatos = Contatos + "{nome: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("NOME")).trim() + "'," +
+                                            "cargo: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CARGO")).trim() + "'," +
+                                            "emails: [{email: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("EMAIL")).trim() + "'}]," +
                                             "telefones: [{numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL1")) + "'," +
                                             "numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL2")) + "'}]},";
                                 }
@@ -751,7 +756,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 ValorSeguro = "0";
                             }
 
-                            String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS"));
+                            String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS")).trim();
                             String line_separator = System.getProperty("line.separator");
                             String OBS = Observacao.replaceAll("\n|" + line_separator, "");
 
@@ -871,17 +876,41 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    public boolean VerificaConexao() {
-        boolean conectado;
-        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (conectivtyManager.getActiveNetworkInfo() != null
-                && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-            conectado = true;
-        } else {
-            conectado = false;
+     /*
+    * Métodos que podem ser invocados de outras activity
+    */
+
+    public static void run(Context ctxEnvClie) {
+        DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
+
+        Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP ", null);
+        CursosParam.moveToFirst();
+
+        String DataUlt = null;
+        String HoraAtu = null;
+
+        try {
+            if (CursosParam.getCount() > 0) {
+                String dataEmUmFormato = CursosParam.getString(CursosParam.getColumnIndex("DT_ULT_ATU"));
+                SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+                Date data = formato.parse(dataEmUmFormato);
+                formato.applyPattern("dd/MM/yyyy");
+                DataUlt = formato.format(data);
+
+                SimpleDateFormat SdfHora = new SimpleDateFormat("HH:mm");
+                HoraAtu = (SdfHora.format(data));
+            } else {
+                DataUlt = "01/01/2000 12:20:30";
+                DB.execSQL(" INSERT INTO PARAMAPP(DT_ULT_ATU) VALUES(datetime());");
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        return conectado;
+
+
+        DataUltSt2 = DataUlt + " " + HoraAtu;
+
+        DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
     }
 
     private static int RetornaBairro(String NomeBairro, int CodCidade) {
@@ -949,40 +978,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             return null;
         }
     }
-
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("actSincronismo Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-    }
-
-    /*
-    * Métodos que podem ser invocados de outras activity
-    * */
 
     public static void SincronizarPedidosEnvioStatic(String sUsuario, String sSenha, Context ctxPedEnv) {
         String JPedidos = null;
@@ -1308,7 +1303,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         DialogECB.setMessage("Sincronizando Tabelas - Cidades");
                         String NomeCidade = c.getString("cidade");
                         int CodCidadeExt = c.getInt("id_cidade");
-                        NomeCidade = NomeCidade.replaceAll("'","");
+                        NomeCidade = NomeCidade.replaceAll("'", "");
 
                         Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                         if (!(CursorCidade.getCount() > 0)) {
@@ -1331,8 +1326,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         } catch (JSONException e) {
             e.toString();
         }
-          if (DialogECB.isShowing())
-             DialogECB.dismiss();
+        if (DialogECB.isShowing())
+            DialogECB.dismiss();
 
     }
 
@@ -1396,7 +1391,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         String NomeBairro = c.getString("bairro");
                         int CodBairroExt = c.getInt("id_bairro");
 
-                        NomeBairro = NomeBairro.replaceAll("'"," ");
+                        NomeBairro = NomeBairro.replaceAll("'", " ");
 
                         Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODBAIRRO_EXT, CODCIDADE FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
                         if (CursorBairro.getCount() > 0) {
@@ -1468,267 +1463,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return true;
     }
 
-    public static String GerarPdf(String NumPedido, Context ctxRetPed) {
-        DB = new ConfigDB(ctxRetPed).getReadableDatabase();
-
-        String Pedido = "";
-        String ItensPedido = "";
-        String Situacao = "";
-        PdfWriter docWriter = null;
-
-        try {
-            DB = new ConfigDB(ctxRetPed).getReadableDatabase();
-            Cursor CursPedido = DB.rawQuery(" SELECT PEDOPER.*, EMPRESAS.NOMEEMPRE, USUARIOS.USUARIO, EMPRESAS.LOGO FROM PEDOPER LEFT OUTER JOIN " +
-                    " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA LEFT OUTER JOIN " +
-                    " USUARIOS ON PEDOPER.CODVENDEDOR = USUARIOS.CODVEND " +
-                    " WHERE NUMPED = '" + NumPedido + "'", null);
-            CursPedido.moveToFirst();
-
-            String dataEmUmFormato = CursPedido.getString(CursPedido.getColumnIndex("DATAEMIS"));
-            SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-            Date data = formato.parse(dataEmUmFormato);
-            formato.applyPattern("dd/MM/yyyy");
-            String sDataVenda = formato.format(data);
-
-            Double VlTotal = (CursPedido.getDouble(CursPedido.getColumnIndex("VALORTOTAL")) -
-                    CursPedido.getDouble(CursPedido.getColumnIndex("VLPERCACRES")));
-
-            String VlDesc = CursPedido.getString(CursPedido.getColumnIndex("VLPERCACRES"));
-            VlDesc = VlDesc.replace('.', ',');
-            Double VlSubTot = CursPedido.getDouble(CursPedido.getColumnIndex("VALORTOTAL"));
-
-            String STotal = String.valueOf(VlSubTot);
-            java.math.BigDecimal Subvenda = new java.math.BigDecimal(Double.parseDouble(STotal.replace(',', '.')));
-            String SubTotal = Subvenda.setScale(2, java.math.BigDecimal.ROUND_UP).toString();
-            SubTotal = SubTotal.replace('.', ',');
-
-            String valor = String.valueOf(VlTotal);
-            java.math.BigDecimal venda = new java.math.BigDecimal(Double.parseDouble(valor.replace(',', '.')));
-            String ValorTotal = venda.setScale(2, java.math.BigDecimal.ROUND_UP).toString();
-            ValorTotal = ValorTotal.replace('.', ',');
-
-            Document PedidoPdf = new Document();
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf";
-            File dir = new File(path);
-            if (!dir.exists())
-                dir.mkdirs();
-            Log.d("PDFCreator", "PDF Path: " + path);
-            File file = new File(dir, NumPedido + ".pdf");
-            FileOutputStream fOut = new FileOutputStream(file);
-            docWriter = PdfWriter.getInstance(PedidoPdf, fOut);
-
-            PedidoPdf.addAuthor("JD System");
-            PedidoPdf.addCreationDate();
-            PedidoPdf.addProducer();
-            PedidoPdf.addCreator("jdsystem.com.br");
-            PedidoPdf.addTitle("Força de Vendas");
-            PedidoPdf.setPageSize(PageSize.A4);
-
-
-            PedidoPdf.open();
-            PdfContentByte cb = docWriter.getDirectContent();
-            initializeFonts();
-
-            /*byte[] byteArray = CursPedido.getBlob(CursPedido.getColumnIndex("LOGO"));
-
-            String Caminho = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf/";
-
-            File arquivo = new File(Caminho + byteArray + ".jpg");
-            Uri localFotoUri = Uri.fromFile(arquivo);
-
-            Blob b = CursPedido.getBlob(2);
-            byte barr[] = new byte[(int)b.length()];
-            barr = b.getBytes(1,(int)b.length());
-
-            FileOutputStream fout = new FileOutputStream("D:\\sonoo.jpg");
-            fout.write(barr);
-
-            Image companyLogo = Image.getInstance(Caminho + byteArray + ".jpg");
-            companyLogo.setAbsolutePosition(25, 700);
-            companyLogo.scalePercent(25);
-            PedidoPdf.add(companyLogo);*/
-
-            generateLayout(PedidoPdf, cb);
-
-            String SitPed = CursPedido.getString(CursPedido.getColumnIndex("FLAGINTEGRADO"));
-            if (SitPed.equals("1")) {
-                Situacao = "Orçamento";
-            }
-            if (SitPed.equals("2")) {
-                Situacao = "Pedido Gerado: " + CursPedido.getString(CursPedido.getColumnIndex("NUMPEDIDOERP"));
-            }
-            if (SitPed.equals("3")) {
-                Situacao = "NFe Gerada: " + CursPedido.getString(CursPedido.getColumnIndex("NUMFISCAL"));
-            }
-            if (SitPed.equals("4")) {
-                Situacao = "Cancelado";
-            }
-            if (SitPed.equals("5")) {
-                Situacao = "Gerar Venda";
-            }
-
-            createHeadings(cb, 200, 800, "Empresa: " + CursPedido.getString(CursPedido.getColumnIndex("NOMEEMPRE")));
-            createHeadings(cb, 200, 785, "Cliente: " + CursPedido.getString(CursPedido.getColumnIndex("NOMECLIE")));
-            createHeadings(cb, 200, 770, "Data Emissão: " + sDataVenda);
-            createHeadings(cb, 200, 755, "Vendedor: " + CursPedido.getString(CursPedido.getColumnIndex("USUARIO")));
-            createHeadings(cb, 200, 740, "Situação: " + Situacao);
-
-            Cursor CursorItensEnv = DB.rawQuery(" SELECT PEDITENS.CODITEMANUAL, PEDITENS.DESCRICAO, PEDITENS.QTDMENORPED, " +
-                    " PEDITENS.UNIDADE, PEDITENS.VLUNIT, PEDITENS.VLTOTAL FROM PEDITENS " +
-                    " WHERE PEDITENS.CHAVEPEDIDO = '" + CursPedido.getString(CursPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-            int item = 1;
-            int y = 670;
-            CursorItensEnv.moveToFirst();
-            do {
-                createContent(cb, 30, y, Util.AcrescentaZeros(String.valueOf(item), 3), PdfContentByte.ALIGN_CENTER);
-                createContent(cb, 60, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")), PdfContentByte.ALIGN_CENTER);
-                createContent(cb, 152, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")), PdfContentByte.ALIGN_LEFT);
-                createContent(cb, 430, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")), PdfContentByte.ALIGN_RIGHT);
-                createContent(cb, 460, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("UNIDADE")), PdfContentByte.ALIGN_LEFT);
-                createContent(cb, 540, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
-                createContent(cb, 580, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
-                y = y - 15;
-                item++;
-            } while (CursorItensEnv.moveToNext());
-
-            CursPedido.close();
-            CursorItensEnv.close();
-
-            createTotal(cb, 430, 180, "Sub-Total:    R$ ", PdfContentByte.ALIGN_RIGHT);
-            createTotal(cb, 550, 180, SubTotal, PdfContentByte.ALIGN_RIGHT);
-
-            createTotal(cb, 430, 150, "Vl. Desconto: R$ ", PdfContentByte.ALIGN_RIGHT);
-            createTotal(cb, 550, 150, VlDesc, PdfContentByte.ALIGN_RIGHT);
-
-            createTotal(cb, 430, 120, "Valor Total:  R$ ", PdfContentByte.ALIGN_RIGHT);
-            createTotal(cb, 550, 120, ValorTotal, PdfContentByte.ALIGN_RIGHT);
-
-           // printPageNumber(cb);
-
-            InserirRodape(cb, "Desenvolvido por JD System - www.jdsystem.com.br");
-
-            PedidoPdf.close();
-            docWriter.close();
-
-        } catch (Exception E) {
-            E.toString();
-            return "0";
-        }
-        return NumPedido + ".pdf";
-    }
-
-    private static void generateLayout(Document doc, PdfContentByte cb) {
-        try {
-
-            cb.setLineWidth(1f);
-
-            // Invoice Detail box layout
-            //cb.rectangle(20, 50, 550, 600);
-            cb.rectangle(20, 200, 570, 500);
-
-            cb.moveTo(20, 680);
-            cb.lineTo(590, 680); //Linha de Baixo ____ (Laterais / Altura)
-
-            //Linhas |
-            cb.moveTo(50, 200);
-            cb.lineTo(50, 700);
-            cb.moveTo(150, 200);
-            cb.lineTo(150, 700);
-            cb.moveTo(400, 200);
-            cb.lineTo(400, 700);
-            cb.moveTo(450, 200);
-            cb.lineTo(450, 700);
-            cb.moveTo(500, 200);
-            cb.lineTo(500, 700);
-            cb.moveTo(550, 200);
-            cb.lineTo(550, 700);
-            cb.stroke();
-
-            // Invoice Detail box Text Headings
-            createHeadings(cb, 22, 683, "Item");
-            createHeadings(cb, 52, 683, "Código");
-            createHeadings(cb, 152, 683, "Descrição");
-            createHeadings(cb, 402, 683, "Qtd");
-            createHeadings(cb, 452, 683, "Und.");
-            createHeadings(cb, 502, 683, "Vl. Unit.");
-            createHeadings(cb, 552, 683, "Vl. Total.");
-
-            //add the images
-            Image companyLogo = Image.getInstance(".gif");
-            companyLogo.setAbsolutePosition(25, 700);
-            companyLogo.scalePercent(25);
-            doc.add(companyLogo);
-
-        } catch (DocumentException dex) {
-            dex.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-    private static void createHeadings(PdfContentByte cb, float x, float y, String text) {
-        cb.beginText();
-        cb.setFontAndSize(bfBold, 8);
-        cb.setTextMatrix(x, y);
-        cb.showText(text.trim());
-        cb.endText();
-    }
-
-    private static void createTotal(PdfContentByte cb, float x, float y, String text, int align) {
-        cb.beginText();
-        cb.setFontAndSize(bfBold, 14);
-        cb.showTextAligned(align, text.trim(), x, y, 0);
-        cb.endText();
-    }
-
-    private static void printPageNumber(PdfContentByte cb) {
-
-        cb.beginText();
-        cb.setFontAndSize(bfBold, 8);
-        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, "Pg. " + (pageNumber + 1), 570, 25, 0);
-        cb.endText();
-
-        pageNumber++;
-
-    }
-
-    private static void InserirRodape(PdfContentByte cb, String Texto) {
-        BaseFont bfRodaPe = null;
-        try {
-            bfRodaPe = BaseFont.createFont(BaseFont.COURIER, BaseFont.CP1252, BaseFont.EMBEDDED);
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        cb.beginText();
-        cb.setFontAndSize(bfRodaPe, 7);
-        cb.showTextAligned(PdfContentByte.ALIGN_CENTER, Texto, 150, 25, 0);
-        cb.endText();
-    }
-
-    private static void createContent(PdfContentByte cb, float x, float y, String text, int align) {
-
-        cb.beginText();
-        cb.setFontAndSize(bf, 8);
-        cb.showTextAligned(align, text.trim(), x, y, 0);
-        cb.endText();
-
-    }
-
-    private static void initializeFonts() {
-        try {
-            bfBold = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-            bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void SincronizarPedidosEnvio(String NumPedido, Context ctxEnv, Boolean bdialog) {
 
@@ -2121,7 +1855,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             String LogoEmpresa = c.getString("logo");
                             imgRecebida = Base64.decode(LogoEmpresa, Base64.DEFAULT);
                             Bitmap imgLogo = BitmapFactory.decodeByteArray(imgRecebida, 0, imgRecebida.length);
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.toString();
                         }
 
@@ -2414,7 +2148,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             }
 
             for (int i = 0; i < ProdItens.length(); i++) {
-                do {
+                while (jumpTime < totalProgressTime) {
                     try {
                         JSONObject CItens = ProdItens.getJSONObject(jumpTime);
                         jumpTime += 1;
@@ -2476,7 +2210,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         E.printStackTrace();
                     }
                 }
-                while (jumpTime < totalProgressTime);
+
             }
             if (bDialogo == false) {
                 if (Dialog.isShowing())
@@ -2767,36 +2501,297 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    public static void run(Context ctxEnvClie) {
-        DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
+    public static String GerarPdf(String NumPedido, Context ctxRetPed) {
+        DB = new ConfigDB(ctxRetPed).getReadableDatabase();
 
-        Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP ", null);
-        CursosParam.moveToFirst();
-
-        String DataUlt = null;
-        String HoraAtu = null;
+        String Pedido = "";
+        String ItensPedido = "";
+        String Situacao = "";
+        PdfWriter docWriter = null;
 
         try {
-            if (CursosParam.getCount() > 0) {
-                String dataEmUmFormato = CursosParam.getString(CursosParam.getColumnIndex("DT_ULT_ATU"));
-                SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-                Date data = formato.parse(dataEmUmFormato);
-                formato.applyPattern("dd/MM/yyyy");
-                DataUlt = formato.format(data);
+            DB = new ConfigDB(ctxRetPed).getReadableDatabase();
+            Cursor CursPedido = DB.rawQuery(" SELECT PEDOPER.*, EMPRESAS.NOMEEMPRE, USUARIOS.USUARIO, EMPRESAS.LOGO FROM PEDOPER LEFT OUTER JOIN " +
+                    " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA LEFT OUTER JOIN " +
+                    " USUARIOS ON PEDOPER.CODVENDEDOR = USUARIOS.CODVEND " +
+                    " WHERE NUMPED = '" + NumPedido + "'", null);
+            CursPedido.moveToFirst();
 
-                SimpleDateFormat SdfHora = new SimpleDateFormat("HH:mm");
-                HoraAtu = (SdfHora.format(data));
-            } else {
-                DataUlt = "01/01/2000 12:20:30";
-                DB.execSQL(" INSERT INTO PARAMAPP(DT_ULT_ATU) VALUES(datetime());");
+            String dataEmUmFormato = CursPedido.getString(CursPedido.getColumnIndex("DATAEMIS"));
+            SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+            Date data = formato.parse(dataEmUmFormato);
+            formato.applyPattern("dd/MM/yyyy");
+            String sDataVenda = formato.format(data);
+
+            Double VlTotal = (CursPedido.getDouble(CursPedido.getColumnIndex("VALORTOTAL")) -
+                    CursPedido.getDouble(CursPedido.getColumnIndex("VLPERCACRES")));
+
+            String VlDesc = CursPedido.getString(CursPedido.getColumnIndex("VLPERCACRES"));
+            VlDesc = VlDesc.replace('.', ',');
+            Double VlSubTot = CursPedido.getDouble(CursPedido.getColumnIndex("VALORTOTAL"));
+
+            String STotal = String.valueOf(VlSubTot);
+            java.math.BigDecimal Subvenda = new java.math.BigDecimal(Double.parseDouble(STotal.replace(',', '.')));
+            String SubTotal = Subvenda.setScale(2, java.math.BigDecimal.ROUND_UP).toString();
+            SubTotal = SubTotal.replace('.', ',');
+
+            String valor = String.valueOf(VlTotal);
+            java.math.BigDecimal venda = new java.math.BigDecimal(Double.parseDouble(valor.replace(',', '.')));
+            String ValorTotal = venda.setScale(2, java.math.BigDecimal.ROUND_UP).toString();
+            ValorTotal = ValorTotal.replace('.', ',');
+
+            Document PedidoPdf = new Document();
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf";
+            File dir = new File(path);
+            if (!dir.exists())
+                dir.mkdirs();
+            Log.d("PDFCreator", "PDF Path: " + path);
+            File file = new File(dir, NumPedido + ".pdf");
+            FileOutputStream fOut = new FileOutputStream(file);
+            docWriter = PdfWriter.getInstance(PedidoPdf, fOut);
+
+            PedidoPdf.addAuthor("JD System");
+            PedidoPdf.addCreationDate();
+            PedidoPdf.addProducer();
+            PedidoPdf.addCreator("jdsystem.com.br");
+            PedidoPdf.addTitle("Força de Vendas");
+            PedidoPdf.setPageSize(PageSize.A4);
+
+
+            PedidoPdf.open();
+            PdfContentByte cb = docWriter.getDirectContent();
+            initializeFonts();
+
+            /*byte[] byteArray = CursPedido.getBlob(CursPedido.getColumnIndex("LOGO"));
+
+            String Caminho = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf/";
+
+            File arquivo = new File(Caminho + byteArray + ".jpg");
+            Uri localFotoUri = Uri.fromFile(arquivo);
+
+            Blob b = CursPedido.getBlob(2);
+            byte barr[] = new byte[(int)b.length()];
+            barr = b.getBytes(1,(int)b.length());
+
+            FileOutputStream fout = new FileOutputStream("D:\\sonoo.jpg");
+            fout.write(barr);
+
+            Image companyLogo = Image.getInstance(Caminho + byteArray + ".jpg");
+            companyLogo.setAbsolutePosition(25, 700);
+            companyLogo.scalePercent(25);
+            PedidoPdf.add(companyLogo);*/
+
+            generateLayout(PedidoPdf, cb);
+
+            String SitPed = CursPedido.getString(CursPedido.getColumnIndex("FLAGINTEGRADO"));
+            if (SitPed.equals("1")) {
+                Situacao = "Orçamento";
             }
-        } catch (ParseException e) {
+            if (SitPed.equals("2")) {
+                Situacao = "Pedido Gerado: " + CursPedido.getString(CursPedido.getColumnIndex("NUMPEDIDOERP"));
+            }
+            if (SitPed.equals("3")) {
+                Situacao = "NFe Gerada: " + CursPedido.getString(CursPedido.getColumnIndex("NUMFISCAL"));
+            }
+            if (SitPed.equals("4")) {
+                Situacao = "Cancelado";
+            }
+            if (SitPed.equals("5")) {
+                Situacao = "Gerar Venda";
+            }
+
+            createHeadings(cb, 200, 800, "Empresa: " + CursPedido.getString(CursPedido.getColumnIndex("NOMEEMPRE")));
+            createHeadings(cb, 200, 785, "Cliente: " + CursPedido.getString(CursPedido.getColumnIndex("NOMECLIE")));
+            createHeadings(cb, 200, 770, "Data Emissão: " + sDataVenda);
+            createHeadings(cb, 200, 755, "Vendedor: " + CursPedido.getString(CursPedido.getColumnIndex("USUARIO")));
+            createHeadings(cb, 200, 740, "Situação: " + Situacao);
+
+            Cursor CursorItensEnv = DB.rawQuery(" SELECT PEDITENS.CODITEMANUAL, PEDITENS.DESCRICAO, PEDITENS.QTDMENORPED, " +
+                    " PEDITENS.UNIDADE, PEDITENS.VLUNIT, PEDITENS.VLTOTAL FROM PEDITENS " +
+                    " WHERE PEDITENS.CHAVEPEDIDO = '" + CursPedido.getString(CursPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+            int item = 1;
+            int y = 670;
+            CursorItensEnv.moveToFirst();
+            do {
+                createContent(cb, 30, y, Util.AcrescentaZeros(String.valueOf(item), 3), PdfContentByte.ALIGN_CENTER);
+                createContent(cb, 60, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")), PdfContentByte.ALIGN_CENTER);
+                createContent(cb, 152, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")), PdfContentByte.ALIGN_LEFT);
+                createContent(cb, 430, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")), PdfContentByte.ALIGN_RIGHT);
+                createContent(cb, 460, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("UNIDADE")), PdfContentByte.ALIGN_LEFT);
+                createContent(cb, 540, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
+                createContent(cb, 580, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
+                y = y - 15;
+                item++;
+            } while (CursorItensEnv.moveToNext());
+
+            CursPedido.close();
+            CursorItensEnv.close();
+
+            createTotal(cb, 430, 180, "Sub-Total:    R$ ", PdfContentByte.ALIGN_RIGHT);
+            createTotal(cb, 550, 180, SubTotal, PdfContentByte.ALIGN_RIGHT);
+
+            createTotal(cb, 430, 150, "Vl. Desconto: R$ ", PdfContentByte.ALIGN_RIGHT);
+            createTotal(cb, 550, 150, VlDesc, PdfContentByte.ALIGN_RIGHT);
+
+            createTotal(cb, 430, 120, "Valor Total:  R$ ", PdfContentByte.ALIGN_RIGHT);
+            createTotal(cb, 550, 120, ValorTotal, PdfContentByte.ALIGN_RIGHT);
+
+            // printPageNumber(cb);
+
+            InserirRodape(cb, "Desenvolvido por JD System - www.jdsystem.com.br");
+
+            PedidoPdf.close();
+            docWriter.close();
+
+        } catch (Exception E) {
+            E.toString();
+            return "0";
+        }
+        return NumPedido + ".pdf";
+    }
+
+    private static void generateLayout(Document doc, PdfContentByte cb) {
+        try {
+
+            cb.setLineWidth(1f);
+
+            // Invoice Detail box layout
+            //cb.rectangle(20, 50, 550, 600);
+            cb.rectangle(20, 200, 570, 500);
+
+            cb.moveTo(20, 680);
+            cb.lineTo(590, 680); //Linha de Baixo ____ (Laterais / Altura)
+
+            //Linhas |
+            cb.moveTo(50, 200);
+            cb.lineTo(50, 700);
+            cb.moveTo(150, 200);
+            cb.lineTo(150, 700);
+            cb.moveTo(400, 200);
+            cb.lineTo(400, 700);
+            cb.moveTo(450, 200);
+            cb.lineTo(450, 700);
+            cb.moveTo(500, 200);
+            cb.lineTo(500, 700);
+            cb.moveTo(550, 200);
+            cb.lineTo(550, 700);
+            cb.stroke();
+
+            // Invoice Detail box Text Headings
+            createHeadings(cb, 22, 683, "Item");
+            createHeadings(cb, 52, 683, "Código");
+            createHeadings(cb, 152, 683, "Descrição");
+            createHeadings(cb, 402, 683, "Qtd");
+            createHeadings(cb, 452, 683, "Und.");
+            createHeadings(cb, 502, 683, "Vl. Unit.");
+            createHeadings(cb, 552, 683, "Vl. Total.");
+
+            //add the images
+            Image companyLogo = Image.getInstance(".gif");
+            companyLogo.setAbsolutePosition(25, 700);
+            companyLogo.scalePercent(25);
+            doc.add(companyLogo);
+
+        } catch (DocumentException dex) {
+            dex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private static void createHeadings(PdfContentByte cb, float x, float y, String text) {
+        cb.beginText();
+        cb.setFontAndSize(bfBold, 8);
+        cb.setTextMatrix(x, y);
+        cb.showText(text.trim());
+        cb.endText();
+    }
+
+    private static void createTotal(PdfContentByte cb, float x, float y, String text, int align) {
+        cb.beginText();
+        cb.setFontAndSize(bfBold, 14);
+        cb.showTextAligned(align, text.trim(), x, y, 0);
+        cb.endText();
+    }
+
+    private static void printPageNumber(PdfContentByte cb) {
+
+        cb.beginText();
+        cb.setFontAndSize(bfBold, 8);
+        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, "Pg. " + (pageNumber + 1), 570, 25, 0);
+        cb.endText();
+
+        pageNumber++;
+
+    }
+
+    private static void InserirRodape(PdfContentByte cb, String Texto) {
+        BaseFont bfRodaPe = null;
+        try {
+            bfRodaPe = BaseFont.createFont(BaseFont.COURIER, BaseFont.CP1252, BaseFont.EMBEDDED);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+        cb.beginText();
+        cb.setFontAndSize(bfRodaPe, 7);
+        cb.showTextAligned(PdfContentByte.ALIGN_CENTER, Texto, 150, 25, 0);
+        cb.endText();
+    }
 
-        DataUltSt2 = DataUlt + " " + HoraAtu;
+    private static void createContent(PdfContentByte cb, float x, float y, String text, int align) {
 
-        DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
+        cb.beginText();
+        cb.setFontAndSize(bf, 8);
+        cb.showTextAligned(align, text.trim(), x, y, 0);
+        cb.endText();
+
+    }
+
+    private static void initializeFonts() {
+        try {
+            bfBold = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("actSincronismo Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 }

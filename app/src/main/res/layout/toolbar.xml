@@ -6,8 +6,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/colorPrimary"
-    android:minHeight="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
     local:theme="@style/Theme.AppCompat.Light">
 
     <RelativeLayout
@@ -51,10 +50,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:src="@drawable/calendario"
-             />
-
-
+            android:src="@drawable/calendario"/>
     </RelativeLayout>
 
 
