@@ -82,23 +82,23 @@ public class actDadosProdutos extends AppCompatActivity {
 
                         String Preco = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA1"));
                         BigDecimal venda = new BigDecimal(Double.parseDouble(Preco.replace(',', '.')));
-                        TAG_VLVENDA1.setText("Tabela base: R$ " + venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        TAG_VLVENDA1.setText("Tabela base:      R$ " + venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
 
                         String PrecoAuxA = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA2"));
                         BigDecimal vendaAuxA = new BigDecimal(Double.parseDouble(PrecoAuxA.replace(',', '.')));
-                        TAG_VLVENDA2.setText("Auxiliar A:     R$ " + vendaAuxA.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        TAG_VLVENDA2.setText("Auxiliar A:           R$ " + vendaAuxA.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
 
                         String PrecoAuxB = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA3"));
                         BigDecimal vendaAuxb = new BigDecimal(Double.parseDouble(PrecoAuxB.replace(',', '.')));
-                        TAG_VLVENDA3.setText("Auxiliar B:     R$ " + vendaAuxb.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        TAG_VLVENDA3.setText("Auxiliar B:           R$ " + vendaAuxb.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
 
                         String PrecoAuxC = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA4"));
                         BigDecimal vendaAuxC = new BigDecimal(Double.parseDouble(PrecoAuxC.replace(',', '.')));
-                        TAG_VLVENDA4.setText("Auxiliar C:     R$ " + vendaAuxC.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        TAG_VLVENDA4.setText("Auxiliar C:           R$ " + vendaAuxC.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
 
                         String PrecoAuxD = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA5"));
                         BigDecimal vendaAuxD = new BigDecimal(Double.parseDouble(PrecoAuxD.replace(',', '.')));
-                        TAG_VLVENDA5.setText("Auxiliar D:     R$ " + vendaAuxD.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        TAG_VLVENDA5.setText("Auxiliar D:           R$ " + vendaAuxD.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
 
                         String PrecoPromoA = CursorProd.getString(CursorProd.getColumnIndex("VLVENDAP1"));
                         BigDecimal vendaPromoA = new BigDecimal(Double.parseDouble(PrecoPromoA.replace(',', '.')));

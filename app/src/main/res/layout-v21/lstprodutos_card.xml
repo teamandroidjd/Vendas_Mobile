@@ -179,7 +179,7 @@
                         android:id="@+id/lbl7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tabela Base: R$ "
+                        android:text="Tabela base:          R$ "
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
@@ -202,7 +202,7 @@
                         android:id="@+id/lbl8"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar A:      R$ "
+                        android:text="Auxiliar A:               R$ "
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
@@ -224,7 +224,7 @@
                         android:id="@+id/lbl9"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar B:      R$ "
+                        android:text="Auxiliar B:               R$ "
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
@@ -246,7 +246,7 @@
                         android:id="@+id/lbl10"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar C:      R$ "
+                        android:text="Auxiliar C:               R$ "
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
@@ -268,7 +268,7 @@
                         android:id="@+id/lbl11"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar D:      R$ "
+                        android:text="Auxiliar D:               R$ "
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />

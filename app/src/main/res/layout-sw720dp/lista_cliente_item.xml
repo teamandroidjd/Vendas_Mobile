@@ -44,7 +44,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
-                        android:text="Cod. Cliente:"
+                        android:text="Código: "
                         android:textColor="@color/colordescClie"
                         android:textSize="@dimen/textsize_sw720"
                         android:textStyle="bold" />

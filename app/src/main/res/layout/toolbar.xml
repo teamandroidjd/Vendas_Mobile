@@ -6,44 +6,52 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/colorPrimary"
-    android:minHeight="?attr/actionBarSize"
+    android:background="@color/colorPrimary"
     local:theme="@style/Theme.AppCompat.Light">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/finalizar_venda"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="10dp"
-        android:src="@drawable/salvar" />
+        <ImageView
+            android:id="@+id/finalizar_venda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/salvar" />
 
-    <ImageView
-        android:id="@+id/cancel_venda"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="20dp"
-        android:src="@drawable/cancelar" />
+        <ImageView
+            android:id="@+id/cancel_venda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/finalizar_venda"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/cancelar" />
 
-    <ImageView
-        android:id="@+id/item_obspedido"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="130dp"
-        android:src="@drawable/observacao" />
+        <ImageView
+            android:id="@+id/item_obspedido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/item_formapgto"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/observacao" />
 
-    <ImageView
-        android:id="@+id/item_formapgto"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="20dp"
-        android:src="@drawable/pagamento" />
+        <ImageView
+            android:id="@+id/item_formapgto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/item_dtentrega"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/pagamento" />
 
-    <ImageView
-        android:id="@+id/item_dtentrega"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="20dp"
-        android:src="@drawable/calendario" />
+        <ImageView
+            android:id="@+id/item_dtentrega"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/calendario"/>
+    </RelativeLayout>
+
 
 </android.support.v7.widget.Toolbar>

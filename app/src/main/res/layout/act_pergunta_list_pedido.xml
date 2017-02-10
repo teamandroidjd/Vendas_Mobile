@@ -12,19 +12,19 @@
             android:id="@+id/genderRadioGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="15dp"
-            >
+            android:paddingTop="15dp">
 
-            <RadioButton
-                android:id="@+id/maleRadioButton"
+            <!--<RadioButton
+                android:id="@+id/rbalterapedido"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_marginTop="10dp"
+                android:layout_below="@+id/maleRadioButton"
                 android:gravity="center"
-                android:text="Sincronizar"
+                android:layout_marginTop="10dp"
+                android:text="Alterar"
                 android:textColor="@color/colordescClie"
-                android:textSize="20dp" />
+                android:textSize="20dp" /> -->
 
             <RadioButton
                 android:id="@+id/femaleRadioButton"
@@ -37,6 +37,7 @@
                 android:text="Cancelar"
                 android:textColor="@color/colordescClie"
                 android:textSize="20dp" />
+
             <RadioButton
                 android:id="@+id/rbCompart"
                 android:layout_width="wrap_content"
@@ -48,17 +49,7 @@
                 android:text="Compartilhar"
                 android:textColor="@color/colordescClie"
                 android:textSize="20dp" />
-            <RadioButton
-                android:id="@+id/rbStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/maleRadioButton"
-                android:gravity="center"
-                android:layout_marginTop="10dp"
-                android:text="Verificar Status"
-                android:textColor="@color/colordescClie"
-                android:textSize="20dp" />
+
             <RadioButton
                 android:id="@+id/rbAutoriza"
                 android:layout_width="wrap_content"
@@ -70,6 +61,31 @@
                 android:text="Gerar Venda"
                 android:textColor="@color/colordescClie"
                 android:textSize="20dp" />
+
+            <RadioButton
+                android:id="@+id/maleRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Sincronizar"
+                android:textColor="@color/colordescClie"
+                android:textSize="20dp" />
+
+
+            <RadioButton
+                android:id="@+id/rbStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Verificar Status"
+                android:textColor="@color/colordescClie"
+                android:textSize="20dp" />
+
 
         </RadioGroup>
     </LinearLayout>

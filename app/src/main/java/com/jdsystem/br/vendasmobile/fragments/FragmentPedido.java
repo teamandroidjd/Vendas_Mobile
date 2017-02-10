@@ -3,7 +3,6 @@ package com.jdsystem.br.vendasmobile.fragments;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -145,11 +144,11 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             Intent intentShareFile = new Intent(android.content.Intent.ACTION_SEND);
                                             File fileWithinMyDir = new File(path);
 
-                                            if(fileWithinMyDir.exists()) {
+                                            if (fileWithinMyDir.exists()) {
                                                 intentShareFile.setType("application/pdf");
-                                                intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://"+path+"/"+TxtPedido));
+                                                intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path + "/" + TxtPedido));
 
-                                                intentShareFile.putExtra(Intent.EXTRA_SUBJECT, " Força de Vendas - Vendedor: " +  NomeVendedor + " - Pedido nº " + NumPedido);
+                                                intentShareFile.putExtra(Intent.EXTRA_SUBJECT, " Força de Vendas - Vendedor: " + NomeVendedor + " - Pedido nº " + NumPedido);
                                                 intentShareFile.putExtra(Intent.EXTRA_TEXT, "Segue em anexo o Pedido nº " + NumPedido);
 
                                                 startActivity(Intent.createChooser(intentShareFile, "Compartilhar Pedido nº " + NumPedido));
@@ -184,18 +183,25 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         } else {
                                             Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
                                         }
-                                    }
+                                    } /*else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
+                                        if (Status.equals("Orçamento")) {
+                                            final String NumPedido = adapter.ChamaDados(position);
+                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                            ((actListPedidos) getActivity()).finish();
+                                            startActivity(intent);
+                                        }
+
+                                    }*/
                                     dialog.cancel();
                                 } else {
                                     Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);
                                 }
                             }
-
                         }).show();
             } else {
                 Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
             }
-        }catch (Exception E){
+        } catch (Exception E) {
             E.toString();
         }
     }
