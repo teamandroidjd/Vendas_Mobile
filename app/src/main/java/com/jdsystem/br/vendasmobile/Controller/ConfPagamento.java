@@ -140,8 +140,6 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             //Util.msg_toast_personal(getBaseContext(), "SALVO COM SUCESSO", Util.SUCESSO);
             finish();
         }
-
-
     }
 
 

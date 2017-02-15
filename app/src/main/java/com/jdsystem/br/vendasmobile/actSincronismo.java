@@ -229,6 +229,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String TAG_EMAILS = "emails";
         String TAG_ATIVO = "ativo";
 
+        String QtdClie = RetornaqtdClientes(sCodVend, this);
+
         String CodVendedor = sCodVend;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -262,7 +264,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         try {
             JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
+            //JSONArray SeqPedidos = jsonObj.getJSONArray("sequencia");
 
+            int SeqClie = 0;
             int jumpTime = 0;
             Dialog.setProgress(jumpTime);
             final int totalProgressTime = pedidosblq.length();
@@ -337,6 +341,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             cursor1.moveToFirst();
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
 
+                            SeqClie++;
+
                             cursor.close();
                             cursor1.close();
 
@@ -360,7 +366,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         String EmailContato = null;
                         String Tel1Contato = null;
                         String Tel2Contato = null;
-
 
                         try {
                             for (int co = 0; co < Cont.length(); co++) {
@@ -1733,6 +1738,38 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
 
     }
+
+
+    public static String RetornaqtdClientes(String CodVend, Context ctxEnv ){
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaQtdClie");
+        soap.addProperty("iCodVend", CodVend);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
+        String RetQtdClie = null;
+
+        try {
+            //Boolean ConexOk = true;
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetQtdClie = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+        return RetQtdClie;
+    }
+
 
     public static void SincParametros(String sUsuario, String sSenha, Context ctxEnv) {
 

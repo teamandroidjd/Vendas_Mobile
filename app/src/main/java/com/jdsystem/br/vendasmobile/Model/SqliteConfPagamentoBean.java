@@ -43,11 +43,11 @@ public class SqliteConfPagamentoBean {
     }
 
     public boolean isAvista() {
-        return this.getConf_tipo_pagamento().equals("AVISTA") ? true : false;
+        return this.getConf_tipo_pagamento().equals("À VISTA") ? true : false;
     }
 
     public boolean isMensal() {
-        return this.getConf_tipo_pagamento().equals("MENSAL") ? true : false;
+        return this.getConf_tipo_pagamento().equals("PARCELADO") ? true : false;
     }
 
     public boolean isSemanal() {
