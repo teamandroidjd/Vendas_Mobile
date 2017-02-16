@@ -1,0 +1,95 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layTop">
+
+        <RadioGroup
+            android:id="@+id/genderRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            >
+
+            <RadioButton
+                android:id="@+id/maleRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Sincronizar"
+                android:textColor="@color/colordescClie"
+                android:textSize="30dp" />
+
+            <RadioButton
+                android:id="@+id/femaleRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Cancelar"
+                android:textColor="@color/colordescClie"
+                android:textSize="30dp" />
+            <RadioButton
+                android:id="@+id/rbCompart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Compartilhar"
+                android:textColor="@color/colordescClie"
+                android:textSize="30dp" />
+            <RadioButton
+                android:id="@+id/rbStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Verificar Status"
+                android:textColor="@color/colordescClie"
+                android:textSize="30dp" />
+            <RadioButton
+                android:id="@+id/rbAutoriza"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="Gerar Venda"
+                android:textColor="@color/colordescClie"
+                android:textSize="30dp" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Escolha uma das opções abaixo:"
+            android:textColor="@color/colordescClie"
+            android:textSize="30dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

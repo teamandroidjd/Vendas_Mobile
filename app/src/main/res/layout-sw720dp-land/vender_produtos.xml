@@ -1,0 +1,206 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/LinearLayoutPai"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
+
+        <TextView
+            android:id="@+id/venda_txv_codigo_cliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cliente: 005 - PAULO ROBERTO DOS SANTOS COUITNHO PINHEIRO FERNANDES DA SILVA SAURO SANTOS DA ROCHA"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/venda_txv_empresa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Empresa"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/textsize_sw720" />
+
+        <TextView
+            android:id="@+id/venda_txv_datavenda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data/Hora Venda : 03/09/2015 19:32:00"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/textsize_sw720" />
+
+        <TextView
+            android:id="@+id/venda_txv_dataentrega"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data da Entrega :"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/textsize_sw720" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.26"
+            android:gravity="center|left"
+            android:paddingLeft="4dp"
+            android:text="Descrição"
+            android:textColor="@color/colordescClie"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.83"
+            android:gravity="center"
+            android:text="Qtd."
+            android:textColor="@color/colordescClie"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.07"
+            android:gravity="center"
+            android:text="Vl.Unit."
+            android:textColor="@color/colordescClie"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingRight="4dp"
+            android:text="Vl.Total"
+            android:textColor="@color/colordescClie"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/LinearLayoutMeio"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/ListView_ItensVendidos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:cacheColorHint="@color/colorAccent"
+            android:fastScrollAlwaysVisible="true"
+            android:fastScrollEnabled="true">
+
+        </ListView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_inclui_produto"
+            android:layout_width="114dp"
+            android:layout_height="103dp"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="12dp"
+            android:src= "@drawable/ic_adicionar"
+            app:backgroundTint="@color/colorPrimary"
+            app:layout_anchor="@+id/ListView_ItensVendidos"
+            app:layout_anchorGravity="bottom|right" />
+
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <TextView
+            android:id="@+id/venda_txv_desconto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Informar desconto na venda :"
+            android:textColor="@color/colordescClie"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/venda_txt_desconto"
+            android:layout_width="82dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:gravity="right"
+            android:inputType="numberDecimal"
+            android:text="0"
+            android:textColor="@color/colordescClie"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/venda_perc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="%"
+            android:textColor="@color/colordescClie"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="28dp"
+        android:background="#afd8de"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/venda_txv_total_da_Venda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:paddingRight="6dp"
+            android:text="Total da venda = 0,00"
+            android:textColor="@color/ColorText"
+            android:textSize="@dimen/textsize_sw720"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/inc_toolbar"
+            layout="@layout/toolbar" />
+    </LinearLayout>
+</LinearLayout>
+
+

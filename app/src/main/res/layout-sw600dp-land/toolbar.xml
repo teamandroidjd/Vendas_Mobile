@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:local="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@color/colorPrimary"
+    local:theme="@style/Theme.AppCompat.Light">
+
+
+    <ImageView
+        android:id="@+id/finalizar_venda"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/salvar" />
+
+    <ImageView
+        android:id="@+id/cancel_venda"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/cancelar" />
+
+    <ImageView
+        android:id="@+id/item_obspedido"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="230dp"
+        android:src="@drawable/observacao" />
+
+    <ImageView
+        android:id="@+id/item_formapgto"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/pagamento" />
+
+    <ImageView
+        android:id="@+id/item_dtentrega"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/calendario" />
+
+</android.support.v7.widget.Toolbar>

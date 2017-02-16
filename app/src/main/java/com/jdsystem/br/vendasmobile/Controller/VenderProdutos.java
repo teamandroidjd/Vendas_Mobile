@@ -276,19 +276,21 @@ public class VenderProdutos extends AppCompatActivity implements View.OnKeyListe
             @Override
             public void onClick(View v) {
                 View view = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_obs_pedido, null);
-
+                final EditText userInput = (EditText) view.findViewById(R.id.inputobspedido);
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
                 alertBuilder.setView(view);
-                final EditText userInput = (EditText) view.findViewById(R.id.inputobspedido);
+
                 if (!ObsPedido.equals("")) {
                     userInput.setText(ObsPedido);
-                }
 
+                }
                 alertBuilder.setCancelable(true)
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ObsPedido = String.valueOf(userInput.getText());
+
+
                             }
                         });
                 Dialog dialog = alertBuilder.create();
@@ -451,6 +453,7 @@ public class VenderProdutos extends AppCompatActivity implements View.OnKeyListe
         ListView_ItensVendidos = (ListView) findViewById(R.id.ListView_ItensVendidos);
         venda_txt_desconto = (EditText) findViewById(R.id.venda_txt_desconto);
         venda_txv_desconto = (TextView) findViewById(R.id.venda_txv_desconto);
+
     }
 
     public void atualiza_listview_e_calcula_total() {

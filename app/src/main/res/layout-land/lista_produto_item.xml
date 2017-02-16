@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/CdCliente"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="3dp"
+        app:cardMaxElevation="3dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorCardClie"
+            android:orientation="vertical"
+            android:padding="3dp">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txv01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Codigo: "
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_codigo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Codigo Produto"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txv02"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrição do Produto:"
+                android:textColor="@color/colordescClie"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/prod_txv_prd_descricaoproduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrição do Produto"
+                android:textColor="@color/colorAccent"
+                android:textSize="15dp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txv03"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Classe:"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_categoria"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Categoria"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txtprocobase"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="Tabela Base"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/prod_txv_simbol_preco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/txtprocobase"
+                    android:text="R$ "
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_preco"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/prod_txv_simbol_preco"
+                    android:text="0,0000"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtprocoauxA"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtprocobase"
+                    android:text="Auxiliar A"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/prod_txv_simbol_preco2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/txtprocoauxA"
+                    android:layout_below="@+id/prod_txv_simbol_preco"
+                    android:text="R$ "
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_preco2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_toRightOf="@+id/prod_txv_simbol_preco2"
+                    android:layout_below="@+id/prod_txv_prd_preco"
+                    android:layout_alignParentRight="true"
+                    android:text="0,0000"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/txtprocoauxB"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtprocoauxA"
+                    android:text="Auxiliar B"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/prod_txv_simbol_preco3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/txtprocoauxB"
+                    android:layout_below="@+id/prod_txv_simbol_preco2"
+                    android:text="R$ "
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_preco3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_toRightOf="@+id/prod_txv_simbol_preco3"
+                    android:layout_below="@+id/prod_txv_prd_preco2"
+                    android:text="0,0000"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/txtprocoauxC"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtprocoauxB"
+                    android:text="Auxiliar C"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/prod_txv_simbol_preco4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/txtprocoauxC"
+                    android:layout_below="@+id/prod_txv_simbol_preco3"
+                    android:text="R$ "
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_preco4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/prod_txv_simbol_preco4"
+                    android:layout_below="@+id/prod_txv_prd_preco3"
+                    android:text="0,0000"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/txtprocoauxD"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtprocoauxC"
+                    android:text="Auxiliar D"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/prod_txv_simbol_preco5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/txtprocoauxD"
+                    android:layout_below="@+id/prod_txv_simbol_preco4"
+                    android:text="R$ "
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_preco5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/prod_txv_simbol_preco5"
+                    android:layout_below="@+id/prod_txv_prd_preco4"
+                    android:text="0,0000"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/txtprocopromoA"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtprocoauxD"
+                    android:text="Promocional A"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/prod_txv_simbol_preco6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/txtprocopromoA"
+                    android:layout_below="@+id/prod_txv_simbol_preco5"
+                    android:text="R$ "
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_preco6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/prod_txv_simbol_preco6"
+                    android:layout_below="@+id/prod_txv_prd_preco5"
+                    android:text="0,0000"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/txtprocopromoB"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtprocopromoA"
+                    android:text="Promocional B"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:id="@+id/prod_txv_simbol_preco7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/txtprocopromoA"
+                    android:layout_below="@+id/prod_txv_simbol_preco6"
+                    android:text="R$ "
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/prod_txv_prd_preco7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/prod_txv_simbol_preco7"
+                    android:layout_below="@+id/prod_txv_prd_preco6"
+                    android:text="0,0000"
+                    android:textColor="@color/colordescClie"
+                    android:textStyle="bold"/>
+
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

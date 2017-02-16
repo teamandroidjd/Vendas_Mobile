@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/CdCliente"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="3dp"
+        app:cardMaxElevation="3dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorCardClie"
+            android:orientation="vertical"
+            android:padding="3dp">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/txv_clicodigo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:text="Código: "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="@dimen/textsize_sw600"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/adm_txv_clicodigo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/txv_clicodigo"
+                        android:layout_toRightOf="@+id/txv_clicodigo"
+                        android:text="Codigo Cliente"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="@dimen/textsize_sw600"
+                        android:textStyle="bold"
+                         />
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:id="@+id/adm_txv_cli_nome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nome Cliente"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="@dimen/textsize_sw600"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/adm_txv_cli_fantasia"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Nome Fantasia"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="@dimen/textsize_sw600"
+                    android:textStyle="bold" />
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/cli_cidade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cidade:"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="@dimen/textsize_sw600"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/adm_txv_cli_cidade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/cli_cidade"
+                        android:layout_toRightOf="@+id/cli_cidade"
+                        android:text="Cidade"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="@dimen/textsize_sw600"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/cli_bairro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bairro: "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="@dimen/textsize_sw600"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/adm_txv_cli_bairro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/cli_bairro"
+                        android:layout_toRightOf="@+id/cli_bairro"
+                        android:text="Bairro"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="@dimen/textsize_sw600" />
+
+
+                </RelativeLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>
