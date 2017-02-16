@@ -10,11 +10,10 @@
     android:weightSum="1">
 
        <ImageView
-           android:layout_width="600dp"
-           android:layout_height="400dp"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
            android:background="@drawable/logoinvertida"
-           android:id="@+id/splash"
-           android:layout_marginTop="220dp" />
+           android:id="@+id/splash"/>
 
        <TextView
            android:text="www.jdsystem.com.br"
@@ -22,7 +21,6 @@
            android:layout_height="wrap_content"
            android:id="@+id/textView"
            android:gravity="bottom|center"
-           android:layout_marginTop="230dp"
            android:textColor="@color/colorPrimary"
            android:textStyle="bold"
            android:textSize="28dp"/>

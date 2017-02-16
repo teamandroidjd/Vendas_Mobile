@@ -186,8 +186,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     } /*else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
                                         if (Status.equals("Orçamento")) {
                                             final String NumPedido = adapter.ChamaDados(position);
-                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                            ((actListPedidos) getActivity()).finish();
+                                            Intent intent = new Intent(actListPedidos, VenderProdutos.class);
                                             startActivity(intent);
                                         }
 

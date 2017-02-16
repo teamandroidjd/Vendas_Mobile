@@ -7,6 +7,13 @@
     android:background="@color/colorCardClie"
     android:orientation="vertical">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </ScrollView>
+
     <TextView
         android:id="@+id/txv01"
         android:layout_margin="10dp"

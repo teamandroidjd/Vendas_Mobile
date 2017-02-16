@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/ColorFundoSplash"
-    android:layout_gravity="center"
     android:id="@+id/lin_lay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/ColorFundoSplash"
     android:gravity="center"
     android:orientation="vertical"
     android:weightSum="1">
 
-       <ImageView
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:background="@drawable/ico_logo_fv"
-           android:id="@+id/splash"
-           android:layout_marginTop="100dp" />
+    <ImageView
+        android:id="@+id/splash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ico_logo_fv" />
 
-       <TextView
-           android:text="www.jdsystem.com.br"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:id="@+id/textView"
-           android:gravity="bottom|center"
-           android:layout_marginTop="150dp"
-           android:textColor="@color/colorPrimary"
-           android:textStyle="bold"/>
+    <TextView
+        android:text="www.jdsystem.com.br"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:gravity="bottom|center"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold">
+
+    </TextView>
+
 
 </LinearLayout>

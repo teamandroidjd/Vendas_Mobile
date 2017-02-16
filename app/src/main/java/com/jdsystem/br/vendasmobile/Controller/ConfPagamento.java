@@ -543,10 +543,36 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
                 BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela2.setVisibility(View.GONE);
+                conf_valorparcela3.setVisibility(View.GONE);
+                conf_valorparcela4.setVisibility(View.GONE);
+                conf_valorparcela5.setVisibility(View.GONE);
+                conf_valorparcela6.setVisibility(View.GONE);
+                conf_valorparcela7.setVisibility(View.GONE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 conf_valorparcela.setText("Valor parcela: R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
             }
 
         } else {
+            conf_valorparcela2.setVisibility(View.GONE);
+            conf_valorparcela3.setVisibility(View.GONE);
+            conf_valorparcela4.setVisibility(View.GONE);
+            conf_valorparcela5.setVisibility(View.GONE);
+            conf_valorparcela6.setVisibility(View.GONE);
+            conf_valorparcela7.setVisibility(View.GONE);
+            conf_valorparcela8.setVisibility(View.GONE);
+            conf_valorparcela9.setVisibility(View.GONE);
+            conf_valorparcela10.setVisibility(View.GONE);
+            conf_valorparcela11.setVisibility(View.GONE);
+            conf_valorparcela12.setVisibility(View.GONE);
+            conf_txtvalorrecebido.setVisibility(View.GONE);
+            conf_txvlabelvalorrecebido.setVisibility(View.GONE);
             conf_valorparcela.setText("Valor parcela : 0,00");
         }
 

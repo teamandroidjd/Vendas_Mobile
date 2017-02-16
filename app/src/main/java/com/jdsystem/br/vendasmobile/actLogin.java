@@ -217,6 +217,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
         NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         return mWifi.isConnected();
     }
+
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
@@ -325,8 +326,6 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                      handler.post(new Runnable() {
                                                          @Override
                                                          public void run() {
-                                                             Dialogo.setMessage("Atualizando cadastro de Cidades/Bairros...");
-                                                             actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this);
                                                              Dialogo.setMessage("Sincronizando Empresas");
                                                              actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                                                              actSincronismo.SincParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
@@ -340,16 +339,26 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                                          public void run() {
                                                                              Dialogo.setMessage("Enviando pedidos...");
                                                                              actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
-                                                                             Dialogo.dismiss();
                                                                              handler.post(new Runnable() {
                                                                                  @Override
                                                                                  public void run() {
-                                                                                     Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
-                                                                                     Bundle params = new Bundle();
-                                                                                     params.putString("codvendedor", CodVendedor);
-                                                                                     params.putString("urlPrincipal", URLPrincipal);
-                                                                                     IntVend.putExtras(params);
-                                                                                     startActivity(IntVend);
+                                                                                     if (!UFVendedor.equals("")) {
+                                                                                         Dialogo.setMessage("Atualizando cadastro de Cidades/Bairros...");
+                                                                                         actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this);
+                                                                                     }
+
+                                                                                     Dialogo.dismiss();
+                                                                                     handler.post(new Runnable() {
+                                                                                         @Override
+                                                                                         public void run() {
+                                                                                             Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
+                                                                                             Bundle params = new Bundle();
+                                                                                             params.putString("codvendedor", CodVendedor);
+                                                                                             params.putString("urlPrincipal", URLPrincipal);
+                                                                                             IntVend.putExtras(params);
+                                                                                             startActivity(IntVend);
+                                                                                         }
+                                                                                     });
                                                                                  }
                                                                              });
                                                                          }

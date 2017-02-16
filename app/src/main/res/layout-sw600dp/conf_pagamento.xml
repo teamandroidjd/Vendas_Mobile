@@ -36,8 +36,7 @@
             android:id="@+id/conf_spfpgto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="25dp"
-            android:layout_marginTop="10dp" />
+            android:padding="25dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,7 +47,6 @@
                 android:id="@+id/conf_txformadepagamento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:text="Forma de pagamento:"
                 android:textColor="@color/colorAccent"
                 android:textSize="25dp"
@@ -79,44 +77,48 @@
                     android:textSize="20dp" />
             </RadioGroup>
 
-            <TextView
-                android:id="@+id/conf_txvlabelparcelas"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Quantidade de parcelas:"
-                android:textColor="@color/colorAccent"
-                android:textSize="25dp"
-                android:textStyle="bold" />
+                android:layout_height="match_parent">
 
-            <EditText
-                android:id="@+id/conf_txtqtdparcelas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:inputType="number"
-                android:maxLength="2"
-                android:textSize="20dp" />
+                <TextView
+                    android:id="@+id/conf_txvlabelparcelas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Quantidade de parcelas: "
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp"
+                    android:textStyle="bold"/>
 
+                <EditText
+                    android:id="@+id/conf_txtqtdparcelas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/conf_txvlabelparcelas"
+                    android:layout_marginTop="5dp"
+                    android:inputType="number"
+                    android:maxLength="2"
+                    android:textSize="20dp" />
+            </RelativeLayout>
         </LinearLayout>
-
     </LinearLayout>
 
     <ScrollView
         android:id="@+id/scrollView"
-        android:layout_width="fill_parent"
-        android:layout_height="250dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:scrollbars="vertical"
         android:layout_below="@+id/LnPai">
 
         <HorizontalScrollView
             android:id="@+id/scrollViewh"
-            android:layout_width="570dp"
-            android:scrollbars="horizontal"
-            android:layout_height="fill_parent">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal">
 
             <RelativeLayout
-                android:layout_width="550dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:weightSum="1">
 
@@ -133,13 +135,13 @@
 
                 <TextView
                     android:id="@+id/conf_valorparcela2"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
                     android:layout_toEndOf="@+id/conf_valorparcela"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="Parcela 2/12: R$ 1000,00"
+                    android:text="   Parcela 2/12: R$ 1000,00"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp"
                     android:textStyle="bold" />
@@ -148,21 +150,20 @@
                     android:id="@+id/conf_valorparcela3"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela2"
+                    android:layout_toEndOf="@+id/conf_valorparcela2"
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
-                    android:text="Parcela 3/12: R$ 1000,00"
+                    android:text="    Parcela 3/12: R$ 1000,00"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/conf_valorparcela4"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela2"
+                    android:layout_below="@+id/conf_valorparcela"
                     android:layout_marginTop="5dp"
-                    android:layout_toEndOf="@+id/conf_valorparcela3"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="Parcela 4/12: R$ 1000,00"
@@ -174,24 +175,25 @@
                     android:id="@+id/conf_valorparcela5"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela4"
+                    android:layout_toEndOf="@+id/conf_valorparcela4"
+                    android:layout_below="@+id/conf_valorparcela2"
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
-                    android:text="Parcela 5/12: R$ 1000,00"
+                    android:text="   Parcela 5/12: R$ 1000,00"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/conf_valorparcela6"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela4"
+                    android:layout_below="@+id/conf_valorparcela3"
                     android:layout_marginTop="5dp"
                     android:layout_toEndOf="@+id/conf_valorparcela5"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="Parcela 6/12: R$ 1000,00"
+                    android:text="    Parcela 6/12: R$ 1000,00"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp"
                     android:textStyle="bold" />
@@ -210,14 +212,14 @@
 
                 <TextView
                     android:id="@+id/conf_valorparcela8"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela6"
+                    android:layout_below="@+id/conf_valorparcela5"
                     android:layout_marginTop="5dp"
                     android:layout_toEndOf="@+id/conf_valorparcela7"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="Parcela 8/12: R$ 1000,00"
+                    android:text="   Parcela 8/12: R$ 1000,00"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp"
                     android:textStyle="bold" />
@@ -226,10 +228,11 @@
                     android:id="@+id/conf_valorparcela9"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela7"
+                    android:layout_below="@+id/conf_valorparcela6"
+                    android:layout_toEndOf="@+id/conf_valorparcela8"
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
-                    android:text="Parcela 9/12: R$ 1000,00"
+                    android:text="    Parcela 9/12: R$ 1000,00"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp"
                     android:textStyle="bold" />
@@ -238,9 +241,8 @@
                     android:id="@+id/conf_valorparcela10"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela8"
+                    android:layout_below="@+id/conf_valorparcela7"
                     android:layout_marginTop="5dp"
-                    android:layout_toEndOf="@+id/conf_valorparcela9"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="Parcela 10/12: R$ 1000,00"
@@ -252,10 +254,11 @@
                     android:id="@+id/conf_valorparcela11"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela9"
+                    android:layout_below="@+id/conf_valorparcela8"
+                    android:layout_toEndOf="@+id/conf_valorparcela10"
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
-                    android:text="Parcela 11/12: R$ 1000,00"
+                    android:text=" Parcela 11/12: R$ 1000,00"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp"
                     android:textStyle="bold" />
@@ -264,12 +267,12 @@
                     android:id="@+id/conf_valorparcela12"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela10"
+                    android:layout_below="@+id/conf_valorparcela9"
                     android:layout_marginTop="5dp"
                     android:layout_toEndOf="@+id/conf_valorparcela11"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="Parcela 12/12: R$ 1000,00"
+                    android:text=" Parcela 12/12: R$ 1000,00"
                     android:textColor="@color/colorAccent"
                     android:textSize="25dp"
                     android:textStyle="bold" />

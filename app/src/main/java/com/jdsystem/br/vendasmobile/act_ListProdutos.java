@@ -258,7 +258,7 @@ public class act_ListProdutos extends ActionBarActivity
                 prdBean.P_PRECO_PROD_VLVENDA4, //VLVENDA4
                 prdBean.P_PRECO_PROD_VLVENDA5, //VLVENDA5
                 prdBean.P_PRECO_PROD_VLVENDAP1,//PROMOCAO_A
-                prdBean.P_PRECO_PROD_VLVENDAP2//PROMOCAO_B
+                prdBean.P_PRECO_PROD_VLVENDAP2 //PROMOCAO_B
         };
 
         int[] to = new int[]{

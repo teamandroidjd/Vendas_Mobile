@@ -26,43 +26,32 @@
         <activity
             android:name=".actLogin"
             android:label="Força de Vendas"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <action android:name="android.intent.action.MAIN" />
         </activity>
         <activity
             android:name=".act_ListClientes"
             android:label="Clientes"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".actListPedidos"
             android:label="Pedidos"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".act_CadClientes"
             android:label="Cadastro de Clientes"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".actDadosCliente"
             android:label="Dados do Cliente"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".actSincronismo"
             android:label="Sincronização de Dados" />
-        <activity
-            android:name=".act_TH_contclie"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".act_TH_dadosclie"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".act_TH_obsclie"
-            android:screenOrientation="portrait" />
+        <activity android:name=".act_TH_contclie" />
+        <activity android:name=".act_TH_dadosclie" />
+        <activity android:name=".act_TH_obsclie" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -70,45 +59,40 @@
 
         <activity
             android:name=".ConfigWeb"
-            android:screenOrientation="portrait"
+
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".act_ListProdutos"
             android:label="Catálogo de Produtos"
-            android:screenOrientation="portrait"
+
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".actDadosProdutos"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".actListClientPedidos"
-            android:screenOrientation="portrait" />
+        <activity android:name=".actDadosProdutos" />
+        <activity android:name=".actListClientPedidos" />
         <activity
             android:name=".act_ListClientesPedidos"
-            android:label="Catálogo de Clientes"
-            android:screenOrientation="portrait" />
+            android:label="Catálogo de Clientes" />
         <activity
             android:name=".Controller.Lista_clientes"
             android:label="Catálogo de Clientes"
-            android:screenOrientation="portrait"
+
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.VenderProdutos"
             android:label="Cadastrar Pedido"
-            android:screenOrientation="portrait"
+
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.Lista_produtos"
             android:label="Cadastrar Pedido"
-            android:screenOrientation="portrait"
+
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.ConfPagamento"
-            android:label="Formas de Pagamento"
-            android:screenOrientation="portrait" />
-        <activity android:name=".actFiltroPeriodoPedidos"
-            android:label="Filtro por Emissão"/>
+            android:label="Formas de Pagamento" />
+        <activity
+            android:name=".actFiltroPeriodoPedidos"
+            android:label="Filtro por Emissão" />
 
     </application>
 
