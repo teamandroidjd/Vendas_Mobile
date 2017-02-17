@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="160dp"
-                        android:layout_marginStart="160dp"
+                        android:layout_marginStart="340dp"
                         android:layout_toEndOf="@+id/lblNumPedido"
                         android:layout_toRightOf="@+id/lblNumPedido"
                         android:text="Pedido"

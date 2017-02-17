@@ -173,9 +173,13 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/lnrtotvenda"
         android:layout_width="match_parent"
-        android:layout_height="28dp"
+        android:layout_height="wrap_content"
         android:background="#afd8de"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/LinearLayoutBottom"
+        android:layout_toRightOf="@+id/LinearLayoutBottom"
         android:orientation="horizontal">
 
         <TextView
@@ -186,7 +190,7 @@
             android:paddingRight="6dp"
             android:text="Total da venda = 0,00"
             android:textColor="@color/ColorText"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="@dimen/textsize_sw600_35"
             android:textStyle="bold" />
 
     </LinearLayout>
