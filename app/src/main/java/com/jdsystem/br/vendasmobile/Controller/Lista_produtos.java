@@ -164,7 +164,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 prdBean.P_DESCRICAO_PRODUTO,
                 //prdBean.P_QUANTIDADE_PRODUTO,
                 prdBean.P_CATEGORIA_PRODUTO,
-                //prdBean.P_PRECO_PROD_VLVENDA1,
+                prdBean.P_APRESENTACAO_PRODUTO,
                 prdBean.P_PRECO_PROD_PADRAO,   //VLVENDA1
                 prdBean.P_PRECO_PROD_VLVENDA2, //VLVENDA2
                 prdBean.P_PRECO_PROD_VLVENDA3, //VLVENDA3
@@ -180,6 +180,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 R.id.prod_txv_prd_descricaoproduto,
                 //R.id.prod_txv_prd_quantidade,
                 R.id.prod_txv_prd_categoria,
+                R.id.txtapres,
                 R.id.prod_txv_prd_preco,  //VLVENDA1
                 R.id.prod_txv_prd_preco2, //VLVENDA2
                 R.id.prod_txv_prd_preco3, //VLVENDA3

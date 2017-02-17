@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:text="Observações"
                     android:textColor="@color/colordescClie"
-                    android:textSize="40sp"
+                    android:textSize="@dimen/textsize_sw720_40"
                     android:textStyle="normal|bold" />
 
             </LinearLayout>

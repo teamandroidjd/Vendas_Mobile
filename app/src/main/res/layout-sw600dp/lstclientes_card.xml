@@ -52,7 +52,7 @@
                             android:layout_height="wrap_content"
                             android:text="11435"
                             android:textColor="@color/colordescClie"
-                            android:textSize="@dimen/textsize_sw600"
+                            android:textSize="@dimen/textsize_sw600_30"
                             android:textStyle="normal|bold" />
 
                         <TextView
@@ -61,7 +61,7 @@
                             android:layout_height="wrap_content"
                             android:text="CLIENTE COM NOME GRANDE QUE DA TRABALHO "
                             android:textColor="@color/colorPrimary"
-                            android:textSize="@dimen/textsize_sw600"
+                            android:textSize="@dimen/textsize_sw600_30"
                             android:textStyle="normal|bold" />
 
                     </LinearLayout>
@@ -80,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:text="CNPJ"
                         android:textColor="@color/colordescClie"
-                        android:textSize="@dimen/textsize_sw600"
+                        android:textSize="@dimen/textsize_sw600_30"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -89,7 +89,7 @@
                         android:layout_height="wrap_content"
                         android:text="Razão Social"
                         android:textColor="@color/colordescClie"
-                        android:textSize="@dimen/textsize_sw600"
+                        android:textSize="@dimen/textsize_sw600_30"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
 
@@ -103,7 +103,7 @@
                         android:layout_height="wrap_content"
                         android:text="Estado"
                         android:textColor="@color/colordescClie"
-                        android:textSize="@dimen/textsize_sw600"
+                        android:textSize="@dimen/textsize_sw600_30"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -117,7 +117,7 @@
                         android:layout_toRightOf="@+id/lblEstado"
                         android:text=" - "
                         android:textColor="@color/colordescClie"
-                        android:textSize="@dimen/textsize_sw600"
+                        android:textSize="@dimen/textsize_sw600_30"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -131,7 +131,7 @@
                         android:layout_toRightOf="@+id/lbl1"
                         android:text="Cidade"
                         android:textColor="@color/colordescClie"
-                        android:textSize="@dimen/textsize_sw600"
+                        android:textSize="@dimen/textsize_sw600_30"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -145,7 +145,7 @@
                         android:layout_toRightOf="@+id/lblCidade"
                         android:text=" - "
                         android:textColor="@color/colordescClie"
-                        android:textSize="@dimen/textsize_sw600"
+                        android:textSize="@dimen/textsize_sw600_30"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -159,7 +159,7 @@
                         android:layout_toRightOf="@+id/lbl2"
                         android:text="Bairro"
                         android:textColor="@color/colordescClie"
-                        android:textSize="@dimen/textsize_sw600"
+                        android:textSize="@dimen/textsize_sw600_30"
                         android:textStyle="normal|bold" />
                 </RelativeLayout>
 
@@ -173,7 +173,7 @@
                         android:layout_height="wrap_content"
                         android:text="Telefone"
                         android:textColor="@color/colordescClie"
-                        android:textSize="@dimen/textsize_sw600"
+                        android:textSize="@dimen/textsize_sw600_30"
                         android:textStyle="normal|bold" />
                 </RelativeLayout>
             </LinearLayout>

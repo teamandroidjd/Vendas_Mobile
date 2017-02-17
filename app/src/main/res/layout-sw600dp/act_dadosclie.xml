@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:text="Nome fantasia:"
                     android:textColor="@color/colordescClie"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
 
 
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:text="NOME FANTASIA"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:text="Razão Social:"
                     android:textColor="@color/colordescClie"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
 
 
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:text="RAZAO SOCIAL"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:text="Documento"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -102,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:text="Identidade"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:text="Inscrição Estadual"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -134,7 +134,7 @@
                     android:layout_height="wrap_content"
                     android:text="Endereço"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:text="Complemento"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -164,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:text="Estado"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -179,7 +179,7 @@
                     android:layout_height="wrap_content"
                     android:text="Cidade"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -195,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:text="Bairro"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -210,7 +210,7 @@
                     android:layout_height="wrap_content"
                     android:text="CEP"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -224,7 +224,7 @@
                     android:layout_height="wrap_content"
                     android:text="Telefone1"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -238,7 +238,7 @@
                     android:layout_height="wrap_content"
                     android:text="Telefone2"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -252,7 +252,7 @@
                     android:layout_height="wrap_content"
                     android:text="Email"
                     android:textColor="@color/colordescClie"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/textsize_sw600_30"
                     android:textStyle="normal|bold" />
             </LinearLayout>
         </LinearLayout>

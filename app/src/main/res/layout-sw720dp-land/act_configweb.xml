@@ -31,7 +31,7 @@
         android:layout_marginTop="8dp"
         android:id="@+id/textView4"
         android:textColor="@color/colorPrimary"
-        android:textSize="35sp"
+        android:textSize="40sp"
         android:layout_below="@+id/textView3"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:inputType="textCapCharacters"
         android:ems="10"
-        android:textSize="35sp"
+        android:textSize="40sp"
         android:layout_marginTop="8dp"
         android:id="@+id/edthost"
         android:layout_below="@+id/textView4"
@@ -63,7 +63,7 @@
         android:padding="30dp"
         android:id="@+id/btsalvhost"
         android:background="@color/colorPrimary"
-        android:textSize="35sp"
+        android:textSize="45sp"
         android:textStyle="normal|bold"
         android:textColor="@color/colorCardClie" />
 

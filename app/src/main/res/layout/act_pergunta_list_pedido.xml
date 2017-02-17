@@ -2,14 +2,32 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+    <LinearLayout
+        android:id="@+id/layTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Escolha uma das opções abaixo:"
+            android:textColor="@color/colordescClie"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+
     <ScrollView
+        android:layout_below="@+id/layTop"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layTop">
+            android:layout_height="wrap_content">
 
             <RadioGroup
                 android:id="@+id/genderRadioGroup"
@@ -93,23 +111,4 @@
             </RadioGroup>
         </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/layTop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Escolha uma das opções abaixo:"
-            android:textColor="@color/colordescClie"
-            android:textSize="20dp" />
-
-    </LinearLayout>
-
 </RelativeLayout>
