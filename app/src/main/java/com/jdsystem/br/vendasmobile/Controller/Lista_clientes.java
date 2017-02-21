@@ -160,15 +160,24 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
 
                 switch (TELA_QUE_CHAMOU) {
                     case TELA_DE_VENDAS:
-                        Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
-                        Bundle params = new Bundle();
-                        params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                        params.putString("CodVendedor", CodVendedor);
-                        params.putString("numpedido", "0");
-                        params.putString("codempresa", CodEmpresa);
-                        intent.putExtras(params);
-                        startActivity(intent);
-                        finish();
+                        String bloqueio = cliente_cursor.getString(cursor.getColumnIndex("BLOQUEIO"));
+                        Double limitecred = cliente_cursor.getDouble(cursor.getColumnIndex("LIMITECRED"));
+                        if(bloqueio.equals("01")){
+                            Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                            Bundle params = new Bundle();
+                            params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                            params.putString("CodVendedor", CodVendedor);
+                            params.putString("numpedido", "0");
+                            params.putString("codempresa", CodEmpresa);
+                            intent.putExtras(params);
+                            startActivity(intent);
+                            finish();
+                        }else
+                        {
+                            Util.msg_toast_personal(getBaseContext(), "Cliente sem permissão de compra.Verifique!", Util.ALERTA);
+                            return;
+                        }
+
                         break;
                 }
             }

@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 2;
+    public static int versao = 3;
 
     public ConfigDB(Context ctx) {
 
@@ -40,6 +40,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             "ATIVO VARCHAR(1), " +
             "FLAGINTEGRADO VARCHAR(1)," +
             "REGIDENT VARCHAR(18)," +
+            "LIMITECRED DOUBLE, " +
+            "BLOQUEIO VARCHAR(2), " +
             "CHAVE VARCHAR(100) " +
             ");");
 
@@ -64,24 +66,33 @@ public class ConfigDB extends SQLiteOpenHelper {
 
     private static String SQL_PARAMAPP = ("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME," +
             " p_usu_codigo INTEGER, " +
-            " p_importar_todos_clientes CHAR DEFAULT 1, " +
-            " p_qual_endereco_ip CHAR DEFAULT 1," +
-            " p_usuario VARCHAR DEFAULT 20," +
-            " p_senha VARCHAR DEFAULT 20," +
-            " p_end_ip_local VARCHAR DEFAULT 50," +
-            " p_end_ip_remoto VARCHAR DEFAULT 50," +
-            " PERCACRESC DECIMAL (7, 4),              " +
+            " p_importar_todos_clientes CHAR DEFAULT 1,       " +
+            " p_qual_endereco_ip CHAR DEFAULT 1,              " +
+            " p_usuario VARCHAR DEFAULT 20,                   " +
+            " p_senha VARCHAR DEFAULT 20,                     " +
+            " p_end_ip_local VARCHAR DEFAULT 50,              " +
+            " p_end_ip_remoto VARCHAR DEFAULT 50,             " +
+            " PERCACRESC DECIMAL (7, 4),                      " +
+            " DESCRICAOTAB1 VARCHAR (20),                     " +
+            " DESCRICAOTAB2 VARCHAR (20),                     " +
+            " DESCRICAOTAB3 VARCHAR (20),                     " +
+            " DESCRICAOTAB4 VARCHAR (20),                     " +
+            " DESCRICAOTAB5 VARCHAR (20),                     " +
+            " DESCRICAOTAB6 VARCHAR (20),                     " +
+            " DESCRICAOTAB7 VARCHAR (20),                     " +
+            " HABITEMNEGATIVO CHAR (1),                       " +
+            " HABCRITSITCLIE CHAR (1),                        " +
             " p_trabalhar_com_estoque_negativo CHAR DEFAULT 1," +
             " p_desconto_do_vendedor INTEGER);");
 
     private static String SQL_CONTATOS = (" CREATE TABLE IF NOT EXISTS CONTATO (" +
             "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
-            "    CODCLIENTE INTEGER           NOT NULL," +
-            "    NOME           VARCHAR (60)  NOT NULL," +
-            "    CARGO          VARCHAR (30)," +
-            "    EMAIL          VARCHAR (100)," +
-            "    TEL1           VARCHAR (15)," +
-            "    TEL2           VARCHAR (15))" +
+            "    CODCLIENTE INTEGER           NOT NULL,                 " +
+            "    NOME           VARCHAR (60)  NOT NULL,                 " +
+            "    CARGO          VARCHAR (30),                           " +
+            "    EMAIL          VARCHAR (100),                          " +
+            "    TEL1           VARCHAR (15),                           " +
+            "    TEL2           VARCHAR (15))                           " +
             ";");
 
     private static String SQL_ITENS = ("CREATE TABLE IF NOT EXISTS ITENS (" +
@@ -99,6 +110,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    VLVENDAP1    DECIMAL (12, 4),          " +
             "    VLVENDAP2    DECIMAL (12, 4),          " +
             "    VENDAPADRAO  DECIMAL (12, 4),          " +
+            "    QTDESTPROD   VARCHAR(10),              " +
             "    CLASSE       VARCHAR(15),              " +
             "    FABRICANTE   VARCHAR(30),              " +
             "    FORNECEDOR   VARCHAR(30),              " +
@@ -110,99 +122,98 @@ public class ConfigDB extends SQLiteOpenHelper {
             ");");
 
     private static String SQL_PEDOPER = ("CREATE TABLE IF NOT EXISTS PEDOPER ( " +
-            "    NUMPED        INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "    CHAVE_PEDIDO  VARCHAR(70),                 " +
-            "    DATAEMIS      DATETIME        NOT NULL,    " +
-            "    DATAPREVISTAENTREGA           DATE,        " +
-            "    CODEMPRESA    INTEGER,                     " +
-            "    CODCLIE       INTEGER         NOT NULL,    " +
-            "    CODCLIE_EXT   INTEGER         NOT NULL,    " +
-            "    NOMECLIE      VARCHAR(50),                 " +
-            "    STATUS        CHAR(1),                     " +
-            "    CODVENDEDOR   INTEGER         NOT NULL,    " +
-            "    FORMAPGTO     VARCHAR(50),                 " +
-            "    VLMERCAD      NUMERIC (12, 2) NOT NULL,    " +
-            "    VLDESCONTO    NUMERIC (12, 2),             " +
-            "    PERCDESCO     DECIMAL (7, 4),              " +
-            "    VALORTOTAL    NUMERIC (12, 2) NOT NULL,    " +
-            "    OBS           TEXT,                        " +
-            "    NUMPEDIDOERP  INTEGER,                     " +
-            "    VLPERCACRES   FLOAT,                       " +
-            "    PERCACRESC    DECIMAL (7, 4),              " +
-            "    VLFRETE       FLOAT,                       " +
-            "    VLTOTALIPI    FLOAT,                       " +
-            "    VLTOTALICMSST FLOAT,                       " +
-            "    VALORSEGURO   FLOAT,                       " +
-            "    FLAGINTEGRADO CHAR(1),                     " +
-            "    LATITUDEPEDIDO DOUBLE,                     " +
-            "    NUMFISCAL      INTEGER,                    " +
-            "    LONGITUDEPEDIDO DOUBLE);");
+            " NUMPED              INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " CHAVE_PEDIDO        VARCHAR(70),                       " +
+            " DATAEMIS            DATETIME        NOT NULL,          " +
+            " DATAPREVISTAENTREGA DATE,                              " +
+            " CODEMPRESA          INTEGER,                           " +
+            " CODCLIE             INTEGER         NOT NULL,          " +
+            " CODCLIE_EXT         INTEGER         NOT NULL,          " +
+            " NOMECLIE            VARCHAR(50),                       " +
+            " STATUS              CHAR(1),                           " +
+            " CODVENDEDOR         INTEGER         NOT NULL,          " +
+            " FORMAPGTO           VARCHAR(50),                       " +
+            " VLMERCAD            NUMERIC (12, 2) NOT NULL,          " +
+            " VLDESCONTO          NUMERIC (12, 2),                   " +
+            " PERCDESCO           DECIMAL (7, 4),                    " +
+            " VALORTOTAL          NUMERIC (12, 2) NOT NULL,          " +
+            " OBS                 TEXT,                              " +
+            " NUMPEDIDOERP        INTEGER,                           " +
+            " VLPERCACRES         FLOAT,                             " +
+            " PERCACRESC          DECIMAL (7, 4),                    " +
+            " VLFRETE             FLOAT,                             " +
+            " VLTOTALIPI          FLOAT,                             " +
+            " VLTOTALICMSST       FLOAT,                             " +
+            " VALORSEGURO         FLOAT,                             " +
+            " FLAGINTEGRADO       CHAR(1),                           " +
+            " LATITUDEPEDIDO      DOUBLE,                            " +
+            " NUMFISCAL           INTEGER,                           " +
+            " LONGITUDEPEDIDO DOUBLE);");
 
 
-    private static String SQL_PEDITENS = ("CREATE TABLE IF NOT EXISTS PEDITENS (                 " +
-            "    NUMIDEOPE     INTEGER         PRIMARY KEY AUTOINCREMENT " +
-            "                                  NOT NULL,    " +
-            "    CHAVEPEDIDO   VARCHAR(70),                 " +
-            // "    NUMPED        INTEGER         NOT NULL,    " +
-            "    CODITEMANUAL  VARCHAR (15)    NOT NULL,    " +
-            "    DESCRICAO     VARCHAR (60)    NOT NULL,    " +
-            "    CODIGOITEM    INTEGER,                     " +
-            "    NUMEROITEM    NUMERIC (5, 0),              " +
-            //"    QTDEMBAPED    NUMERIC (11, 3) NOT NULL,  " +
-            "    QTDMENORPED   FLOAT           NOT NULL,    " +
-            //"    QTDMAIORPED   FLOAT           NOT NULL,  " +
-            "    UNIDADE       VARCHAR (5),                 " +
-            "    VLUNIT        DECIMAL(10,2)   NOT NULL,    " +
-            "    PERCACREDESC  DOUBLE,                      " +
-            "    VALORDESCONTO DECIMAL(10,2)  ,             " +
-            "    VLTOTAL       DECIMAL(10,2)   NOT NULL,    " +
-            "    VLICMSST      FLOAT,                       " +
-            "    VLIPI         FLOAT                        " +
+    private static String SQL_PEDITENS = ("CREATE TABLE IF NOT EXISTS PEDITENS (" +
+            " NUMIDEOPE     INTEGER         PRIMARY KEY AUTOINCREMENT " +
+            "                               NOT NULL,    " +
+            " CHAVEPEDIDO   VARCHAR(70),                 " +
+         // " NUMPED        INTEGER         NOT NULL,    " +
+            " CODITEMANUAL  VARCHAR (15)    NOT NULL,    " +
+            " DESCRICAO     VARCHAR (60)    NOT NULL,    " +
+            " CODIGOITEM    INTEGER,                     " +
+            " NUMEROITEM    NUMERIC (5, 0),              " +
+          //" QTDEMBAPED    NUMERIC (11, 3) NOT NULL,    " +
+            " QTDMENORPED   FLOAT           NOT NULL,    " +
+          //" QTDMAIORPED   FLOAT           NOT NULL,    " +
+            " UNIDADE       VARCHAR (5),                 " +
+            " VLUNIT        DECIMAL(10,2)   NOT NULL,    " +
+            " PERCACREDESC  DOUBLE,                      " +
+            " VALORDESCONTO DECIMAL(10,2),               " +
+            " VLTOTAL       DECIMAL(10,2)   NOT NULL,    " +
+            " VLICMSST      FLOAT,                       " +
+            " VLIPI         FLOAT                        " +
             ");");
 
     private static String SQL_CONFPAGAMENTO = "CREATE TABLE IF NOT EXISTS [CONFPAGAMENTO] (" +
-            "conf_codigo INTEGER PRIMARY KEY AUTOINCREMENT ," +
-            "conf_sementrada_comentrada CHAR DEFAULT 1," +
-            "conf_tipo_pagamento VARCHAR DEFAULT 20," +
-            "conf_recebeucom_din_chq_car VARCHAR DEFAULT  20," +
-            "conf_valor_recebido DECIMAL(10,2)," +
-            "conf_parcelas INTEGER," +
-            "vendac_chave VARCHAR DEFAULT 70 ," +
-            "conf_enviado CHAR DEFAULT 1 )";
+            " conf_codigo                 INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " conf_sementrada_comentrada  CHAR DEFAULT 1,                    " +
+            " conf_tipo_pagamento         VARCHAR DEFAULT 20,                " +
+            " conf_recebeucom_din_chq_car VARCHAR DEFAULT  20,               " +
+            " conf_valor_recebido         DECIMAL(10,2),                     " +
+            " conf_parcelas               INTEGER,                           " +
+            " vendac_chave                VARCHAR DEFAULT 70 ,               " +
+            " conf_enviado                CHAR DEFAULT 1 )";
 
     private static String SQL_VENDA_D_TEMP = "CREATE TABLE [VENDAD_TEMP] (" +
-            "vendad_eanTEMP VARCHAR DEFAULT 50," +
-            "vendad_prd_codigoTEMP INTEGER," +
-            "vendad_prd_descricaoTEMP VARCHAR DEFAULT 50," +
-            "vendad_quantidadeTEMP DECIMAL(10,2), " +
-            "vendad_preco_vendaTEMP DECIMAL(10,2)," +
-            "vendad_prd_unidadeTEMP  VARCHAR(5)," +
-            "vendad_totalTEMP DECIMAL(10,2))";
+            " vendad_eanTEMP           VARCHAR DEFAULT 50, " +
+            " vendad_prd_codigoTEMP    INTEGER,            " +
+            " vendad_prd_descricaoTEMP VARCHAR DEFAULT 50, " +
+            " vendad_quantidadeTEMP    DECIMAL(10,2),      " +
+            " vendad_preco_vendaTEMP   DECIMAL(10,2),      " +
+            " vendad_prd_unidadeTEMP   VARCHAR(5),         " +
+            " vendad_totalTEMP         DECIMAL(10,2))";
 
     private static String SQL_RECEBER = "CREATE TABLE [CONREC] (" +
-            "rec_codigo INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "rec_numparcela INTEGER," +
-            "rec_cli_codigo INTEGER," +
-            "rec_cli_nome VARCHAR DEFAULT 50 ," +
-            "vendac_chave VARCHAR DEFAULT 70 ," +
-            "rec_datamovimento DATE ," +
-            "rec_valor_receber DECIMAL (10,2)," +
-            "rec_valorpago DECIMAL (10,2)," +
-            "rec_datavencimento DATE ," +
-            "rec_data_que_pagou DATE ," +
-            "rec_recebeu_com  VARCHAR DEFAULT 20 ," +
-            "rec_enviado CHAR DEFAULT 1)";
+            " rec_codigo         INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " rec_numparcela     INTEGER,                           " +
+            " rec_cli_codigo     INTEGER,                           " +
+            " rec_cli_nome       VARCHAR DEFAULT 50,                " +
+            " vendac_chave       VARCHAR DEFAULT 70,                " +
+            " rec_datamovimento  DATE ,                             " +
+            " rec_valor_receber  DECIMAL (10,2),                    " +
+            " rec_datavencimento DATE ,                             " +
+            " rec_data_que_pagou DATE ,                             " +
+            " rec_recebeu_com    VARCHAR DEFAULT 20,                " +
+            " rec_enviado        CHAR DEFAULT 1)";
 
-    private static String SQL_EMPRESA = ("CREATE TABLE IF NOT EXISTS EMPRESAS (        " +
-            "    CODEMPRESA  INTEGER           NOT NULL,                 " +
-            "    CNPJ        VARCHAR (14) PRIMARY KEY UNIQUE NOT NULL,  " +
-            "    NOMEEMPRE   VARCHAR (60) NOT NULL,                     " +
-            "    NOMEABREV   VARCHAR (20) NOT NULL,                     " +
-            "    TEL1        VARCHAR (15) NOT NULL,                     " +
-            "    TEL2        VARCHAR (15),                              " +
-            "    EMAIL       VARCHAR (40) NOT NULL,                     " +
-            "    ATIVO       CHAR(1),                          " +
-            "    LOGO        BLOB                                       " +
+    private static String SQL_EMPRESA = ("CREATE TABLE IF NOT EXISTS EMPRESAS (" +
+            " CODEMPRESA  INTEGER      NOT NULL,                    " +
+            " CNPJ        VARCHAR (14) PRIMARY KEY UNIQUE NOT NULL, " +
+            " NOMEEMPRE   VARCHAR (60) NOT NULL,                    " +
+            " NOMEABREV   VARCHAR (20) NOT NULL,                    " +
+            " TEL1        VARCHAR (15) NOT NULL,                    " +
+            " TEL2        VARCHAR (15),                             " +
+            " EMAIL       VARCHAR (40) NOT NULL,                    " +
+            " ATIVO       CHAR(1),                                  " +
+            " LOGO        BLOB                                      " +
             ");");
 
     private static String SQL_USUARIOS = (" CREATE TABLE IF NOT EXISTS USUARIOS (" +
@@ -210,6 +221,13 @@ public class ConfigDB extends SQLiteOpenHelper {
             " USUARIO VARCHAR (30), " +
             " SENHA VARCHAR  (100), " +
             " CODEMPRESA INTEGER ); ");
+
+    private static String SQL_BLOQUEIOS = (" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
+            " CODBLOQ   VARCHAR (3),  " +
+            " DESCRICAO VARCHAR (30), " +
+            " BLOQUEAR  CHAR    (1),  " +
+            " LIBERAR   CHAR    (1),  " +
+            " FPAVISTA  VARCHAR (3) ); ");
 
 
     @Override
@@ -228,6 +246,7 @@ public class ConfigDB extends SQLiteOpenHelper {
         db.execSQL(SQL_RECEBER);
         db.execSQL(SQL_EMPRESA);
         db.execSQL(SQL_USUARIOS);
+        db.execSQL(SQL_BLOQUEIOS);
 
     }
 
@@ -265,6 +284,34 @@ public class ConfigDB extends SQLiteOpenHelper {
             } catch (Exception E) {
                 E.toString();
             }
+            try  {
+                //MODIFICAÇÕES NA VERSÃO 3
+                db.execSQL("ALTER TABLE ITENS ADD QTDESTPROD VARCHAR(10) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1   VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB2   VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB3   VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB4   VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB5   VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB6   VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB7   VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABITEMNEGATIVO CHAR (1) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABCRITSITCLIE  CHAR (1)  ");
+                db.execSQL("ALTER TABLE CLIENTES ADD LIMITECRED      DOUBLE  ");
+                db.execSQL("ALTER TABLE CLIENTES ADD BLOQUEIO        VARCHAR(2)  ");
+                db.execSQL(" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
+                        " CODBLOQ   VARCHAR (3),  " +
+                        " DESCRICAO VARCHAR (30), " +
+                        " BLOQUEAR  CHAR    (1),  " +
+                        " LIBERAR   CHAR    (1),  " +
+                        " FPAVISTA  VARCHAR (3) ); ");
+
+
+            } catch (Exception E){
+                E.toString();
+            }
+
+
+
         }
 
 

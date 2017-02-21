@@ -14,7 +14,7 @@ public class SqliteProdutoBean {
     public static final String P_DESCRICAO_PRODUTO      = "DESCRICAO";
     public static final String P_UNIDADE_MEDIDA         = "UNIVENDA";
     //public static final String P_CUSTO_PRODUTO        = "prd_custo";
-    // public static final String P_QUANTIDADE_PRODUTO  = "prd_quantidade";
+    public static final String P_QUANTIDADE_PRODUTO     = "QTDESTPROD";
     public static final String P_PRECO_PROD_PADRAO      = "VLVENDA1";
     public static final String P_PRECO_PROD_VLVENDA1    = "VENDAPADRAO";
     public static final String P_PRECO_PROD_VLVENDA2    = "VLVENDA2";
@@ -27,6 +27,10 @@ public class SqliteProdutoBean {
     public static final String P_STATUS_PRODUTO         = "ATIVO";
     public static final String P_APRESENTACAO_PRODUTO   = "APRESENTACAO";
 
+
+
+
+
     private String prd_codigo;
     //private String prd_EAN13;
     private String prd_descricao;
@@ -38,6 +42,7 @@ public class SqliteProdutoBean {
     private String prd_categoria;
     private String prd_status;
     private String prd_apresentacao;
+
 
     public SqliteProdutoBean() {
     }

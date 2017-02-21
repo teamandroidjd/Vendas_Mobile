@@ -275,9 +275,13 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                          String sUsuario = (String) envelope.getResponse();
                                          System.out.println("Response::" + resultsRequestSOAP.toString());
 
+                                         if(sUsuario.equals("0")){
+                                             Dialogo.cancel();
+                                             Toast.makeText(actLogin.this, "Usuário/senha inválido ou não habilitado. Verifique!", Toast.LENGTH_SHORT).show();
+                                             return;
+                                         }
                                          JSONObject jsonObj = new JSONObject(sUsuario);
                                          JSONArray JUsuario = jsonObj.getJSONArray("usuario");
-
                                          JSONObject user = JUsuario.getJSONObject(0);
 
                                          CodVendedor = user.getString("codvend");
@@ -326,9 +330,14 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                      handler.post(new Runnable() {
                                                          @Override
                                                          public void run() {
-                                                             Dialogo.setMessage("Sincronizando Empresas");
+                                                             Dialogo.setMessage("Atualizando dados da empresa");
                                                              actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             Dialogo.setMessage("Atualizando parâmetros");
                                                              actSincronismo.SincParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             Dialogo.setMessage("Atualizando outras informações");
+                                                             actSincronismo.SincDescricaoTabelas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             Dialogo.setMessage("Atualizando outras informações");
+                                                             actSincronismo.SincBloqueios(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                                                              handler.post(new Runnable() {
                                                                  @Override
                                                                  public void run() {
@@ -373,7 +382,12 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                          public void run() {
                                                              Dialogo.setMessage("Sincronizando Empresas");
                                                              actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             Dialogo.setMessage("Atualizando parâmetros");
                                                              actSincronismo.SincParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             Dialogo.setMessage("Atualizando outras informações");
+                                                             actSincronismo.SincDescricaoTabelas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             Dialogo.setMessage("Atualizando outras informações");
+                                                             actSincronismo.SincBloqueios(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                                                              handler.post(new Runnable() {
                                                                  @Override
                                                                  public void run() {

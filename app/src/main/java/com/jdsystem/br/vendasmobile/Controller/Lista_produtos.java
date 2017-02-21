@@ -162,7 +162,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 //prdBean.P_CODIGO_PRODUTO,
                 //prdBean.P_CODIGO_BARRAS,
                 prdBean.P_DESCRICAO_PRODUTO,
-                //prdBean.P_QUANTIDADE_PRODUTO,
+                prdBean.P_QUANTIDADE_PRODUTO,
                 prdBean.P_CATEGORIA_PRODUTO,
                 prdBean.P_APRESENTACAO_PRODUTO,
                 prdBean.P_PRECO_PROD_PADRAO,   //VLVENDA1
@@ -178,7 +178,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 R.id.prod_txv_prd_codigo,
                 //R.id.prod_txv_prd_codigobarras,
                 R.id.prod_txv_prd_descricaoproduto,
-                //R.id.prod_txv_prd_quantidade,
+                R.id.txt_qtdestoque,
                 R.id.prod_txv_prd_categoria,
                 R.id.txtapres,
                 R.id.prod_txv_prd_preco,  //VLVENDA1
@@ -253,6 +253,21 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         alerta.setCancelable(false);
         alerta.setView(view);
 
+        DB = new ConfigDB(this).getReadableDatabase();
+
+        Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP",null);
+        Bloqueios.moveToFirst();
+        String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
+        Bloqueios.close();
+        Double qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
+        if(vendenegativo.equals("N") && qtdestoque <= 0  ){
+
+            Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível", Util.ALERTA);
+            return;
+
+        }
+
+
         final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
         final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
         final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
@@ -264,7 +279,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 spreco = spntabpreco.getSelectedItem().toString();
-                spreco = spreco.replaceAll("[A-Za-z$:]","").trim();
+                spreco = spreco.replaceAll("[A-Za-z$ãç:]", "").trim();
                 info_txv_precoproduto.setText(spreco);
             }
 
@@ -276,53 +291,80 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         try {
             List<String> DadosListTabPreco = new ArrayList<String>();
 
+            Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP" , null);
+            CursorParametro.moveToFirst();
+            String tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+            String tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+            String tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+            String tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+            String tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+            String tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+            String tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+            CursorParametro.close();
+
+            String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
+            if (!vlvendapadrao.equals("0,0000")) {
+                BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
+                String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                Precopadrao = Precopadrao.replace('.', ',');
+                DadosListTabPreco.add(tab1+" R$: " + Precopadrao);
+            }
+
             String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
-            BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
-            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-            Preco1 = Preco1.replace('.', ',');
-            DadosListTabPreco.add("Tabela base R$: " + Preco1);
+            if (!vlvenda1.equals("0,0000")) {
+                BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
+                String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                Preco1 = Preco1.replace('.', ',');
+                DadosListTabPreco.add(tab2+" R$: " + Preco1);
+            }
 
             String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
-            BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
-            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-            Preco2 = Preco2.replace('.', ',');
-            DadosListTabPreco.add("Auxiliar A R$: " + Preco2);
+            if (!vlvenda2.equals("0,0000")) {
+                BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
+                String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                Preco2 = Preco2.replace('.', ',');
+                DadosListTabPreco.add(tab3+" R$: " + Preco2);
+            }
 
             String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
-            BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
-            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-            Preco3 = Preco3.replace('.', ',');
-            DadosListTabPreco.add("Auxiliar B R$: " + Preco3);
+            if (!vlvenda3.equals("0,0000")) {
+                BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
+                String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                Preco3 = Preco3.replace('.', ',');
+                DadosListTabPreco.add(tab4+" R$: " +Preco3);
+            }
 
             String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
-            BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
-            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-            Preco4 = Preco4.replace('.', ',');
-            DadosListTabPreco.add("Auxiliar C R$: " + Preco4);
+            if (!vlvenda4.equals("0,0000")) {
+                BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
+                String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                Preco4 = Preco4.replace('.', ',');
+                DadosListTabPreco.add(tab5+" R$: " + Preco4);
+            }
 
             String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
-            BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
-            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-            Preco5 = Preco5.replace('.', ',');
-            DadosListTabPreco.add("Auxiliar D R$: " + Preco5);
+            if (!vlvenda5.equals("0,0000")) {
+                BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
+                String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                Preco5 = Preco5.replace('.', ',');
+                DadosListTabPreco.add(tab6+" R$: " + Preco5);
+            }
 
             String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
-            BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
-            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-            Precop1 = Precop1.replace('.', ',');
-            DadosListTabPreco.add("Promocional A R$: " + Precop1);
+            if (!vlvendap1.equals("0,0000")) {
+                BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
+                String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                Precop1 = Precop1.replace('.', ',');
+                DadosListTabPreco.add(tab7+" R$: " + Precop1);
+            }
 
             String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
-            BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
-            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-            Precop2 = Precop2.replace('.', ',');
-            DadosListTabPreco.add("Promocional B R$: " + Precop2);
-
-            /*String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
-            BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
-            String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-            Precopadrao = Precopadrao.replace('.', ',');
-            DadosListTabPreco.add(Precopadrao);*/
+            if (!vlvendap2.equals("0,0000")) {
+                BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
+                String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                Precop2 = Precop2.replace('.', ',');
+                DadosListTabPreco.add("Preço 8 R$: " + Precop2);
+            }
 
             ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(Lista_produtos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
             arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -378,15 +420,19 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
                             //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
                             String ValorItem = info_txv_precoproduto.getText().toString();
-                            BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                            venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                            itemBean1.setVendad_preco_vendaTEMP(venda);
+                            if (!ValorItem.equals("0,0000")) {
+                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                itemBean1.setVendad_preco_vendaTEMP(venda);
 
-                            //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
-                            itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
-                            itemDao.insere_item(itemBean1);
-                            atualiza_listview_com_os_itens_da_venda();
-                            finish();
+                                //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
+                                itemDao.insere_item(itemBean1);
+                                atualiza_listview_com_os_itens_da_venda();
+                                finish();
+                            } else {
+                                Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                            }
                         } else {
                             Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
                         }

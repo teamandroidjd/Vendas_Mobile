@@ -78,15 +78,24 @@ public class ConfigWeb extends AppCompatActivity {
                             System.out.println("Response :" + resultsRequestSOAP.toString());
 
                             if (RetHost.equals("0")){
-                                DialogECB.dismiss();
+                                DialogECB.cancel();
                                 Toast.makeText(ConfigWeb.this, "Host não encontrado!", Toast.LENGTH_SHORT).show();
                                 return;
                             }
+                        }else {
+                            DialogECB.cancel();
+                            Toast.makeText(ConfigWeb.this, "Sem conexão com a internet. Verifique!", Toast.LENGTH_SHORT).show();
+                            return;
                         }
                     } catch (Exception e) {
                         DialogECB.dismiss();
                         System.out.println("Error" + e);
                     }
+                }
+                if (RetHost == null) {
+                    DialogECB.cancel();
+                    Toast.makeText(ConfigWeb.this, "Não foi possível validar a licença. Verifique!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 DialogECB.dismiss();
                 SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();

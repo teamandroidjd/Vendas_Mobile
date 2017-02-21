@@ -666,15 +666,19 @@ public class VenderProdutos extends AppCompatActivity implements View.OnKeyListe
 
                                                     //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
                                                     String ValorItem = info_txv_precoproduto.getText().toString();
-                                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                                    venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                                    itemBean1.setVendad_preco_vendaTEMP(venda);
+                                                    if (!ValorItem.equals("0,0000")) {
+                                                        BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                                        venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                                        itemBean1.setVendad_preco_vendaTEMP(venda);
 
-                                                    //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
-                                                    itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
-                                                    itemDao.atualizar_item_na_venda(itemBean1);
-                                                    atualiza_listview_e_calcula_total();
-                                                    //finish();
+                                                        //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                                        itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
+                                                        itemDao.atualizar_item_na_venda(itemBean1);
+                                                        atualiza_listview_e_calcula_total();
+                                                        finish();
+                                                    }else {
+                                                        Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                                    }
                                                 } else {
                                                     Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
                                                 }
