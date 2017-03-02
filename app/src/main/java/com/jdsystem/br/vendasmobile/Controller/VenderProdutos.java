@@ -67,7 +67,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
-public class VenderProdutos extends AppCompatActivity implements View.OnKeyListener, Runnable {
+public class VenderProdutos extends Activity implements View.OnKeyListener, Runnable {
 
     private BigDecimal TOTAL_DA_VENDA;
     private Intent CLI_CODIGO_INTENT;

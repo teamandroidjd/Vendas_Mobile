@@ -57,7 +57,7 @@ public class act_ListProdutos extends ActionBarActivity
     private List<String> array_spinner = new ArrayList<String>();
     private ArrayAdapter<String> arrayAdapter;
     private String selecao_spinner;
-    private String dtUltAtu;
+    private String dtUltAtu, usuario, senha;
     private Cursor cursor;
     private EditText prod_txt_pesquisaproduto;
     private ListView prod_listview_produtotemp;
@@ -84,6 +84,8 @@ public class act_ListProdutos extends ActionBarActivity
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal = params.getString("urlPrincipal");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
                 //Pedido = params.getBoolean("pedido");
             }
         }
@@ -168,10 +170,11 @@ public class act_ListProdutos extends ActionBarActivity
             Intent intent = (act_ListProdutos.this).getIntent();
             (act_ListProdutos.this).finish();
             startActivity(intent);
-        } finally {
-            if (dialog.isShowing())
-                dialog.dismiss();
+        } catch (Exception e){
+            e.toString();
         }
+        if (dialog.isShowing())
+            dialog.dismiss();
 
     }
 
@@ -252,6 +255,13 @@ public class act_ListProdutos extends ActionBarActivity
                 //prdBean.P_CATEGORIA_PRODUTO,
                 prdBean.P_STATUS_PRODUTO,
                 prdBean.P_APRESENTACAO_PRODUTO,
+                prdBean.P_DESCRICAO_TAB1,
+                prdBean.P_DESCRICAO_TAB2,
+                prdBean.P_DESCRICAO_TAB3,
+                prdBean.P_DESCRICAO_TAB4,
+                prdBean.P_DESCRICAO_TAB5,
+                prdBean.P_DESCRICAO_TAB6,
+                prdBean.P_DESCRICAO_TAB7,
                 prdBean.P_PRECO_PROD_PADRAO,   //VLVENDA1
                 prdBean.P_PRECO_PROD_VLVENDA2, //VLVENDA2
                 prdBean.P_PRECO_PROD_VLVENDA3, //VLVENDA3
@@ -271,6 +281,13 @@ public class act_ListProdutos extends ActionBarActivity
                 //R.id.prod_txv_prd_categoria,
                 R.id.txtStatus,
                 R.id.txtapres,
+                R.id.lbl7,
+                R.id.lbl8,
+                R.id.lbl9,
+                R.id.lbl10,
+                R.id.lbl11,
+                R.id.lbl12,
+                R.id.lbl13,
                 R.id.txtpreco,
                 R.id.txtprecoauxiliara,
                 R.id.txtprecoauxiliarb,

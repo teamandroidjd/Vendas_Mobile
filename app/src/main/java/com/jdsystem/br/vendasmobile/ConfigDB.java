@@ -54,18 +54,18 @@ public class ConfigDB extends SQLiteOpenHelper {
 
     private static String SQL_CIDADES = ("CREATE TABLE IF NOT EXISTS CIDADES (" +
             "    CODCIDADE INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "    CODCIDADE_EXT INTEGER  ," +
-            "    DESCRICAO VARCHAR (50) NOT NULL," +
-            "    UF        CHAR (2)     NOT NULL" +
+            "    CODCIDADE_EXT INTEGER  ,"                     +
+            "    DESCRICAO VARCHAR (50) NOT NULL,"             +
+            "    UF        CHAR (2)     NOT NULL"              +
             ");");
 
     private static String SQL_ESTADOS = ("CREATE TABLE IF NOT EXISTS ESTADOS (" +
-            "    UF CHAR(2) PRIMARY KEY, " +
+            "    UF CHAR(2) PRIMARY KEY, "        +
             "    DESCRICAO VARCHAR (20) NOT NULL" +
             ");");
 
     private static String SQL_PARAMAPP = ("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME," +
-            " p_usu_codigo INTEGER, " +
+            " p_usu_codigo INTEGER,                           " +
             " p_importar_todos_clientes CHAR DEFAULT 1,       " +
             " p_qual_endereco_ip CHAR DEFAULT 1,              " +
             " p_usuario VARCHAR DEFAULT 20,                   " +
@@ -82,6 +82,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " DESCRICAOTAB7 VARCHAR (20),                     " +
             " HABITEMNEGATIVO CHAR (1),                       " +
             " HABCRITSITCLIE CHAR (1),                        " +
+            " TIPOCRITICQTDITEM CHAR(1),                      " +
             " p_trabalhar_com_estoque_negativo CHAR DEFAULT 1," +
             " p_desconto_do_vendedor INTEGER);");
 
@@ -117,8 +118,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    ATIVO        VARCHAR(1),               " +
             "    OBS          TEXT,                     " +
             "    MARCA        VARCHAR(15),              " +
-            "    VLICMSST      FLOAT,                   " +
-            "    VLIPI         FLOAT                    " +
+            "    VLICMSST     FLOAT,                    " +
+            "    VLIPI        FLOAT                     " +
             ");");
 
     private static String SQL_PEDOPER = ("CREATE TABLE IF NOT EXISTS PEDOPER ( " +
@@ -287,17 +288,18 @@ public class ConfigDB extends SQLiteOpenHelper {
             try  {
                 //MODIFICAÇÕES NA VERSÃO 3
                 db.execSQL("ALTER TABLE ITENS ADD QTDESTPROD VARCHAR(10) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1   VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB2   VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB3   VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB4   VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB5   VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB6   VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB7   VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD HABITEMNEGATIVO CHAR (1) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD HABCRITSITCLIE  CHAR (1)  ");
-                db.execSQL("ALTER TABLE CLIENTES ADD LIMITECRED      DOUBLE  ");
-                db.execSQL("ALTER TABLE CLIENTES ADD BLOQUEIO        VARCHAR(2)  ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1     VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB2     VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB3     VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB4     VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB5     VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB6     VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB7     VARCHAR(20) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABITEMNEGATIVO   CHAR (1) ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABCRITSITCLIE    CHAR (1)  ");
+                db.execSQL("ALTER TABLE CLIENTES ADD LIMITECRED        DOUBLE  ");
+                db.execSQL("ALTER TABLE CLIENTES ADD BLOQUEIO          VARCHAR(2)  ");
+                db.execSQL("ALTER TABLE PARAMAPP ADD TIPOCRITICQTDITEM CHAR(1)");
                 db.execSQL(" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
                         " CODBLOQ   VARCHAR (3),  " +
                         " DESCRICAO VARCHAR (30), " +

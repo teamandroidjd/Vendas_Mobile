@@ -92,6 +92,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal = params.getString("urlPrincipal");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
             }
         }
         //DB = new ConfigDB(ctx).getReadableDatabase();
@@ -165,14 +167,16 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     public void run() {
         DB = new ConfigDB(this).getReadableDatabase();
 
-        Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP ", null);
-        CursosParam.moveToFirst();
-
-        String DataUlt = null;
-        String HoraAtu = null;
+        //String DataUlt = null;
+        //String HoraAtu = null;
 
         try {
-            if (CursosParam.getCount() > 0) {
+            Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP ", null);
+            CursosParam.moveToFirst();
+            DataUltSt2 = Util.DataHojeComHorasBR();
+            DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = '" + DataUltSt2 + "';");
+            CursosParam.close();
+            /*if (CursosParam.getCount() > 0) {
                 String dataEmUmFormato = CursosParam.getString(CursosParam.getColumnIndex("DT_ULT_ATU"));
                 SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
                 Date data = formato.parse(dataEmUmFormato);
@@ -184,27 +188,26 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             } else {
                 DataUlt = "01/01/2000 12:20:30";
                 DB.execSQL(" INSERT INTO PARAMAPP(DT_ULT_ATU) VALUES(datetime());");
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
+            }*/
+        } catch (Exception e) {
+            e.toString();
         }
 
 
-        String DataUlt2 = DataUlt + " " + HoraAtu;
+        String DataUlt2 = DataUltSt2;
 
         SharedPreferences prefs = getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
 
 
-        //Dialog.setMessage("Sincronizando clientes");
         SincronizarClientes(sCodVend, usuario, senha, DataUlt2);
-        //Dialog.setMessage("Sincronizando produtos");
         SincronizarProdutos(usuario, senha, DataUlt2);
-        //Dialog.setMessage("Enviando clientes");
         SincronizarClientesEnvio();
-        //Dialog.setMessage("Enviando pedidos");
         SincronizarPedidosEnvio();
+        SincDescricaoTabelas();
+        SincBloqueios();
+        SincParametros();
 
 
         DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
@@ -560,6 +563,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() + "'" +
                                         " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             } else {
+                                TAG_VLVENDA1 = CItens.getString(TAG_VLVENDA1).trim();
+                                TAG_VLVENDA2 = CItens.getString(TAG_VLVENDA2).trim();
+                                TAG_VLVENDA3 = CItens.getString(TAG_VLVENDA3).trim();
+                                TAG_VLVENDA4 = CItens.getString(TAG_VLVENDA4).trim();
+                                TAG_VLVENDA5 = CItens.getString(TAG_VLVENDA5).trim();
+                                TAG_VLVENDAP1 = CItens.getString(TAG_VLVENDAP1).trim();
+                                TAG_VLVENDAP2 = CItens.getString(TAG_VLVENDAP2).trim();
+                                TAG_VENDAPADRAO = CItens.getString(TAG_VENDAPADRAO).trim();
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
                                         "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
                                         "ATIVO, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
@@ -570,14 +581,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_CLASSE).trim() +
                                         "',' " + CItens.getString(TAG_MARCA).trim() +
                                         "', '" + CItens.getString(TAG_UNIVENDA).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA1).trim() +
-                                        "', '" + CItens.getString(TAG_VLVENDA2).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA3).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA4).trim() +
-                                        "','" + CItens.getString(TAG_VLVENDA5).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "',' " + TAG_VLVENDA1 +
+                                        "', '" + TAG_VLVENDA2 +
+                                        "',' " + TAG_VLVENDA3 +
+                                        "',' " + TAG_VLVENDA4 +
+                                        "','" + TAG_VLVENDA5 +
+                                        "',' " + TAG_VLVENDAP1 +
+                                        "',' " + TAG_VLVENDAP2 +
+                                        "', '" + TAG_VENDAPADRAO +
                                         "', '" + CItens.getString(TAG_ATIVO) +
                                         "', '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
@@ -892,41 +903,273 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
+    public void SincDescricaoTabelas() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
+        soap.addProperty("aUsuario", usuario);
+        soap.addProperty("aSenha", senha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
+        String RetDescTabelas = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(this);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetDescTabelas = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+
+        try {
+            JSONObject jsonObj = new JSONObject(RetDescTabelas);
+            JSONArray JParamApp = jsonObj.getJSONArray("tabelas");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JParamApp.length();
+            DB = new ConfigDB(this).getReadableDatabase();
+
+            for (int i = 0; i < JParamApp.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JParamApp.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        String DescTab1 = c.getString("nometab1");
+                        String DescTab2 = c.getString("nometab2");
+                        String DescTab3 = c.getString("mometab3");
+                        String DescTab4 = c.getString("nometab4");
+                        String DescTab5 = c.getString("nometab5");
+                        String DescTab6 = c.getString("nometabp1");
+                        String DescTab7 = c.getString("nometabp2");
+
+
+                        Cursor CursorTabela = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                        CursorTabela.moveToFirst();
+                        if (CursorTabela.getCount() > 0) {
+                            DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
+                                    "', DESCRICAOTAB2 = '" + DescTab2.trim() +
+                                    "', DESCRICAOTAB3 = '" + DescTab3.trim() +
+                                    "', DESCRICAOTAB4 = '" + DescTab4.trim() +
+                                    "', DESCRICAOTAB5 = '" + DescTab5.trim() +
+                                    "', DESCRICAOTAB6 = '" + DescTab6.trim() +
+                                    "', DESCRICAOTAB7 = '" + DescTab7.trim() +
+                                    "'");
+                        } else {
+
+                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7)" +
+                                    " VALUES(" + DescTab1.trim() + ",'" + DescTab2.trim() + "', '" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "' );");
+                        }
+                        CursorTabela.close();
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.toString();
+        }
+    }
+
+    public void SincBloqueios() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
+        soap.addProperty("aUsuario", usuario);
+        soap.addProperty("aSenha", senha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+        String RetBloqueios = null;
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(this);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetBloqueios = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetBloqueios);
+            JSONArray JBloqueios = jsonObj.getJSONArray("bloqueios");
+
+            int jumpTime = 0;
+            //DialogECB.setProgress(jumpTime);
+            final int totalProgressTime = JBloqueios.length();
+            //DialogECB.setMax(totalProgressTime);
+            DB = new ConfigDB(this).getReadableDatabase();
+
+            for (int i = 0; i < JBloqueios.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JBloqueios.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        //DialogECB.setProgress(jumpTime);
+                        // DialogECB.setMessage("Sincronizando Tabelas - Empresas");
+                        String codblq = c.getString("codblq");
+                        String descricao = c.getString("descricao");
+                        String bloquear = c.getString("bloquear");
+                        String liberar = c.getString("liberar");
+                        String fpavista = c.getString("fpavista");
+
+
+                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq, null);
+                        if (CursorBloqueio.getCount() > 0) {
+                            DB.execSQL(" UPDATE BLOQCLIE SET CODBLOQ = '" + codblq + "', DESCRICAO = '" + descricao + "', BLOQUEAR = '" + bloquear + "'," +
+                                    " LIBERAR = '" + liberar + "', FPAVISTA = '" + fpavista + "'" +
+                                    " WHERE CODBLOQ = " + codblq);
+                        } else {
+                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
+                                    " VALUES(" + codblq + ",'" + descricao + "', '" + bloquear + "','" + liberar + "','" + fpavista + "' );");
+                        }
+                        CursorBloqueio.close();
+
+                    } catch (Exception E) {
+
+                        E.toString();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.toString();
+        }
+    }
+
+    public void SincParametros() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
+        soap.addProperty("aUsuario", usuario);
+        soap.addProperty("aSenha", senha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 6000);
+        String RetParamApp = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(this);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetParamApp = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            } else {
+                Toast.makeText(this, "Sem conexão com a internet. Verifique!", Toast.LENGTH_LONG).show();
+                return;
+            }
+        } catch (Exception e) {
+            e.toString();
+        }
+
+        try {
+            JSONObject jsonObj = new JSONObject(RetParamApp);
+            JSONArray JParamApp = jsonObj.getJSONArray("param_app");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JParamApp.length();
+            DB = new ConfigDB(this).getReadableDatabase();
+
+            for (int i = 0; i < JParamApp.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JParamApp.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        Double PercDescMax = c.getDouble("percdescmaxped");
+                        String habitemnegativo = c.getString("habitemnegativo");
+                        String habcritsitclie = c.getString("habcritsitclie");
+                        String habcritqtditens = c.getString("habcritqtditens");
+
+                        Cursor CursorParam = DB.rawQuery(" SELECT PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM", null);
+                        CursorParam.moveToFirst();
+                        if (CursorParam.getCount() > 0) {
+                            DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
+                                    "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
+                                    "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
+                                    "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
+                                    "'");
+                        } else {
+
+                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM)" +
+                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "','" + habcritqtditens.trim() + "');");
+                        }
+                        CursorParam.close();
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
      /*
     * Métodos que podem ser invocados de outras activity
     */
 
     public static void run(Context ctxEnvClie) {
         DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
-
-        Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP ", null);
-        CursosParam.moveToFirst();
-
-        String DataUlt = null;
-        String HoraAtu = null;
+        //String DataUlt = null;
+        //String HoraAtu = null;
 
         try {
-            if (CursosParam.getCount() > 0) {
+            Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP", null);
+            CursosParam.moveToFirst();
+            DataUltSt2 = Util.DataHojeComHorasBR();
+            DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = '" + DataUltSt2 + "';");
+            CursosParam.close();
+            /*if (CursosParam.getCount() > 0) {
                 String dataEmUmFormato = CursosParam.getString(CursosParam.getColumnIndex("DT_ULT_ATU"));
-                SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-                Date data = formato.parse(dataEmUmFormato);
-                formato.applyPattern("dd/MM/yyyy");
-                DataUlt = formato.format(data);
+                if (dataEmUmFormato != null) {
+                    SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+                    Date data = formato.parse(dataEmUmFormato);
+                    formato.applyPattern("dd/MM/yyyy");
+                    DataUlt = formato.format(data);
 
-                SimpleDateFormat SdfHora = new SimpleDateFormat("HH:mm");
-                HoraAtu = (SdfHora.format(data));
-            } else {
-                DataUlt = "01/01/2000 12:20:30";
-                DB.execSQL(" INSERT INTO PARAMAPP(DT_ULT_ATU) VALUES(datetime());");
-            }
-        } catch (ParseException e) {
+                    SimpleDateFormat SdfHora = new SimpleDateFormat("HH:mm");
+                    HoraAtu = (SdfHora.format(data));
+
+                    DataUltSt2 = DataUlt + " " + HoraAtu;
+                    DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = '" + DataUltSt2 + "';");
+                } else if (dataEmUmFormato == null) {
+                    DataUlt = "01/01/2000 12:20:30";
+                    DB.execSQL(" INSERT INTO PARAMAPP(DT_ULT_ATU) VALUES('" + DataUlt + "');");
+                    DataUltSt2 = DataUlt;
+                } else {
+                    DataUlt = "01/01/2000 12:20:30";
+                    DataUltSt2 = DataUlt;
+                }
+            }*/
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-        DataUltSt2 = DataUlt + " " + HoraAtu;
-
-        DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
     }
 
     private static int RetornaBairro(String NomeBairro, int CodCidade) {
@@ -1479,7 +1722,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return true;
     }
 
-
     public static void SincronizarPedidosEnvio(String NumPedido, Context ctxEnv, Boolean bdialog) {
 
         String JPedidos = null;
@@ -1750,8 +1992,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
     }
 
-
-    public static String RetornaqtdClientes(String CodVend, Context ctxEnv ){
+    public static String RetornaqtdClientes(String CodVend, Context ctxEnv) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -1781,8 +2022,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return RetQtdClie;
     }
 
-
-    public static void SincParametros(String sUsuario, String sSenha, Context ctxEnv) {
+    public static void SincParametrosStatic(String sUsuario, String sSenha, Context ctxEnv) {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -1795,7 +2035,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         soap.addProperty("aSenha", sSenha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS,6000);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 6000);
         String RetParamApp = null;
 
         try {
@@ -1806,7 +2046,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                 RetParamApp = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
-            }else {
+            } else {
                 Toast.makeText(ctxEnv, "Sem conexão com a internet. Verifique!", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -1828,27 +2068,37 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         JSONObject c = JParamApp.getJSONObject(jumpTime);
                         jumpTime += 1;
                         Double PercDescMax = c.getDouble("percdescmaxped");
-                        String  habitemnegativo = c.getString("habitemnegativo");
+                        String habitemnegativo = c.getString("habitemnegativo");
                         String habcritsitclie = c.getString("habcritsitclie");
+                        String habcritqtditens = c.getString("habcritqtditens");
 
-                        DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
-                                "', HABITEMNEGATIVO = '"+ habitemnegativo  +
-                                "', HABCRITSITCLIE = '"+ habcritsitclie +
-                                "'");
+                        Cursor CursorParam = DB.rawQuery(" SELECT PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP", null);
+                        CursorParam.moveToFirst();
+                        if (CursorParam.getCount() > 0) {
+                            DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
+                                    "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
+                                    "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
+                                    "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
+                                    "'");
+                        } else {
+
+                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM)" +
+                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "','" + habcritqtditens.trim() + "');");
+                        }
+                        CursorParam.close();
+
 
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
-                        E.printStackTrace();
                         E.toString();
                     }
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            e.toString();
         }
     }
 
-    public static void SincDescricaoTabelas(String sUsuario, String sSenha, Context ctxEnv) {
+    public static void SincDescricaoTabelasStatic(String sUsuario, String sSenha, Context ctxEnv) {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -1898,15 +2148,24 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         String DescTab6 = c.getString("nometabp1");
                         String DescTab7 = c.getString("nometabp2");
 
+                        Cursor CursorTabela = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                        CursorTabela.moveToFirst();
+                        if (CursorTabela.getCount() > 0) {
+                            DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
+                                    "', DESCRICAOTAB2 = '" + DescTab2.trim() +
+                                    "', DESCRICAOTAB3 = '" + DescTab3.trim() +
+                                    "', DESCRICAOTAB4 = '" + DescTab4.trim() +
+                                    "', DESCRICAOTAB5 = '" + DescTab5.trim() +
+                                    "', DESCRICAOTAB6 = '" + DescTab6.trim() +
+                                    "', DESCRICAOTAB7 = '" + DescTab7.trim() +
+                                    "'");
+                        } else {
 
-                        DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
-                                "', DESCRICAOTAB2 = '" + DescTab2.trim() +
-                                "', DESCRICAOTAB3 = '" + DescTab3.trim() +
-                                "', DESCRICAOTAB4 = '" + DescTab4.trim() +
-                                "', DESCRICAOTAB5 = '" + DescTab5.trim() +
-                                "', DESCRICAOTAB6 = '" + DescTab6.trim() +
-                                "', DESCRICAOTAB7 = '" + DescTab7.trim() +
-                                "'" );
+                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7)" +
+                                    " VALUES(" + "'" + DescTab1.trim() + "','" + DescTab2.trim() + "', '" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "' );");
+                        }
+                        CursorTabela.close();
+
 
                     } catch (Exception E) {
                         E.toString();
@@ -1918,7 +2177,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    public static void SincBloqueios(String sUsuario, String sSenha, Context ctxEnv) {
+    public static void SincBloqueiosStatic(String sUsuario, String sSenha, Context ctxEnv) {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -2088,7 +2347,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    public static void SincronizarClientesEnvioStatic(String CodClie_Int, Context ctxEnvClie, Boolean bDialogo) {
+    public static void SincronizarClientesEnvioStatic(String CodClie_Int, Context ctxEnvClie, Boolean bDialogo, String user, String pass) {
         String Jcliente = null;
         ProgressDialog Dialog = null;
         String METHOD_NAMEENVIO = "Cadastrar";
@@ -2204,9 +2463,15 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 StrictMode.setThreadPolicy(policy);
 
                                 SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                                soap.addProperty("aJson", Jcliente);
-                                soap.addProperty("aUsuario", usuario);
-                                soap.addProperty("aSenha", senha);
+                                if (senha != null) {
+                                    soap.addProperty("aJson", Jcliente);
+                                    soap.addProperty("aUsuario", usuario);
+                                    soap.addProperty("aSenha", senha);
+                                } else {
+                                    soap.addProperty("aJson", Jcliente);
+                                    soap.addProperty("aUsuario", user);
+                                    soap.addProperty("aSenha", pass);
+                                }
                                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
                                 envelope.setOutputSoapObject(soap);
                                 HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
@@ -2317,7 +2582,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         soap.addProperty("aSenha", senha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS,60000);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 60000);
         String RetProdutos = null;
 
         try {
@@ -2386,7 +2651,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
                                         "',' " + CItens.getString(TAG_CLASSE).trim().replace("'", "") +
                                         "',' " + CItens.getString(TAG_MARCA).trim().replace("'", "") +
-                                        "', '" + CItens.getString(TAG_UNIVENDA).replaceAll(" ","") +
+                                        "', '" + CItens.getString(TAG_UNIVENDA).replaceAll(" ", "") +
                                         "',' " + CItens.getString(TAG_VLVENDA1).trim() +
                                         "', '" + CItens.getString(TAG_VLVENDA2).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA3).trim() +
@@ -2405,15 +2670,13 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         }
 
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
-                        E.printStackTrace();
+                        E.toString();
                     }
                 }
 
             }
         } catch (Exception E) {
-            // TODO Auto-generated catch block
-            E.printStackTrace();
+            E.toString();
         }
         if (bDialogo == false) {
             if (Dialog.isShowing())
@@ -2421,7 +2684,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    public static void SincronizarClientesStatic(String sCodVend, Context ctxEnvClie, Boolean bDialogo) {
+    public static void SincronizarClientesStatic(String sCodVend, Context ctxEnvClie, Boolean bDialogo, String user, String pass) {
 
         ProgressDialog Dialog = null;
 
@@ -2476,12 +2739,18 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         StrictMode.setThreadPolicy(policy);
 
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        soap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
-        soap.addProperty("aUsuario", usuario);
-        soap.addProperty("aSenha", senha);
+        if (senha != null) {
+            soap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+            soap.addProperty("aUsuario", usuario);
+            soap.addProperty("aSenha", senha);
+        } else {
+            soap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+            soap.addProperty("aUsuario", user);
+            soap.addProperty("aSenha", pass);
+        }
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES,60000);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 60000);
         String RetClientes = null;
 
         try {
@@ -2505,6 +2774,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         try {
             //String SHA1Ret = RetClientes.substring(0, 40);
             //String ArrayClientes = RetClientes.substring(40, (RetClientes.length()));
+            if (RetClientes.equals("0")) {
+                Dialog.dismiss();
+                Toast.makeText(ctxEnvClie, "Nenhum Cliente encontrado. Verifique!", Toast.LENGTH_SHORT).show();
+                return;
+
+            }
 
             JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
@@ -2551,6 +2826,291 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             Dialog.setProgress(jumpTime);
                             Dialog.setMessage("Sincronizando Tabelas - Clientes");
                         }
+
+                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+
+                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
+                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
+                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade);
+
+                        try {
+                            if (cursor.getCount() > 0) {
+                                cursor.moveToFirst();
+                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
+                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
+                                        "', REGIDENT = '" + c.getString(TAG_RG) + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
+                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
+                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
+                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO) +
+                                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
+                                        "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
+                                        " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
+                                        ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
+                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
+                            } else {
+                                DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, REGIDENT, INSCREST, EMAIL, TEL1, TEL2, " +
+                                        "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
+                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED, BLOQUEIO, ATIVO, FLAGINTEGRADO) VALUES(" +
+                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") + "','" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
+                                        "',' " + c.getString(TAG_RG) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
+                                        "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO) +
+                                        "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +
+                                        "','" + CodBairro + "',' " + c.getString(TAG_OBS) + "','" + CodCidade + "',' " + CodEstado +
+                                        "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
+                                        "','" + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_LIMITECRED) + "','" + c.getString(TAG_BLOQUEIO) + "','" + c.getString(TAG_ATIVO)
+                                        + "','" + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
+                            }
+
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+                            cursor1.moveToFirst();
+                            CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
+
+                            cursor.close();
+                            cursor1.close();
+
+                        } catch (Exception E) {
+                            E.toString();
+                        }
+
+                        String Contatos = c.getString(TAG_CONTATOSINFO);
+                        Contatos = "{\"contatos\":" + Contatos + "\t}";
+                        JSONObject ObjCont = new JSONObject(Contatos);
+                        JSONArray Cont = ObjCont.getJSONArray("contatos");
+                        String NomeContato = null;
+                        String CargoContato = null;
+                        String EmailContato = null;
+                        String Tel1Contato = null;
+                        String Tel2Contato = null;
+
+                        try {
+                            for (int co = 0; co < Cont.length(); co++) {
+                                JSONObject cc = Cont.getJSONObject(co);
+                                if (co == 0) {
+                                    NomeContato = cc.getString("nome");
+                                    CargoContato = cc.getString("cargo");
+                                    EmailContato = cc.getString("email");
+
+                                    String TelCont1 = c.getString("telefones");
+                                    TelCont1 = "{\"telefones\":" + TelCont1 + "\t}";
+                                    JSONObject ObjTelC1 = new JSONObject(TelCont1);
+                                    JSONArray TelefC1 = ObjTelC1.getJSONArray("telefones");
+
+                                    for (int tc1 = 0; tc1 < TelefC1.length(); tc1++) {
+                                        JSONObject tt1 = TelefC1.getJSONObject(tc1);
+                                        if (tc1 == 0) {
+                                            Tel1Contato = tt1.getString("numero");
+                                        }
+                                        if (tc1 == 1) {
+                                            Tel2Contato = tt1.getString("numero");
+                                        }
+                                    }
+                                }
+                                if (co == 1) {
+                                    NomeContato = cc.getString("nome");
+                                    CargoContato = cc.getString("cargo");
+                                    EmailContato = cc.getString("email");
+
+                                    String TelCont2 = c.getString("telefones");
+                                    TelCont2 = "{\"telefones\":" + TelCont2 + "\t}";
+                                    JSONObject ObjTelC2 = new JSONObject(TelCont2);
+                                    JSONArray TelefC2 = ObjTelC2.getJSONArray("telefones");
+
+                                    for (int tc2 = 0; tc2 < TelefC2.length(); tc2++) {
+                                        JSONObject tt2 = Telef.getJSONObject(tc2);
+                                        if (tc2 == 0) {
+                                            Tel1Contato = tt2.getString("numero");
+                                        }
+                                        if (tc2 == 1) {
+                                            Tel2Contato = tt2.getString("numero");
+                                        }
+                                    }
+                                }
+                                if (co == 2) {
+                                    NomeContato = cc.getString("nome");
+                                    CargoContato = cc.getString("cargo");
+                                    EmailContato = cc.getString("email");
+
+                                    String TelCont3 = c.getString("telefones");
+                                    TelCont3 = "{\"telefones\":" + TelCont3 + "\t}";
+                                    JSONObject ObjTelC3 = new JSONObject(TelCont3);
+                                    JSONArray TelefC3 = ObjTelC3.getJSONArray("telefones");
+
+                                    for (int tc3 = 0; tc3 < TelefC3.length(); tc3++) {
+                                        JSONObject tt3 = Telef.getJSONObject(tc3);
+                                        if (tc3 == 0) {
+                                            Tel1Contato = tt3.getString("numero");
+                                        }
+                                        if (tc3 == 1) {
+                                            Tel2Contato = tt3.getString("numero");
+                                        }
+                                    }
+                                }
+
+                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND NOME = '" + NomeContato + "'", null);
+
+                                try {
+                                    if (!(CursorContatosEnv.getCount() > 0)) {
+                                        DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE ) VALUES(" +
+                                                "'" + NomeContato + "','" + CargoContato +
+                                                "',' " + EmailContato + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
+                                                "," + CodCliente + ");");
+
+                                    }
+                                    CursorContatosEnv.close();
+                                } catch (Exception E) {
+                                    System.out.println("Error" + E);
+                                }
+
+                            }
+                        } catch (Exception e) {
+                            e.toString();
+                        }
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+            if (bDialogo == false) {
+                if (Dialog.isShowing())
+                    Dialog.dismiss();
+            }
+        } catch (JSONException e) {
+            e.toString();
+        }
+    }
+
+    public static void RetornaInfoCliexPedido(String sCodVend, Context ctxEnvClie, String user, String pass, int CodClie) {
+
+        ProgressDialog Dialog = null;
+
+        Dialog = new ProgressDialog(ctxEnvClie);
+        Dialog.setTitle("Aguarde...");
+        Dialog.setMessage("Sincronizando Clientes");
+        Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        Dialog.setProgress(0);
+        Dialog.setIcon(R.drawable.icon_sync);
+        Dialog.setMax(0);
+        Dialog.show();
+
+        String METHOD_NAME = "";
+        String TAG_CLIENTESINFO = "clientes";
+        String TAG_TELEFONESINFO = "telefones";
+        String TAG_CONTATOSINFO = "contatos";
+        String TAG_CODIGO = "codigo";
+        String TAG_RAZAOSOCIAL = "razao_social";
+        String TAG_NOMEFANTASIA = "nome_fantasia";
+        String TAG_TIPO = "tipo";
+        String TAG_CNPJCPF = "cnpj_cpf";
+        String TAG_INSCESTADUAL = "inscricao_estadual";
+        String TAG_LOGRADOURO = "Logradouro";
+        String TAG_NUMERO = "numero";
+        String TAG_COMPLEMENTO = "complemento";
+        String TAG_BAIRRO = "bairro";
+        String TAG_CIDADE = "cidade";
+        String TAG_ESTADO = "estado";
+        String TAG_CEP = "cep";
+        String TAG_RG = "identidade";
+        String TAG_OBS = "observacao";
+        String TAG_EMAILS = "emails";
+        String TAG_ATIVO = "ativo";
+        String TAG_BLOQUEIO = "bloqueio";
+        String TAG_LIMITECRED = "limitecredito";
+
+        String CodVendedor = sCodVend;
+
+
+        SharedPreferences prefs = ctxEnvClie.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
+        String DtUlt = DataUltSt2;
+
+        SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+        if (senha != null) {
+            soap.addProperty("aCodVend", CodVendedor);
+            soap.addProperty("aUsuario", usuario);
+            soap.addProperty("aSenha", senha);
+            soap.addProperty("aCodClie", CodClie);
+        } else {
+            soap.addProperty("aCodVend", CodVendedor);
+            soap.addProperty("aUsuario", user);
+            soap.addProperty("aSenha", pass);
+            soap.addProperty("aCodClie", CodClie);
+        }
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 60000);
+        String RetClientes = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
+            if (ConexOk == true) {
+                Cursor cursorclie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODCLIE_EXT = " + CodClie + "", null);
+                cursorclie.moveToFirst();
+                if (cursorclie.getCount() > 0) {
+                    DB.execSQL("DELETE FROM CLIENTES WHERE CODCLIE_EXT = " + CodClie + "");
+                }
+                cursorclie.close();
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                RetClientes = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+        try {
+
+            JSONObject jsonObj = new JSONObject(RetClientes);
+            JSONArray InfoClie = jsonObj.getJSONArray(TAG_CLIENTESINFO);
+
+            int jumpTime = 0;
+            final int totalProgressTime = InfoClie.length();
+
+            Dialog.setProgress(jumpTime);
+            Dialog.setMax(totalProgressTime);
+
+
+            String CodCliente = null;
+
+            DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
+
+            for (int i = 0; i < InfoClie.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = InfoClie.getJSONObject(jumpTime);
+
+                        String Telefone = c.getString(TAG_TELEFONESINFO);
+                        Telefone = "{\"telefones\":" + Telefone + "\t}";
+                        JSONObject ObjTel = new JSONObject(Telefone);
+                        JSONArray Telef = ObjTel.getJSONArray("telefones");
+                        String Tel1 = null;
+                        String Tel2 = null;
+                        String Tel3 = null;
+
+                        for (int t = 0; t < Telef.length(); t++) {
+                            JSONObject tt = Telef.getJSONObject(t);
+                            if (t == 0) {
+                                Tel1 = tt.getString("numero");
+                            }
+                            if (t == 1) {
+                                Tel2 = tt.getString("numero");
+                            }
+                            if (t == 2) {
+                                Tel3 = tt.getString("numero");
+                            }
+                        }
+
+                        jumpTime += 1;
+                        Dialog.setProgress(jumpTime);
+                        Dialog.setMessage("Atualizando informações do clientes");
 
                         Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
 
@@ -2696,13 +3256,13 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     }
                 }
             }
-            if (bDialogo == false) {
-                if (Dialog.isShowing())
-                    Dialog.dismiss();
-            }
-        } catch (JSONException e) {
-            e.toString();
+        } catch (Exception E) {
+            E.toString();
         }
+        if (Dialog.isShowing()) {
+            Dialog.dismiss();
+        }
+
     }
 
     public static String GerarPdf(String NumPedido, Context ctxRetPed) {

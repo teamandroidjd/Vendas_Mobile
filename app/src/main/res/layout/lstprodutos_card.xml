@@ -173,22 +173,33 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/lbl7"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:text="Tabela base:          R$ "
+                        android:text="Tabela"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/lbl7"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtpreco"
-                        android:layout_width="wrap_content"
+                        android:layout_width="90dp"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:gravity="right"
+                        android:text="100000,0000"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
@@ -196,88 +207,132 @@
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/lbl8"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar A:               R$ "
+                        android:text="Tabela"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/lbl8"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecoauxiliara"
-                        android:layout_width="wrap_content"
+                        android:layout_width="90dp"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:gravity="right"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/lbl9"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar B:               R$ "
+                        android:text="Tabela"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/lbl9"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecoauxiliarb"
-                        android:layout_width="wrap_content"
+                        android:layout_width="90dp"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:gravity="right"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/lbl10"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar C:               R$ "
+                        android:text="Tabela"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/lbl10"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecoauxiliarc"
-                        android:layout_width="wrap_content"
+                        android:layout_width="90dp"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:gravity="right"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/lbl11"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar D:               R$ "
+                        android:text="Tabela"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/lbl11"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecoauxiliard"
-                        android:layout_width="wrap_content"
+                        android:layout_width="90dp"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:gravity="right"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
@@ -285,22 +340,33 @@
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/lbl12"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:text="Promocional A:      R$ "
+                        android:text="Tabela"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/txtprecopromocaoa"
+                        android:id="@+id/prod_txv_simbol_preco5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:layout_toRightOf="@+id/lbl12"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecopromocaoa"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="100000,0000"
+                        android:gravity="right"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
@@ -308,22 +374,33 @@
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/lbl13"
-                        android:layout_width="wrap_content"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:text="Promocional B:      R$ "
+                        android:text="Tabela"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/txtprecopromocaob"
+                        android:id="@+id/prod_txv_simbol_preco6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:layout_toRightOf="@+id/lbl13"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecopromocaob"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:text="100000,0000"
+                        android:gravity="right"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />

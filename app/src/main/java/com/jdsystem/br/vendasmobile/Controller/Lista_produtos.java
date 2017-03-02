@@ -6,10 +6,13 @@ import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -34,16 +37,26 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jdsystem.br.vendasmobile.ConfigConex;
 import com.jdsystem.br.vendasmobile.ConfigDB;
+import com.jdsystem.br.vendasmobile.ConfigWeb;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
+import com.jdsystem.br.vendasmobile.actLogin;
 import com.jdsystem.br.vendasmobile.actSincronismo;
 import com.jdsystem.br.vendasmobile.act_ListProdutos;
 import com.jdsystem.br.vendasmobile.adapter.ListaItensTemporariosAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -66,8 +79,10 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     private EditText prod_txt_pesquisaproduto;
     private ListView prod_listview_produtotemp;
     private ListView prod_listview_itenstemp;
+    private Handler handler = new Handler();
     private Intent Codigo;
     private String NumPedido, spreco;
+    private int CodigoItem;
     SQLiteDatabase DB;
 
 
@@ -159,12 +174,19 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
         String[] colunas = new String[]{
                 prdBean.P_PRODUTO_SIMPLECURSOR,
-                //prdBean.P_CODIGO_PRODUTO,
+                //prdBean.P_CODIGOITEM,
                 //prdBean.P_CODIGO_BARRAS,
                 prdBean.P_DESCRICAO_PRODUTO,
                 prdBean.P_QUANTIDADE_PRODUTO,
                 prdBean.P_CATEGORIA_PRODUTO,
                 prdBean.P_APRESENTACAO_PRODUTO,
+                prdBean.P_DESCRICAO_TAB1,
+                prdBean.P_DESCRICAO_TAB2,
+                prdBean.P_DESCRICAO_TAB3,
+                prdBean.P_DESCRICAO_TAB4,
+                prdBean.P_DESCRICAO_TAB5,
+                prdBean.P_DESCRICAO_TAB6,
+                prdBean.P_DESCRICAO_TAB7,
                 prdBean.P_PRECO_PROD_PADRAO,   //VLVENDA1
                 prdBean.P_PRECO_PROD_VLVENDA2, //VLVENDA2
                 prdBean.P_PRECO_PROD_VLVENDA3, //VLVENDA3
@@ -181,6 +203,13 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 R.id.txt_qtdestoque,
                 R.id.prod_txv_prd_categoria,
                 R.id.txtapres,
+                R.id.txtprocobase,
+                R.id.txtprocoauxA,
+                R.id.txtprocoauxB,
+                R.id.txtprocoauxC,
+                R.id.txtprocoauxD,
+                R.id.txtprocopromoA,
+                R.id.txtprocopromoB,
                 R.id.prod_txv_prd_preco,  //VLVENDA1
                 R.id.prod_txv_prd_preco2, //VLVENDA2
                 R.id.prod_txv_prd_preco3, //VLVENDA3
@@ -255,16 +284,25 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
         DB = new ConfigDB(this).getReadableDatabase();
 
-        Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP",null);
+        Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
         Bloqueios.moveToFirst();
         String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
         Bloqueios.close();
-        Double qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
-        if(vendenegativo.equals("N") && qtdestoque <= 0  ){
+        CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (vendenegativo.equals("N") && ConexOk == true) {
 
-            Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível", Util.ALERTA);
-            return;
+            atualizaEstoqueItem(CodigoItem);
 
+            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+            CursItens.moveToFirst();
+            Double qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+            CursItens.close();
+
+            if (qtdestoque <= 0) {
+                Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
+                return;
+            }
         }
 
 
@@ -291,7 +329,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         try {
             List<String> DadosListTabPreco = new ArrayList<String>();
 
-            Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP" , null);
+            Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
             CursorParametro.moveToFirst();
             String tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
             String tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
@@ -303,62 +341,70 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             CursorParametro.close();
 
             String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
+            vlvendapadrao = vlvendapadrao.trim();
             if (!vlvendapadrao.equals("0,0000")) {
                 BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
                 String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                 Precopadrao = Precopadrao.replace('.', ',');
-                DadosListTabPreco.add(tab1+" R$: " + Precopadrao);
+                DadosListTabPreco.add(tab1 + " R$: " + Precopadrao);
             }
 
             String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
+            vlvenda1 = vlvenda1.trim();
             if (!vlvenda1.equals("0,0000")) {
                 BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
                 String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                 Preco1 = Preco1.replace('.', ',');
-                DadosListTabPreco.add(tab2+" R$: " + Preco1);
+                DadosListTabPreco.add(tab2 + " R$: " + Preco1);
             }
 
             String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
+            vlvenda2 = vlvenda2.trim();
             if (!vlvenda2.equals("0,0000")) {
                 BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
                 String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                 Preco2 = Preco2.replace('.', ',');
-                DadosListTabPreco.add(tab3+" R$: " + Preco2);
+                DadosListTabPreco.add(tab3 + " R$: " + Preco2);
             }
 
             String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
+            vlvenda3 = vlvenda3.trim();
             if (!vlvenda3.equals("0,0000")) {
                 BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
                 String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                 Preco3 = Preco3.replace('.', ',');
-                DadosListTabPreco.add(tab4+" R$: " +Preco3);
+                DadosListTabPreco.add(tab4 + " R$: " + Preco3);
             }
 
             String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
+            vlvenda4 = vlvenda4.trim();
             if (!vlvenda4.equals("0,0000")) {
                 BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
                 String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                 Preco4 = Preco4.replace('.', ',');
-                DadosListTabPreco.add(tab5+" R$: " + Preco4);
+                DadosListTabPreco.add(tab5 + " R$: " + Preco4);
             }
 
             String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
+            vlvenda5 = vlvenda5.trim();
             if (!vlvenda5.equals("0,0000")) {
                 BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
                 String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                 Preco5 = Preco5.replace('.', ',');
-                DadosListTabPreco.add(tab6+" R$: " + Preco5);
+                DadosListTabPreco.add(tab6 + " R$: " + Preco5);
             }
 
             String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
+            vlvendap1 = vlvendap1.trim();
             if (!vlvendap1.equals("0,0000")) {
                 BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
                 String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                 Precop1 = Precop1.replace('.', ',');
-                DadosListTabPreco.add(tab7+" R$: " + Precop1);
+                DadosListTabPreco.add(tab7 + " R$: " + Precop1);
             }
 
             String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
+            vlvendap2 = vlvendap2.trim();
             if (!vlvendap2.equals("0,0000")) {
                 BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
                 String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
@@ -552,18 +598,79 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         }
     }
 
-    public void carregartabelaprecos(final Cursor produto_cursor) {
+    public void atualizaEstoqueItem(int item) {
+
+        ProgressDialog Dialog = null;
+
+        Dialog = new ProgressDialog(this);
+        Dialog.setTitle("Aguarde...");
+        Dialog.setMessage("Verificando estoque do produtos");
+        Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        Dialog.setProgress(0);
+        Dialog.setIcon(R.drawable.icon_sync);
+        Dialog.setMax(0);
+        Dialog.show();
+
+        String METHOD_NAME = "RetornaQtdItem";
+        //String TAG_PRODUTOSINFO = "produtos";
+        String TAG_QTDESTOQUE = "qtd_disponivel";
+
+        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        String URLPrincipal = prefsHost.getString("host", null);
+
+        SharedPreferences prefs = this.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
+        String usuario = prefs.getString("usuario", null);
+        String senha = prefs.getString("senha", null);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+        soap.addProperty("aCodigoItem", item);
+        soap.addProperty("aUsuario", usuario);
+        soap.addProperty("aSenha", senha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 60000);
+        String RetQTDProdutos = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(this);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetQTDProdutos = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            } else {
+                Util.msg_toast_personal(getApplicationContext(), "Sem conexão com a internet.Verifique!", Util.ALERTA);
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+        try {
+            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + item, null);
+            try {
+                if (CursItens.getCount() > 0) {
+                    CursItens.moveToFirst();
+                    DB.execSQL(" UPDATE ITENS SET QTDESTPROD = '" + RetQTDProdutos.trim() +
+                            "' WHERE CODIGOITEM = " + item);
+                } else {
+                    Toast.makeText(this, "Produto não encontrado. Verifique!", Toast.LENGTH_SHORT).show();
+                }
+                CursItens.close();
+            } catch (Exception E) {
+                System.out.println("Error" + E);
+            }
 
 
+        } catch (Exception E) {
+            E.toString();
+        }
+        if (Dialog.isShowing()) {
+            Dialog.dismiss();
+        }
+        carrega_produto_para_venda();
     }
 }
-
-
-
-
-
-
-
-
-
-

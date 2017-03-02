@@ -56,7 +56,7 @@ public class actListPedidos extends AppCompatActivity
     String UsuarioLogado;
     LinearLayout lnenhum;
 
-    String sCodVend, URLPrincipal;
+    String sCodVend, URLPrincipal,usuario, senha;
     SQLiteDatabase DB;
     private Context ctx;
     private AlertDialog dlg;
@@ -91,6 +91,8 @@ public class actListPedidos extends AppCompatActivity
                 CodClie = params.getString("CodCliente");
                 DtInicio = params.getString("datainicial");
                 DtFinal = params.getString("datafinal");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
             }
             if (DtInicio == null) {
                 DtInicio = "0";
@@ -140,6 +142,8 @@ public class actListPedidos extends AppCompatActivity
                                                                        Bundle params = new Bundle();
                                                                        params.putString("codvendedor", sCodVend);
                                                                        params.putString("urlPrincipal", URLPrincipal);
+                                                                       params.putString("usuario", usuario);
+                                                                       params.putString("senha", senha);
                                                                        params.putInt("SitPedido", SitPed);
                                                                        params.putInt("codclie", 0);
                                                                        params.putString("datainicial", "0");
@@ -177,6 +181,8 @@ public class actListPedidos extends AppCompatActivity
                                                     Bundle params = new Bundle();
                                                     params.putString("codvendedor", sCodVend);
                                                     params.putString("urlPrincipal", URLPrincipal);
+                                                    params.putString("usuario", usuario);
+                                                    params.putString("senha", senha);
                                                     params.putBoolean("consultapedido", true);
                                                     intent.putExtras(params);
                                                     //finish();
@@ -245,6 +251,8 @@ public class actListPedidos extends AppCompatActivity
                                                 params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                                                 params.putString("CodVendedor", sCodVend);
                                                 params.putString("codempresa", sCodEmpresa);
+                                                params.putString("usuario", usuario);
+                                                params.putString("senha", senha);
                                                 intent.putExtras(params);
                                                 startActivityForResult(intent, 1);
                                             } catch (Exception E) {
@@ -262,6 +270,8 @@ public class actListPedidos extends AppCompatActivity
                             params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                             params.putString("CodVendedor", sCodVend);
                             params.putString("codempresa", sCodEmpresa);
+                            params.putString("usuario", usuario);
+                            params.putString("senha", senha);
                             intent.putExtras(params);
                             startActivityForResult(intent, 1);
                         }
@@ -346,6 +356,8 @@ public class actListPedidos extends AppCompatActivity
                     Bundle params = new Bundle();
                     params.putString("codvendedor", sCodVend);
                     params.putString("urlPrincipal", URLPrincipal);
+                    params.putString("usuario", usuario);
+                    params.putString("senha", senha);
                     params.putString("datainicial", DtInicio);
                     params.putString("datafinal", DtFinal);
                     params.putInt("SitPedido", SitPed);
@@ -370,6 +382,8 @@ public class actListPedidos extends AppCompatActivity
                     Bundle params = new Bundle();
                     params.putString("codvendedor", sCodVend);
                     params.putString("urlPrincipal", URLPrincipal);
+                    params.putString("usuario", usuario);
+                    params.putString("senha", senha);
                     params.putString("datainicial", DtInicio);
                     params.putString("datafinal", DtFinal);
                     params.putInt("SitPedido", SitPed);
@@ -399,6 +413,8 @@ public class actListPedidos extends AppCompatActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             params.putBoolean("fazpedido", false);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
@@ -411,6 +427,8 @@ public class actListPedidos extends AppCompatActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
 
@@ -420,6 +438,8 @@ public class actListPedidos extends AppCompatActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
 

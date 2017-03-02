@@ -92,6 +92,8 @@ public class act_ListClientes extends AppCompatActivity
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal   = params.getString("urlPrincipal");
                 ConsultaPedido = params.getBoolean("consultapedido");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
             }
         }
 
@@ -104,6 +106,8 @@ public class act_ListClientes extends AppCompatActivity
                 Intent intent = new Intent(act_ListClientes.this, act_CadClientes.class);
                 Bundle params = new Bundle();
                 params.putString("codvendedor", sCodVend);
+                params.putString("usuario", usuario);
+                params.putString("senha", senha);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -128,6 +132,8 @@ public class act_ListClientes extends AppCompatActivity
         TELA_QUE_CHAMOU_INTENT = getIntent();
         TELA_QUE_CHAMOU = TELA_QUE_CHAMOU_INTENT.getStringExtra("TELA_QUE_CHAMOU");
         CodVendedor = TELA_QUE_CHAMOU_INTENT.getStringExtra("codvendedor");
+        usuario = TELA_QUE_CHAMOU_INTENT.getStringExtra("usuario");
+        senha = TELA_QUE_CHAMOU_INTENT.getStringExtra("senha");
 
         array_spinner.add(PESQUISAR_CLIENTE_NOME);
         array_spinner.add(PESQUISAR_CLIENTE_FANTASIA);
@@ -296,6 +302,8 @@ public class act_ListClientes extends AppCompatActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
 
@@ -304,11 +312,19 @@ public class act_ListClientes extends AppCompatActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
 
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListClientes.this, actSincronismo.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            i.putExtras(params);
             startActivity(i);
             this.finish();
         }
@@ -323,17 +339,17 @@ public class act_ListClientes extends AppCompatActivity
     public void run() {
         try {
             actSincronismo.run(this);
-            actSincronismo.SincronizarClientesEnvioStatic("0", this, true);
-            actSincronismo.SincronizarClientesStatic(CodVendedor, this, true);
+            actSincronismo.SincronizarClientesEnvioStatic("0", this, true,usuario,senha);
+            actSincronismo.SincronizarClientesStatic(CodVendedor, this, true, usuario, senha);
 
-            //Toast.makeText(this, "Clientes atualizados com sucesso!", Toast.LENGTH_SHORT).show();
             Intent intent = (act_ListClientes.this).getIntent();
             (act_ListClientes.this).finish();
             startActivity(intent);
-        } finally {
-            if (dialog.isShowing())
-                dialog.dismiss();
-        }
+        } catch (Exception e){
+            e.toString();
 
+        }
+        if (dialog.isShowing())
+            dialog.dismiss();
     }
 }
