@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -49,7 +50,8 @@ import java.util.List;
  */
 public class act_TH_contclie extends Fragment{
 
-    String sCodCliente;
+    String sCodVend,usuario,senha,URLPrincipal,NomeCliente;
+    int CodCliente, sCodCliente;
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -71,9 +73,35 @@ public class act_TH_contclie extends Fragment{
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodCliente = params.getString("codCliente");
+                sCodCliente = params.getInt("codCliente");
+                sCodVend = params.getString("codvendedor");
+                URLPrincipal = params.getString("urlPrincipal");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
+                CodCliente = params.getInt("codCliente");
+                NomeCliente = params.getString("nomerazao");
             }
         }
+
+        FloatingActionButton CadContatos = (FloatingActionButton) v.findViewById(R.id.cadcontatoclie);
+        CadContatos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), CadContatos.class);
+                Bundle params = new Bundle();
+                params.putString("codvendedor", sCodVend);
+                params.putString("usuario", usuario);
+                params.putString("senha", senha);
+                params.putInt("codCliente",CodCliente);
+                params.putString("nomerazao",NomeCliente);
+                i.putExtras(params);
+                startActivity(i);
+                getActivity().finish();
+
+            }
+        });
+
+
 
         try {
             Cursor CursorClie = DB.rawQuery(" SELECT CODCONTATO_INT AS _id, NOME, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO WHERE CODCLIENTE = " + sCodCliente, null);

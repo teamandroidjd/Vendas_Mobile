@@ -433,6 +433,16 @@ public class actListPedidos extends AppCompatActivity
             startActivityForResult(intent, 1);
 
 
+        } else if(id == R.id.nav_contatos){
+            Intent i = new Intent(actListPedidos.this, act_ListContatos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            i.putExtras(params);
+            startActivity(i);
+
         } else if (id == R.id.nav_sincronismo) {
             Intent intent = new Intent(actListPedidos.this, actSincronismo.class);
             Bundle params = new Bundle();

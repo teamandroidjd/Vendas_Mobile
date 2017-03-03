@@ -1,6 +1,5 @@
 package com.jdsystem.br.vendasmobile;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +32,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
 import com.jdsystem.br.vendasmobile.Util.Util;
@@ -77,6 +75,7 @@ public class act_ListClientes extends AppCompatActivity
     private String usuario, senha;
     public ProgressDialog dialog;
     public Boolean ConsultaPedido;
+    public  int CadastroContato;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +93,7 @@ public class act_ListClientes extends AppCompatActivity
                 ConsultaPedido = params.getBoolean("consultapedido");
                 usuario = params.getString("usuario");
                 senha = params.getString("senha");
+                CadastroContato = params.getInt("cadcont");
             }
         }
 
@@ -134,6 +134,8 @@ public class act_ListClientes extends AppCompatActivity
         CodVendedor = TELA_QUE_CHAMOU_INTENT.getStringExtra("codvendedor");
         usuario = TELA_QUE_CHAMOU_INTENT.getStringExtra("usuario");
         senha = TELA_QUE_CHAMOU_INTENT.getStringExtra("senha");
+        CadastroContato = TELA_QUE_CHAMOU_INTENT.getIntExtra("cadcont",0);
+
 
         array_spinner.add(PESQUISAR_CLIENTE_NOME);
         array_spinner.add(PESQUISAR_CLIENTE_FANTASIA);
@@ -197,7 +199,7 @@ public class act_ListClientes extends AppCompatActivity
 
         String[] colunas = new String[]{cliBean.C_CODIGO_CLIENTE_CURSOR, cliBean.C_NOME_DO_CLIENTE, cliBean.C_NOME_FANTASIA, cliBean.C_CIDADE_CLIENTE,
                 cliBean.C_BAIRRO_CLIENTE, cliBean.C_UF_CLIENTE, cliBean.C_TELEFONE_CLIENTE, cliBean.C_CNPJCPF, cliBean.C_ENVIADO };
-        int[] para;
+        final int[] para;
 
         if (cliBean.C_ENVIADO == "S") {
             para = new int[]{R.id.lblCodClie, R.id.lblNomerazao, R.id.lblNomeFanClie, R.id.lblCidade, R.id.lblBairro, R.id.lblEstado,
@@ -215,14 +217,36 @@ public class act_ListClientes extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> listview, View view, int posicao, long id) {
 
-                if (ConsultaPedido.equals(false)) {
+                if(CadastroContato == 1){
+                    //String TipoContato = "C";
+                    Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
+                    int CodCliente = cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT"));
+                    Intent intent = new Intent(getBaseContext(), CadContatos.class);
+                    Bundle params = new Bundle();
+                    params.putString("codvendedor", sCodVend);
+                    params.putString("usuario", usuario);
+                    params.putString("senha", senha);
+                    params.putString("urlPrincipal", URLPrincipal);
+                    params.putInt("codCliente", CodCliente);
+                    params.putString("nomerazao", cliente_cursor.getString(cursor.getColumnIndex("NOMERAZAO")));
+                    //params.putString("C",TipoContato);
+                    intent.putExtras(params);
+                    startActivity(intent);
+
+                }else if (ConsultaPedido.equals(false)) {
                     Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
                     Intent intent = new Intent(getBaseContext(), actDadosCliente.class);
                     Bundle params = new Bundle();
-                    params.putString("codCliente", cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
+                    params.putInt("codCliente", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                    params.putString("nomerazao", cliente_cursor.getString(cursor.getColumnIndex("NOMERAZAO")));
+                    params.putString("codvendedor", sCodVend);
+                    params.putString("usuario", usuario);
+                    params.putString("senha", senha);
+                    params.putString("urlPrincipal", URLPrincipal);
                     intent.putExtras(params);
                     startActivity(intent);
                     //finish();
+
                 }else{
                     Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
                     Intent returnIntent = new Intent();
@@ -316,6 +340,16 @@ public class act_ListClientes extends AppCompatActivity
             params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
+
+        } else if(id == R.id.nav_contatos){
+            Intent i = new Intent(act_ListClientes.this, act_ListContatos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            i.putExtras(params);
+            startActivity(i);
 
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListClientes.this, actSincronismo.class);

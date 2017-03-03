@@ -16,7 +16,8 @@ import com.jdsystem.br.vendasmobile.adapter.ViewPagerAdapter;
 
 public class actDadosCliente extends ActionBarActivity {
 
-    private String DocClie;
+    private String DocClie,sCodVend,URLPrincipal,usuario,senha,NomeCliente;
+    int CodCliente;
     Toolbar toolbar;
     ViewPager pager;
     ViewPagerAdapter adapter;
@@ -60,6 +61,12 @@ public class actDadosCliente extends ActionBarActivity {
             Bundle params = intent.getExtras();
             if (params != null) {
                 DocClie = params.getString("documento");
+                sCodVend = params.getString("codvendedor");
+                URLPrincipal = params.getString("urlPrincipal");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
+                CodCliente = params.getInt("codCliente");
+                NomeCliente = params.getString("nomerazao");
             }
         }
 

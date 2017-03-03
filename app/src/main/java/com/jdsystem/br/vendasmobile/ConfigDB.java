@@ -54,14 +54,14 @@ public class ConfigDB extends SQLiteOpenHelper {
 
     private static String SQL_CIDADES = ("CREATE TABLE IF NOT EXISTS CIDADES (" +
             "    CODCIDADE INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "    CODCIDADE_EXT INTEGER  ,"                     +
-            "    DESCRICAO VARCHAR (50) NOT NULL,"             +
-            "    UF        CHAR (2)     NOT NULL"              +
+            "    CODCIDADE_EXT INTEGER,                      " +
+            "    DESCRICAO VARCHAR (50) NOT NULL,            " +
+            "    UF        CHAR (2)     NOT NULL             " +
             ");");
 
     private static String SQL_ESTADOS = ("CREATE TABLE IF NOT EXISTS ESTADOS (" +
-            "    UF CHAR(2) PRIMARY KEY, "        +
-            "    DESCRICAO VARCHAR (20) NOT NULL" +
+            "    UF CHAR(2) PRIMARY KEY,         " +
+            "    DESCRICAO VARCHAR (20) NOT NULL " +
             ");");
 
     private static String SQL_PARAMAPP = ("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME," +
@@ -89,11 +89,22 @@ public class ConfigDB extends SQLiteOpenHelper {
     private static String SQL_CONTATOS = (" CREATE TABLE IF NOT EXISTS CONTATO (" +
             "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
             "    CODCLIENTE INTEGER           NOT NULL,                 " +
-            "    NOME           VARCHAR (60)  NOT NULL,                 " +
-            "    CARGO          VARCHAR (30),                           " +
-            "    EMAIL          VARCHAR (100),                          " +
-            "    TEL1           VARCHAR (15),                           " +
-            "    TEL2           VARCHAR (15))                           " +
+            "    CODCLIE_EXT                  INTEGER,                  " +
+            "    NOME                         VARCHAR (60)  NOT NULL,   " +
+            "    CARGO                        VARCHAR (30),             " +
+            "    DOCUMENTO                    VARCHAR(15),              " +
+            "    DATA                         VARCHAR(10),              " +
+            "    CEP                          VARCHAR(10),              " +
+            "    ENDERECO                     VARCHAR(15),              " +
+            "    NUMERO                       VARCHAR(10),              " +
+            "    COMPLEMENTO                  VARCHAR(15),              " +
+            "    UF                           CHAR(2),                  " +
+            "    CODVENDEDOR                  INTEGER,                  " +
+            "    CODBAIRRO                    INTEGER,                  " +
+            "    CODCIDADE                    INTEGER,                  " +
+            "    EMAIL                        VARCHAR (100),            " +
+            "    TEL1                         VARCHAR (15),             " +
+            "    TEL2                         VARCHAR (15))             " +
             ";");
 
     private static String SQL_ITENS = ("CREATE TABLE IF NOT EXISTS ITENS (" +
@@ -154,23 +165,23 @@ public class ConfigDB extends SQLiteOpenHelper {
 
     private static String SQL_PEDITENS = ("CREATE TABLE IF NOT EXISTS PEDITENS (" +
             " NUMIDEOPE     INTEGER         PRIMARY KEY AUTOINCREMENT " +
-            "                               NOT NULL,    " +
-            " CHAVEPEDIDO   VARCHAR(70),                 " +
-         // " NUMPED        INTEGER         NOT NULL,    " +
-            " CODITEMANUAL  VARCHAR (15)    NOT NULL,    " +
-            " DESCRICAO     VARCHAR (60)    NOT NULL,    " +
-            " CODIGOITEM    INTEGER,                     " +
-            " NUMEROITEM    NUMERIC (5, 0),              " +
-          //" QTDEMBAPED    NUMERIC (11, 3) NOT NULL,    " +
-            " QTDMENORPED   FLOAT           NOT NULL,    " +
-          //" QTDMAIORPED   FLOAT           NOT NULL,    " +
-            " UNIDADE       VARCHAR (5),                 " +
-            " VLUNIT        DECIMAL(10,2)   NOT NULL,    " +
-            " PERCACREDESC  DOUBLE,                      " +
-            " VALORDESCONTO DECIMAL(10,2),               " +
-            " VLTOTAL       DECIMAL(10,2)   NOT NULL,    " +
-            " VLICMSST      FLOAT,                       " +
-            " VLIPI         FLOAT                        " +
+            "                               NOT NULL,                 " +
+            " CHAVEPEDIDO   VARCHAR(70),                              " +
+         // " NUMPED        INTEGER         NOT NULL,                 " +
+            " CODITEMANUAL  VARCHAR (15)    NOT NULL,                 " +
+            " DESCRICAO     VARCHAR (60)    NOT NULL,                 " +
+            " CODIGOITEM    INTEGER,                                  " +
+            " NUMEROITEM    NUMERIC (5, 0),                           " +
+          //" QTDEMBAPED    NUMERIC (11, 3) NOT NULL,                 " +
+            " QTDMENORPED   FLOAT           NOT NULL,                 " +
+          //" QTDMAIORPED   FLOAT           NOT NULL,                 " +
+            " UNIDADE       VARCHAR (5),                              " +
+            " VLUNIT        DECIMAL(10,2)   NOT NULL,                 " +
+            " PERCACREDESC  DOUBLE,                                   " +
+            " VALORDESCONTO DECIMAL(10,2),                            " +
+            " VLTOTAL       DECIMAL(10,2)   NOT NULL,                 " +
+            " VLICMSST      FLOAT,                                    " +
+            " VLIPI         FLOAT                                     " +
             ");");
 
     private static String SQL_CONFPAGAMENTO = "CREATE TABLE IF NOT EXISTS [CONFPAGAMENTO] (" +
@@ -269,7 +280,8 @@ public class ConfigDB extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE ITENS ADD VENDAPADRAO DECIMAL(12,4) ");
             } catch (Exception E) {
                 E.toString();
-            }try {
+            }
+            try {
                 db.execSQL("ALTER TABLE VENDAD_TEMP ADD vendad_prd_unidadeTEMP  VARCHAR(5) ");
             } catch (Exception E) {
                 E.toString();
@@ -285,9 +297,10 @@ public class ConfigDB extends SQLiteOpenHelper {
             } catch (Exception E) {
                 E.toString();
             }
-            try  {
+            try {
                 //MODIFICAÇÕES NA VERSÃO 3
                 db.execSQL("ALTER TABLE ITENS ADD QTDESTPROD VARCHAR(10) ");
+
                 db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1     VARCHAR(20) ");
                 db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB2     VARCHAR(20) ");
                 db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB3     VARCHAR(20) ");
@@ -297,9 +310,24 @@ public class ConfigDB extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB7     VARCHAR(20) ");
                 db.execSQL("ALTER TABLE PARAMAPP ADD HABITEMNEGATIVO   CHAR (1) ");
                 db.execSQL("ALTER TABLE PARAMAPP ADD HABCRITSITCLIE    CHAR (1)  ");
+
                 db.execSQL("ALTER TABLE CLIENTES ADD LIMITECRED        DOUBLE  ");
                 db.execSQL("ALTER TABLE CLIENTES ADD BLOQUEIO          VARCHAR(2)  ");
                 db.execSQL("ALTER TABLE PARAMAPP ADD TIPOCRITICQTDITEM CHAR(1)");
+
+                db.execSQL("ALTER TABLE CONTATO ADD DOCUMENTO          VARCHAR(15) ");
+             // db.execSQL("ALTER TABLE CONTATO ADD SETOR              VARCHAR(50) ");
+                db.execSQL("ALTER TABLE CONTATO ADD DATA               VARCHAR(10) ");
+                db.execSQL("ALTER TABLE CONTATO ADD CEP                VARCHAR(10) ");
+                db.execSQL("ALTER TABLE CONTATO ADD ENDERECO           VARCHAR(15) ");
+                db.execSQL("ALTER TABLE CONTATO ADD NUMERO             VARCHAR(10) ");
+                db.execSQL("ALTER TABLE CONTATO ADD COMPLEMENTO        VARCHAR(15) ");
+                db.execSQL("ALTER TABLE CONTATO ADD UF                 CHAR(2) ");
+                db.execSQL("ALTER TABLE CONTATO ADD                    CODVENDEDOR  INTEGER ");
+                db.execSQL("ALTER TABLE CONTATO ADD                    CODCLIE_EXT  INTEGER ");
+                db.execSQL("ALTER TABLE CONTATO ADD                    CODBAIRRO  INTEGER ");
+                db.execSQL("ALTER TABLE CONTATO ADD                    CODCIDADE  INTEGER ");
+
                 db.execSQL(" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
                         " CODBLOQ   VARCHAR (3),  " +
                         " DESCRICAO VARCHAR (30), " +
@@ -308,10 +336,9 @@ public class ConfigDB extends SQLiteOpenHelper {
                         " FPAVISTA  VARCHAR (3) ); ");
 
 
-            } catch (Exception E){
+            } catch (Exception E) {
                 E.toString();
             }
-
 
 
         }

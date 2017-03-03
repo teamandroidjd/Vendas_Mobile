@@ -14,6 +14,7 @@ public class Mask {
     public static String TELEFONE_MASK  = "(##) ####-#####";
     public static String CEP_MASK       = "#####-###";
     public static String VALOR_MASK     = "#.###,##";
+    public static String DATA_MASK      = "##/##/####";
 
 
     public static String unmask(String s) {

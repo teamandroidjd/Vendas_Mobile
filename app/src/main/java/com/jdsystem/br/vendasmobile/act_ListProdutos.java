@@ -30,16 +30,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.jdsystem.br.vendasmobile.Controller.Lista_produtos;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoDao;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class act_ListProdutos extends ActionBarActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
@@ -201,6 +197,8 @@ public class act_ListProdutos extends ActionBarActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
 
@@ -209,6 +207,8 @@ public class act_ListProdutos extends ActionBarActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
             //finish();
@@ -218,15 +218,29 @@ public class act_ListProdutos extends ActionBarActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
             //finish();
 
-        } else if (id == R.id.nav_sincronismo) {
+        } else if(id == R.id.nav_contatos){
+            Intent i = new Intent(act_ListProdutos.this, act_ListContatos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            i.putExtras(params);
+            startActivity(i);
+
+        }else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListProdutos.this, actSincronismo.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
             finish();

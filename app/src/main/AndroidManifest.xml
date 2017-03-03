@@ -59,12 +59,10 @@
 
         <activity
             android:name=".ConfigWeb"
-
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".act_ListProdutos"
             android:label="Catálogo de Produtos"
-
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".actDadosProdutos" />
@@ -75,17 +73,14 @@
         <activity
             android:name=".Controller.Lista_clientes"
             android:label="Catálogo de Clientes"
-
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.VenderProdutos"
             android:label="Cadastrar Pedido"
-
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.Lista_produtos"
             android:label="Cadastrar Pedido"
-
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.ConfPagamento"
@@ -93,7 +88,12 @@
         <activity
             android:name=".actFiltroPeriodoPedidos"
             android:label="Filtro por Emissão" />
-
+        <activity
+            android:name=".act_ListContatos"
+            android:label="Lista de contatos"/>
+        <activity android:name=".CadContatos"
+            android:label="Cadastro de contatos">
+        </activity>
     </application>
 
 </manifest>
