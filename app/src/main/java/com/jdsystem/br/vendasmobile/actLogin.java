@@ -49,9 +49,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String METHOD_NAME = "Login";
     private static final int REQUEST_READ_PHONE_STATE = 0;
-
     private SQLiteDatabase DB;
-
     private GoogleApiClient client;
 
     public void onAttachedToWindow() {
@@ -60,10 +58,10 @@ public class actLogin extends AppCompatActivity implements Runnable {
         window.setFormat(PixelFormat.RGB_565);
     }
 
-    public boolean onCreateOptionMenu(Menu menu) {
+    /*public boolean onCreateOptionMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_act_principal, menu);
         return true;
-    }
+    }*/
 
     private EditText edtUsuario;
     private EditText edtSenha;

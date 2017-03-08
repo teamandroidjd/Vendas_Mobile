@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,22 +20,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.domain.Contatos;
+import com.jdsystem.br.vendasmobile.domain.FiltroContatos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentContatos;
+import com.jdsystem.br.vendasmobile.fragments.FragmentFiltroContatos;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class act_ListContatos extends AppCompatActivity implements Runnable  {
+public class act_ListContatos extends AppCompatActivity implements Runnable {
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     String sCodVend, URLPrincipal, usuario, senha, UsuarioLogado;
     SQLiteDatabase DB;
     Contatos lstcontatos;
+    FiltroContatos lstfiltrocontatos;
     ProgressDialog pDialog;
+    private EditText pesquisacliente;
     Handler handler = new Handler();
 
 
@@ -63,11 +73,45 @@ public class act_ListContatos extends AppCompatActivity implements Runnable  {
                     params.putString("codvendedor", sCodVend);
                     params.putString("usuario", usuario);
                     params.putString("senha", senha);
-                    params.putString("urlPrincipal",URLPrincipal);
+                    params.putString("urlPrincipal", URLPrincipal);
                     i.putExtras(params);
                     startActivity(i);
                     finish();
 
+                }
+            });
+
+            pesquisacliente = (EditText) findViewById(R.id.pesqcontato);
+            pesquisacliente.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    FragmentFiltroContatos frag = (FragmentFiltroContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                    if (frag == null) {
+                        frag = new FragmentFiltroContatos();
+                        Bundle bundle = new Bundle();
+                        bundle.putCharSequence("pesquisa", s);
+                        frag.setArguments(bundle);
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
+                        ft.commit();
+                    }else {
+                        frag = new FragmentFiltroContatos();
+                        Bundle bundle = new Bundle();
+                        bundle.putCharSequence("pesquisa", s);
+                        frag.setArguments(bundle);
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
+                        ft.commit();
+                    }
+
+
+                }
+
+                public void afterTextChanged(Editable s) {
                 }
             });
 
@@ -92,13 +136,14 @@ public class act_ListContatos extends AppCompatActivity implements Runnable  {
             }*/
         }
         pDialog = new ProgressDialog(act_ListContatos.this);
-        pDialog.setTitle("Aguarde...");
-        pDialog.setMessage("Carregando Clientes");
+        pDialog.setTitle("Aguarde");
+        pDialog.setMessage("Carregando Contatos...");
         pDialog.setCancelable(false);
         pDialog.show();
 
         Thread thread = new Thread(act_ListContatos.this);
         thread.start();
+
     }
 
     @Override
@@ -108,7 +153,7 @@ public class act_ListContatos extends AppCompatActivity implements Runnable  {
         params.putString("codvendedor", sCodVend);
         params.putString("usuario", usuario);
         params.putString("senha", senha);
-        params.putString("urlPrincipal",URLPrincipal);
+        params.putString("urlPrincipal", URLPrincipal);
         intent.putExtras(params);
         startActivity(intent);
         finish();
@@ -188,33 +233,93 @@ public class act_ListContatos extends AppCompatActivity implements Runnable  {
         return true;
     }*/
 
-    public List<Contatos> carregarcontatos(){
+    public List<Contatos> carregarcontatos() {
 
         DB = new ConfigDB(this).getReadableDatabase();
 
         ArrayList<Contatos> DadosListContatos = new ArrayList<Contatos>();
 
-        Cursor cursorContatos = DB.rawQuery("SELECT NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, COMPLEMENTO, UF, CODVENDEDOR, CODBAIRRO, CODCIDADE, CODCLIENTE FROM CONTATO",null);
+
+            Cursor cursorContatos = DB.rawQuery("SELECT NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, COMPLEMENTO, UF, CODVENDEDOR, CODBAIRRO, CODCIDADE, CODCLIENTE FROM CONTATO ORDER BY NOME", null);
+            cursorContatos.moveToFirst();
+            if (cursorContatos.getCount() > 0) {
+                do {
+                    String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
+                    String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
+                    String email = cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL"));
+                    String tel1 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL1"));
+                    String tel2 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL2"));
+                    String Doc = cursorContatos.getString(cursorContatos.getColumnIndex("DOCUMENTO"));
+                    String Data = cursorContatos.getString(cursorContatos.getColumnIndex("DATA"));
+                    String Cep = cursorContatos.getString(cursorContatos.getColumnIndex("CEP"));
+                    String Endereco = cursorContatos.getString(cursorContatos.getColumnIndex("ENDERECO"));
+                    String Num = cursorContatos.getString(cursorContatos.getColumnIndex("NUMERO"));
+                    String Compl = cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO"));
+                    String uf = cursorContatos.getString(cursorContatos.getColumnIndex("UF"));
+
+
+                    lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null, 0, 0);
+                    DadosListContatos.add(lstcontatos);
+                } while (cursorContatos.moveToNext());
+                cursorContatos.close();
+
+            } else {
+                Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
+            }
+
+        return DadosListContatos;
+
+    }
+
+    public List<FiltroContatos> pesquisarcontatos(CharSequence valor_campo) {
+
+        pDialog = new ProgressDialog(act_ListContatos.this);
+        pDialog.setTitle("Aguarde");
+        pDialog.setMessage("Realizando filtro...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        FragmentContatos frag1 = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFrag");
+        if (frag1 != null) {
+            frag1.getActivity().getSupportFragmentManager().popBackStack();
+        }
+
+        ArrayList<FiltroContatos> DadosListContatos = new ArrayList<FiltroContatos>();
+
+        Cursor cursorContatos = DB.rawQuery("SELECT NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, COMPLEMENTO, UF, CODVENDEDOR, CODBAIRRO, CODCIDADE, CODCLIENTE FROM CONTATO WHERE NOME LIKE '%" + valor_campo + "%' ORDER BY NOME", null);
         cursorContatos.moveToFirst();
-        if(cursorContatos.getCount() > 0){
-            do{
+        if (cursorContatos.getCount() > 0) {
+
+            do {
                 String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
                 String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
                 String email = cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL"));
                 String tel1 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL1"));
                 String tel2 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL2"));
+                String Doc = cursorContatos.getString(cursorContatos.getColumnIndex("DOCUMENTO"));
+                String Data = cursorContatos.getString(cursorContatos.getColumnIndex("DATA"));
+                String Cep = cursorContatos.getString(cursorContatos.getColumnIndex("CEP"));
+                String Endereco = cursorContatos.getString(cursorContatos.getColumnIndex("ENDERECO"));
+                String Num = cursorContatos.getString(cursorContatos.getColumnIndex("NUMERO"));
+                String Compl = cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO"));
+                String uf = cursorContatos.getString(cursorContatos.getColumnIndex("UF"));
 
 
-                lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null, 0, 0);
-                DadosListContatos.add(lstcontatos);
-            }while (cursorContatos.moveToNext());
+                lstfiltrocontatos = new FiltroContatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null, 0, 0);
+                DadosListContatos.add(lstfiltrocontatos);
+            } while (cursorContatos.moveToNext());
             cursorContatos.close();
 
-        }else {
+        } else {
             Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
         }
+        if (pDialog.isShowing()) {
+            pDialog.dismiss();
+        }
+
         return DadosListContatos;
     }
+
 
     @Override
     public void run() {
@@ -237,7 +342,6 @@ public class act_ListContatos extends AppCompatActivity implements Runnable  {
                 }
             }
 
-            ;
 
         });
 

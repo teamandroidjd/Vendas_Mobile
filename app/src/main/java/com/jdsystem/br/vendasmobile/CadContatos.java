@@ -1,6 +1,7 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,7 +39,8 @@ public class CadContatos extends AppCompatActivity {
     Boolean PesqCEP;
     int CodCidade, CodBairro, CodCliente;
     EditText nome, setor, data, documento, endereco, numero, cep, tel1, tel2, email, OBS, Complemento;
-    Spinner TipoContato, TipoCargoEspec, UF, SpnCidade, Bairro;
+    Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF;
+    Context ctx;
     LinearLayout linearcheck1, linearcheck2, lineartxtsemana, linearrazao;
     TextView razaosocial;
     private CheckBox domingo, segunda, terca, quarta, quinta, sexta;
@@ -52,9 +54,9 @@ public class CadContatos extends AppCompatActivity {
 
         TipoContato = (Spinner) findViewById(R.id.spnTipoContato);
         TipoCargoEspec = (Spinner) findViewById(R.id.spnCargoEspec);
-        UF = (Spinner) findViewById(R.id.spnUF);
-        SpnCidade = (Spinner) findViewById(R.id.spnCidade);
-        Bairro = (Spinner) findViewById(R.id.spnBairro);
+        spUF = (Spinner) findViewById(R.id.spnUF);
+        spCidade = (Spinner) findViewById(R.id.spnCidade);
+        spBairro = (Spinner) findViewById(R.id.spnBairro);
         linearcheck1 = (LinearLayout) findViewById(R.id.lnrcheckbox);
         linearcheck2 = (LinearLayout) findViewById(R.id.lnrcheckbox2);
         lineartxtsemana = (LinearLayout) findViewById(R.id.lnrtxtdiasemana);
@@ -123,6 +125,8 @@ public class CadContatos extends AppCompatActivity {
                         break;
                 }
                 if (sTipoContato == "O") {
+                    CodCliente = 0;
+                    linearrazao.setVisibility(View.GONE);
                     linearcheck1.setVisibility(EditText.VISIBLE);
                     linearcheck2.setVisibility(EditText.VISIBLE);
                     lineartxtsemana.setVisibility(EditText.VISIBLE);
@@ -161,7 +165,7 @@ public class CadContatos extends AppCompatActivity {
             }
         });
 
-        UF.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spUF.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 1:
@@ -246,8 +250,9 @@ public class CadContatos extends AppCompatActivity {
                         sUF = "TO";//Tocantins
                         break;
                 }
-                Boolean ConexOk = Util.checarConexaoCelular(CadContatos.this);
+                Boolean ConexOk = Util.checarConexaoCelular(ctx);
                 if (ConexOk == false) {
+
                     int CodCidade = 0;
                     try {
 
@@ -265,17 +270,12 @@ public class CadContatos extends AppCompatActivity {
                             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
                             ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                            SpnCidade.setAdapter(spinnerArrayAdapter);
+                            spCidade.setAdapter(spinnerArrayAdapter);
                         }
                     } catch (Exception E) {
                         System.out.println("Error" + E);
                     }
-
                 }
-
-
-                /*Thread thread = new Thread(CadContatos.this);
-                thread.start();*/
             }
 
             @Override
@@ -284,13 +284,13 @@ public class CadContatos extends AppCompatActivity {
             }
         });
 
-        SpnCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                Boolean ConexOk = Util.checarConexaoCelular(CadContatos.this);
+                Boolean ConexOk = Util.checarConexaoCelular(ctx);
                 if (ConexOk == false) {
 
-                    NomeCidade = SpnCidade.getSelectedItem().toString();
+                    NomeCidade = spCidade.getSelectedItem().toString();
                     Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
                     if (CurCidade.getCount() > 0) {
                         CurCidade.moveToFirst();
@@ -321,11 +321,11 @@ public class CadContatos extends AppCompatActivity {
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
                     ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    Bairro.setAdapter(spinnerArrayAdapter);
+                    spBairro.setAdapter(spinnerArrayAdapter);
 
                 } else {
 
-                    NomeCidade = SpnCidade.getSelectedItem().toString();
+                    NomeCidade = spCidade.getSelectedItem().toString();
                     Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
                     if (CurCidade.getCount() > 0) {
                         CurCidade.moveToFirst();
@@ -356,7 +356,7 @@ public class CadContatos extends AppCompatActivity {
                     ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
                     ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    Bairro.setAdapter(spinnerArrayAdapter);
+                    spBairro.setAdapter(spinnerArrayAdapter);
 
                 }
 
@@ -368,9 +368,9 @@ public class CadContatos extends AppCompatActivity {
             }
         });
 
-        Bairro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spBairro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                NomeBairro = Bairro.getSelectedItem().toString();
+                NomeBairro = spBairro.getSelectedItem().toString();
                 try {
                     Cursor CurBai = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
                     if (CurBai.getCount() > 0) {
@@ -397,6 +397,9 @@ public class CadContatos extends AppCompatActivity {
 
         if (sTipoContato == "Selecione o tipo de contato") {
             Toast.makeText(this, "Informe o tipo de contato!", Toast.LENGTH_SHORT).show();
+            return;
+        } else  if(sTipoContato == "C" && CodCliente == 0){
+            Toast.makeText(this, "Informe o cliente para cadastrar esse contato!", Toast.LENGTH_SHORT).show();
             return;
         } else if (nome.getText().length() == 0) {
             nome.setError("Digite o nome do contato!");
@@ -485,13 +488,6 @@ public class CadContatos extends AppCompatActivity {
     }
 
     public void cadastraDadosCep(String cep) {
-
-        if (cep.length() < 8) {
-            Toast.makeText(this, "CEP incompleto. Verifique!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-
         String Estado = null;
         String Cidade = null;
         Boolean AtualizaEst = true;
@@ -510,7 +506,7 @@ public class CadContatos extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
+        String URLPrincipal = prefsHost.getString("host", null);
 
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "PesquisaCEP");
         soap.addProperty("aCEP", cep);
@@ -520,7 +516,6 @@ public class CadContatos extends AppCompatActivity {
         String RetDadosEndereco = null;
 
         try {
-
             Boolean ConexOk = Util.checarConexaoCelular(this);
             if (ConexOk == true) {
                 Envio.call("", envelope);
@@ -636,7 +631,8 @@ public class CadContatos extends AppCompatActivity {
                     sUF = Estado;
                     ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEstado);
                     arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    UF.setAdapter(arrayAdapterUF);
+
+                    spUF.setAdapter(arrayAdapterUF);
 
                     //Cidade
                     List<String> DadosListCidade = new ArrayList<String>();
@@ -644,7 +640,7 @@ public class CadContatos extends AppCompatActivity {
                     ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListCidade);
                     ArrayAdapter<String> spinnerArrayAdapterCidade = arrayAdapterCidade;
                     spinnerArrayAdapterCidade.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    SpnCidade.setAdapter(spinnerArrayAdapterCidade);
+                    spCidade.setAdapter(spinnerArrayAdapterCidade);
 
                     //Bairro
                     List<String> DadosListBairroUnic = new ArrayList<String>();
@@ -652,7 +648,7 @@ public class CadContatos extends AppCompatActivity {
                     ArrayAdapter<String> arrayAdapterBairroUnic = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairroUnic);
                     ArrayAdapter<String> spinnerArrayAdapterBairroUnic = arrayAdapterBairroUnic;
                     spinnerArrayAdapterBairroUnic.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    Bairro.setAdapter(spinnerArrayAdapterBairroUnic);
+                    spBairro.setAdapter(spinnerArrayAdapterBairroUnic);
 
                 }
             }

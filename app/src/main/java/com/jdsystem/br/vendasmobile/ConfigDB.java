@@ -298,7 +298,7 @@ public class ConfigDB extends SQLiteOpenHelper {
                 E.toString();
             }
             try {
-                //MODIFICAÇÕES NA VERSÃO 3
+                //MODIFICAÇÕES NA VERSÃO 3 DO BANCO DE DADOS
                 db.execSQL("ALTER TABLE ITENS ADD QTDESTPROD VARCHAR(10) ");
 
                 db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1     VARCHAR(20) ");

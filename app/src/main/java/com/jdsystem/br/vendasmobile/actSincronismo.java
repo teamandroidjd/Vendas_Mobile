@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Blob;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -2775,7 +2776,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             //String SHA1Ret = RetClientes.substring(0, 40);
             //String ArrayClientes = RetClientes.substring(40, (RetClientes.length()));
             if (RetClientes.equals("0")) {
-                Dialog.dismiss();
+                Dialog.cancel();
                 Toast.makeText(ctxEnvClie, "Nenhum Cliente encontrado. Verifique!", Toast.LENGTH_SHORT).show();
                 return;
 
@@ -3265,6 +3266,291 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
     }
 
+    public static void SituacaodoClientexPed(Double limitecred, Context ctxEnvClie, String user, String pass, int CodClie, String codbloq) {
+
+        ProgressDialog Dialog = null;
+
+        Dialog = new ProgressDialog(ctxEnvClie);
+        Dialog.setTitle("Aguarde...");
+        Dialog.setMessage("Sincronizando Clientes");
+        Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        Dialog.setProgress(0);
+        Dialog.setIcon(R.drawable.icon_sync);
+        Dialog.setMax(0);
+        Dialog.show();
+
+        String METHOD_NAME = "";
+        String TAG_CLIENTESINFO = "clientes";
+        String TAG_TELEFONESINFO = "telefones";
+        String TAG_CONTATOSINFO = "contatos";
+        String TAG_CODIGO = "codigo";
+        String TAG_RAZAOSOCIAL = "razao_social";
+        String TAG_NOMEFANTASIA = "nome_fantasia";
+        String TAG_TIPO = "tipo";
+        String TAG_CNPJCPF = "cnpj_cpf";
+        String TAG_INSCESTADUAL = "inscricao_estadual";
+        String TAG_LOGRADOURO = "Logradouro";
+        String TAG_NUMERO = "numero";
+        String TAG_COMPLEMENTO = "complemento";
+        String TAG_BAIRRO = "bairro";
+        String TAG_CIDADE = "cidade";
+        String TAG_ESTADO = "estado";
+        String TAG_CEP = "cep";
+        String TAG_RG = "identidade";
+        String TAG_OBS = "observacao";
+        String TAG_EMAILS = "emails";
+        String TAG_ATIVO = "ativo";
+        String TAG_BLOQUEIO = "bloqueio";
+        String TAG_LIMITECRED = "limitecredito";
+
+        String CodVendedor = sCodVend;
+
+
+        SharedPreferences prefs = ctxEnvClie.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
+        String DtUlt = DataUltSt2;
+
+        SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+        if (senha != null) {
+            soap.addProperty("aCodVend", CodVendedor);
+            soap.addProperty("aUsuario", usuario);
+            soap.addProperty("aSenha", senha);
+            soap.addProperty("aCodClie", CodClie);
+        } else {
+            soap.addProperty("aCodVend", CodVendedor);
+            soap.addProperty("aUsuario", user);
+            soap.addProperty("aSenha", pass);
+            soap.addProperty("aCodClie", CodClie);
+        }
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 60000);
+        String RetClientes = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
+            if (ConexOk == true) {
+                Cursor cursorclie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODCLIE_EXT = " + CodClie + "", null);
+                cursorclie.moveToFirst();
+                if (cursorclie.getCount() > 0) {
+                    DB.execSQL("DELETE FROM CLIENTES WHERE CODCLIE_EXT = " + CodClie + "");
+                }
+                cursorclie.close();
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                RetClientes = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+        try {
+
+            JSONObject jsonObj = new JSONObject(RetClientes);
+            JSONArray InfoClie = jsonObj.getJSONArray(TAG_CLIENTESINFO);
+
+            int jumpTime = 0;
+            final int totalProgressTime = InfoClie.length();
+
+            Dialog.setProgress(jumpTime);
+            Dialog.setMax(totalProgressTime);
+
+
+            String CodCliente = null;
+
+            DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
+
+            for (int i = 0; i < InfoClie.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = InfoClie.getJSONObject(jumpTime);
+
+                        String Telefone = c.getString(TAG_TELEFONESINFO);
+                        Telefone = "{\"telefones\":" + Telefone + "\t}";
+                        JSONObject ObjTel = new JSONObject(Telefone);
+                        JSONArray Telef = ObjTel.getJSONArray("telefones");
+                        String Tel1 = null;
+                        String Tel2 = null;
+                        String Tel3 = null;
+
+                        for (int t = 0; t < Telef.length(); t++) {
+                            JSONObject tt = Telef.getJSONObject(t);
+                            if (t == 0) {
+                                Tel1 = tt.getString("numero");
+                            }
+                            if (t == 1) {
+                                Tel2 = tt.getString("numero");
+                            }
+                            if (t == 2) {
+                                Tel3 = tt.getString("numero");
+                            }
+                        }
+
+                        jumpTime += 1;
+                        Dialog.setProgress(jumpTime);
+                        Dialog.setMessage("Atualizando informações do clientes");
+
+                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+
+                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
+                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
+                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade);
+
+                        try {
+                            if (cursor.getCount() > 0) {
+                                cursor.moveToFirst();
+                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
+                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
+                                        "', REGIDENT = '" + c.getString(TAG_RG) + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
+                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
+                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
+                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO) +
+                                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
+                                        "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
+                                        " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
+                                        ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
+                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
+                            } else {
+                                DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, REGIDENT, INSCREST, EMAIL, TEL1, TEL2, " +
+                                        "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
+                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED, BLOQUEIO, ATIVO, FLAGINTEGRADO) VALUES(" +
+                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") + "','" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
+                                        "',' " + c.getString(TAG_RG) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
+                                        "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO) +
+                                        "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +
+                                        "','" + CodBairro + "',' " + c.getString(TAG_OBS) + "','" + CodCidade + "',' " + CodEstado +
+                                        "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
+                                        "','" + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_LIMITECRED) + "','" + c.getString(TAG_BLOQUEIO) + "','" + c.getString(TAG_ATIVO)
+                                        + "','" + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
+                            }
+
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+                            cursor1.moveToFirst();
+                            CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
+
+                            cursor.close();
+                            cursor1.close();
+
+                        } catch (Exception E) {
+                            System.out.println("Error" + E);
+                        }
+
+                        String Contatos = c.getString(TAG_CONTATOSINFO);
+                        Contatos = "{\"contatos\":" + Contatos + "\t}";
+                        JSONObject ObjCont = new JSONObject(Contatos);
+                        JSONArray Cont = ObjCont.getJSONArray("contatos");
+                        String NomeContato = null;
+                        String CargoContato = null;
+                        String EmailContato = null;
+                        String Tel1Contato = null;
+                        String Tel2Contato = null;
+
+                        try {
+                            for (int co = 0; co < Cont.length(); co++) {
+                                JSONObject cc = Cont.getJSONObject(co);
+                                if (co == 0) {
+                                    NomeContato = cc.getString("nome");
+                                    CargoContato = cc.getString("cargo");
+                                    EmailContato = cc.getString("email");
+
+                                    String TelCont1 = c.getString("telefones");
+                                    TelCont1 = "{\"telefones\":" + TelCont1 + "\t}";
+                                    JSONObject ObjTelC1 = new JSONObject(TelCont1);
+                                    JSONArray TelefC1 = ObjTelC1.getJSONArray("telefones");
+
+                                    for (int tc1 = 0; tc1 < TelefC1.length(); tc1++) {
+                                        JSONObject tt1 = TelefC1.getJSONObject(tc1);
+                                        if (tc1 == 0) {
+                                            Tel1Contato = tt1.getString("numero");
+                                        }
+                                        if (tc1 == 1) {
+                                            Tel2Contato = tt1.getString("numero");
+                                        }
+                                    }
+                                }
+                                if (co == 1) {
+                                    NomeContato = cc.getString("nome");
+                                    CargoContato = cc.getString("cargo");
+                                    EmailContato = cc.getString("email");
+
+                                    String TelCont2 = c.getString("telefones");
+                                    TelCont2 = "{\"telefones\":" + TelCont2 + "\t}";
+                                    JSONObject ObjTelC2 = new JSONObject(TelCont2);
+                                    JSONArray TelefC2 = ObjTelC2.getJSONArray("telefones");
+
+                                    for (int tc2 = 0; tc2 < TelefC2.length(); tc2++) {
+                                        JSONObject tt2 = Telef.getJSONObject(tc2);
+                                        if (tc2 == 0) {
+                                            Tel1Contato = tt2.getString("numero");
+                                        }
+                                        if (tc2 == 1) {
+                                            Tel2Contato = tt2.getString("numero");
+                                        }
+                                    }
+                                }
+                                if (co == 2) {
+                                    NomeContato = cc.getString("nome");
+                                    CargoContato = cc.getString("cargo");
+                                    EmailContato = cc.getString("email");
+
+                                    String TelCont3 = c.getString("telefones");
+                                    TelCont3 = "{\"telefones\":" + TelCont3 + "\t}";
+                                    JSONObject ObjTelC3 = new JSONObject(TelCont3);
+                                    JSONArray TelefC3 = ObjTelC3.getJSONArray("telefones");
+
+                                    for (int tc3 = 0; tc3 < TelefC3.length(); tc3++) {
+                                        JSONObject tt3 = Telef.getJSONObject(tc3);
+                                        if (tc3 == 0) {
+                                            Tel1Contato = tt3.getString("numero");
+                                        }
+                                        if (tc3 == 1) {
+                                            Tel2Contato = tt3.getString("numero");
+                                        }
+                                    }
+                                }
+
+                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND NOME = '" + NomeContato + "'", null);
+
+                                try {
+                                    if (!(CursorContatosEnv.getCount() > 0)) {
+                                        DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE ) VALUES(" +
+                                                "'" + NomeContato + "','" + CargoContato +
+                                                "',' " + EmailContato + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
+                                                "," + CodCliente + ");");
+
+                                    }
+                                    CursorContatosEnv.close();
+                                } catch (Exception E) {
+                                    System.out.println("Error" + E);
+                                }
+
+                            }
+                        } catch (Exception e) {
+                            e.toString();
+                        }
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+        } catch (Exception E) {
+            E.toString();
+        }
+        if (Dialog.isShowing()) {
+            Dialog.dismiss();
+        }
+
+    }
+
     public static String GerarPdf(String NumPedido, Context ctxRetPed) {
         DB = new ConfigDB(ctxRetPed).getReadableDatabase();
 
@@ -3376,14 +3662,16 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             int item = 1;
             int y = 670;
             CursorItensEnv.moveToFirst();
+            DecimalFormat dfunit = new DecimalFormat("0.0000");
+            DecimalFormat dftotal = new DecimalFormat("0.00");
             do {
                 createContent(cb, 30, y, Util.AcrescentaZeros(String.valueOf(item), 3), PdfContentByte.ALIGN_CENTER);
                 createContent(cb, 60, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")), PdfContentByte.ALIGN_CENTER);
                 createContent(cb, 152, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")), PdfContentByte.ALIGN_LEFT);
                 createContent(cb, 430, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")), PdfContentByte.ALIGN_RIGHT);
                 createContent(cb, 460, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("UNIDADE")), PdfContentByte.ALIGN_LEFT);
-                createContent(cb, 540, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
-                createContent(cb, 580, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
+                createContent(cb, 540, y, dfunit.format(CursorItensEnv.getDouble(CursorItensEnv.getColumnIndex("VLUNIT"))).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
+                createContent(cb, 580, y, dftotal.format(CursorItensEnv.getDouble(CursorItensEnv.getColumnIndex("VLTOTAL"))).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
                 y = y - 15;
                 item++;
             } while (CursorItensEnv.moveToNext());
@@ -3502,7 +3790,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
         cb.beginText();
         cb.setFontAndSize(bfRodaPe, 7);
-        cb.showTextAligned(PdfContentByte.ALIGN_CENTER, Texto, 150, 25, 0);
+        cb.showTextAligned(PdfContentByte.ALIGN_CENTER, Texto, 280, 25, 0);
         cb.endText();
     }
 

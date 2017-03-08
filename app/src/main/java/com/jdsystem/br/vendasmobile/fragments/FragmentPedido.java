@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
@@ -43,7 +46,12 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
     private RecyclerView mRecyclerView;
     private List<Pedidos> mList;
-    private Context context;
+    private Context context = this.getActivity();
+    private SQLiteDatabase DB;
+    int codclie_ext;
+    Double limitecred;
+    String bloqueio;
+
 
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -90,6 +98,21 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             Boolean ConexOk = Util.checarConexaoCelular(view.getContext());
             if (ConexOk == true) {
                 final String NumPedido = adapter.ChamaDados(position);
+
+                DB = new ConfigDB(getActivity()).getReadableDatabase();
+
+                Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT, CODCLIE FROM PEDOPER WHERE NUMPED = "+NumPedido+"",null);
+                cursorped.moveToFirst();
+                codclie_ext = cursorped.getInt(cursorped.getColumnIndex("CODCLIE_EXT"));
+                int codclie = cursorped.getInt(cursorped.getColumnIndex("CODCLIE"));
+                cursorped.close();
+
+                Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = "+codclie_ext+"",null);
+                cursorclie.moveToFirst();
+                limitecred = cursorclie.getDouble(cursorclie.getColumnIndex("LIMITECRED"));
+                bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
+                cursorclie.close();
+
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View formElementsView = inflater.inflate(R.layout.act_pergunta_list_pedido, null, false);
                 final RadioGroup genderRadioGroup = (RadioGroup) formElementsView.findViewById(R.id.genderRadioGroup);
@@ -103,6 +126,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                                     if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
                                         if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
+                                            actSincronismo.SituacaodoClientexPed(limitecred,context,null,null,codclie_ext,bloqueio);
                                             actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
 
                                             Intent intent = ((actListPedidos) getActivity()).getIntent();

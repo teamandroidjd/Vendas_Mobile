@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -82,8 +83,13 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     private Handler handler = new Handler();
     private Intent Codigo;
     private String NumPedido, spreco;
-    private int CodigoItem;
+    private int CodigoItem, sprecoprincipal;
     SQLiteDatabase DB;
+    private Double qtdestoque;
+
+    private SharedPreferences prefs;
+    private String PREFS_PRIVATE = "PREFS_PRIVATE";
+    private Spinner spntabpreco;
 
 
     public String dtUltAtu;
@@ -286,7 +292,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
         Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
         Bloqueios.moveToFirst();
-        String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
+        final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
         Bloqueios.close();
         CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
         Boolean ConexOk = Util.checarConexaoCelular(this);
@@ -296,7 +302,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
             Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
             CursItens.moveToFirst();
-            Double qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
             CursItens.close();
 
             if (qtdestoque <= 0) {
@@ -305,20 +311,53 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             }
         }
 
-
         final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
         final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
         final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
         final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
         final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
-        final Spinner spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
+        /*final Spinner*/
+        spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
         DB = new ConfigDB(this).getReadableDatabase();
 
         spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                spreco = spntabpreco.getSelectedItem().toString();
-                spreco = spreco.replaceAll("[A-Za-z$ãç:]", "").trim();
-                info_txv_precoproduto.setText(spreco);
+                SharedPreferences prefsHost = Lista_produtos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
+                sprecoprincipal = prefsHost.getInt("spreco", 0);
+                //int teste = sprecoprincipal;
+                if (sprecoprincipal == 0) {
+                    sprecoprincipal = spntabpreco.getSelectedItemPosition();
+                    if (sprecoprincipal == 0) {
+                        GravaPreferencias(sprecoprincipal);
+                        spreco = spntabpreco.getSelectedItem().toString();
+                        spreco = spreco.replaceAll("[A-Za-z$ãç:]", "").trim();
+                        info_txv_precoproduto.setText(spreco);
+                    } else {
+                        sprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        GravaPreferencias(sprecoprincipal);
+                        spntabpreco.setSelection(sprecoprincipal);
+                        spreco = spntabpreco.getSelectedItem().toString();
+                        spreco = spreco.replaceAll("[A-Za-z$ãç:]", "").trim();
+                        info_txv_precoproduto.setText(spreco);
+                    }
+                }
+                if (sprecoprincipal != 0) {
+                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                    if(novosprecoprincipal != 0) {
+                        GravaPreferencias(novosprecoprincipal);
+                        spntabpreco.setSelection(novosprecoprincipal);
+                        spreco = spntabpreco.getSelectedItem().toString();
+                        spreco = spreco.replaceAll("[A-Za-z$ãç:]", "").trim();
+                        info_txv_precoproduto.setText(spreco);
+                    } else {
+                        //sprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        GravaPreferencias(sprecoprincipal);
+                        spntabpreco.setSelection(sprecoprincipal);
+                        spreco = spntabpreco.getSelectedItem().toString();
+                        spreco = spreco.replaceAll("[A-Za-z$ãç:]", "").trim();
+                        info_txv_precoproduto.setText(spreco);
+                    }
+                }
             }
 
             @Override
@@ -449,6 +488,10 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                     String UNIDADE = info_txv_unmedida.getText().toString();
 
                     if (QUANTIDADE_DIGITADA > 0) {
+                        if(vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque){
+                            Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                            return;
+                        }
 
                         SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
                         SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
@@ -500,6 +543,29 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             }
         });
         alerta.show();
+    }
+
+    public void RecuperaPreferencias() {
+
+
+        prefs = getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
+
+        spntabpreco.setSelection(prefs.getInt("spreco", 0));
+
+
+        prefs = null;
+    }
+
+    public void GravaPreferencias(int preco) {
+
+        prefs = getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor prefsPrivateEditor = prefs.edit();
+
+        prefsPrivateEditor.putInt("spreco", preco);
+
+        prefsPrivateEditor.commit();
+
     }
 
     public void atualiza_listview_com_os_itens_da_venda() {

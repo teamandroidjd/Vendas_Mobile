@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,10 +25,12 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
     private RecyclerView mRecyclerView;
     private List<Contatos> mList;
 
+
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_contatos, container, false);
+
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_sinc);
         mRecyclerView.setHasFixedSize(true);

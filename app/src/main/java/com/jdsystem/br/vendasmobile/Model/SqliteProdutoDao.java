@@ -201,10 +201,10 @@ public class SqliteProdutoDao {
             if (Param == 1) {
                 cursor = db.rawQuery("select CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
                         "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO from ITENS" +
-                        " ", null);
+                        " ORDER BY DESCRICAO ", null);
             } else {
                 cursor = db.rawQuery("select CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
-                        "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO from ITENS where ATIVO = '1' ", null);
+                        "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO from ITENS where ATIVO = '1' ORDER BY DESCRICAO ", null);
             }
 
             if (cursor != null) {
@@ -225,32 +225,32 @@ public class SqliteProdutoDao {
             if (valor_campo == null || valor_campo.length() == 0) {
                 if (Param == 1) {
                     cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
-                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS " , null);
+                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS ORDER BY DESCRICAO " , null);
                 } else {
                     cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
-                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS WHERE ATIVO = '1'", null);
+                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS WHERE ATIVO = '1' ORDER BY DESCRICAO", null);
                 }
             } else {
                 switch (field) {
                     case DESCRICAO_PRODUTO:
                         if (Param == 1) {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
-                                    "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE  DESCRICAO LIKE '%" + valor_campo + "%'", null);
+                                    "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE  DESCRICAO LIKE '%" + valor_campo + "%' ORDER BY DESCRICAO", null);
                         } else {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
                                     "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE ATIVO = '1'" +
-                                    " AND DESCRICAO LIKE '%" + valor_campo + "%'", null);
+                                    " AND DESCRICAO LIKE '%" + valor_campo + "%' ORDER BY DESCRICAO", null);
 
                         }
                         break;
                     case CATEGORIA_PRODUTO:
                         if (Param == 1) {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
-                                    "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE CLASSE LIKE '%" + valor_campo + "%'", null);
+                                    "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE CLASSE LIKE '%" + valor_campo + "%' ORDER BY CLASSE", null);
                         } else {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
                                     "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE ATIVO = '1'" +
-                                    " AND CLASSE LIKE '%" + valor_campo + "%'", null);
+                                    " AND CLASSE LIKE '%" + valor_campo + "%' ORDER BY CLASSE", null);
                         }
                         break;
 
@@ -258,11 +258,11 @@ public class SqliteProdutoDao {
                         if (Param == 1) {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
                                     "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS " +
-                                    " WHERE CODITEMANUAL LIKE '%" + valor_campo + "%'", null);
+                                    " WHERE CODITEMANUAL LIKE '%" + valor_campo + "%' ORDER BY CODITEMANUAL", null);
                         } else {
                             cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
                                     "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS  WHERE ATIVO = '1'" +
-                                    " AND CODITEMANUAL LIKE '%" + valor_campo + "%'", null);
+                                    " AND CODITEMANUAL LIKE '%" + valor_campo + "%' ORDER BY CODITEMANUAL", null);
                         }
                         break;
                 }
