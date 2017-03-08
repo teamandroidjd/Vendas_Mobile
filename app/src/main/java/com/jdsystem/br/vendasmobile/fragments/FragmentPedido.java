@@ -207,14 +207,20 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         } else {
                                             Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
                                         }
-                                    } /*else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
-                                        if (Status.equals("Orçamento")) {
+                                    } else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
+                                        if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                             final String NumPedido = adapter.ChamaDados(position);
-                                            Intent intent = new Intent(actListPedidos, VenderProdutos.class);
-                                            startActivity(intent);
-                                        }
 
-                                    }*/
+                                            Intent VendaProd = new Intent((actListPedidos) getActivity(), VenderProdutos.class);
+                                            Bundle params = new Bundle();
+                                            params.putString("numpedido", NumPedido);
+                                            params.putString("CodVendedor", NumPedido);
+                                            VendaProd.putExtras(params);
+                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                            ((actListPedidos) getActivity()).finish();
+                                            startActivityForResult(VendaProd, 1);
+                                        }
+                                    }
                                     dialog.cancel();
                                 } else {
                                     Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);

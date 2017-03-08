@@ -241,7 +241,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String TAG_BLOQUEIO = "bloqueio";
         String TAG_LIMITECRED = "limitecredito";
 
-        String QtdClie = RetornaqtdClientes(sCodVend, this);
+        //String QtdClie = RetornaqtdClientes(sCodVend, this);
 
         String CodVendedor = sCodVend;
 
@@ -2331,8 +2331,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                     " VALUES(" + CodEmpresa + ",'" + NomeEmpresa + "', '" + NomeAbreviado + "','" + Cnpj + "','" + Tel1 + "','" + Tel2 +
                                     "','" + Email + "','" + Ativo + "', '" + imgRecebida + "' );");
                             Cursor cursor1 = DB.rawQuery(" SELECT CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
-                            cursor1.moveToFirst();
-                            //CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
                             cursor1.close();
                         }
                         CursorEmpresa.close();

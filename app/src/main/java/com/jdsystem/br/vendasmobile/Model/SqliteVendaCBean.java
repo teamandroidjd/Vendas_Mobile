@@ -52,6 +52,15 @@ public class SqliteVendaCBean {
     private String DataEntrega;
     private String Integrado;
     private String CodEmpresa;
+    private String CodVendedor;
+
+    public String getCodVendedor() {
+        return CodVendedor;
+    }
+
+    public void setCodVendedor(String codVendedor) {
+        CodVendedor = codVendedor;
+    }
 
     public String getCodEmpresa() {
         return CodEmpresa;

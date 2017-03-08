@@ -29,37 +29,38 @@ public class SqliteConRecDao {
     }
 
     public boolean gravar_parcela(SqliteConRecBean rec) {
-        try {
-            gravou = false;
-            db = new ConfigDB(ctx).getWritableDatabase();
-            sql = "INSERT INTO CONREC (rec_numparcela,rec_cli_codigo,rec_cli_nome,vendac_chave,rec_datamovimento,rec_valor_receber,rec_valorpago,rec_datavencimento,rec_data_que_pagou,rec_recebeu_com,rec_enviado) values (?,?,?,?,?,?,?,?,?,?,?)";
-            stmt = db.compileStatement(sql);
-            stmt.bindLong(1, rec.getRec_numparcela());
-            stmt.bindLong(2, rec.getRec_cli_codigo());
-            stmt.bindString(3, rec.getRec_cli_nome());
-            stmt.bindString(4, rec.getVendac_chave());
-            stmt.bindString(5, rec.getRec_datamovimento());
-            stmt.bindDouble(6, rec.getRec_valor_receber().setScale(2, BigDecimal.ROUND_UP).doubleValue());
-            stmt.bindDouble(7, rec.getRec_valorpago().setScale(2, BigDecimal.ROUND_UP).doubleValue());
-            stmt.bindString(8, rec.getRec_datavencimento());
-            stmt.bindString(9, rec.getRec_data_que_pagou());
-            stmt.bindString(10, rec.getRec_recebeu_com());
-            stmt.bindString(11, rec.getRec_enviado());
-            if (stmt.executeInsert() > 0) {
-                gravou = true;
-                sql = "";
-            }
-            stmt.clearBindings();
-        } catch (SQLiteException e) {
-            gravou = false;
-            Log.d("grava_receber", e.getMessage());
+            SQLiteDatabase DB = null;
+            try {
+                gravou = false;
+                db = new ConfigDB(ctx).getWritableDatabase();
+                sql = "INSERT INTO CONREC (rec_numparcela,rec_cli_codigo,rec_cli_nome,vendac_chave,rec_datamovimento,rec_valor_receber,rec_valorpago,rec_datavencimento,rec_data_que_pagou,rec_recebeu_com,rec_enviado) values (?,?,?,?,?,?,?,?,?,?,?)";
+                stmt = db.compileStatement(sql);
+                stmt.bindLong(1, rec.getRec_numparcela());
+                stmt.bindLong(2, rec.getRec_cli_codigo());
+                stmt.bindString(3, rec.getRec_cli_nome());
+                stmt.bindString(4, rec.getVendac_chave());
+                stmt.bindString(5, rec.getRec_datamovimento());
+                stmt.bindDouble(6, rec.getRec_valor_receber().setScale(2, BigDecimal.ROUND_UP).doubleValue());
+                stmt.bindDouble(7, rec.getRec_valorpago().setScale(2, BigDecimal.ROUND_UP).doubleValue());
+                stmt.bindString(8, rec.getRec_datavencimento());
+                stmt.bindString(9, rec.getRec_data_que_pagou());
+                stmt.bindString(10, rec.getRec_recebeu_com());
+                stmt.bindString(11, rec.getRec_enviado());
+                if (stmt.executeInsert() > 0) {
+                    gravou = true;
+                    sql = "";
+                }
+                stmt.clearBindings();
+            } catch (Exception e) {
+                gravou = false;
+                Log.d("grava_receber", e.getMessage());
 
-        } finally {
-            db.close();
-            stmt.close();
+            } finally {
+                db.close();
+                stmt.close();
+            }
+            return gravou;
         }
-        return gravou;
-    }
 
 //***********************************************************************************
 
@@ -88,7 +89,7 @@ public class SqliteConRecDao {
         try {
             db = new ConfigDB(ctx).getWritableDatabase();
             gravou = false;
-            sql = "update CONREC set rec_valorpago = ? , rec_data_que_pagou  = ? , rec_recebeu_com = ? ,rec_enviado = ? where vendac_chave = ? and rec_numparcela = ? ";
+            sql = "update CONREC set rec_valorpago = ? , rec_data_que_pagou  = ?, rec_recebeu_com = ? ,rec_enviado = ? where vendac_chave = ? and rec_numparcela = ? ";
             stmt = db.compileStatement(sql);
             stmt.bindDouble(1, rec.getRec_valorpago().doubleValue());
             stmt.bindString(2, rec.getRec_data_que_pagou());
@@ -228,7 +229,7 @@ public class SqliteConRecDao {
             else
                 sql = "select * from CONREC where  vendac_chave  = ? and  rec_cli_codigo = ? and rec_datavencimento  between ? and ?  and rec_valorpago = 0  order by rec_numparcela asc  ";
 
-            cursor = db.rawQuery(sql, new String[]{vendac_chave, cli_codigo.toString(), data1, data2}, null);
+            //cursor = db.rawQuery(sql, new String[]{vendac_chave, cli_codigo.toString(), data1, data2}, null);
             Util.log(sql);
 
             while (cursor.moveToNext()) {

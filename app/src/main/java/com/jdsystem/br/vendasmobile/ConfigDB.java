@@ -211,6 +211,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " vendac_chave       VARCHAR DEFAULT 70,                " +
             " rec_datamovimento  DATE ,                             " +
             " rec_valor_receber  DECIMAL (10,2),                    " +
+            " rec_valorpago      DECIMAL (10,2),                    " +
             " rec_datavencimento DATE ,                             " +
             " rec_data_que_pagou DATE ,                             " +
             " rec_recebeu_com    VARCHAR DEFAULT 20,                " +
@@ -327,6 +328,8 @@ public class ConfigDB extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE CONTATO ADD                    CODCLIE_EXT  INTEGER ");
                 db.execSQL("ALTER TABLE CONTATO ADD                    CODBAIRRO  INTEGER ");
                 db.execSQL("ALTER TABLE CONTATO ADD                    CODCIDADE  INTEGER ");
+
+                db.execSQL("ALTER TABLE CONREC ADD rec_valorpago DECIMAL (10,2) ");
 
                 db.execSQL(" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
                         " CODBLOQ   VARCHAR (3),  " +
