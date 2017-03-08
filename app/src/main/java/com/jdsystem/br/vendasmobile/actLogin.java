@@ -382,42 +382,46 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                      handler.post(new Runnable() {
                                                          @Override
                                                          public void run() {
-                                                             Dialogo.setMessage("Sincronizando Empresas");
-                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
-                                                             Dialogo.setMessage("Atualizando parâmetros");
-                                                             actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
-                                                             Dialogo.setMessage("Atualizando outras informações");
-                                                             actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
-                                                             Dialogo.setMessage("Atualizando outras informações");
-                                                             actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
-                                                             handler.post(new Runnable() {
-                                                                 @Override
-                                                                 public void run() {
-                                                                     Dialogo.setMessage("Atualizando Cadastro de Clientes");
-                                                                     actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true,edtUsuario.getText().toString(), edtSenha.getText().toString());
-                                                                     handler.post(new Runnable() {
-                                                                         @Override
-                                                                         public void run() {
-                                                                             Dialogo.setMessage("Enviando pedidos...");
-                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
-                                                                             Dialogo.dismiss();
-                                                                             handler.post(new Runnable() {
-                                                                                 @Override
-                                                                                 public void run() {
-                                                                                     Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
-                                                                                     Bundle params = new Bundle();
-                                                                                     params.putString("codvendedor", CodVendedor);
-                                                                                     params.putString("urlPrincipal", URLPrincipal);
-                                                                                     params.putString("usuario", usuario);
-                                                                                     params.putString("senha", pass);
-                                                                                     IntVend.putExtras(params);
-                                                                                     startActivity(IntVend);
-                                                                                 }
-                                                                             });
-                                                                         }
-                                                                     });
-                                                                 }
-                                                             });
+                                                             try {
+                                                                 Dialogo.setMessage("Sincronizando Empresas");
+                                                                 actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                 Dialogo.setMessage("Atualizando parâmetros");
+                                                                 actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                 Dialogo.setMessage("Atualizando outras informações");
+                                                                 actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                 Dialogo.setMessage("Atualizando outras informações");
+                                                                 actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                 handler.post(new Runnable() {
+                                                                     @Override
+                                                                     public void run() {
+                                                                         Dialogo.setMessage("Atualizando Cadastro de Clientes");
+                                                                         actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true, edtUsuario.getText().toString(), edtSenha.getText().toString());
+                                                                         handler.post(new Runnable() {
+                                                                             @Override
+                                                                             public void run() {
+                                                                                 Dialogo.setMessage("Enviando pedidos...");
+                                                                                 actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                                 Dialogo.dismiss();
+                                                                                 handler.post(new Runnable() {
+                                                                                     @Override
+                                                                                     public void run() {
+                                                                                         Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
+                                                                                         Bundle params = new Bundle();
+                                                                                         params.putString("codvendedor", CodVendedor);
+                                                                                         params.putString("urlPrincipal", URLPrincipal);
+                                                                                         params.putString("usuario", usuario);
+                                                                                         params.putString("senha", pass);
+                                                                                         IntVend.putExtras(params);
+                                                                                         startActivity(IntVend);
+                                                                                     }
+                                                                                 });
+                                                                             }
+                                                                         });
+                                                                     }
+                                                                 });
+                                                             } catch (Exception E) {
+                                                                 System.out.println("Error" + E);
+                                                             }
                                                          }
                                                      });
                                                  } else {

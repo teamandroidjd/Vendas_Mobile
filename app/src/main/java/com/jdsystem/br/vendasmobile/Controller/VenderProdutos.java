@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -89,14 +90,16 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     private String DATA_DE_ENTREGA, CodVendedor, ObsPedido, NumPedido;
     private Toolbar toolbar;
     private SqliteClienteBean cliBean;
-    public String Chave_Venda;
-
-    public String sCodVend, URLPrincipal, spreco, COD_PRODUTO;
+    public String Chave_Venda, dataent;
+    public String sCodVend, URLPrincipal, spreco, COD_PRODUTO, usuario, senha;
     public ProgressDialog dialog;
     public Long venda_ok;
     public AlertDialog alerta;
     private Builder alerta1;
     private Spinner spntabpreco;
+
+    public static final String DATA_ENT = "DATA DE ENTREGA";
+    public SharedPreferences prefs;
 
     private SimpleCursorAdapter adapter;
     private ListView prod_listview_produtotemp;
@@ -117,7 +120,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         setContentView(R.layout.vender_produtos);
 
         declaraObjetos();
-        DATA_DE_ENTREGA = "";
+
         ObsPedido = "";
         setDateTimeField();
 
@@ -127,6 +130,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             if (params != null) {
                 sCodVend = params.getString("CodVendedor");
                 URLPrincipal = params.getString("urlPrincipal");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
             }
         }
 
@@ -135,6 +140,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         CodVendedor = CLI_CODIGO_INTENT.getStringExtra("CodVendedor");
         NumPedido = CLI_CODIGO_INTENT.getStringExtra("numpedido");
         CodEmpresa = CLI_CODIGO_INTENT.getStringExtra("codempresa");
+
+        prefs = getSharedPreferences(DATA_ENT, MODE_PRIVATE);
+        dataent = prefs.getString("dataentrega", null);
+
+        if (dataent != null && dataent != ""){
+            venda_txv_dataentrega.setText(dataent);
+        }
 
         venda_txt_desconto.setOnKeyListener(this);
 
@@ -168,6 +180,24 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         TextView venda_txv_codigo_cliente = (TextView) findViewById(R.id.venda_txv_codigo_cliente);
         venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO.toString() + " - " + cliBean.getCli_nome().toString());
         venda_txv_codigo_cliente.requestFocus();
+
+
+        venda_txv_codigo_cliente.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                            Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+                                                            Bundle params = new Bundle();
+                                                            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                                                            params.putString("CodVendedor", sCodVend);
+                                                            params.putString("codempresa", CodEmpresa);
+                                                            params.putString("usuario", usuario);
+                                                            params.putString("senha", senha);
+                                                            intent.putExtras(params);
+                                                            startActivityForResult(intent, 1);
+                                                        }
+                                                    });
+
+
 
         DB = new ConfigDB(this).getReadableDatabase();
         TextView venda_txv_empresa = (TextView) findViewById(R.id.venda_txv_empresa);
@@ -230,6 +260,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                     it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
                                     setResult(1, it);
                                     new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+                                    SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                                    editor.putString("dataentrega", null);
                                     finish();
                                 }
                             })
@@ -246,6 +278,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
                     setResult(1, it);
                     new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+                    SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                    editor.putString("dataentrega", null);
                     finish();
                 }
             }
@@ -323,6 +357,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 venda_txv_dataentrega.setText("Data de Entrega: " + dateFormatterBR.format(newDate.getTime()));
                 DATA_DE_ENTREGA = dateFormatterUSA.format(newDate.getTime());
                 Util.log(DATA_DE_ENTREGA);
+                SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                editor.putString("dataentrega", venda_txv_dataentrega.getText().toString());
+                editor.commit();
             }
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
     }
@@ -856,6 +893,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
                             setResult(1, it);
                             new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+                            SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                            editor.putString("dataentrega", null);
                             finish();
                         }
                     })
@@ -872,6 +911,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
             setResult(1, it);
             new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+            SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+            editor.putString("dataentrega", null);
             finish();
         }
     }
