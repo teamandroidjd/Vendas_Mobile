@@ -75,7 +75,6 @@ public class SqliteVendaD_TempDao {
         }
     }
 
-
     public void excluir_itens() {
         db = new ConfigDB(ctx).getWritableDatabase();
         try {
@@ -147,17 +146,20 @@ public class SqliteVendaD_TempDao {
         try {
             sql = "select * from VENDAD_TEMP ";
             cursor = db.rawQuery(sql, null);
-            while (cursor.moveToNext()) {
-                SqliteVendaD_TempBean items = new SqliteVendaD_TempBean();
-                //items.setVendad_eanTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_EAN)));
-                items.setVendad_prd_codigoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_CODPRODUTO)));
-                items.setVendad_prd_descricaoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_DESCRICAOPROD)));
-                String und = cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO));
-                items.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO)));
-                items.setVendad_quantidadeTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_QUANTVENDIDA))));
-                items.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_PRECOPRODUTO))).setScale(4,BigDecimal.ROUND_HALF_UP));
-                items.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_TOTALPRODUTO))).setScale(4,BigDecimal.ROUND_HALF_UP));
-                lista_de_itens_vendidos.add((SqliteVendaD_TempBean) items);
+            if (cursor.getCount()>0) {
+                cursor.moveToFirst();
+                do {
+                    SqliteVendaD_TempBean items = new SqliteVendaD_TempBean();
+                    //items.setVendad_eanTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_EAN)));
+                    items.setVendad_prd_codigoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_CODPRODUTO)));
+                    items.setVendad_prd_descricaoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_DESCRICAOPROD)));
+                    String und = cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO));
+                    items.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO)));
+                    items.setVendad_quantidadeTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_QUANTVENDIDA))));
+                    items.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_PRECOPRODUTO))).setScale(4, BigDecimal.ROUND_HALF_UP));
+                    items.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_TOTALPRODUTO))).setScale(4, BigDecimal.ROUND_HALF_UP));
+                    lista_de_itens_vendidos.add((SqliteVendaD_TempBean) items);
+                } while (cursor.moveToNext());
             }
         } catch (SQLiteException e) {
             Util.log("SQLiteException busca_todos_itens_da_venda" + e.getMessage());
@@ -168,25 +170,28 @@ public class SqliteVendaD_TempDao {
         return lista_de_itens_vendidos;
     }
 
-    public List<SqliteVendaD_TempBean> buscar_itens_pedido(String NumPedido) {
+    public List<SqliteVendaD_TempBean> buscar_itens_pedido(String Chave_Venda) {
         List<SqliteVendaD_TempBean> lista_de_itens_vendidos = new ArrayList<SqliteVendaD_TempBean>();
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            sql = "select * from VENDAD_TEMP ";
+            sql = "select * from PEDITENS WHERE CHAVEPEDIDO = " + Chave_Venda;
             cursor = db.rawQuery(sql, null);
-            while (cursor.moveToNext()) {
-                SqliteVendaD_TempBean items = new SqliteVendaD_TempBean();
-                //items.setVendad_eanTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_EAN)));
-                items.setVendad_prd_codigoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_CODPRODUTO)));
-                items.setVendad_prd_descricaoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_DESCRICAOPROD)));
-                items.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO)));
-                items.setVendad_quantidadeTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_QUANTVENDIDA))));
-                items.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_PRECOPRODUTO))).setScale(4,BigDecimal.ROUND_HALF_UP));
-                items.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(items.TEMP_TOTALPRODUTO))).setScale(4,BigDecimal.ROUND_HALF_UP));
-                lista_de_itens_vendidos.add((SqliteVendaD_TempBean) items);
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                do {
+                    SqliteVendaD_TempBean items = new SqliteVendaD_TempBean();
+                    items.setVendad_prd_codigoTEMP(cursor.getString(cursor.getColumnIndex("CODITEMANUAL")));
+                    items.setVendad_prd_descricaoTEMP(cursor.getString(cursor.getColumnIndex("DESCRICAO")));
+                    items.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex("UNIDADE")));
+                    items.setVendad_quantidadeTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex("QTDMENORPED"))).setScale(2, BigDecimal.ROUND_UP));
+                    items.setVendad_preco_vendaTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex("VLUNIT"))).setScale(4, BigDecimal.ROUND_UP));
+                    items.setVendad_totalTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex("VLTOTAL"))).setScale(2, BigDecimal.ROUND_UP));
+                    lista_de_itens_vendidos.add((SqliteVendaD_TempBean) items);
+                    insere_item(items);
+                } while (cursor.moveToNext());
             }
         } catch (SQLiteException e) {
-            Util.log("SQLiteException busca_todos_itens_da_venda" + e.getMessage());
+            Util.log("SQLiteException buscar_itens_pedido" + e.getMessage());
         } finally {
             db.close();
             cursor.close();

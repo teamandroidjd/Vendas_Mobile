@@ -50,8 +50,10 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     private String RECEBIMENTO_DIN_CAR_CHQ = "";
     private String COMENTRADA_SEMENTRADA = "";
     private String TIPO_PAGAMENTO = "";
+    private String ChavePedido = "";
     private Double SUBTOTAL_VENDA;
     private BigDecimal VALORRECEBIDO;
+    private Boolean AtuPedido;
 
     private ScrollView vScroll;
     private HorizontalScrollView hScroll;
@@ -75,6 +77,9 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         SUBTOTAL_VENDA = INTENT_SOBTOTAL_VENDA.getDoubleExtra("SUBTOTAL_VENDA", 0);
         INTENT_CLI_CODIGO = getIntent();
         CLI_CODIGO = INTENT_CLI_CODIGO.getIntExtra("CLI_CODIGO", 0);
+        ChavePedido = INTENT_CLI_CODIGO.getStringExtra("ChavePedido");
+        AtuPedido = INTENT_CLI_CODIGO.getBooleanExtra("AtuPedido", false);
+
 
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
@@ -135,45 +140,22 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                             Integer.parseInt(conf_txtqtdparcelas.getText().toString()),
                             "",
                             "N"
-                    )
+                            ), AtuPedido, ChavePedido
             );
             //Util.msg_toast_personal(getBaseContext(), "SALVO COM SUCESSO", Util.SUCESSO);
             finish();
         }
     }
 
-
     private boolean validar_forma_de_pagamento() {
-
         boolean fechar = true;
-/*
-        // venda avista
-        if (TIPO_PAGAMENTO.equals("AVISTA")) {
-            if (conf_txtvalorrecebido.getText().toString().trim().length() > 0) {
-                BigDecimal valor_recebido = new BigDecimal(conf_txtvalorrecebido.getText().toString());
-                if (RECEBIMENTO_DIN_CAR_CHQ.equals("DINHEIRO") && valor_recebido.doubleValue() > SUBTOTAL_VENDA) {
-                    fechar = false;
-                    Util.msg_toast_personal(getBaseContext(), "Valor avista maior que valor da venda", Util.ALERTA);
-                } else if (RECEBIMENTO_DIN_CAR_CHQ.equals("DINHEIRO") && valor_recebido.doubleValue() < SUBTOTAL_VENDA) {
-                    fechar = false;
-                    Util.msg_toast_personal(getBaseContext(), "Valor avista menor que valor da venda", Util.ALERTA);
-                }
-            } else {
-                Util.msg_toast_personal(getBaseContext(), "informe o valor recebido", Util.ALERTA);
-            }
-        }
-*/
-
         if (TIPO_PAGAMENTO.equals("PARCELADO")) {
-
             // condicao sem entrada
             if (conf_txtqtdparcelas.getText().toString().trim().length() <= 0) {
                 fechar = false;
                 Util.msg_toast_personal(getBaseContext(), "informe a quantidade de parcelas", Util.ALERTA);
             }
-
         }
-
         return fechar;
     }
 

@@ -129,8 +129,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             }
         });
         carrega_produto_para_venda();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
+
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
@@ -159,7 +158,6 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             } else {
                 Toast.makeText(Lista_produtos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
             }
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -323,6 +321,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 

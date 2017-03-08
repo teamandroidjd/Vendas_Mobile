@@ -25,12 +25,10 @@ import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.actListPedidos;
-import com.jdsystem.br.vendasmobile.actLogin;
 import com.jdsystem.br.vendasmobile.actSincronismo;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
-//import com.lowagie.text.HeaderFooter;
 
 import java.io.File;
 import java.util.List;
@@ -136,7 +134,6 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                                             return;
                                         }
-
                                         String TxtPedido = actSincronismo.GerarPdf(NumPedido, getContext());
                                         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf";
 
@@ -183,14 +180,21 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         } else {
                                             Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
                                         }
-                                    } /*else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
-                                        if (Status.equals("Orçamento")) {
+                                    } else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
+                                        if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                             final String NumPedido = adapter.ChamaDados(position);
-                                            Intent intent = new Intent(actListPedidos, VenderProdutos.class);
-                                            startActivity(intent);
+
+                                            Intent VendaProd = new Intent((actListPedidos)getActivity() , VenderProdutos.class);
+                                            Bundle params = new Bundle();
+                                            params.putString("numpedido", NumPedido);
+                                            params.putString("CodVendedor", NumPedido);
+                                            VendaProd.putExtras(params);
+                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                            ((actListPedidos) getActivity()).finish();
+                                            startActivityForResult(VendaProd,1);
                                         }
 
-                                    }*/
+                                    }
                                     dialog.cancel();
                                 } else {
                                     Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);

@@ -22,6 +22,7 @@ public class SqliteConRecDao {
     private boolean gravou;
     private SQLiteStatement stmt;
     private SQLiteDatabase db;
+
     private Cursor cursor;
 
     public SqliteConRecDao(Context ctx) {
@@ -29,6 +30,7 @@ public class SqliteConRecDao {
     }
 
     public boolean gravar_parcela(SqliteConRecBean rec) {
+        SQLiteDatabase DB = null;
         try {
             gravou = false;
             db = new ConfigDB(ctx).getWritableDatabase();
@@ -50,7 +52,7 @@ public class SqliteConRecDao {
                 sql = "";
             }
             stmt.clearBindings();
-        } catch (SQLiteException e) {
+        } catch (Exception e) {
             gravou = false;
             Log.d("grava_receber", e.getMessage());
 
@@ -111,7 +113,7 @@ public class SqliteConRecDao {
         try {
             db = new ConfigDB(ctx).getWritableDatabase();
             gravou = false;
-            sql = "update CONREC set rec_valor_receber = ? , rec_enviado = ? where vendac_chave = ? and rec_numparcela = ? ";
+            sql = "update CONREC set rec_valor_receber = ?, rec_enviado = ? where vendac_chave = ? and rec_numparcela = ? ";
             stmt = db.compileStatement(sql);
             stmt.bindDouble(1, rec.getRec_valor_receber().doubleValue());
             stmt.bindString(2, "N");
@@ -228,7 +230,7 @@ public class SqliteConRecDao {
             else
                 sql = "select * from CONREC where  vendac_chave  = ? and  rec_cli_codigo = ? and rec_datavencimento  between ? and ?  and rec_valorpago = 0  order by rec_numparcela asc  ";
 
-            cursor = db.rawQuery(sql, new String[]{vendac_chave, cli_codigo.toString(), data1, data2}, null);
+            //cursor = db.rawQuery(sql, new String[]{vendac_chave, cli_codigo.toString(), data1, data2}, null);
             Util.log(sql);
 
             while (cursor.moveToNext()) {

@@ -22,6 +22,7 @@ public class SqliteConfPagamentoBean {
     private Integer conf_parcelas;
     private String vendac_chave;
     private String conf_enviado;
+    private Boolean AtuPedido;
 
 
     public SqliteConfPagamentoBean() {
@@ -36,6 +37,7 @@ public class SqliteConfPagamentoBean {
         this.conf_parcelas = conf_parcelas;
         this.vendac_chave = vendac_chave;
         this.conf_enviado = conf_enviado;
+
     }
 
     public boolean isComEntrada() {
@@ -100,6 +102,14 @@ public class SqliteConfPagamentoBean {
 
     public void setConf_valor_recebido(BigDecimal conf_valor_recebido) {
         this.conf_valor_recebido = conf_valor_recebido;
+    }
+
+    public Boolean getAtuPedido() {
+        return AtuPedido;
+    }
+
+    public void setAtuPedido(Boolean atuPedido) {
+        AtuPedido = atuPedido;
     }
 
     public Integer getConf_parcelas() {
