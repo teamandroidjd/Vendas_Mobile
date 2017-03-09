@@ -26,7 +26,7 @@ import java.util.List;
 public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnClickListenerHack {
     private RecyclerView mRecyclerView;
     private List<FiltroContatos> mList;
-    CharSequence sCodVend;
+    CharSequence pesqcontato;
 
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -35,7 +35,7 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
 
         Bundle params = getArguments();
         if (params != null) {
-            sCodVend = params.getCharSequence("pesquisa");
+            pesqcontato = params.getCharSequence("pesquisa");
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_sinc);
@@ -46,7 +46,7 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
         mRecyclerView.setLayoutManager(llm);
 
 
-        mList = ((act_ListContatos) getActivity()).pesquisarcontatos(sCodVend);
+        mList = ((act_ListContatos) getActivity()).pesquisarcontatos(pesqcontato);
         ListAdapterFiltroContatos adapter = new ListAdapterFiltroContatos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);

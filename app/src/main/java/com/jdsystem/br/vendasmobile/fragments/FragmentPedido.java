@@ -36,6 +36,8 @@ import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 //import com.lowagie.text.HeaderFooter;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -49,14 +51,20 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     private Context context = this.getActivity();
     private SQLiteDatabase DB;
     int codclie_ext;
-    Double limitecred;
-    String bloqueio;
+    String limitecred;
+    String bloqueio, usuario, senha;
 
 
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pedidos, container, false);
+
+        Bundle params = getArguments();
+        if (params != null) {
+            usuario = params.getString("usuario");
+            senha = params.getString("senha");
+        }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list);
         mRecyclerView.setHasFixedSize(true);
@@ -109,7 +117,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
                 Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = "+codclie_ext+"",null);
                 cursorclie.moveToFirst();
-                limitecred = cursorclie.getDouble(cursorclie.getColumnIndex("LIMITECRED"));
+                limitecred = cursorclie.getString(cursorclie.getColumnIndex("LIMITECRED"));
                 bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
                 cursorclie.close();
 
@@ -126,8 +134,13 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                                     if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
                                         if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
-                                            actSincronismo.SituacaodoClientexPed(limitecred,context,null,null,codclie_ext,bloqueio);
-                                            actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
+                                            boolean sitclie = actSincronismo.SituacaodoClientexPed(limitecred,getActivity(),usuario,senha,codclie_ext,bloqueio);
+                                            if(sitclie==true) {
+                                                actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
+                                            }else {
+                                                Util.msg_toast_personal(getActivity(), "Cliente sem permissão de compra. Verifique!", Util.PADRAO);
+                                                return;
+                                            }
 
                                             Intent intent = ((actListPedidos) getActivity()).getIntent();
                                             ((actListPedidos) getActivity()).finish();

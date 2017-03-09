@@ -74,7 +74,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     private Intent CLI_CODIGO_INTENT;
     private Integer CLI_CODIGO;
     private Integer CLI_CODIGO_EXT;
-    private String CodEmpresa, vendenegativo;
+    private String CodEmpresa, vendenegativo, numpedido;;
     private ListView ListView_ItensVendidos;
     private List<SqliteVendaD_TempBean> itens_temp = new ArrayList<>();
     private List<SqliteVendaDBean> itens_venda = new ArrayList<>();
@@ -468,7 +468,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     vendaCBean.setVendac_cli_nome(cliBean.getCli_nome());
                     vendaCBean.setVendac_formapgto(confBean.getConf_tipo_pagamento());
                     vendaCBean.setObservacao(ObsPedido);
-                    vendaCBean.setVendac_valor(BigDecimal.ZERO);
+                    vendaCBean.setVendac_valor(total_venda);//(BigDecimal.ZERO);
 
                     BigDecimal PERCENTUAL_DESCONTO = new BigDecimal(venda_txt_desconto.getText().toString());
                     BigDecimal VALOR_DESCONTO = PERCENTUAL_DESCONTO.multiply(TOTAL_DA_VENDA).divide(new BigDecimal(100));
@@ -934,26 +934,32 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
     public void sincronizaPedidosAposSalvar() {
 
+
         final AlertDialog.Builder builderAut = new AlertDialog.Builder(this);
         builderAut.setTitle("Gerar Pedido?");
         builderAut.setMessage("Sim - Pedido | Não - Orçamento");
         builderAut.setCancelable(true);
         builderAut.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Cursor CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = " + venda_ok.toString(), null);
+                Chave_Venda = vendaCBean.getVendac_chave();
+                Cursor CursorPedido = DB.rawQuery(" SELECT NUMPED,CHAVE_PEDIDO FROM PEDOPER WHERE CHAVE_PEDIDO = " + Chave_Venda, null);
                 CursorPedido.moveToFirst();
-                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
+                numpedido = CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED"));
+                String chavepedido = CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO"));
+                numpedido = Util.AcrescentaZeros(numpedido.toString(), 4);
+
+                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE CHAVE_PEDIDO = '" + chavepedido + "'");
                 Boolean ConexOk = Util.checarConexaoCelular(VenderProdutos.this);
                 if (ConexOk == true) {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
                     builder.setTitle("Sincronizar");
-                    builder.setMessage("Deseja Sincronizar o Pedido " + Util.AcrescentaZeros(venda_ok.toString(), 4) + " agora?");
+                    builder.setMessage("Deseja Sincronizar o Pedido " + numpedido + " agora?");
                     builder.setCancelable(true);
                     builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
 
                             dialog = new ProgressDialog(VenderProdutos.this);
-                            dialog.setMessage("Sincronizando pedido nº " + venda_ok);
+                            dialog.setMessage("Sincronizando pedido nº " + numpedido);
                             dialog.setCancelable(false);
                             dialog.setTitle("Aguarde");
                             dialog.show();
@@ -994,7 +1000,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
     public void run() {
         try {
-            actSincronismo.SincronizarPedidosEnvio(venda_ok.toString(), this, true);
+            actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
             Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);

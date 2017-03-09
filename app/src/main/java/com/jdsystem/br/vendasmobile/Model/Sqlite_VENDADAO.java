@@ -81,7 +81,7 @@ public class Sqlite_VENDADAO {
                         "'" + venda.getVendac_chave().toString() + "','" + venda.getVendac_datahoravenda().toString() + "','" + venda.getVendac_previsaoentrega().toString() +
                         "'," + venda.getVendac_cli_codigo().toString() + ",' " + venda.getVendac_cli_codigo_ext().toString().toString()
                         + "',' " + venda.getVendac_cli_nome().toString() +
-                        "'," + venda.getCodEmpresa().toString() + ", '" + CodVend + "'," + venda.getTotal().toString() +
+                        "'," + venda.getCodEmpresa().toString() + ", '" + CodVend + "'," + venda.getVendac_valor().toString() +
                         "," + venda.getVendac_desconto().toString() + ", '" + venda.getVendac_enviada().toString() +
                         "'," + venda.getVendac_latitude() + ",'" + venda.getObservacao().toString() + "','1'," + venda.getVendac_longitude() +
                         "," + venda.getTotal().toString() + ");");

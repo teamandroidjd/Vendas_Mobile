@@ -195,15 +195,6 @@ public class actListPedidos extends AppCompatActivity
             e.toString();
         }
 
-
-        FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
-        if (frag == null) {
-            frag = new FragmentPedido();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
-            ft.commit();
-        }
-
         DB = new ConfigDB(this).getReadableDatabase();
 
 
@@ -467,7 +458,18 @@ public class actListPedidos extends AppCompatActivity
             @Override
             public void run() {
                 try {
-                    CarregarPedidos();
+                    //CarregarPedidos();
+                    FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
+                    if (frag == null) {
+                        frag = new FragmentPedido();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("usuario", usuario);
+                        bundle.putString("senha", senha);
+                        frag.setArguments(bundle);
+                        ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
+                        ft.commit();
+                    }
                 } catch (Exception E) {
 
                 } finally {
