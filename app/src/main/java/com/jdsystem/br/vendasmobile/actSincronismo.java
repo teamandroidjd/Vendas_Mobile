@@ -460,7 +460,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         }
 
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
                         E.toString();
                     }
                 }
@@ -565,34 +564,26 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() + "'" +
                                         " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             } else {
-                                TAG_VLVENDA1 = CItens.getString(TAG_VLVENDA1).trim();
-                                TAG_VLVENDA2 = CItens.getString(TAG_VLVENDA2).trim();
-                                TAG_VLVENDA3 = CItens.getString(TAG_VLVENDA3).trim();
-                                TAG_VLVENDA4 = CItens.getString(TAG_VLVENDA4).trim();
-                                TAG_VLVENDA5 = CItens.getString(TAG_VLVENDA5).trim();
-                                TAG_VLVENDAP1 = CItens.getString(TAG_VLVENDAP1).trim();
-                                TAG_VLVENDAP2 = CItens.getString(TAG_VLVENDAP2).trim();
-                                TAG_VENDAPADRAO = CItens.getString(TAG_VENDAPADRAO).trim();
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
                                         "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
                                         "ATIVO, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
                                         "',' " + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "','" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
+                                        "',' " + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
                                         "',' " + CItens.getString(TAG_FABRICANTE).trim() +
                                         "',' " + CItens.getString(TAG_FORNECEDOR).trim() +
                                         "',' " + CItens.getString(TAG_CLASSE).trim() +
                                         "',' " + CItens.getString(TAG_MARCA).trim() +
-                                        "', '" + CItens.getString(TAG_UNIVENDA).trim() +
-                                        "',' " + TAG_VLVENDA1 +
-                                        "', '" + TAG_VLVENDA2 +
-                                        "',' " + TAG_VLVENDA3 +
-                                        "',' " + TAG_VLVENDA4 +
-                                        "','" + TAG_VLVENDA5 +
-                                        "',' " + TAG_VLVENDAP1 +
-                                        "',' " + TAG_VLVENDAP2 +
-                                        "', '" + TAG_VENDAPADRAO +
-                                        "', '" + CItens.getString(TAG_ATIVO) +
-                                        "', '" + CItens.getString(TAG_QTDESTOQUE) +
+                                        "',' " + CItens.getString(TAG_UNIVENDA).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
+                                        "',' " + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "',' " + CItens.getString(TAG_ATIVO) +
+                                        "',' " + CItens.getString(TAG_QTDESTOQUE) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
                             }
                             CursItens.close();
@@ -898,8 +889,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 Dialog.dismiss();
             }
 
-            if (Dialog.isShowing())
-                Dialog.dismiss();
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
@@ -940,6 +929,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
             int jumpTime = 0;
             final int totalProgressTime = JParamApp.length();
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
             DB = new ConfigDB(this).getReadableDatabase();
 
             for (int i = 0; i < JParamApp.length(); i++) {
@@ -947,6 +938,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     try {
                         JSONObject c = JParamApp.getJSONObject(jumpTime);
                         jumpTime += 1;
+                        Dialog.setProgress(jumpTime);
                         String DescTab1 = c.getString("nometab1");
                         String DescTab2 = c.getString("nometab2");
                         String DescTab3 = c.getString("mometab3");
@@ -1016,9 +1008,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             JSONArray JBloqueios = jsonObj.getJSONArray("bloqueios");
 
             int jumpTime = 0;
-            //DialogECB.setProgress(jumpTime);
             final int totalProgressTime = JBloqueios.length();
-            //DialogECB.setMax(totalProgressTime);
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
             DB = new ConfigDB(this).getReadableDatabase();
 
             for (int i = 0; i < JBloqueios.length(); i++) {
@@ -1026,8 +1018,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     try {
                         JSONObject c = JBloqueios.getJSONObject(jumpTime);
                         jumpTime += 1;
-                        //DialogECB.setProgress(jumpTime);
-                        // DialogECB.setMessage("Sincronizando Tabelas - Empresas");
+                        Dialog.setProgress(jumpTime);
                         String codblq = c.getString("codblq");
                         String descricao = c.getString("descricao");
                         String bloquear = c.getString("bloquear");
@@ -1095,6 +1086,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
             int jumpTime = 0;
             final int totalProgressTime = JParamApp.length();
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
             DB = new ConfigDB(this).getReadableDatabase();
 
             for (int i = 0; i < JParamApp.length(); i++) {
@@ -1102,6 +1095,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     try {
                         JSONObject c = JParamApp.getJSONObject(jumpTime);
                         jumpTime += 1;
+                        Dialog.setProgress(jumpTime);
                         Double PercDescMax = c.getDouble("percdescmaxped");
                         String habitemnegativo = c.getString("habitemnegativo");
                         String habcritsitclie = c.getString("habcritsitclie");
@@ -1130,6 +1124,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        if (Dialog.isShowing())
+            Dialog.dismiss();
     }
 
      /*

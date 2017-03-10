@@ -74,7 +74,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     private Intent CLI_CODIGO_INTENT;
     private Integer CLI_CODIGO;
     private Integer CLI_CODIGO_EXT;
-    private String CodEmpresa, vendenegativo, numpedido;;
+    private String CodEmpresa, vendenegativo, numpedido;
+    ;
     private ListView ListView_ItensVendidos;
     private List<SqliteVendaD_TempBean> itens_temp = new ArrayList<>();
     private List<SqliteVendaDBean> itens_venda = new ArrayList<>();
@@ -144,7 +145,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         prefs = getSharedPreferences(DATA_ENT, MODE_PRIVATE);
         dataent = prefs.getString("dataentrega", null);
 
-        if (dataent != null && dataent != ""){
+        if (dataent != null && dataent != "") {
             venda_txv_dataentrega.setText(dataent);
         }
 
@@ -183,20 +184,20 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
 
         venda_txv_codigo_cliente.setOnClickListener(new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View v) {
-                                                            Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
-                                                            Bundle params = new Bundle();
-                                                            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                                                            params.putString("CodVendedor", sCodVend);
-                                                            params.putString("codempresa", CodEmpresa);
-                                                            params.putString("usuario", usuario);
-                                                            params.putString("senha", senha);
-                                                            intent.putExtras(params);
-                                                            startActivityForResult(intent, 1);
-                                                        }
-                                                    });
-
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+                Bundle params = new Bundle();
+                params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                params.putString("CodVendedor", sCodVend);
+                params.putString("codempresa", CodEmpresa);
+                params.putString("usuario", usuario);
+                params.putString("senha", senha);
+                intent.putExtras(params);
+                startActivityForResult(intent, 1);
+                finish();
+            }
+        });
 
 
         DB = new ConfigDB(this).getReadableDatabase();
@@ -415,7 +416,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             Lista_produtos.putExtras(params);
             startActivity(Lista_produtos);
 
-        } else if (DATA_DE_ENTREGA.equals("")) {
+
+        } else if (DATA_DE_ENTREGA == null) {
             Toast.makeText(this, "A data prevista da entrega não foi selecionada!", Toast.LENGTH_SHORT).show();
             datePicker.show();
         } else if (confBean == null) {
@@ -849,9 +851,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                 alerta1.show();
                             } else {
                                 SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
-                                if(NumPedido.equals("0")) {
+                                if (NumPedido.equals("0")) {
                                     new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
-                                }else{
+                                } else {
                                     new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
                                 }
                             }

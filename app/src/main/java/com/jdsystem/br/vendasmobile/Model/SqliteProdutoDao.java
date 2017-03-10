@@ -204,7 +204,7 @@ public class SqliteProdutoDao {
                         " ORDER BY DESCRICAO ", null);
             } else {
                 cursor = db.rawQuery("select CODITEMANUAL as _id, CODITEMANUAL, CODIGOITEM, DESCRICAO, UNIVENDA, VENDAPADRAO, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
-                        "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO from ITENS where ATIVO = '1' ORDER BY DESCRICAO ", null);
+                        "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO from ITENS ORDER BY DESCRICAO ", null);
             }
 
             if (cursor != null) {

@@ -150,7 +150,7 @@ public class Util extends Activity {
         //llRoot.setBackgroundResource(bg);
         Toast toast = new Toast(ctx);
         toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
         toast.show();
 

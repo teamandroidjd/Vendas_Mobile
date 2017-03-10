@@ -43,6 +43,8 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class actLogin extends AppCompatActivity implements Runnable {
     public static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public static final String COD_EMPRESA = "CODIGO_EMPRESA";
@@ -331,13 +333,13 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                          @Override
                                                          public void run() {
                                                              Dialogo.setMessage("Atualizando dados da empresa");
-                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              Dialogo.setMessage("Atualizando parâmetros");
-                                                             actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              Dialogo.setMessage("Atualizando outras informações");
-                                                             actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              Dialogo.setMessage("Atualizando outras informações");
-                                                             actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              handler.post(new Runnable() {
                                                                  @Override
                                                                  public void run() {
@@ -347,13 +349,13 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                                          @Override
                                                                          public void run() {
                                                                              Dialogo.setMessage("Enviando pedidos...");
-                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                                              handler.post(new Runnable() {
                                                                                  @Override
                                                                                  public void run() {
                                                                                      if (!UFVendedor.equals("")) {
                                                                                          Dialogo.setMessage("Atualizando cadastro de Cidades/Bairros...");
-                                                                                         actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this);
+                                                                                         actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this,true);
                                                                                      }
 
                                                                                      Dialogo.dismiss();
@@ -383,13 +385,13 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                          @Override
                                                          public void run() {
                                                              Dialogo.setMessage("Sincronizando Empresas");
-                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              Dialogo.setMessage("Atualizando parâmetros");
-                                                             actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              Dialogo.setMessage("Atualizando outras informações");
-                                                             actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              Dialogo.setMessage("Atualizando outras informações");
-                                                             actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              handler.post(new Runnable() {
                                                                  @Override
                                                                  public void run() {
@@ -399,7 +401,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                                          @Override
                                                                          public void run() {
                                                                              Dialogo.setMessage("Enviando pedidos...");
-                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                                              Dialogo.dismiss();
                                                                              handler.post(new Runnable() {
                                                                                  @Override

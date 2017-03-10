@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 3;
+    public static int versao = 4;
 
     public ConfigDB(Context ctx) {
 
@@ -167,14 +167,14 @@ public class ConfigDB extends SQLiteOpenHelper {
             " NUMIDEOPE     INTEGER         PRIMARY KEY AUTOINCREMENT " +
             "                               NOT NULL,                 " +
             " CHAVEPEDIDO   VARCHAR(70),                              " +
-         // " NUMPED        INTEGER         NOT NULL,                 " +
+            // " NUMPED        INTEGER         NOT NULL,                 " +
             " CODITEMANUAL  VARCHAR (15)    NOT NULL,                 " +
             " DESCRICAO     VARCHAR (60)    NOT NULL,                 " +
             " CODIGOITEM    INTEGER,                                  " +
             " NUMEROITEM    NUMERIC (5, 0),                           " +
-          //" QTDEMBAPED    NUMERIC (11, 3) NOT NULL,                 " +
+            //" QTDEMBAPED    NUMERIC (11, 3) NOT NULL,                 " +
             " QTDMENORPED   FLOAT           NOT NULL,                 " +
-          //" QTDMAIORPED   FLOAT           NOT NULL,                 " +
+            //" QTDMAIORPED   FLOAT           NOT NULL,                 " +
             " UNIDADE       VARCHAR (5),                              " +
             " VLUNIT        DECIMAL(10,2)   NOT NULL,                 " +
             " PERCACREDESC  DOUBLE,                                   " +
@@ -299,7 +299,7 @@ public class ConfigDB extends SQLiteOpenHelper {
                 E.toString();
             }
             try {
-                //MODIFICAÇÕES NA VERSÃO 3 DO BANCO DE DADOS
+                //MODIFICAÇÕES NA VERSÃO 4 DO BANCO DE DADOS
                 db.execSQL("ALTER TABLE ITENS ADD QTDESTPROD VARCHAR(10) ");
 
                 db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1     VARCHAR(20) ");
@@ -317,7 +317,7 @@ public class ConfigDB extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE PARAMAPP ADD TIPOCRITICQTDITEM CHAR(1)");
 
                 db.execSQL("ALTER TABLE CONTATO ADD DOCUMENTO          VARCHAR(15) ");
-             // db.execSQL("ALTER TABLE CONTATO ADD SETOR              VARCHAR(50) ");
+                // db.execSQL("ALTER TABLE CONTATO ADD SETOR              VARCHAR(50) ");
                 db.execSQL("ALTER TABLE CONTATO ADD DATA               VARCHAR(10) ");
                 db.execSQL("ALTER TABLE CONTATO ADD CEP                VARCHAR(10) ");
                 db.execSQL("ALTER TABLE CONTATO ADD ENDERECO           VARCHAR(15) ");
@@ -342,10 +342,17 @@ public class ConfigDB extends SQLiteOpenHelper {
             } catch (Exception E) {
                 E.toString();
             }
+            try {
+                //MODIFICAÇÕES NA VERSÃO 5 DO BANCO DE DADOS
+
+
+            } catch (Exception E) {
+                E.toString();
+
+
+            }
 
 
         }
-
-
     }
 }
