@@ -1,30 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lin_lay"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/ColorFundoSplash"
     android:layout_gravity="center"
-    android:id="@+id/lin_lay"
-    android:gravity="center"
+    android:background="@color/ColorFundoSplash"
     android:orientation="vertical"
-    android:weightSum="1">
-
-       <ImageView
-           android:layout_width="600dp"
-           android:layout_height="400dp"
-           android:background="@drawable/logoinvertida"
-           android:id="@+id/splash"
-           android:layout_marginTop="220dp" />
-
-       <TextView
-           android:text="www.jdsystem.com.br"
+    >
+       <RelativeLayout
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
-           android:id="@+id/textView"
-           android:gravity="bottom|center"
-           android:layout_marginTop="230dp"
-           android:textColor="@color/colorPrimary"
-           android:textStyle="bold"
-           android:textSize="28dp"/>
+           android:layout_alignParentLeft="true"
+           android:layout_alignParentStart="true"
+           android:layout_centerVertical="true"
+           android:elevation="7dp"
+           android:gravity="center"
+           android:orientation="vertical"
+           android:padding="20dp">
 
-</LinearLayout>
+              <ImageView
+                  android:id="@+id/splash"
+                  android:layout_width="wrap_content"
+                  android:layout_height="300sp"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:background="@drawable/ico_logo_fv" />
+       </RelativeLayout>
+
+       <RelativeLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           >
+
+              <TextView
+                  android:text="www.jdsystem.com.br"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/textView"
+                  android:layout_alignParentBottom="true"
+                  android:layout_centerHorizontal="true"
+                  android:textAlignment="center"
+                  android:gravity="bottom|center"
+                  android:textSize="28sp"
+                  android:textColor="@color/colorPrimary"
+                  android:textStyle="bold">
+              </TextView>
+       </RelativeLayout>
+
+
+
+
+</RelativeLayout>

@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/prod_lisview_descricao"
-        android:layout_width="220dp"
+        android:layout_width="560dp"
         android:layout_height="wrap_content"
         android:gravity="center|left"
         android:text="produto com a descricao muito grande. assim podemos ver como se compota."
@@ -37,7 +37,7 @@
         android:text="R$ 1000,5000"
         android:textColor="@color/colordescClie"
         android:textSize="25dp"
-        android:layout_marginStart="285dp"
+        android:layout_marginStart="680dp"
         android:layout_marginLeft="324dp" />
 
     <TextView
@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:gravity="right|center"
         android:text="1000"
+        android:layout_marginLeft="20sp"
         android:textColor="@color/colordescClie"
         android:textSize="25dp"
         android:layout_alignParentTop="true"

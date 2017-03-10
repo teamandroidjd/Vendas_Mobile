@@ -80,8 +80,9 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.Lista_produtos"
-            android:label="Cadastrar Pedido"
-            android:windowSoftInputMode="stateHidden" />
+            android:label="Cadastrar Pedido"/>
+
+
         <activity
             android:name=".Controller.ConfPagamento"
             android:label="Formas de Pagamento" />
@@ -90,9 +91,11 @@
             android:label="Filtro por Emissão" />
         <activity
             android:name=".act_ListContatos"
-            android:label="Lista de contatos"/>
+            android:label="Lista de contatos"
+            android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".CadContatos"
-            android:label="Cadastro de contatos">
+            android:label="Cadastro de contatos"
+            android:windowSoftInputMode="stateHidden">
         </activity>
     </application>
 

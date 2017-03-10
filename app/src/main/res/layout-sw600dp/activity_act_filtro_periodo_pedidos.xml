@@ -51,7 +51,7 @@
                             android:layout_height="wrap_content"
                             android:text="Data Inicial"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="40sp"
+                            android:textSize="30sp"
                             android:textStyle="normal|bold" />
                     </LinearLayout>
 
@@ -60,11 +60,12 @@
                         android:layout_height="match_parent"
                         android:gravity="center">
 
-                        <DatePicker
+                        <EditText
                             android:id="@+id/dpResult"
-                            android:layout_width="wrap_content"
-                            android:layout_height="101dp"
-                            android:elevation="1dp" />
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:elevation="1dp"
+                            />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -85,7 +86,7 @@
                             android:layout_height="wrap_content"
                             android:text="Data Final"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="40sp"
+                            android:textSize="30sp"
                             android:textStyle="normal|bold" />
                     </LinearLayout>
 
@@ -94,10 +95,12 @@
                         android:layout_height="wrap_content"
                         android:gravity="center">
 
-                        <DatePicker
-                            android:layout_width="wrap_content"
-                            android:layout_height="105dp"
-                            android:id="@+id/dpResultFinal" />
+                        <EditText
+                            android:id="@+id/dpResultFinal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:elevation="1dp"
+                            />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -112,7 +115,7 @@
                 android:text="Confirmar Período"
                 android:textAllCaps="false"
                 android:textColor="#fff"
-                android:textSize="40sp"
+                android:textSize="30sp"
                 android:id="@+id/btnConfirmar"
                 android:layout_weight="5.63" />
         </LinearLayout>

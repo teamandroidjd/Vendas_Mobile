@@ -43,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:text="Codigo Produto:"
+                    android:text="Codigo Produto: "
                     android:textColor="@color/colordescClie"
                     android:textSize="35dp"
                     android:textStyle="bold" />
@@ -90,7 +90,7 @@
                     android:id="@+id/txv03"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Classe:"
+                    android:text="Classe: "
                     android:textColor="@color/colordescClie"
                     android:textSize="35dp"
                     android:textStyle="bold" />
@@ -151,7 +151,7 @@
                     android:layout_toRightOf="@+id/txtprocobase"
                     android:text="R$ "
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
                 <TextView
@@ -162,7 +162,7 @@
                     android:text="0,0000"
                     android:textSize="35dp"
                     android:layout_alignParentRight="true"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
                 <TextView
@@ -185,7 +185,7 @@
                     android:layout_below="@+id/prod_txv_simbol_preco"
                     android:text="R$ "
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
                 <TextView
@@ -198,7 +198,7 @@
                     android:layout_alignParentRight="true"
                     android:text="0,0000"
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -221,7 +221,7 @@
                     android:layout_below="@+id/prod_txv_simbol_preco2"
                     android:text="R$ "
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
                 <TextView
@@ -233,7 +233,7 @@
                     android:layout_below="@+id/prod_txv_prd_preco2"
                     android:text="0,0000"
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -256,7 +256,7 @@
                     android:layout_below="@+id/prod_txv_simbol_preco3"
                     android:text="R$ "
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
                 <TextView
@@ -267,7 +267,7 @@
                     android:layout_below="@+id/prod_txv_prd_preco3"
                     android:text="0,0000"
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -290,7 +290,7 @@
                     android:layout_below="@+id/prod_txv_simbol_preco4"
                     android:text="R$ "
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
                 <TextView
@@ -301,7 +301,7 @@
                     android:layout_below="@+id/prod_txv_prd_preco4"
                     android:text="0,0000"
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -324,7 +324,7 @@
                     android:layout_below="@+id/prod_txv_simbol_preco5"
                     android:text="R$ "
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
                 <TextView
@@ -335,7 +335,7 @@
                     android:layout_below="@+id/prod_txv_prd_preco5"
                     android:text="0,0000"
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold"/>
 
                 <TextView
@@ -358,7 +358,7 @@
                     android:layout_below="@+id/prod_txv_simbol_preco6"
                     android:text="R$ "
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold" />
 
                 <TextView
@@ -369,10 +369,36 @@
                     android:layout_below="@+id/prod_txv_prd_preco6"
                     android:text="0,0000"
                     android:textSize="35dp"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/colorAccent"
                     android:textStyle="bold"/>
 
             </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt_estoque"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Estoque disponível: "
+                    android:textColor="@color/colordescClie"
+                    android:textSize="35sp"
+                    android:textStyle="normal|bold" />
+
+                <TextView
+                    android:id="@+id/txt_qtdestoque"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1000000"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="35sp"
+                    android:textStyle="normal|bold" />
+
+
+            </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
