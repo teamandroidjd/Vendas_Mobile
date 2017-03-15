@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.R;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
@@ -17,21 +18,21 @@ public class ListaItensVendaAdapter extends BaseAdapter {
 
 
     private Context ctx;
-    private List<SqliteVendaDBean> listaItensTemporarios;
+    private List<SqliteVendaDBean> listaItens;
 
     public ListaItensVendaAdapter(Context ctx, List<SqliteVendaDBean> listaItensTemporarios) {
         this.ctx = ctx;
-        this.listaItensTemporarios = listaItensTemporarios;
+        this.listaItens = listaItensTemporarios;
     }
 
     @Override
     public int getCount() {
-        return listaItensTemporarios.size();
+        return listaItens.size();
     }
 
     @Override
     public Object getItem(int posicao) {
-        return listaItensTemporarios.get(posicao);
+        return listaItens.get(posicao);
     }
 
     @Override
@@ -51,10 +52,10 @@ public class ListaItensVendaAdapter extends BaseAdapter {
         TextView preco = (TextView) v.findViewById(R.id.prod_lisview_preco);
         TextView total = (TextView) v.findViewById(R.id.prod_lisview_total);
 
-        descriacao.setText(item.getVendad_prd_codigo().toString());
+        descriacao.setText(item.getVendad_prd_descricao().toString());
         quantidade.setText(item.getVendad_quantidade().toString());
 
-        preco.setText(item.getVendad_preco_venda().setScale(2, RoundingMode.HALF_UP).toString());
+        preco.setText(item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
         total.setText(item.getVendad_total().setScale(2,RoundingMode.UP).toString());
 
 

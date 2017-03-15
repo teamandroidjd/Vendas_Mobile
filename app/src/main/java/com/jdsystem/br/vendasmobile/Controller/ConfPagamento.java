@@ -88,6 +88,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         array_forma_pagamento.add("PARCELADO");
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_forma_pagamento);
         conf_spfpgto.setAdapter(arrayAdapter);
+
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {

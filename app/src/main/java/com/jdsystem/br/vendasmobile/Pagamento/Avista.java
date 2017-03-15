@@ -24,7 +24,7 @@ public class Avista implements iPagamento {
         //BigDecimal PERCENTUAL_DESCONTO = BigDecimal.valueOf(0);
         BigDecimal teste = vendaCBean.getVendac_desconto();
         BigDecimal VALOR_DESCONTO = vendaCBean.getVendac_valor();//PERCENTUAL_DESCONTO.multiply(vendaCBean.getTotal()).divide(new BigDecimal(100));
-        BigDecimal VALOR_COM_DESCONTO = vendaCBean.getTotal().subtract(VALOR_DESCONTO);
+        BigDecimal VALOR_COM_DESCONTO = vendaCBean.getTotal().subtract(teste);
 
         new SqliteConRecDao(ctx).gravar_parcela(
                 new SqliteConRecBean(

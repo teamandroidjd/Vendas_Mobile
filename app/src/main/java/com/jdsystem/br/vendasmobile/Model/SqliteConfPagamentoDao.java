@@ -33,20 +33,50 @@ public class SqliteConfPagamentoDao {
         gravou = false;
         try {
             if (AtuPedido.equals(true)) {
-                excluir_FormaPgto_Chave(ChavePedido);
-            }
-            Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado)  VALUES (?,?,?,?,?,?,?)";
-            stmt = db.compileStatement(Sql);
-            stmt.bindString(1, pagamento.getConf_sementrada_comentrada());
-            stmt.bindString(2, pagamento.getConf_tipo_pagamento());
-            stmt.bindString(3, pagamento.getConf_recebeucom_din_chq_car());
-            stmt.bindDouble(4, pagamento.getConf_valor_recebido().doubleValue());
-            stmt.bindLong(5, pagamento.getConf_parcelas());
-            stmt.bindString(6, pagamento.getVendac_chave());
-            stmt.bindString(7, pagamento.getConf_enviado());
 
-            if (stmt.executeInsert() > 0) {
-                gravou = true;
+                excluir_FormaPgto_Chave(ChavePedido);
+
+                Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado)  VALUES (?,?,?,?,?,?,?)";
+                stmt = db.compileStatement(Sql);
+                stmt.bindString(1, pagamento.getConf_sementrada_comentrada());
+                stmt.bindString(2, pagamento.getConf_tipo_pagamento());
+                stmt.bindString(3, pagamento.getConf_recebeucom_din_chq_car());
+                stmt.bindDouble(4, pagamento.getConf_valor_recebido().doubleValue());
+                stmt.bindLong(5, pagamento.getConf_parcelas());
+                stmt.bindString(6, ChavePedido);
+                stmt.bindString(7, pagamento.getConf_enviado());
+
+                if (stmt.executeInsert() > 0) {
+                    gravou = true;
+                }
+                /*Cursor atuconfpgto = db.rawQuery("SELECT conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado FROM CONFPAGAMENTO WHERE vendac_chave = '"+ ChavePedido +"'",null);
+                atuconfpgto.moveToFirst();
+                if(atuconfpgto.getCount() > 0){
+                    db.execSQL("UPDATE CONFPAGAMENTO SET conf_sementrada_comentrada = '"+ pagamento.getConf_sementrada_comentrada() +
+                            "', conf_tipo_pagamento = '"+ pagamento.getConf_tipo_pagamento() +
+                            "', conf_recebeucom_din_chq_car = '"+ pagamento.getConf_recebeucom_din_chq_car() +
+                            "', conf_valor_recebido = '"+ pagamento.getConf_valor_recebido().doubleValue() +
+                            "', conf_parcelas = '"+ pagamento.getConf_parcelas() +
+                            "', vendac_chave = '"+ ChavePedido +
+                            "', conf_enviado = '"+ pagamento.getConf_enviado() +"'" +
+                            " WHERE vendac_chave = '"+ ChavePedido +"'");
+                    atuconfpgto.close();*/
+
+
+            } else {
+                Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado)  VALUES (?,?,?,?,?,?,?)";
+                stmt = db.compileStatement(Sql);
+                stmt.bindString(1, pagamento.getConf_sementrada_comentrada());
+                stmt.bindString(2, pagamento.getConf_tipo_pagamento());
+                stmt.bindString(3, pagamento.getConf_recebeucom_din_chq_car());
+                stmt.bindDouble(4, pagamento.getConf_valor_recebido().doubleValue());
+                stmt.bindLong(5, pagamento.getConf_parcelas());
+                stmt.bindString(6, pagamento.getVendac_chave());
+                stmt.bindString(7, pagamento.getConf_enviado());
+
+                if (stmt.executeInsert() > 0) {
+                    gravou = true;
+                }
             }
 
         } catch (Exception e) {
@@ -170,12 +200,13 @@ public class SqliteConfPagamentoDao {
 
         return conf;
     }
+
     public SqliteConfPagamentoBean busca_CONFPAGAMENTO_Pedido(String Chave_pedido) {
         SqliteConfPagamentoBean conf = null;
         try {
             db = new ConfigDB(ctx).getReadableDatabase();
             cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = " + Chave_pedido, null);
-            if (cursor.getCount()>0) {
+            if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 do {
                     conf = new SqliteConfPagamentoBean();

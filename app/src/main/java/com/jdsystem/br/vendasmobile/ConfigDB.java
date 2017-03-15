@@ -167,7 +167,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " NUMIDEOPE     INTEGER         PRIMARY KEY AUTOINCREMENT " +
             "                               NOT NULL,                 " +
             " CHAVEPEDIDO   VARCHAR(70),                              " +
-            // " NUMPED        INTEGER         NOT NULL,                 " +
+            " NUMPED        INTEGER,                                  " +
             " CODITEMANUAL  VARCHAR (15)    NOT NULL,                 " +
             " DESCRICAO     VARCHAR (60)    NOT NULL,                 " +
             " CODIGOITEM    INTEGER,                                  " +
@@ -298,39 +298,167 @@ public class ConfigDB extends SQLiteOpenHelper {
             } catch (Exception E) {
                 E.toString();
             }
+            //MODIFICAÇÕES NA VERSÃO 4 DO BANCO DE DADOS
             try {
-                //MODIFICAÇÕES NA VERSÃO 4 DO BANCO DE DADOS
                 db.execSQL("ALTER TABLE ITENS ADD QTDESTPROD VARCHAR(10) ");
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1 VARCHAR(20) ");
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABCRITSITCLIE CHAR (1)  ");
 
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1     VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB2     VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB3     VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB4     VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB5     VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB6     VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB7     VARCHAR(20) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD HABITEMNEGATIVO   CHAR (1) ");
-                db.execSQL("ALTER TABLE PARAMAPP ADD HABCRITSITCLIE    CHAR (1)  ");
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE CLIENTES ADD LIMITECRED DOUBLE");
 
-                db.execSQL("ALTER TABLE CLIENTES ADD LIMITECRED        DOUBLE  ");
-                db.execSQL("ALTER TABLE CLIENTES ADD BLOQUEIO          VARCHAR(2)  ");
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CLIENTES ADD BLOQUEIO VARCHAR(2)  ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
                 db.execSQL("ALTER TABLE PARAMAPP ADD TIPOCRITICQTDITEM CHAR(1)");
 
-                db.execSQL("ALTER TABLE CONTATO ADD DOCUMENTO          VARCHAR(15) ");
-                // db.execSQL("ALTER TABLE CONTATO ADD SETOR              VARCHAR(50) ");
-                db.execSQL("ALTER TABLE CONTATO ADD DATA               VARCHAR(10) ");
-                db.execSQL("ALTER TABLE CONTATO ADD CEP                VARCHAR(10) ");
-                db.execSQL("ALTER TABLE CONTATO ADD ENDERECO           VARCHAR(15) ");
-                db.execSQL("ALTER TABLE CONTATO ADD NUMERO             VARCHAR(10) ");
-                db.execSQL("ALTER TABLE CONTATO ADD COMPLEMENTO        VARCHAR(15) ");
-                db.execSQL("ALTER TABLE CONTATO ADD UF                 CHAR(2) ");
-                db.execSQL("ALTER TABLE CONTATO ADD                    CODVENDEDOR  INTEGER ");
-                db.execSQL("ALTER TABLE CONTATO ADD                    CODCLIE_EXT  INTEGER ");
-                db.execSQL("ALTER TABLE CONTATO ADD                    CODBAIRRO  INTEGER ");
-                db.execSQL("ALTER TABLE CONTATO ADD                    CODCIDADE  INTEGER ");
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
 
+                db.execSQL("ALTER TABLE CONTATO ADD DOCUMENTO VARCHAR(15) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE PEDITENS ADD NUMPED INTEGER ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CONTATO ADD DATA VARCHAR(10) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CONTATO ADD CEP VARCHAR(10) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CONTATO ADD ENDERECO VARCHAR(15) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CONTATO ADD NUMERO VARCHAR(10) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CONTATO ADD COMPLEMENTO VARCHAR(15) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CONTATO ADD UF CHAR(2) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CONTATO ADD CODVENDEDOR INTEGER ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+
+                db.execSQL("ALTER TABLE CONTATO ADD CODCLIE_EXT INTEGER ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABITEMNEGATIVO CHAR (1) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB7 VARCHAR(20) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB6 VARCHAR(20) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB5 VARCHAR(20) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB4 VARCHAR(20) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB3 VARCHAR(20) ");
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB2 VARCHAR(20) ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE CONTATO ADD CODCIDADE  INTEGER ");
+
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
                 db.execSQL("ALTER TABLE CONREC ADD rec_valorpago DECIMAL (10,2) ");
 
+            } catch (Exception E) {
+                E.toString();
+            }
+            try {
                 db.execSQL(" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
                         " CODBLOQ   VARCHAR (3),  " +
                         " DESCRICAO VARCHAR (30), " +
@@ -338,21 +466,16 @@ public class ConfigDB extends SQLiteOpenHelper {
                         " LIBERAR   CHAR    (1),  " +
                         " FPAVISTA  VARCHAR (3) ); ");
 
-
             } catch (Exception E) {
                 E.toString();
             }
+
+            //MODIFICAÇÕES NA VERSÃO 5 DO BANCO DE DADOS
             try {
-                //MODIFICAÇÕES NA VERSÃO 5 DO BANCO DE DADOS
-
 
             } catch (Exception E) {
                 E.toString();
-
-
             }
-
-
         }
     }
 }

@@ -37,6 +37,7 @@ import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentPedido;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -466,6 +467,7 @@ public class actListPedidos extends AppCompatActivity
                         Bundle bundle = new Bundle();
                         bundle.putString("usuario", usuario);
                         bundle.putString("senha", senha);
+                        bundle.putString("CodVendedor", sCodVend);
                         frag.setArguments(bundle);
                         ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
                         ft.commit();
@@ -544,7 +546,7 @@ public class actListPedidos extends AppCompatActivity
 
                         String valor = String.valueOf(VlTotal);
                         java.math.BigDecimal venda = new java.math.BigDecimal(Double.parseDouble(valor.replace(',', '.')));
-                        String ValorTotal = venda.setScale(2, java.math.BigDecimal.ROUND_UP).toString();
+                        String ValorTotal = venda.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                         ValorTotal = ValorTotal.replace('.', ',');
 
                         String NumPedido = CursorPed.getString(CursorPed.getColumnIndex("NUMPED"));

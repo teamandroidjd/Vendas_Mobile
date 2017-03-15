@@ -1,12 +1,9 @@
 <component name="libraryTable">
   <library name="support-fragment-24.2.1">
-    <ANNOTATIONS>
-      <root url="jar://$USER_HOME$/.android/build-cache/a3594f3c2e93cfb6cfd87726e3d628b019ab74e7/output/annotations.zip!/" />
-    </ANNOTATIONS>
     <CLASSES>
-      <root url="file://$USER_HOME$/.android/build-cache/a3594f3c2e93cfb6cfd87726e3d628b019ab74e7/output/res" />
-      <root url="jar://$USER_HOME$/.android/build-cache/a3594f3c2e93cfb6cfd87726e3d628b019ab74e7/output/jars/classes.jar!/" />
-      <root url="jar://$USER_HOME$/.android/build-cache/a3594f3c2e93cfb6cfd87726e3d628b019ab74e7/output/jars/libs/internal_impl-24.2.1.jar!/" />
+      <root url="jar://$USER_HOME$/.android/build-cache/2b3e9dfd6c245d849475ddf4500872cd35ebc647/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/2b3e9dfd6c245d849475ddf4500872cd35ebc647/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/2b3e9dfd6c245d849475ddf4500872cd35ebc647/output/jars/libs/internal_impl-24.2.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

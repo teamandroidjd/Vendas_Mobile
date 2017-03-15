@@ -585,6 +585,27 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_ATIVO) +
                                         "',' " + CItens.getString(TAG_QTDESTOQUE) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
+
+                                //está tendo que atualizar cadas item que é incluso para tirar os espaçõs em alguns campos, pois somente na inserção não tira.
+                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
+                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
+                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
+                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
+                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim().replace("'", "") +
+                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim().replace("'", "") +
+                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
+                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
+                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
+                                        "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
+                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
+                                        "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             }
                             CursItens.close();
 
@@ -2692,6 +2713,26 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', '" + CItens.getString(TAG_ATIVO) +
                                         "', '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") + "');");
+
+                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
+                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
+                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
+                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
+                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim().replace("'", "") +
+                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim().replace("'", "") +
+                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
+                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
+                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
+                                        "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
+                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
+                                        "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             }
                             CursItens.close();
                         } catch (Exception E) {
@@ -2799,16 +2840,16 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         } catch (Exception e) {
             System.out.println("Error" + e);
         }
+        if (RetClientes.equals("0")) {
+            Dialog.cancel();
+            Toast.makeText(ctxEnvClie, "Nenhum Cliente encontrado. Verifique!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         try {
             //String SHA1Ret = RetClientes.substring(0, 40);
             //String ArrayClientes = RetClientes.substring(40, (RetClientes.length()));
-            if (RetClientes.equals("0")) {
-                Dialog.cancel();
-                Toast.makeText(ctxEnvClie, "Nenhum Cliente encontrado. Verifique!", Toast.LENGTH_SHORT).show();
-                return;
 
-            }
 
             JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);

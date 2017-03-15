@@ -52,7 +52,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     private SQLiteDatabase DB;
     int codclie_ext;
     String limitecred;
-    String bloqueio, usuario, senha;
+    String bloqueio, usuario, senha, Codvendedor;
 
 
     public View onCreateView(LayoutInflater inflater,
@@ -64,6 +64,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
         if (params != null) {
             usuario = params.getString("usuario");
             senha = params.getString("senha");
+            Codvendedor = params.getString("CodVendedor");
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list);
@@ -112,14 +113,18 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                 Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT, CODCLIE FROM PEDOPER WHERE NUMPED = "+NumPedido+"",null);
                 cursorped.moveToFirst();
                 codclie_ext = cursorped.getInt(cursorped.getColumnIndex("CODCLIE_EXT"));
-                int codclie = cursorped.getInt(cursorped.getColumnIndex("CODCLIE"));
                 cursorped.close();
 
-                Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = "+codclie_ext+"",null);
-                cursorclie.moveToFirst();
-                limitecred = cursorclie.getString(cursorclie.getColumnIndex("LIMITECRED"));
-                bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
-                cursorclie.close();
+                try{
+                    Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = "+codclie_ext+"",null);
+                    cursorclie.moveToFirst();
+                    limitecred = cursorclie.getString(cursorclie.getColumnIndex("LIMITECRED"));
+                    bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
+                    cursorclie.close();
+                } catch (Exception e){
+                    e.toString();
+                }
+
 
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 final View formElementsView = inflater.inflate(R.layout.act_pergunta_list_pedido, null, false);
@@ -227,10 +232,10 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             Intent VendaProd = new Intent((actListPedidos) getActivity(), VenderProdutos.class);
                                             Bundle params = new Bundle();
                                             params.putString("numpedido", NumPedido);
-                                            params.putString("CodVendedor", NumPedido);
+                                            params.putString("CodVendedor", Codvendedor);
                                             VendaProd.putExtras(params);
                                             Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                            ((actListPedidos) getActivity()).finish();
+                                            //((actListPedidos) getActivity()).finish();
                                             startActivityForResult(VendaProd, 1);
                                         }
                                     }

@@ -41,7 +41,6 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Alterar"
-                android:visibility="gone"
                 android:textColor="@color/colordescClie"
                 android:textSize="20dp" />
 

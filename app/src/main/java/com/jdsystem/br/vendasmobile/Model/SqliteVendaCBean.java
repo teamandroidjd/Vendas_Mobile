@@ -22,7 +22,8 @@ public class SqliteVendaCBean {
     public static String VLMERCADORIA = "VLMERCAD";
     public static String FORMA_DE_PAGAMENTO = "FORMAPGTO";
     public static String VALOR_DA_VENDA = "VALORTOTAL";
-    public static String DESCONTO = "VLPERCACRES";
+    public static String DESCONTO = "VLDESCONTO";
+    public static String PERCDESCONTO = "PERCDESCO";
    // public static String PESO_TOTAL_DOS_PRODUTOS = "vendac_pesototal";
     public static String VENDA_ENVIADA_SERVIDOR = "STATUS";
     public static String LATITUDE = "LATITUDEPEDIDO";
@@ -43,6 +44,7 @@ public class SqliteVendaCBean {
     private String vendac_formapgto;
     private BigDecimal vendac_valor;
     private BigDecimal vendac_desconto;
+    private BigDecimal vendac_percdesconto;
     private BigDecimal vendac_pesototal;
     private double vendac_vlmercad;
     private String vendac_enviada;
@@ -209,6 +211,14 @@ public class SqliteVendaCBean {
 
     public void setVendac_desconto(BigDecimal vendac_desconto) {
         this.vendac_desconto = vendac_desconto;
+    }
+
+    public BigDecimal getVendac_percdesconto() {
+        return vendac_percdesconto;
+    }
+
+    public void setVendac_percdesconto(BigDecimal vendac_percdesconto) {
+        this.vendac_percdesconto = vendac_percdesconto;
     }
 
     public BigDecimal getVendac_pesototal() {

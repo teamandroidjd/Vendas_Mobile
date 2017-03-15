@@ -27,6 +27,7 @@ public class SqliteVendaDBean {
     private String vendad_prd_descricao ;
     private String vendad_prd_unidade ;
     private Integer vendad_prd_codigoitem ;
+    private Integer numped;
 
     public String getVendad_prd_unidade() {
         return vendad_prd_unidade;
@@ -56,6 +57,15 @@ public class SqliteVendaDBean {
 
     public void setVendad_tmercad(BigDecimal vendad_tmercad) {
         this.vendad_tmercad = vendad_tmercad;
+    }
+
+    public int getVendac_numped() {
+        return numped;
+    }
+
+    public void setVendac_numped(int numped) {
+
+        this.numped = numped;
     }
 
     public String getVendac_chave() {
