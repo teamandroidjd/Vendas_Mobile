@@ -32,8 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/item_formapgto"
-            android:layout_marginRight="10dp"
-            android:visibility="gone"
+            android:layout_marginRight="20dp"
             android:src="@drawable/observacao" />
 
         <ImageView
@@ -41,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/item_dtentrega"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="20dp"
             android:src="@drawable/pagamento" />
 
         <ImageView

@@ -60,11 +60,12 @@
                         android:layout_height="match_parent"
                         android:gravity="center">
 
-                        <DatePicker
+                        <EditText
                             android:id="@+id/dpResult"
-                            android:layout_width="179dp"
-                            android:layout_height="101dp"
-                            android:elevation="1dp" />
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:elevation="1dp"
+                            />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -94,10 +95,12 @@
                         android:layout_height="wrap_content"
                         android:gravity="center">
 
-                        <DatePicker
-                            android:layout_width="179dp"
-                            android:layout_height="105dp"
-                            android:id="@+id/dpResultFinal" />
+                        <EditText
+                            android:id="@+id/dpResultFinal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:elevation="1dp"
+                            />
 
                     </LinearLayout>
                 </LinearLayout>

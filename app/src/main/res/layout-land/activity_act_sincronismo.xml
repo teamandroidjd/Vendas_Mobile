@@ -5,7 +5,7 @@
     android:id="@+id/activity_act_sincronismo"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingBottom="10dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -18,12 +18,12 @@
         android:text="Sincronizar"
         android:textAllCaps="false"
         android:textColor="#fff"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:id="@+id/btnSincronizar"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="13dp" />
+        />
 
     <TextView
         android:layout_width="match_parent"

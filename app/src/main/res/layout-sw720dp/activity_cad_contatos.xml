@@ -64,6 +64,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Nome do contato"
+                    android:textSize="35sp"
                     android:inputType="textCapCharacters"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -79,6 +80,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Registro de Identificação"
+                    android:textSize="35sp"
                     android:inputType="textCapCharacters"
                     android:maxLength="15"
                     android:maxLines="1" />
@@ -96,6 +98,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_weight="1"
                     android:hint="Setor"
+                    android:textSize="35sp"
                     android:inputType="textCapCharacters"
                     android:maxLength="30"
                     android:maxLines="1" />
@@ -112,6 +115,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_weight="1"
                     android:hint="Data Aniversário / Inauguração"
+                    android:textSize="35sp"
                     android:inputType="number"
                     android:maxLength="10"
                     android:maxLines="1" />
@@ -141,6 +145,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Email"
+                    android:textSize="35sp"
                     android:inputType="textEmailAddress"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -158,7 +163,7 @@
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/textInputLayout2"
                         android:layout_width="251dp"
-                        android:layout_height="52dp">
+                        android:layout_height="62dp">
 
                         <EditText
                             android:id="@+id/EdtCep"
@@ -166,14 +171,15 @@
                             android:layout_height="wrap_content"
                             android:elevation="1dp"
                             android:hint="CEP"
+                            android:textSize="35sp"
                             android:inputType="number"
                             android:maxLines="1" />
                     </android.support.design.widget.TextInputLayout>
 
                     <ImageButton
                         android:id="@+id/btnBuscaCep"
-                        android:layout_width="50dp"
-                        android:layout_height="40dp"
+                        android:layout_width="70dp"
+                        android:layout_height="50dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/textInputLayout2"
                         android:layout_toRightOf="@+id/textInputLayout2"
@@ -192,6 +198,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:hint="Endereço"
+                    android:textSize="35sp"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -205,6 +212,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Número"
+                    android:textSize="35sp"
                     android:inputType="number"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -219,6 +227,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Complemento"
+                    android:textSize="35sp"
                     android:inputType="text"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
@@ -264,6 +273,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Telefone Comercial"
+                    android:textSize="35sp"
                     android:inputType="phone"
                     android:maxLength="15"
                     android:maxLines="1" />
@@ -279,6 +289,7 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Telefone Celular"
+                    android:textSize="35sp"
                     android:inputType="phone"
                     android:maxLength="15"
                     android:maxLines="1" />
@@ -295,7 +306,7 @@
                     android:id="@+id/txtdiassemana"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="20dp"
+                    android:textSize="35dp"
                     android:textColor="@color/colordescClie"
                     android:text="Informe os dias e horários de visita" />
             </LinearLayout>
@@ -310,22 +321,26 @@
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Domingo" />
+                    android:text="Domingo"
+                    android:textSize="35sp"/>
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Segunda" />
+                    android:text="Segunda"
+                    android:textSize="35sp"/>
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Terça" />
+                    android:text="Terça"
+                    android:textSize="35sp"/>
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Quarta" />
+                    android:text="Quarta"
+                    android:textSize="35sp"/>
 
             </LinearLayout>
 
@@ -340,17 +355,20 @@
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Quinta" />
+                    android:text="Quinta"
+                    android:textSize="35sp"/>
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sexta" />
+                    android:text="Sexta"
+                    android:textSize="35sp"/>
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sábado" />
+                    android:text="Sábado"
+                    android:textSize="35sp"/>
 
             </LinearLayout>
 
@@ -365,6 +383,7 @@
                     android:layout_height="250dp"
                     android:gravity="start"
                     android:hint="Observação"
+                    android:textSize="35sp"
                     android:inputType="textMultiLine" />
             </android.support.design.widget.TextInputLayout>
 

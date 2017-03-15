@@ -68,7 +68,7 @@
             android:layout_height="30dp"
             android:src="@drawable/compra"
             fab:fab_label="Novo Pedido"
-            fab:fab_size="mini" />
+            fab:fab_size="normal" />
     </com.github.clans.fab.FloatingActionMenu>
 
     <com.github.clans.fab.FloatingActionMenu
@@ -116,7 +116,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/sit"
             fab:fab_label="Situação"
-            fab:fab_size="mini" />
+            fab:fab_size="normal" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/mmCliePedido"
@@ -124,7 +124,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/user"
             fab:fab_label="Cliente"
-            fab:fab_size="mini" />
+            fab:fab_size="normal" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/mmEmissaoPedido"
@@ -132,7 +132,7 @@
             android:layout_height="28dp"
             android:src="@drawable/calendar"
             fab:fab_label="Emissão"
-            fab:fab_size="mini" />
+            fab:fab_size="normal" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

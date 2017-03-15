@@ -14,8 +14,8 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Firebase" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f58d3410-3a1b-45ee-8164-7b562682296f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/forcavendas.apk" />
+    <list default="true" id="f58d3410-3a1b-45ee-8164-7b562682296f" name="Default" comment="Alteração de cliente no pedido e corrigido o filtro da data">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/android_android_24.xml" afterPath="$PROJECT_DIR$/.idea/libraries/android_android_24.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/animated_vector_drawable_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/animated_vector_drawable_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/cardview_v7_24_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/cardview_v7_24_0_0.xml" />
@@ -30,9 +30,14 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/library_1_4.xml" afterPath="$PROJECT_DIR$/.idea/libraries/library_1_4.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/multidex_1_0_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/multidex_1_0_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/multidex_instrumentation_1_0_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/multidex_instrumentation_1_0_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_appindexing_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_appindexing_9_8_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_base_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_base_9_8_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_basement_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_basement_9_8_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_tasks_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_tasks_9_8_0.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/rules_0_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/rules_0_5.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/runner_0_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/runner_0_5.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_annotations_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_annotations_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_compat_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_compat_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_core_ui_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_core_ui_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_core_utils_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_core_utils_24_2_1.xml" />
@@ -41,20 +46,8 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_v4_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_v4_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_vector_drawable_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_vector_drawable_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigDB.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigDB.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Avista.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Avista.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensVendaAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensVendaAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/act_pergunta_list_pedido.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/act_pergunta_list_pedido.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
     </list>
     <ignored path="Vendas_Mobile.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -89,44 +82,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="FragmentPedido.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java">
+      <file leaf-file-name="ctSplash.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ctSplash.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-113">
-              <caret line="107" column="34" selection-start-line="107" selection-start-column="34" selection-end-line="107" selection-end-column="34" />
+            <state relative-caret-position="-340">
+              <caret line="18" column="40" selection-start-line="18" selection-start-column="40" selection-end-line="18" selection-end-column="40" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="actSincronismo.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
+      <file leaf-file-name="nav_header_act__contatos.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_act__contatos.xml">
+          <provider editor-type-id="android-designer2">
+            <state />
+          </provider>
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="193">
-              <caret line="722" column="46" selection-start-line="722" selection-start-column="46" selection-end-line="722" selection-end-column="46" />
-              <folding>
-                <element signature="method#VerificaConexao#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#run#1;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaBairro#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaCidade#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaEstado#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarPedidosEnvioStatic#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincAtuEstado#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincAtualizaCidade#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincAtualizaBairro#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#CancelarPedidoAberto#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#AutorizaPedidoAberto#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarPedidosEnvio#1;class#actSincronismo#0" expanded="false" />
-                <element signature="method#AtualizaStatusPedido#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaqtdClientes#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincParametrosStatic#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarClientesEnvioStatic#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaInfoCliexPedido#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SituacaodoClientexPed#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#getIndexApiAction#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#onStart#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#onStop#0;class#actSincronismo#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="nav_header_act__contatos.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp/nav_header_act__contatos.xml">
+          <provider editor-type-id="android-designer2">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="nav_header_act__contatos.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/nav_header_act__contatos.xml">
+          <provider editor-type-id="android-designer2">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="60" selection-start-line="10" selection-start-column="60" selection-end-line="10" selection-end-column="60" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -160,7 +160,7 @@
   <component name="GradleLocalSettings">
     <option name="myGradleHomes">
       <map>
-        <entry key="$PROJECT_DIR$" value="C:\Users\Usuário\.gradle\wrapper\dists\gradle-3.3-all\55gk2rcmfc6p2dg9u9ohc3hw9\gradle-3.3" />
+        <entry key="$PROJECT_DIR$" value="C:\Users\wks\.gradle\wrapper\dists\gradle-3.3-all\55gk2rcmfc6p2dg9u9ohc3hw9\gradle-3.3" />
       </map>
     </option>
     <option name="myGradleVersions">
@@ -1816,7 +1816,7 @@
     <option name="modificationStamps">
       <map>
         <entry key="$PROJECT_DIR$" value="4463434773585" />
-        <entry key="C:\Users\wks\AndroidStudioProjects\Vendas_Mobile" value="4463180525972" />
+        <entry key="C:\Users\wks\AndroidStudioProjects\Vendas_Mobile" value="4463356366511" />
         <entry key="C:\WSGE PROJETOS\Vendas_Mobile" value="4463519290516" />
         <entry key="C:\Wsge(2005)\Vendas_Mobile" value="4445629819452" />
       </map>
@@ -2122,6 +2122,10 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/clientes_drawer.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/activity_act__contatos_drawer.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/act_list_produtos_drawer.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/res/menu/activity_main_drawer.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/menu/produtos_drawer.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_Contatos.java" />
@@ -2147,40 +2151,36 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListContatos.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentFiltroContatos.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigWeb.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaD_TempDao.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Mensal.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/toolbar.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Avista.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConRecDao.java" />
         <option value="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteProdutoDao.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Util/Util.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/act_pergunta_list_pedido.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Avista.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensVendaAdapter.java" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigDB.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Util/Util.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
+    <option name="x" value="1358" />
     <option name="y" value="-8" />
-    <option name="width" value="1616" />
-    <option name="height" value="886" />
+    <option name="width" value="1382" />
+    <option name="height" value="744" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -2226,8 +2226,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
@@ -2246,6 +2247,28 @@
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Vendas_Mobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="layout" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidResFolderTypeNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -2287,31 +2310,18 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vendasmobile" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fragments" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="android.sdk.path" value="C:/../rafael.costa/AppData/Local/Android/Sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="device.picker.selection" value="Nexus_5X_API_22" />
+    <property name="last_opened_file_path" value="C:/" />
+    <property name="device.picker.selection" value="Nexus_5_API_22" />
     <property name="UI_DESIGNER_EDITOR_MODE.NlPaletteManager-NlPreviewForm.SHOW" value="false" />
     <property name="ExportApk.ApkPath" value="C:\WSGE PROJETOS\Vendas_Mobile\app" />
     <property name="ExportApk.Flavors" value="" />
@@ -2781,17 +2791,10 @@
       <option name="project" value="LOCAL" />
       <updated>1489003730698</updated>
     </task>
-    <task id="LOCAL-00012" summary="Correção do erro ao salvar o pedido. preferencia da tabela de preço.">
-      <created>1489177395236</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1489177395236</updated>
-    </task>
-    <option name="localTasksCounter" value="13" />
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
-  <component name="TodoView">
+  <component name="TodoView" selected-index="4">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
     </todo-panel>
@@ -2801,28 +2804,29 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
+    <frame x="1358" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.4974293" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32647464" sideWeight="0.48971722" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998326" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32647464" sideWeight="0.4922879" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32647464" sideWeight="0.5025707" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.4974293" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32647464" sideWeight="0.4974293" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.4974293" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.49485862" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33788395" sideWeight="0.50642675" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32753405" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32647464" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998326" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998326" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20565553" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20499243" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24935733" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3388203" sideWeight="0.48843187" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33788395" sideWeight="0.49357328" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -2835,7 +2839,6 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3277635" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -2897,8 +2900,7 @@
     <MESSAGE value="Desenvolvido menu de cadastro de contatos e colocado também a opção de cadastrar novo contato pela consulta de cliente." />
     <MESSAGE value="Validação na qtd estoque solicitada. correção na alteração de quantidade do item no pedido. filtro de contatos. tabela de preço padrão ordenação alfabética produtos e clientes" />
     <MESSAGE value="Alteração de cliente no pedido e corrigido o filtro da data" />
-    <MESSAGE value="Correção do erro ao salvar o pedido. preferencia da tabela de preço." />
-    <option name="LAST_COMMIT_MESSAGE" value="Correção do erro ao salvar o pedido. preferencia da tabela de preço." />
+    <option name="LAST_COMMIT_MESSAGE" value="Alteração de cliente no pedido e corrigido o filtro da data" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2929,9 +2931,15 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java</url>
-          <line>95</line>
+          <line>65</line>
           <properties />
           <option name="timeStamp" value="170" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigDB.java</url>
+          <line>342</line>
+          <properties />
+          <option name="timeStamp" value="198" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
@@ -2941,19 +2949,37 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>2071</line>
+          <line>2050</line>
           <properties />
           <option name="timeStamp" value="255" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>2222</line>
+          <line>2201</line>
           <properties />
           <option name="timeStamp" value="262" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>3014</line>
+          <line>2955</line>
+          <properties />
+          <option name="timeStamp" value="279" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
+          <line>2960</line>
+          <properties />
+          <option name="timeStamp" value="280" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
+          <line>2964</line>
+          <properties />
+          <option name="timeStamp" value="281" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
+          <line>2973</line>
           <properties />
           <option name="timeStamp" value="282" />
         </line-breakpoint>
@@ -2977,13 +3003,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>615</line>
+          <line>594</line>
           <properties />
           <option name="timeStamp" value="299" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>623</line>
+          <line>602</line>
           <properties />
           <option name="timeStamp" value="300" />
         </line-breakpoint>
@@ -3007,13 +3033,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>960</line>
+          <line>939</line>
           <properties />
           <option name="timeStamp" value="327" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>2481</line>
+          <line>2460</line>
           <properties />
           <option name="timeStamp" value="369" />
         </line-breakpoint>
@@ -3060,6 +3086,24 @@
           <option name="timeStamp" value="499" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
+          <line>756</line>
+          <properties />
+          <option name="timeStamp" value="501" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java</url>
+          <line>128</line>
+          <properties />
+          <option name="timeStamp" value="516" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
+          <line>470</line>
+          <properties />
+          <option name="timeStamp" value="518" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
           <line>42</line>
           <properties />
@@ -3096,6 +3140,18 @@
           <option name="timeStamp" value="524" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
+          <line>456</line>
+          <properties />
+          <option name="timeStamp" value="525" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
+          <line>477</line>
+          <properties />
+          <option name="timeStamp" value="527" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
           <line>90</line>
           <properties />
@@ -3103,19 +3159,19 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>192</line>
+          <line>190</line>
           <properties />
           <option name="timeStamp" value="529" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>196</line>
+          <line>194</line>
           <properties />
           <option name="timeStamp" value="530" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>40</line>
+          <line>37</line>
           <properties />
           <option name="timeStamp" value="535" />
         </line-breakpoint>
@@ -3288,586 +3344,22 @@
           <option name="timeStamp" value="569" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>152</line>
-          <properties />
-          <option name="timeStamp" value="612" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>98</line>
-          <properties />
-          <option name="timeStamp" value="615" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>102</line>
-          <properties />
-          <option name="timeStamp" value="616" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java</url>
-          <line>183</line>
-          <properties />
-          <option name="timeStamp" value="618" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java</url>
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
           <line>206</line>
           <properties />
-          <option name="timeStamp" value="619" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>156</line>
-          <properties />
-          <option name="timeStamp" value="620" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>70</line>
-          <properties />
-          <option name="timeStamp" value="621" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>66</line>
-          <properties />
-          <option name="timeStamp" value="622" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>74</line>
-          <properties />
-          <option name="timeStamp" value="623" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>78</line>
-          <properties />
-          <option name="timeStamp" value="624" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>82</line>
-          <properties />
-          <option name="timeStamp" value="625" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>86</line>
-          <properties />
-          <option name="timeStamp" value="626" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>94</line>
-          <properties />
-          <option name="timeStamp" value="627" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>113</line>
-          <properties />
-          <option name="timeStamp" value="628" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>117</line>
-          <properties />
-          <option name="timeStamp" value="629" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>121</line>
-          <properties />
-          <option name="timeStamp" value="630" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>125</line>
-          <properties />
-          <option name="timeStamp" value="631" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>129</line>
-          <properties />
-          <option name="timeStamp" value="632" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java</url>
-          <line>133</line>
-          <properties />
-          <option name="timeStamp" value="633" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>95</line>
-          <properties />
-          <option name="timeStamp" value="637" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>91</line>
-          <properties />
-          <option name="timeStamp" value="638" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>82</line>
-          <properties />
-          <option name="timeStamp" value="639" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>63</line>
-          <properties />
-          <option name="timeStamp" value="640" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>88</line>
-          <properties />
-          <option name="timeStamp" value="641" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>220</line>
-          <properties />
-          <option name="timeStamp" value="642" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>216</line>
-          <properties />
-          <option name="timeStamp" value="643" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>212</line>
-          <properties />
-          <option name="timeStamp" value="645" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>208</line>
-          <properties />
-          <option name="timeStamp" value="646" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java</url>
-          <line>126</line>
-          <properties />
-          <option name="timeStamp" value="653" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java</url>
-          <line>151</line>
-          <properties />
-          <option name="timeStamp" value="654" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java</url>
-          <line>76</line>
-          <properties />
-          <option name="timeStamp" value="655" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java</url>
-          <line>31</line>
-          <properties />
-          <option name="timeStamp" value="656" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>118</line>
-          <properties />
-          <option name="timeStamp" value="657" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>33</line>
-          <properties />
-          <option name="timeStamp" value="658" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java</url>
-          <line>233</line>
-          <properties />
-          <option name="timeStamp" value="659" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java</url>
-          <line>228</line>
-          <properties />
-          <option name="timeStamp" value="660" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>116</line>
-          <properties />
-          <option name="timeStamp" value="661" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>124</line>
-          <properties />
-          <option name="timeStamp" value="662" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>128</line>
-          <properties />
-          <option name="timeStamp" value="663" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>132</line>
-          <properties />
-          <option name="timeStamp" value="664" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>136</line>
-          <properties />
-          <option name="timeStamp" value="665" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>144</line>
-          <properties />
-          <option name="timeStamp" value="666" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>140</line>
-          <properties />
-          <option name="timeStamp" value="667" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>108</line>
-          <properties />
-          <option name="timeStamp" value="668" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>104</line>
-          <properties />
-          <option name="timeStamp" value="669" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>100</line>
-          <properties />
-          <option name="timeStamp" value="670" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>96</line>
-          <properties />
-          <option name="timeStamp" value="671" />
+          <option name="timeStamp" value="573" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>646</line>
+          <line>408</line>
           <properties />
-          <option name="timeStamp" value="672" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>84</line>
-          <properties />
-          <option name="timeStamp" value="673" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>80</line>
-          <properties />
-          <option name="timeStamp" value="674" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>76</line>
-          <properties />
-          <option name="timeStamp" value="675" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>71</line>
-          <properties />
-          <option name="timeStamp" value="676" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java</url>
-          <line>66</line>
-          <properties />
-          <option name="timeStamp" value="679" />
+          <option name="timeStamp" value="605" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>175</line>
+          <line>358</line>
           <properties />
-          <option name="timeStamp" value="687" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>569</line>
-          <properties />
-          <option name="timeStamp" value="688" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java</url>
-          <line>46</line>
-          <properties />
-          <option name="timeStamp" value="696" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java</url>
-          <line>30</line>
-          <properties />
-          <option name="timeStamp" value="697" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java</url>
-          <line>34</line>
-          <properties />
-          <option name="timeStamp" value="698" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java</url>
-          <line>40</line>
-          <properties />
-          <option name="timeStamp" value="699" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java</url>
-          <line>24</line>
-          <properties />
-          <option name="timeStamp" value="700" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java</url>
-          <line>25</line>
-          <properties />
-          <option name="timeStamp" value="701" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java</url>
-          <line>187</line>
-          <properties />
-          <option name="timeStamp" value="705" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>123</line>
-          <properties />
-          <option name="timeStamp" value="706" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>118</line>
-          <properties />
-          <option name="timeStamp" value="707" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>330</line>
-          <properties />
-          <option name="timeStamp" value="708" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>540</line>
-          <properties />
-          <option name="timeStamp" value="709" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigDB.java</url>
-          <line>270</line>
-          <properties />
-          <option name="timeStamp" value="710" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>62</line>
-          <properties />
-          <option name="timeStamp" value="711" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>67</line>
-          <properties />
-          <option name="timeStamp" value="712" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>132</line>
-          <properties />
-          <option name="timeStamp" value="713" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>128</line>
-          <properties />
-          <option name="timeStamp" value="714" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>523</line>
-          <properties />
-          <option name="timeStamp" value="715" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>179</line>
-          <properties />
-          <option name="timeStamp" value="717" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>2834</line>
-          <properties />
-          <option name="timeStamp" value="718" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>120</line>
-          <properties />
-          <option name="timeStamp" value="721" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java</url>
-          <line>32</line>
-          <properties />
-          <option name="timeStamp" value="722" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>594</line>
-          <properties />
-          <option name="timeStamp" value="726" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>619</line>
-          <properties />
-          <option name="timeStamp" value="728" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>1231</line>
-          <properties />
-          <option name="timeStamp" value="729" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>582</line>
-          <properties />
-          <option name="timeStamp" value="731" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>160</line>
-          <properties />
-          <option name="timeStamp" value="734" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>164</line>
-          <properties />
-          <option name="timeStamp" value="735" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>168</line>
-          <properties />
-          <option name="timeStamp" value="736" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java</url>
-          <line>172</line>
-          <properties />
-          <option name="timeStamp" value="737" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>1413</line>
-          <properties />
-          <option name="timeStamp" value="738" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>741</line>
-          <properties />
-          <option name="timeStamp" value="739" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>1058</line>
-          <properties />
-          <option name="timeStamp" value="740" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>556</line>
-          <properties />
-          <option name="timeStamp" value="741" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>2716</line>
-          <properties />
-          <option name="timeStamp" value="742" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>2738</line>
-          <properties />
-          <option name="timeStamp" value="743" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>272</line>
-          <properties />
-          <option name="timeStamp" value="744" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>656</line>
-          <properties />
-          <option name="timeStamp" value="745" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java</url>
-          <line>650</line>
-          <properties />
-          <option name="timeStamp" value="746" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java</url>
-          <line>341</line>
-          <properties />
-          <option name="timeStamp" value="748" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>263</line>
-          <properties />
-          <option name="timeStamp" value="749" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>514</line>
-          <properties />
-          <option name="timeStamp" value="750" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java</url>
-          <line>722</line>
-          <properties />
-          <option name="timeStamp" value="751" />
+          <option name="timeStamp" value="606" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-field">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteClienteBean.java</url>
@@ -3882,11 +3374,159 @@
           <option name="timeStamp" value="536" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="752" />
+      <option name="time" value="607" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListContatos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="393">
+          <caret line="108" column="21" selection-start-line="108" selection-start-column="21" selection-end-line="108" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentFiltroContatos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/domain/FiltroContatos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="53" column="5" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterFiltroContatos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="50">
+          <caret line="179" column="49" selection-start-line="179" selection-start-column="49" selection-end-line="179" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaD_TempBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="661">
+          <caret line="58" column="18" selection-start-line="58" selection-start-column="18" selection-end-line="58" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/../rafael.costa/AppData/Local/Android/sdk/sources/android-24/android/app/Instrumentation.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigWeb.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="26" column="29" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="135" column="50" selection-start-line="135" selection-start-column="50" selection-end-line="135" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaD_TempDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="194" column="77" selection-start-line="194" selection-start-column="77" selection-end-line="194" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/toolbar.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="34" column="45" selection-start-line="34" selection-start-column="45" selection-end-line="34" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListClientes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="235" column="0" selection-start-line="235" selection-start-column="0" selection-end-line="235" selection-end-column="0" />
+          <folding>
+            <element signature="method#onBackPressed#0;class#act_ListClientes#0" expanded="false" />
+            <element signature="method#onNavigationItemSelected#0;class#act_ListClientes#0" expanded="false" />
+            <element signature="method#run#0;class#act_ListClientes#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosCliente.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_contclie.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="236">
+          <caret line="80" column="57" selection-start-line="80" selection-start-column="57" selection-end-line="80" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/../rafael.costa/AppData/Local/Android/sdk/sources/android-24/android/app/ActivityThread.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Semanal.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="18" column="16" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/BaixaParcelaEntrada.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2">
+          <caret line="39" column="55" selection-start-line="39" selection-start-column="55" selection-end-line="39" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Mensal.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="55" column="0" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/interfaces/iPagamento.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="9" column="9" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actFiltroPeriodoPedidos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="45" column="32" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/gradle.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -3912,6 +3552,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -3927,26 +3568,33 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="false" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/act_configweb.xml">
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
       <provider editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
-      <provider selected="true" editor-type-id="android-designer2">
-        <state />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="54" column="23" selection-start-line="54" selection-start-column="23" selection-end-line="55" selection-end-column="25" />
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3791">
           <caret line="258" column="45" selection-start-line="258" selection-start-column="45" selection-end-line="258" selection-end-column="45" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -3958,488 +3606,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4341">
-          <caret line="638" column="43" selection-start-line="638" selection-start-column="43" selection-end-line="638" selection-end-column="43" />
-          <folding>
-            <element signature="method#carrega_produto_para_venda#0;class#Lista_produtos#0" expanded="false" />
-            <element signature="e#36886#36894#0" expanded="false" />
-            <element signature="e#42020#42028#0" expanded="false" />
-            <element signature="e#43255#46989#0" expanded="false" />
-            <element signature="e#46988#46989#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/vender_produtos.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="24" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/act_pergunta_list_pedido.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="355">
-          <caret line="42" column="38" selection-start-line="42" selection-start-column="38" selection-end-line="42" selection-end-column="38" />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/info_produto_venda.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="36" selection-start-line="26" selection-start-column="36" selection-end-line="26" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-manifest">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/app/ActivityThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="2322" column="0" selection-start-line="2322" selection-start-column="0" selection-end-line="2322" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Users/rafael.costa/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/appcompat-v7/24.2.1/appcompat-v7-24.2.1-sources.jar!/android/support/v7/app/AppCompatViewInflater.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="291" column="0" selection-start-line="291" selection-start-column="0" selection-end-line="291" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterPedidos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="93" column="23" selection-start-line="93" selection-start-column="23" selection-end-line="93" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/prod_listview_itenstemp_item.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-204">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/widget/AdapterView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="721" column="0" selection-start-line="721" selection-start-column="0" selection-end-line="721" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/widget/ListView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="1150" column="0" selection-start-line="1150" selection-start-column="0" selection-end-line="1150" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/app/Instrumentation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="1267" column="0" selection-start-line="1267" selection-start-column="0" selection-end-line="1267" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-24/java/util/List.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="436" column="6" selection-start-line="436" selection-start-column="6" selection-end-line="436" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentContatos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-323">
-          <caret line="23" column="13" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentFiltroContatos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="59" column="23" selection-start-line="59" selection-start-column="23" selection-end-line="59" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Util/Gps.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="62" column="46" selection-start-line="62" selection-start-column="46" selection-end-line="62" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaD_TempBean.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-901">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/widget/AbsListView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="2346" column="0" selection-start-line="2346" selection-start-column="0" selection-end-line="2346" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaD_TempDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="143" column="39" selection-start-line="143" selection-start-column="39" selection-end-line="143" selection-end-column="39" />
-          <folding>
-            <element signature="method#buscar_item_na_venda#0;class#SqliteVendaD_TempDao#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensVendaAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/app/Activity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="5990" column="0" selection-start-line="5990" selection-start-column="0" selection-end-line="5990" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/view/View.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="4785" column="0" selection-start-line="4785" selection-start-column="0" selection-end-line="4785" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Users/rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/os/Handler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="101" column="0" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="187" column="56" selection-start-line="187" selection-start-column="56" selection-end-line="187" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="151" column="0" selection-start-line="151" selection-start-column="0" selection-end-line="151" selection-end-column="0" />
-          <folding>
-            <element signature="method#onTouchEvent#0;class#ConfPagamento#0" expanded="false" />
-            <element signature="method#onItemSelected#0;class#ConfPagamento#0" expanded="false" />
-            <element signature="method#calcular_valor_parcela#0;class#ConfPagamento#0" expanded="false" />
-            <element signature="method#declaraObjetosListeners#0;class#ConfPagamento#0" expanded="false" />
-            <element signature="method#mostraCalendario#0;class#ConfPagamento#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConRecDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConRecBean.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="154" column="0" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
-          <folding>
-            <element signature="e#2987#2988#0" expanded="true" />
-            <element signature="e#3024#3025#0" expanded="true" />
-            <element signature="e#3179#3180#0" expanded="true" />
-            <element signature="e#3216#3217#0" expanded="true" />
-            <element signature="e#3368#3369#0" expanded="true" />
-            <element signature="e#3403#3404#0" expanded="true" />
-            <element signature="e#3546#3547#0" expanded="true" />
-            <element signature="e#3581#3582#0" expanded="true" />
-            <element signature="e#3729#3730#0" expanded="true" />
-            <element signature="e#3769#3770#0" expanded="true" />
-            <element signature="e#3941#3942#0" expanded="true" />
-            <element signature="e#3981#3982#0" expanded="true" />
-            <element signature="e#4153#4154#0" expanded="true" />
-            <element signature="e#4189#4190#0" expanded="true" />
-            <element signature="e#4346#4347#0" expanded="true" />
-            <element signature="e#4387#4388#0" expanded="true" />
-            <element signature="e#4560#4561#0" expanded="true" />
-            <element signature="e#4601#4602#0" expanded="true" />
-            <element signature="e#4771#4772#0" expanded="true" />
-            <element signature="e#4809#4810#0" expanded="true" />
-            <element signature="e#4997#4998#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Avista.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaDBean.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="96" column="0" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
-          <folding>
-            <element signature="e#1178#1179#0" expanded="true" />
-            <element signature="e#1219#1220#0" expanded="true" />
-            <element signature="e#2147#2148#0" expanded="true" />
-            <element signature="e#2182#2183#0" expanded="true" />
-            <element signature="e#2330#2331#0" expanded="true" />
-            <element signature="e#2368#2369#0" expanded="true" />
-            <element signature="e#2735#2736#0" expanded="true" />
-            <element signature="e#2906#2907#0" expanded="true" />
-            <element signature="e#2949#2950#0" expanded="true" />
-            <element signature="e#3350#3351#0" expanded="true" />
-            <element signature="e#3391#3392#0" expanded="true" />
-            <element signature="e#3566#3567#0" expanded="true" />
-            <element signature="e#3601#3602#0" expanded="true" />
-            <element signature="e#3661#3662#0" expanded="true" />
-            <element signature="e#3709#3710#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
-          <folding>
-            <element signature="e#877#878#0" expanded="true" />
-            <element signature="e#928#929#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigDB.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="137" column="26" selection-start-line="137" selection-start-column="14" selection-end-line="137" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="534" column="44" selection-start-line="534" selection-start-column="43" selection-end-line="534" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="160" column="0" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
-          <folding>
-            <element signature="e#2967#2968#0" expanded="true" />
-            <element signature="e#3000#3001#0" expanded="true" />
-            <element signature="e#3052#3053#0" expanded="true" />
-            <element signature="e#3091#3092#0" expanded="true" />
-            <element signature="e#3527#3528#0" expanded="true" />
-            <element signature="e#3598#3599#0" expanded="true" />
-            <element signature="e#3814#3815#0" expanded="true" />
-            <element signature="e#3856#3857#0" expanded="true" />
-            <element signature="e#4309#4310#0" expanded="true" />
-            <element signature="e#4354#4355#0" expanded="true" />
-            <element signature="e#4583#4584#0" expanded="true" />
-            <element signature="e#5952#5953#0" expanded="true" />
-            <element signature="e#5994#5995#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Util/Util.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="108" column="26" selection-start-line="108" selection-start-column="23" selection-end-line="108" selection-end-column="26" />
-          <folding>
-            <element signature="e#3586#3587#0" expanded="true" />
-            <element signature="e#3624#3625#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="397">
-          <caret line="665" column="14" selection-start-line="665" selection-start-column="14" selection-end-line="665" selection-end-column="14" />
-          <folding>
-            <element signature="method#lista_pedidos_do_cliente#0;class#Sqlite_VENDADAO#0" expanded="false" />
-            <element signature="method#buscar_vendas_nao_enviadas#0;class#Sqlite_VENDADAO#0" expanded="false" />
-            <element signature="method#atualizar_alteracao_item_na_venda#0;class#Sqlite_VENDADAO#0" expanded="false" />
-            <element signature="method#buscar_itens_das_vendas_nao_enviadas#0;class#Sqlite_VENDADAO#0" expanded="false" />
-            <element signature="method#atualiza_vendac_enviada#0;class#Sqlite_VENDADAO#0" expanded="false" />
-            <element signature="method#atualiza_cli_codigo_cliente_offline#0;class#Sqlite_VENDADAO#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-          <folding>
-            <element signature="e#2599#2600#0" expanded="true" />
-            <element signature="e#2645#2646#0" expanded="true" />
-            <element signature="e#2698#2699#0" expanded="true" />
-            <element signature="e#2747#2748#0" expanded="true" />
-            <element signature="e#2953#2954#0" expanded="true" />
-            <element signature="e#2995#2996#0" expanded="true" />
-            <element signature="e#3181#3182#0" expanded="true" />
-            <element signature="e#3231#3232#0" expanded="true" />
-            <element signature="e#3445#3446#0" expanded="true" />
-            <element signature="e#3487#3488#0" expanded="true" />
-            <element signature="e#3820#3821#0" expanded="true" />
-            <element signature="e#3856#3857#0" expanded="true" />
-            <element signature="e#3915#3916#0" expanded="true" />
-            <element signature="e#3965#3966#0" expanded="true" />
-            <element signature="e#4004#4005#0" expanded="true" />
-            <element signature="e#4039#4040#0" expanded="true" />
-            <element signature="e#4095#4096#0" expanded="true" />
-            <element signature="e#4143#4144#0" expanded="true" />
-            <element signature="e#4182#4183#0" expanded="true" />
-            <element signature="e#4217#4218#0" expanded="true" />
-            <element signature="e#4273#4274#0" expanded="true" />
-            <element signature="e#4321#4322#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="228" column="0" selection-start-line="228" selection-start-column="0" selection-end-line="228" selection-end-column="0" />
-          <folding>
-            <element signature="method#lista_de_CONFPAGAMENTO#0;class#SqliteConfPagamentoDao#0" expanded="false" />
-            <element signature="method#busca_todos_CONFPAGAMENTO_nao_enviados#0;class#SqliteConfPagamentoDao#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="33" selection-start-line="2" selection-start-column="33" selection-end-line="2" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="341" column="62" selection-start-line="341" selection-start-column="62" selection-end-line="341" selection-end-column="62" />
-          <folding>
-            <element signature="e#11015#11168#0" expanded="true" />
-            <element signature="e#11167#11168#0" expanded="true" />
-            <element signature="e#11681#11702#0" expanded="true" />
-            <element signature="e#13623#13644#0" expanded="true" />
-            <element signature="e#13916#14999#0" expanded="true" />
-            <element signature="e#14998#14999#0" expanded="true" />
-            <element signature="e#15059#15317#0" expanded="true" />
-            <element signature="e#15316#15317#0" expanded="true" />
-            <element signature="e#15622#15643#0" expanded="true" />
-            <element signature="e#15963#18207#0" expanded="true" />
-            <element signature="e#18206#18207#0" expanded="true" />
-            <element signature="e#18267#18525#0" expanded="true" />
-            <element signature="e#18524#18525#0" expanded="true" />
-            <element signature="method#setDateTimeField#0;class#VenderProdutos#0" expanded="false" />
-            <element signature="method#carregaFormaPgtoPedido#0;class#VenderProdutos#0" expanded="false" />
-            <element signature="method#gerar_parcelas_venda#0;class#VenderProdutos#0" expanded="false" />
-            <element signature="method#declaraObjetos#0;class#VenderProdutos#0" expanded="false" />
-            <element signature="e#37856#38143#0" expanded="true" />
-            <element signature="e#38142#38143#0" expanded="true" />
-            <element signature="e#38200#38431#0" expanded="true" />
-            <element signature="e#38430#38431#0" expanded="true" />
-            <element signature="e#39160#39579#0" expanded="true" />
-            <element signature="e#39578#39579#0" expanded="true" />
-            <element signature="method#alterarproduto#0;class#VenderProdutos#0" expanded="false" />
-            <element signature="e#43742#43750#0" expanded="true" />
-            <element signature="e#51411#51419#0" expanded="true" />
-            <element signature="e#52875#58075#0" expanded="true" />
-            <element signature="e#58074#58075#0" expanded="true" />
-            <element signature="e#61717#61725#0" expanded="true" />
-            <element signature="e#71031#76125#0" expanded="true" />
-            <element signature="e#76124#76125#0" expanded="true" />
-            <element signature="method#onBackPressed#0;class#VenderProdutos#0" expanded="false" />
-            <element signature="method#onKey#0;class#VenderProdutos#0" expanded="false" />
-            <element signature="method#run#0;class#VenderProdutos#0" expanded="false" />
-            <marker date="1489610632369" expanded="false" signature="41128:41241" ph="(arg0, arg1) → {" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-113">
-          <caret line="107" column="34" selection-start-line="107" selection-start-column="34" selection-end-line="107" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="722" column="46" selection-start-line="722" selection-start-column="46" selection-end-line="722" selection-end-column="46" />
+        <state relative-caret-position="225">
+          <caret line="2133" column="32" selection-start-line="2133" selection-start-column="26" selection-end-line="2133" selection-end-column="32" />
           <folding>
             <element signature="method#VerificaConexao#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#run#1;class#actSincronismo#0" expanded="false" />
@@ -4463,6 +3633,187 @@
             <element signature="method#onStart#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#onStop#0;class#actSincronismo#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4341">
+          <caret line="638" column="43" selection-start-line="638" selection-start-column="43" selection-end-line="638" selection-end-column="43" />
+          <folding>
+            <element signature="method#carrega_produto_para_venda#0;class#Lista_produtos#0" expanded="false" />
+            <element signature="e#36886#36894#0" expanded="true" />
+            <element signature="e#42020#42028#0" expanded="true" />
+            <element signature="e#43255#46989#0" expanded="true" />
+            <element signature="e#46988#46989#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/vender_produtos.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="24" selection-start-line="11" selection-start-column="24" selection-end-line="11" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/act_pergunta_list_pedido.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="43" column="40" selection-start-line="43" selection-start-column="40" selection-end-line="43" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigDB.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-487">
+          <caret line="302" column="42" selection-start-line="302" selection-start-column="42" selection-end-line="302" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Util/Util.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="128" column="48" selection-start-line="128" selection-start-column="48" selection-end-line="128" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="89" column="106" selection-start-line="89" selection-start-column="106" selection-end-line="89" selection-end-column="106" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="65" column="0" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Pagamento/Avista.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="258">
+          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConRecBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="278">
+          <caret line="154" column="0" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
+          <folding>
+            <element signature="e#4997#4998#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConRecDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="151">
+          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
+          <folding>
+            <element signature="e#3231#3232#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteVendaCBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="194" column="0" selection-start-line="194" selection-start-column="0" selection-end-line="194" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-544">
+          <caret line="470" column="0" selection-start-line="470" selection-start-column="0" selection-end-line="470" selection-end-column="0" />
+          <folding>
+            <element signature="method#alterarproduto#0;class#VenderProdutos#0" expanded="false" />
+            <element signature="method#onBackPressed#0;class#VenderProdutos#0" expanded="false" />
+            <element signature="method#onKey#0;class#VenderProdutos#0" expanded="false" />
+            <element signature="method#sincronizaPedidosAposSalvar#0;class#VenderProdutos#0" expanded="false" />
+            <element signature="method#run#0;class#VenderProdutos#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ctSplash.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-340">
+          <caret line="18" column="40" selection-start-line="18" selection-start-column="40" selection-end-line="18" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/nav_header_act__contatos.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp/nav_header_act__contatos.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/nav_header_act__contatos.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="60" selection-start-line="10" selection-start-column="60" selection-end-line="10" selection-end-column="60" />
+          <folding />
         </state>
       </provider>
     </entry>

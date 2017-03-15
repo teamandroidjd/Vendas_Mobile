@@ -37,7 +37,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.82"
             android:gravity="center|right"
-            android:text="R$ 1000.500000"
+            android:text="R$ 10000,5000"
             android:textColor="@color/colordescClie"
             android:textSize="15dp" />
 

@@ -5,6 +5,22 @@
     android:layout_height="match_parent">
 
 
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:id="@+id/EdtPesquisaContato"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/pesqcontato"
+            android:layout_centerHorizontal="true"
+            android:hint="Pesquisa"
+            android:inputType="textCapCharacters"
+            android:maxLines="1" />
+    </android.support.design.widget.TextInputLayout>
+
+
         <RelativeLayout
             android:id="@+id/rl_fragment_container2"
             android:layout_width="match_parent"

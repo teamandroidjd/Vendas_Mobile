@@ -1,12 +1,15 @@
 <component name="libraryTable">
   <library name="design-24.2.1">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.android/build-cache/d1ed275f5e1d03826f220e56e71d10b7a63c6e8b/output/annotations.zip!/" />
+    </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/d5e171b7c216ad05dea863e818ecf376463ecd5d/output/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/d5e171b7c216ad05dea863e818ecf376463ecd5d/output/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/d10425d5ac1f417cfe1d99438abfde5642109156/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/d10425d5ac1f417cfe1d99438abfde5642109156/output/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://C:/Users/rafael.costa/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/design/24.2.1/design-24.2.1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../rafael.costa/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/design/24.2.1/design-24.2.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

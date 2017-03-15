@@ -14,6 +14,10 @@
             android:id="@+id/nav_pedidos"
             android:icon="@drawable/ic_pedidos"
             android:title="Pedidos" />
+        <item
+            android:id="@+id/nav_contatos"
+            android:icon="@drawable/contatos"
+            android:title="Contatos" />
     </group>
 
     <item android:title="Comunicação">

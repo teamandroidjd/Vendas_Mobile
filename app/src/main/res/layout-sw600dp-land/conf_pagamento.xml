@@ -37,6 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="25dp"
+            android:textColor="@color/colordescClie"
             android:layout_marginTop="10dp" />
 
         <LinearLayout
@@ -65,10 +66,11 @@
                     android:id="@+id/conf_rbdinheiro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
+                    android:textColor="@color/colordescClie"
                     android:checked="true"
                     android:text="Dinheiro"
-                    android:textSize="20dp" />
+                    android:textSize="25dp" />
 
                 <RadioButton
                     android:id="@+id/conf_rbboleto"
@@ -76,7 +78,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Boleto"
-                    android:textSize="20dp" />
+                    android:textColor="@color/colordescClie"
+                    android:textSize="25dp" />
             </RadioGroup>
 
             <TextView
@@ -95,8 +98,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:inputType="number"
+                android:textColor="@color/colordescClie"
                 android:maxLength="2"
                 android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/tit_parcela"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Parcelas: "
+                android:textColor="@color/colorAccent"
+                android:textSize="25dp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
         </LinearLayout>
 
@@ -105,7 +122,7 @@
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="fill_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
         android:scrollbars="vertical"
         android:layout_below="@+id/LnPai">
 
@@ -120,27 +137,32 @@
                 android:layout_height="match_parent"
                 android:weightSum="1">
 
+
+
                 <TextView
                     android:id="@+id/conf_valorparcela"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:text="Parcela 1/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
 
                 <TextView
                     android:id="@+id/conf_valorparcela2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
+                    android:layout_below="@+id/tit_parcela"
                     android:layout_toEndOf="@+id/conf_valorparcela"
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="Parcela 2/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -152,7 +174,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:text="Parcela 3/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -166,7 +188,7 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="Parcela 4/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -178,7 +200,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:text="Parcela 5/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -192,7 +214,7 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="Parcela 6/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -204,7 +226,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:text="Parcela 7/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -218,7 +240,7 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="Parcela 8/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -230,7 +252,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:text="Parcela 9/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -244,7 +266,7 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="Parcela 10/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -256,7 +278,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:text="Parcela 11/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -270,7 +292,7 @@
                     android:layout_weight="1"
                     android:gravity="end"
                     android:text="Parcela 12/12: R$ 1000,00"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -294,6 +316,8 @@
         android:layout_below="@+id/conf_txvlabelvalorrecebido"
         android:inputType="numberDecimal"
         android:visibility="invisible" />
+
+
 
     <Button
         android:id="@+id/conf_btnsalvar"

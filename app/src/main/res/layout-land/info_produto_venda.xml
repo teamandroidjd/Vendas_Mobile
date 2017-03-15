@@ -110,6 +110,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
+        android:textColor="@color/colordescClie"
         android:entries="@array/tabela_preco"
         android:layout_alignBaseline="@+id/info_txv_precoproduto"
         android:layout_alignBottom="@+id/info_txv_precoproduto"

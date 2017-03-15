@@ -26,8 +26,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="22dp"
-        android:layout_marginEnd="22dp" />
+        android:layout_marginLeft="15dp"
+         />
 
     <TextView
         android:id="@+id/prod_lisview_preco"
@@ -37,7 +37,7 @@
         android:text="R$ 1000,5000"
         android:textColor="@color/colordescClie"
         android:textSize="25dp"
-        android:layout_marginStart="285dp"
+        android:layout_marginStart="300dp"
         android:layout_marginLeft="324dp" />
 
     <TextView
@@ -48,6 +48,7 @@
         android:text="1000"
         android:textColor="@color/colordescClie"
         android:textSize="25dp"
+        android:layout_marginLeft="15sp"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/prod_lisview_descricao"
         android:layout_toEndOf="@+id/prod_lisview_descricao" />

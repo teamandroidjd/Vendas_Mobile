@@ -13,20 +13,22 @@
     tools:context=".actLogin">
 
     <RelativeLayout
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#fff"
         android:elevation="7dp"
+        android:layout_margin="50sp"
+        android:gravity="center"
+        android:foregroundGravity="center"
         android:orientation="vertical"
         android:padding="20dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerVertical="true">
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="30dp"
+            android:paddingTop="10dp"
             android:id="@+id/linearLayout"
             android:weightSum="1">
 
@@ -84,8 +86,8 @@
 
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="70sp"
-                android:layout_margin="30dp"
+                android:layout_height="60sp"
+                android:layout_margin="10dp"
                 android:background="#14bfd6"
                 android:text="Entrar"
                 android:textAllCaps="false"

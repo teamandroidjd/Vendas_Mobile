@@ -115,7 +115,7 @@
                         android:id="@+id/lbl01"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Empresa:"
+                        android:text="Empresa: "
                         android:textColor="@color/colordescClie"
                         android:textSize="30sp"
                         android:textStyle="normal|bold" />
@@ -141,7 +141,7 @@
                         android:id="@+id/lbl02"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Data de emissão:"
+                        android:text="Data de emissão: "
                         android:textColor="@color/colordescClie"
                         android:textSize="30sp"
                         android:textStyle="normal|bold" />
