@@ -357,7 +357,6 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                                                          Dialogo.setMessage("Atualizando cadastro de Cidades/Bairros...");
                                                                                          actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this,true);
                                                                                      }
-
                                                                                      Dialogo.dismiss();
                                                                                      handler.post(new Runnable() {
                                                                                          @Override

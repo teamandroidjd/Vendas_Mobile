@@ -20,9 +20,9 @@ public class ListaItensVendaAdapter extends BaseAdapter {
     private Context ctx;
     private List<SqliteVendaDBean> listaItens;
 
-    public ListaItensVendaAdapter(Context ctx, List<SqliteVendaDBean> listaItensTemporarios) {
+    public ListaItensVendaAdapter(Context ctx, List<SqliteVendaDBean> listaItensPedidos) {
         this.ctx = ctx;
-        this.listaItens = listaItensTemporarios;
+        this.listaItens = listaItensPedidos;
     }
 
     @Override
@@ -56,7 +56,8 @@ public class ListaItensVendaAdapter extends BaseAdapter {
         quantidade.setText(item.getVendad_quantidade().toString());
 
         preco.setText(item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
-        total.setText(item.getVendad_total().setScale(2,RoundingMode.UP).toString());
+        total.setText("R$ " + item.getVendad_total().setScale(2,BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
+        //total.setText(item.getVendad_total().setScale(2,RoundingMode.UP).toString().replace('.',','));
 
 
         return v;

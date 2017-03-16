@@ -75,7 +75,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     private Intent CLI_CODIGO_INTENT;
     private Integer CLI_CODIGO;
     private Integer CLI_CODIGO_EXT;
-    private String CodEmpresa, vendenegativo, numpedido;
+    private String CodEmpresa, vendenegativo, numpedido, nomeclievenda;
 
     private ListView ListView_ItensVendidos;
     private List<SqliteVendaD_TempBean> itens_temp = new ArrayList<>();
@@ -88,7 +88,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     private SimpleDateFormat dateFormatterBR;
     private SimpleDateFormat dateFormatterUSA;
     private DatePickerDialog datePicker;
-    private TextView venda_txv_datavenda;
+    private TextView venda_txv_datavenda, venda_txv_codigo_cliente, venda_txv_empresa;
     private TextView venda_txv_dataentrega, venda_txv_desconto;
     private String DATA_DE_ENTREGA, CodVendedor, ObsPedido, NumPedido;
     private Toolbar toolbar;
@@ -166,27 +166,37 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         if (!NumPedido.equals("0")) {
             vendaCBean = new SqliteVendaCBean();
             vendaCBean = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_vendas_por_numeropedido(NumPedido.toString());
+            CLI_CODIGO_EXT = vendaCBean.getVendac_cli_codigo_ext();
+            CLI_CODIGO = vendaCBean.getVendac_cli_codigo();
+            nomeclievenda = vendaCBean.getVendac_cli_nome().toString();
             Chave_Venda = vendaCBean.getVendac_chave();
             CodEmpresa = vendaCBean.getCodEmpresa();
             CodVendedor = vendaCBean.getCodVendedor();
             DATA_DE_ENTREGA = vendaCBean.getVendac_previsaoentrega();
             ObsPedido = vendaCBean.getObservacao();
             venda_txt_desconto.setText(vendaCBean.getVendac_percdesconto().toString());
+            venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
+            if (CLI_CODIGO_EXT == null) {
+                venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO.toString() + " - " + vendaCBean.getVendac_cli_nome().toString());
+                venda_txv_codigo_cliente.requestFocus();
+            } else {
+                venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO_EXT.toString() + " - " + vendaCBean.getVendac_cli_nome().toString());
+                venda_txv_codigo_cliente.requestFocus();
+            }
             //itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).buscar_itens_pedido(Chave_Venda);
-            itens_venda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
+            //itens_venda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
             //carregaFormaPgtoPedido(Chave_Venda);
             Alterar_Pedido_listview_e_calcula_total();
-        }
+        } else {
+            if (CLI_CODIGO.equals(0)) {
+                CLI_CODIGO = vendaCBean.getVendac_cli_codigo();
+            }
 
-        if (CLI_CODIGO.equals(0)) {
-            CLI_CODIGO = vendaCBean.getVendac_cli_codigo();
+            cliBean = new SqliteClienteBean();
+            cliBean = new SqliteClienteDao(getApplicationContext()).buscar_cliente_pelo_codigo(CLI_CODIGO.toString());
+            venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO.toString() + " - " + cliBean.getCli_nome().toString());
+            venda_txv_codigo_cliente.requestFocus();
         }
-
-        cliBean = new SqliteClienteBean();
-        cliBean = new SqliteClienteDao(getApplicationContext()).buscar_cliente_pelo_codigo(CLI_CODIGO.toString());
-        TextView venda_txv_codigo_cliente = (TextView) findViewById(R.id.venda_txv_codigo_cliente);
-        venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO.toString() + " - " + cliBean.getCli_nome().toString());
-        venda_txv_codigo_cliente.requestFocus();
 
 
         venda_txv_codigo_cliente.setOnClickListener(new View.OnClickListener() {
@@ -219,10 +229,16 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 }
             }
         });
+        venda_txv_empresa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
 
         DB = new ConfigDB(this).getReadableDatabase();
-        TextView venda_txv_empresa = (TextView) findViewById(R.id.venda_txv_empresa);
+        //TextView venda_txv_empresa = (TextView) findViewById(R.id.venda_txv_empresa);
         try {
             Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
             if (CursorEmpresa.getCount() > 0) {
@@ -240,7 +256,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
         DESCONTO_PADRAO_VENDEDOR = new SqliteParametroDao(this).busca_parametros().getP_desconto_do_vendedor();
 
-        CLI_CODIGO_EXT = Integer.valueOf(cliBean.getCli_codigo_ext().toString());
+        if (!NumPedido.equals("0")) {
+            CLI_CODIGO_EXT = vendaCBean.getVendac_cli_codigo_ext();
+        } else {
+            CLI_CODIGO_EXT = Integer.valueOf(cliBean.getCli_codigo_ext().toString());
+        }
+
+
         FloatingActionButton incluirProduto = (FloatingActionButton) findViewById(R.id.fab_inclui_produto);
         incluirProduto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,6 +270,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
                 Bundle params = new Bundle();
                 params.putString("numpedido", NumPedido);
+                params.putString("chave", Chave_Venda);
+                params.putString("CodVendedor", sCodVend);
                 Lista_produtos.putExtras(params);
                 startActivity(Lista_produtos);
             }
@@ -282,7 +306,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                         it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
                                         setResult(1, it);
 
-
                                         new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
                                         SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
                                         editor.putString("dataentrega", null);
@@ -299,7 +322,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                         return;
                     }
 
-                } else if(!NumPedido.equals("0")){
+                } else if (!NumPedido.equals("0")) {
                     itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
                     if (!itens_venda.isEmpty()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
@@ -331,16 +354,16 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                         alert.show();
                         return;
 
-                    }else {
+                    } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
                         builder.setTitle(R.string.app_namesair);
                         builder.setIcon(R.drawable.logo_ico);
-                        builder.setMessage("Não existe produto incluso neste pedido "+NumPedido+". O mesmo será cancelado. Deseja continuar?")
+                        builder.setMessage("Não existe produto incluso neste pedido " + NumPedido + ". O mesmo será cancelado. Deseja continuar?")
                                 .setCancelable(false)
                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         Boolean pedcancelado = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).atualizar_pedido_para_cancelado(Chave_Venda);
-                                        if(pedcancelado == true){
+                                        if (pedcancelado == true) {
                                             Toast.makeText(VenderProdutos.this, "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
                                             Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
                                             Bundle params = new Bundle();
@@ -351,7 +374,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                             i.putExtras(params);
                                             startActivity(i);
                                             finish();
-                                        }else {
+                                        } else {
                                             Toast.makeText(VenderProdutos.this, " Houve um problema ao cancelar o pedido. Verifique!", Toast.LENGTH_SHORT).show();
                                             Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
                                             Bundle params = new Bundle();
@@ -553,6 +576,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             params.putString("numpedido", NumPedido);
             Lista_produtos.putExtras(params);
             startActivity(Lista_produtos);
+            return;
         }
         if (DATA_DE_ENTREGA == null) {
             Toast.makeText(this, "A data prevista da entrega não foi selecionada!", Toast.LENGTH_SHORT).show();
@@ -617,15 +641,19 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                         Random numero_aleatorio = new Random();
                         Integer chave = numero_aleatorio.nextInt(999999);
                         vendaCBean.setVendac_chave(String.valueOf(CLI_CODIGO + chave));
+                        vendaCBean.setVendac_cli_codigo_ext(cliBean.getCli_codigo_ext());
+                        vendaCBean.setVendac_cli_nome(cliBean.getCli_nome());
                     } else {
                         vendaCBean.setVendac_chave(String.valueOf(Chave_Venda));
+                        vendaCBean.setVendac_cli_codigo_ext(CLI_CODIGO_EXT);
+                        vendaCBean.setVendac_cli_nome(nomeclievenda);
                     }
 
                     vendaCBean.setVendac_datahoravenda(Util.DataHojeComHorasUSA());
                     vendaCBean.setVendac_previsaoentrega(DATA_DE_ENTREGA);
                     vendaCBean.setVendac_cli_codigo(CLI_CODIGO);
-                    vendaCBean.setVendac_cli_codigo_ext(cliBean.getCli_codigo_ext());
-                    vendaCBean.setVendac_cli_nome(cliBean.getCli_nome());
+                    //vendaCBean.setVendac_cli_codigo_ext(cliBean.getCli_codigo_ext());
+                    //vendaCBean.setVendac_cli_nome(cliBean.getCli_nome());
                     vendaCBean.setVendac_formapgto(confBean.getConf_tipo_pagamento());
                     vendaCBean.setObservacao(ObsPedido);
                     vendaCBean.setVendac_valor(total_venda);//(BigDecimal.ZERO);
@@ -647,16 +675,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                         gravavenda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true);
                         venda_ok = gravavenda.grava_vendasalva(vendaCBean, itens_venda);
                     }
-
-                    //venda_ok = gravavenda.grava_venda(vendaCBean, itens_temp);
-
                     if (venda_ok > 0) {
                         gerar_parcelas_venda();
                         // atualizando a chave da venda nas configuracoes de pagamento
                         new SqliteConfPagamentoDao(this).AtualizaVendac_chave_CONFPAGAMENTO(vendaCBean.getVendac_chave());
-                        if(sincpedido == true) {
+                        if (sincpedido == true) {
                             sincronizaPedidosAposSalvar();
-                        }else {
+                        } else {
                             Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
                             Bundle params = new Bundle();
                             params.putString("codvendedor", sCodVend);
@@ -691,11 +716,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     public void declaraObjetos() {
         confBean = new SqliteConfPagamentoBean();
         confDao = new SqliteConfPagamentoDao(this);
+        venda_txv_codigo_cliente = (TextView) findViewById(R.id.venda_txv_codigo_cliente);
+        venda_txv_empresa = (TextView) findViewById(R.id.venda_txv_empresa);
         venda_txv_total_da_Venda = (TextView) findViewById(R.id.venda_txv_total_da_Venda);
         ListView_ItensVendidos = (ListView) findViewById(R.id.ListView_ItensVendidos);
         venda_txv_dataentrega = (TextView) findViewById(R.id.venda_txv_dataentrega);
         venda_txv_datavenda = (TextView) findViewById(R.id.venda_txv_datavenda);
-        ListView_ItensVendidos = (ListView) findViewById(R.id.ListView_ItensVendidos);
+        //ListView_ItensVendidos = (ListView) findViewById(R.id.ListView_ItensVendidos);
         venda_txt_desconto = (EditText) findViewById(R.id.venda_txt_desconto);
         venda_txv_desconto = (TextView) findViewById(R.id.venda_txv_desconto);
 
@@ -739,7 +766,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
     public void Alterar_Pedido_listview_e_calcula_total() {
         declaraObjetos();
-        venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
+        //venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
         itens_venda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
         ListView_ItensVendidos.setAdapter(new ListaItensVendaAdapter(getApplicationContext(), itens_venda));
         if (!itens_venda.isEmpty()) {
@@ -1229,7 +1256,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                                 Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
 
                                                 itemBean2.setVendad_prd_codigo(COD_PRODUTO);
-                                                itemBean3 = itemDao.altera_item_na_venda(itemBean2);
+                                                //itemBean3 = itemDao.altera_item_na_venda(itemBean2);
 
                                                 //if (itemBean3 != null) {
                                                 itemBean1.setVendad_prd_codigo(COD_PRODUTO);

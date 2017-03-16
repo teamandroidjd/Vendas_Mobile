@@ -44,14 +44,17 @@ import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConfigWeb;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoDao;
+import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
+import com.jdsystem.br.vendasmobile.Model.Sqlite_VENDADAO;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.actLogin;
 import com.jdsystem.br.vendasmobile.actSincronismo;
 import com.jdsystem.br.vendasmobile.act_ListProdutos;
 import com.jdsystem.br.vendasmobile.adapter.ListaItensTemporariosAdapter;
+import com.jdsystem.br.vendasmobile.adapter.ListaItensVendaAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -81,9 +84,11 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     private EditText prod_txt_pesquisaproduto;
     private ListView prod_listview_produtotemp;
     private ListView prod_listview_itenstemp;
+    private ListView ListView_ItensVendidos;
+
     private Handler handler = new Handler();
     private Intent Codigo;
-    private String NumPedido, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7;
+    private String NumPedido, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7, sCodvend, chavepedido;
     private int CodigoItem, sprecoprincipal, tabanterior;
     SQLiteDatabase DB;
     private Double qtdestoque;
@@ -112,7 +117,6 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         setContentView(R.layout.lista_produtos);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-        atualiza_listview_com_os_itens_da_venda();
 
         array_spinner.add(DESCRICAO_PRODUTO);
         array_spinner.add(CODIGO_PRODUTO);
@@ -120,6 +124,8 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         Codigo = getIntent();
 
         NumPedido = Codigo.getStringExtra("numpedido");
+        chavepedido = Codigo.getStringExtra("chave");
+        sCodvend = Codigo.getStringExtra("CodVendedor");
 
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_spinner);
         prod_sp_produtos = (Spinner) findViewById(R.id.prod_sp_produtos);
@@ -281,718 +287,1444 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     }
 
     private void informa_produto_na_venda(final Cursor produto_cursor) {
+        if (NumPedido.equals("0")) {
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.info_produto_venda, null);
-        alerta = new Builder(this);
-        alerta.setCancelable(false);
-        alerta.setView(view);
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.info_produto_venda, null);
+            alerta = new Builder(this);
+            alerta.setCancelable(false);
+            alerta.setView(view);
 
-        DB = new ConfigDB(this).getReadableDatabase();
+            DB = new ConfigDB(this).getReadableDatabase();
 
-        Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
-        Bloqueios.moveToFirst();
-        final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
-        Bloqueios.close();
-        CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (vendenegativo.equals("N") && ConexOk == true) {
+            Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
+            Bloqueios.moveToFirst();
+            final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
+            Bloqueios.close();
+            CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
+            Boolean ConexOk = Util.checarConexaoCelular(this);
+            if (vendenegativo.equals("N") && ConexOk == true) {
 
-            atualizaEstoqueItem(CodigoItem);
+                atualizaEstoqueItem(CodigoItem);
 
-            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
-            CursItens.moveToFirst();
-            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-            CursItens.close();
+                Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+                CursItens.moveToFirst();
+                qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                CursItens.close();
 
-            if (qtdestoque <= 0) {
-                Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
-                return;
+                if (qtdestoque <= 0) {
+                    Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
+                    return;
+                }
             }
-        }
 
-        final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
-        final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
-        final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-        final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
-        final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
+            final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
+            final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
+            final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
+            final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+            final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
         /*final Spinner*/
-        spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
-        DB = new ConfigDB(this).getReadableDatabase();
+            spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
+            DB = new ConfigDB(this).getReadableDatabase();
 
-        spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                SharedPreferences prefsHost = Lista_produtos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
-                sprecoprincipal = prefsHost.getInt("spreco", 0);
-                tabanterior = sprecoprincipal;
-                if (sprecoprincipal == 0) {
-                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
-                    if (novosprecoprincipal == 0) {
-                        //sprecoprincipal = novosprecoprincipal;
-                        //GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    } else {
-                        sprecoprincipal = novosprecoprincipal;
-                        GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    }
-
-                }
-                if (sprecoprincipal == 1) {
-                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
-                    if (novosprecoprincipal == 0) {
-                        //sprecoprincipal = novosprecoprincipal;
-                        //GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    } else {
-                        sprecoprincipal = novosprecoprincipal;
-                        GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    }
-                }
-                if (sprecoprincipal == 2) {
-                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
-                    if (novosprecoprincipal == 0) {
-                        //sprecoprincipal = novosprecoprincipal;
-                        //GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    } else {
-                        sprecoprincipal = novosprecoprincipal;
-                        GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    }
-                }
-                if (sprecoprincipal == 3) {
-                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
-                    if (novosprecoprincipal == 0) {
-                        //sprecoprincipal = novosprecoprincipal;
-                        //GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    } else {
-                        sprecoprincipal = novosprecoprincipal;
-                        GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    }
-                }
-                if (sprecoprincipal == 4) {
-                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
-                    if (novosprecoprincipal == 0) {
-                        //sprecoprincipal = novosprecoprincipal;
-                        //GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    } else {
-                        sprecoprincipal = novosprecoprincipal;
-                        GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    }
-                }if (sprecoprincipal == 5) {
-                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
-                    if (novosprecoprincipal == 0) {
-                        //sprecoprincipal = novosprecoprincipal;
-                        //GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    } else {
-                        sprecoprincipal = novosprecoprincipal;
-                        GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    }
-                } if (sprecoprincipal == 6) {
-                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
-                    if (novosprecoprincipal == 0) {
-                        //sprecoprincipal = novosprecoprincipal;
-                        //GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    } else {
-                        sprecoprincipal = novosprecoprincipal;
-                        GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    }
-                } if (sprecoprincipal == 7) {
-                    int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
-                    if (novosprecoprincipal == 0) {
-                        //sprecoprincipal = novosprecoprincipal;
-                        //GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    } else {
-                        sprecoprincipal = novosprecoprincipal;
-                        GravaPreferencias(sprecoprincipal);
-                        spntabpreco.setSelection(sprecoprincipal);
-                        spreco = spntabpreco.getSelectedItem().toString();
-                        if (tab1 != null) {
-                            spreco = spreco.replace(tab1, "");
-                        }
-                        if (tab2 != null) {
-                            spreco = spreco.replace(tab2, "");
-                        }
-                        if (tab3 != null) {
-                            spreco = spreco.replace(tab3, "");
-                        }
-                        if (tab4 != null) {
-                            spreco = spreco.replace(tab4, "");
-                        }
-                        if (tab5 != null) {
-                            spreco = spreco.replace(tab5, "");
-                        }
-                        if (tab6 != null) {
-                            spreco = spreco.replace(tab6, "");
-                        }
-                        if (tab7 != null) {
-                            spreco = spreco.replace(tab7, "");
-                        }
-                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        try {
-            List<String> DadosListTabPreco = new ArrayList<String>();
-
-            Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
-            CursorParametro.moveToFirst();
-            tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-            tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-            tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-            tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-            tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-            tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-            tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-
-            CursorParametro.close();
-
-            String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
-            vlvendapadrao = vlvendapadrao.trim();
-            if (!vlvendapadrao.equals("0,0000")) {
-                BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
-                String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                Precopadrao = Precopadrao.replace('.', ',');
-                DadosListTabPreco.add("Preço base R$: " + Precopadrao);
-            }
-
-            String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
-            vlvenda1 = vlvenda1.trim();
-            if (!vlvenda1.equals("0,0000")) {
-                BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
-                String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                Preco1 = Preco1.replace('.', ',');
-                DadosListTabPreco.add(tab1 + " R$: " + Preco1);
-            }
-
-            String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
-            vlvenda2 = vlvenda2.trim();
-            if (!vlvenda2.equals("0,0000")) {
-                BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
-                String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                Preco2 = Preco2.replace('.', ',');
-                DadosListTabPreco.add(tab2 + " R$: " + Preco2);
-            }
-
-            String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
-            vlvenda3 = vlvenda3.trim();
-            if (!vlvenda3.equals("0,0000")) {
-                BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
-                String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                Preco3 = Preco3.replace('.', ',');
-                DadosListTabPreco.add(tab3 + " R$: " + Preco3);
-            }
-
-            String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
-            vlvenda4 = vlvenda4.trim();
-            if (!vlvenda4.equals("0,0000")) {
-                BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
-                String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                Preco4 = Preco4.replace('.', ',');
-                DadosListTabPreco.add(tab4 + " R$: " + Preco4);
-            }
-
-            String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
-            vlvenda5 = vlvenda5.trim();
-            if (!vlvenda5.equals("0,0000")) {
-                BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
-                String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                Preco5 = Preco5.replace('.', ',');
-                DadosListTabPreco.add(tab5 + " R$: " + Preco5);
-            }
-
-            String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
-            vlvendap1 = vlvendap1.trim();
-            if (!vlvendap1.equals("0,0000")) {
-                BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
-                String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                Precop1 = Precop1.replace('.', ',');
-                DadosListTabPreco.add(tab6 + " R$: " + Precop1);
-            }
-
-            String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
-            vlvendap2 = vlvendap2.trim();
-            if (!vlvendap2.equals("0,0000")) {
-                BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
-                String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                Precop2 = Precop2.replace('.', ',');
-                DadosListTabPreco.add(tab7 + " R$: " + Precop2);
-            }
-
-            ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(Lista_produtos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
-            arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spntabpreco.setAdapter(arrayAdapterTabPreco);
-
-        } catch (Exception E) {
-            E.toString();
-
-        }
-
-        SqliteProdutoBean prdBean = new SqliteProdutoBean();
-        info_txv_codproduto.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRODUTO_SIMPLECURSOR)));
-        info_txv_descricaoproduto.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_DESCRICAO_PRODUTO)));
-        info_txv_unmedida.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_UNIDADE_MEDIDA)));
-
-
-        String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PROD_PADRAO));
-        BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-        String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-        Preco = Preco.replace('.', ',');
-
-        info_txv_precoproduto.setText(Preco);
-        info_txt_quantidadecomprada.selectAll();
-
-        alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-
-                Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
-
-                if (TAMANHO_TEXTO > 0) {
-                    SqliteProdutoBean prdBean = new SqliteProdutoBean();
-                    Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
-                    String COD_PRODUTO = info_txv_codproduto.getText().toString();
-                    String DESCRICAO = info_txv_descricaoproduto.getText().toString();
-                    String UNIDADE = info_txv_unmedida.getText().toString();
-
-                    if (QUANTIDADE_DIGITADA > 0) {
-                        if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                            Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                            return;
-                        }
-
-                        SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
-                        SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
-                        SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
-                        SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getApplicationContext());
-
-                        itemBean2.setVendad_prd_codigoTEMP(COD_PRODUTO);
-                        itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
-
-                        if (itemBean3 == null) {
-                            itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
-                            itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
-                            itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
-                            itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
-
-                            //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                            String ValorItem = info_txv_precoproduto.getText().toString();
-                            if (!ValorItem.equals("0,0000")) {
-                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                itemBean1.setVendad_preco_vendaTEMP(venda);
-
-                                //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
-                                itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
-                                itemDao.insere_item(itemBean1);
-                                atualiza_listview_com_os_itens_da_venda();
-                                finish();
-                            } else {
-                                Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                    SharedPreferences prefsHost = Lista_produtos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
+                    sprecoprincipal = prefsHost.getInt("spreco", 0);
+                    tabanterior = sprecoprincipal;
+                    if (sprecoprincipal == 0) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
                             }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
                         } else {
-                            Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
                         }
 
-                        //}
+                    }
+                    if (sprecoprincipal == 1) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 2) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 3) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 4) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 5) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 6) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 7) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+            try {
+                List<String> DadosListTabPreco = new ArrayList<String>();
+
+                Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                CursorParametro.moveToFirst();
+                tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+
+                CursorParametro.close();
+
+                String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
+                vlvendapadrao = vlvendapadrao.trim();
+                if (!vlvendapadrao.equals("0,0000")) {
+                    BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
+                    String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Precopadrao = Precopadrao.replace('.', ',');
+                    DadosListTabPreco.add("Preço base R$: " + Precopadrao);
+                }
+
+                String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
+                vlvenda1 = vlvenda1.trim();
+                if (!vlvenda1.equals("0,0000")) {
+                    BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
+                    String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco1 = Preco1.replace('.', ',');
+                    DadosListTabPreco.add(tab1 + " R$: " + Preco1);
+                }
+
+                String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
+                vlvenda2 = vlvenda2.trim();
+                if (!vlvenda2.equals("0,0000")) {
+                    BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
+                    String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco2 = Preco2.replace('.', ',');
+                    DadosListTabPreco.add(tab2 + " R$: " + Preco2);
+                }
+
+                String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
+                vlvenda3 = vlvenda3.trim();
+                if (!vlvenda3.equals("0,0000")) {
+                    BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
+                    String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco3 = Preco3.replace('.', ',');
+                    DadosListTabPreco.add(tab3 + " R$: " + Preco3);
+                }
+
+                String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
+                vlvenda4 = vlvenda4.trim();
+                if (!vlvenda4.equals("0,0000")) {
+                    BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
+                    String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco4 = Preco4.replace('.', ',');
+                    DadosListTabPreco.add(tab4 + " R$: " + Preco4);
+                }
+
+                String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
+                vlvenda5 = vlvenda5.trim();
+                if (!vlvenda5.equals("0,0000")) {
+                    BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
+                    String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco5 = Preco5.replace('.', ',');
+                    DadosListTabPreco.add(tab5 + " R$: " + Preco5);
+                }
+
+                String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
+                vlvendap1 = vlvendap1.trim();
+                if (!vlvendap1.equals("0,0000")) {
+                    BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
+                    String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Precop1 = Precop1.replace('.', ',');
+                    DadosListTabPreco.add(tab6 + " R$: " + Precop1);
+                }
+
+                String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
+                vlvendap2 = vlvendap2.trim();
+                if (!vlvendap2.equals("0,0000")) {
+                    BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
+                    String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Precop2 = Precop2.replace('.', ',');
+                    DadosListTabPreco.add(tab7 + " R$: " + Precop2);
+                }
+
+                ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(Lista_produtos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
+                arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spntabpreco.setAdapter(arrayAdapterTabPreco);
+
+            } catch (Exception E) {
+                E.toString();
+
+            }
+
+            SqliteProdutoBean prdBean = new SqliteProdutoBean();
+            info_txv_codproduto.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRODUTO_SIMPLECURSOR)));
+            info_txv_descricaoproduto.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_DESCRICAO_PRODUTO)));
+            info_txv_unmedida.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_UNIDADE_MEDIDA)));
+
+
+            String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PROD_PADRAO));
+            BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+            String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+            Preco = Preco.replace('.', ',');
+
+            info_txv_precoproduto.setText(Preco);
+            info_txt_quantidadecomprada.selectAll();
+
+            alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
+
+                    if (TAMANHO_TEXTO > 0) {
+                        SqliteProdutoBean prdBean = new SqliteProdutoBean();
+                        Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
+                        String COD_PRODUTO = info_txv_codproduto.getText().toString();
+                        String DESCRICAO = info_txv_descricaoproduto.getText().toString();
+                        String UNIDADE = info_txv_unmedida.getText().toString();
+
+                        if (QUANTIDADE_DIGITADA > 0) {
+                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
+                                Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                return;
+                            }
+
+                            SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
+                            SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
+                            SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
+                            SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getApplicationContext());
+
+                            itemBean2.setVendad_prd_codigoTEMP(COD_PRODUTO);
+                            itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
+
+                            if (itemBean3 == null) {
+                                itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
+                                itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
+                                itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
+                                itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
+
+                                //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
+                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                if (!ValorItem.equals("0,0000")) {
+                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                    venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                    itemBean1.setVendad_preco_vendaTEMP(venda);
+
+                                    //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                    itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
+                                    itemDao.insere_item(itemBean1);
+                                    atualiza_listview_com_os_itens_da_venda();
+                                    finish();
+                                } else {
+                                    Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                }
+                            } else {
+                                Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                            }
+
+                            //}
+                        } else {
+                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                        }
+
                     } else {
                         Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
                     }
 
-                } else {
-                    Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                }
+            });
+            alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+
+            {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            alerta.show();
+        } else {
+
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.info_produto_venda, null);
+            alerta = new Builder(this);
+            alerta.setCancelable(false);
+            alerta.setView(view);
+
+            DB = new ConfigDB(this).getReadableDatabase();
+
+            Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
+            Bloqueios.moveToFirst();
+            final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
+            Bloqueios.close();
+            CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
+            Boolean ConexOk = Util.checarConexaoCelular(this);
+            if (vendenegativo.equals("N") && ConexOk == true) {
+
+                atualizaEstoqueItem(CodigoItem);
+
+                Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+                CursItens.moveToFirst();
+                qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                CursItens.close();
+
+                if (qtdestoque <= 0) {
+                    Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
+                    return;
                 }
             }
-        });
-        alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+
+            final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
+            final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
+            final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
+            final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+            final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
+        /*final Spinner*/
+            spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
+            DB = new ConfigDB(this).getReadableDatabase();
+
+            spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                    SharedPreferences prefsHost = Lista_produtos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
+                    sprecoprincipal = prefsHost.getInt("spreco", 0);
+                    tabanterior = sprecoprincipal;
+                    if (sprecoprincipal == 0) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+
+                    }
+                    if (sprecoprincipal == 1) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 2) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 3) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 4) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 5) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 6) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+                    if (sprecoprincipal == 7) {
+                        int novosprecoprincipal = spntabpreco.getSelectedItemPosition();
+                        if (novosprecoprincipal == 0) {
+                            //sprecoprincipal = novosprecoprincipal;
+                            //GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        } else {
+                            sprecoprincipal = novosprecoprincipal;
+                            GravaPreferencias(sprecoprincipal);
+                            spntabpreco.setSelection(sprecoprincipal);
+                            spreco = spntabpreco.getSelectedItem().toString();
+                            if (tab1 != null) {
+                                spreco = spreco.replace(tab1, "");
+                            }
+                            if (tab2 != null) {
+                                spreco = spreco.replace(tab2, "");
+                            }
+                            if (tab3 != null) {
+                                spreco = spreco.replace(tab3, "");
+                            }
+                            if (tab4 != null) {
+                                spreco = spreco.replace(tab4, "");
+                            }
+                            if (tab5 != null) {
+                                spreco = spreco.replace(tab5, "");
+                            }
+                            if (tab6 != null) {
+                                spreco = spreco.replace(tab6, "");
+                            }
+                            if (tab7 != null) {
+                                spreco = spreco.replace(tab7, "");
+                            }
+                            spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                            info_txv_precoproduto.setText(spreco);
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+            try {
+                List<String> DadosListTabPreco = new ArrayList<String>();
+
+                Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                CursorParametro.moveToFirst();
+                tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+
+                CursorParametro.close();
+
+                String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
+                vlvendapadrao = vlvendapadrao.trim();
+                if (!vlvendapadrao.equals("0,0000")) {
+                    BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
+                    String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Precopadrao = Precopadrao.replace('.', ',');
+                    DadosListTabPreco.add("Preço base R$: " + Precopadrao);
+                }
+
+                String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
+                vlvenda1 = vlvenda1.trim();
+                if (!vlvenda1.equals("0,0000")) {
+                    BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
+                    String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco1 = Preco1.replace('.', ',');
+                    DadosListTabPreco.add(tab1 + " R$: " + Preco1);
+                }
+
+                String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
+                vlvenda2 = vlvenda2.trim();
+                if (!vlvenda2.equals("0,0000")) {
+                    BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
+                    String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco2 = Preco2.replace('.', ',');
+                    DadosListTabPreco.add(tab2 + " R$: " + Preco2);
+                }
+
+                String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
+                vlvenda3 = vlvenda3.trim();
+                if (!vlvenda3.equals("0,0000")) {
+                    BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
+                    String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco3 = Preco3.replace('.', ',');
+                    DadosListTabPreco.add(tab3 + " R$: " + Preco3);
+                }
+
+                String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
+                vlvenda4 = vlvenda4.trim();
+                if (!vlvenda4.equals("0,0000")) {
+                    BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
+                    String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco4 = Preco4.replace('.', ',');
+                    DadosListTabPreco.add(tab4 + " R$: " + Preco4);
+                }
+
+                String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
+                vlvenda5 = vlvenda5.trim();
+                if (!vlvenda5.equals("0,0000")) {
+                    BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
+                    String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Preco5 = Preco5.replace('.', ',');
+                    DadosListTabPreco.add(tab5 + " R$: " + Preco5);
+                }
+
+                String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
+                vlvendap1 = vlvendap1.trim();
+                if (!vlvendap1.equals("0,0000")) {
+                    BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
+                    String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Precop1 = Precop1.replace('.', ',');
+                    DadosListTabPreco.add(tab6 + " R$: " + Precop1);
+                }
+
+                String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
+                vlvendap2 = vlvendap2.trim();
+                if (!vlvendap2.equals("0,0000")) {
+                    BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
+                    String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                    Precop2 = Precop2.replace('.', ',');
+                    DadosListTabPreco.add(tab7 + " R$: " + Precop2);
+                }
+
+                ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(Lista_produtos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
+                arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spntabpreco.setAdapter(arrayAdapterTabPreco);
+
+            } catch (Exception E) {
+                E.toString();
 
             }
-        });
-        alerta.show();
+
+            SqliteProdutoBean prdBean = new SqliteProdutoBean();
+            info_txv_codproduto.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRODUTO_SIMPLECURSOR)));
+            info_txv_descricaoproduto.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_DESCRICAO_PRODUTO)));
+            info_txv_unmedida.setText(produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_UNIDADE_MEDIDA)));
+
+
+            String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PROD_PADRAO));
+            BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+            String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+            Preco = Preco.replace('.', ',');
+
+            info_txv_precoproduto.setText(Preco);
+            info_txt_quantidadecomprada.selectAll();
+
+            alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
+
+                    if (TAMANHO_TEXTO > 0) {
+                        SqliteProdutoBean prdBean = new SqliteProdutoBean();
+                        Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
+                        String COD_PRODUTO = info_txv_codproduto.getText().toString();
+                        String DESCRICAO = info_txv_descricaoproduto.getText().toString();
+                        String UNIDADE = info_txv_unmedida.getText().toString();
+
+                        if (QUANTIDADE_DIGITADA > 0) {
+                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
+                                Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                            }
+
+                            SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
+                            SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
+                            SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
+                            Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getApplicationContext(), sCodvend, true);
+
+                            itemBean2.setVendad_prd_codigo(COD_PRODUTO);
+                            //itemBean3 = itemDao.altera_item_na_venda(itemBean2);
+
+                            //if (itemBean3 != null) {
+                            itemBean1.setVendad_prd_codigo(COD_PRODUTO);
+                            itemBean1.setVendad_prd_descricao(DESCRICAO);
+                            itemBean1.setVendad_prd_unidade(UNIDADE);
+                            itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
+                            itemBean1.setVendac_chave(chavepedido);
+
+                            //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
+                            String ValorItem = info_txv_precoproduto.getText().toString();
+                            ValorItem = ValorItem.trim();
+                            if (!ValorItem.equals("0,0000")) {
+                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                itemBean1.setVendad_preco_venda(venda);
+
+                                //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                itemBean1.setVendad_total(itemBean1.getSubTotal());
+                                itemDao.insere_item_na_venda(itemBean1);
+                                //atualiza_listview_com_os_itens_pedido();
+                                finish();
+                            } else {
+                                Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                            }
+                                                /*} else {
+                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                                                }*/
+
+                            //}
+                        } else {
+                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                        }
+
+                    } else {
+                        Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                    }
+                }
+            });
+            alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+
+            {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            alerta.show();
+
+        }
     }
 
     public void GravaPreferencias(int preco) {
@@ -1007,11 +1739,33 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
     }
 
+    // utilizado na inclusao de um novo pedido
     public void atualiza_listview_com_os_itens_da_venda() {
+
         prod_listview_itenstemp = (ListView) findViewById(R.id.prod_listview_produtotemp);
         List<SqliteVendaD_TempBean> itens_da_venda_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
         prod_listview_itenstemp.setAdapter(new ListaItensTemporariosAdapter(getApplicationContext(), itens_da_venda_temp));
+
+
         prod_listview_itenstemp.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> listview, View view, int posicao, long l) {
+                confirmar_exclusao_do_produto(listview, posicao);
+                return false;
+            }
+        });
+    }
+
+    // utilizado na alteração de um pedido
+    public void atualiza_listview_com_os_itens_pedido() {
+
+        ListView_ItensVendidos = (ListView) findViewById(R.id.ListView_ItensVendidos);
+        //prod_listview_itenstemp = (ListView) findViewById(R.id.prod_listview_produtotemp);
+        List<SqliteVendaDBean> itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodvend, true).buscar_itens_vendas_por_numeropedido(chavepedido);
+        ListView_ItensVendidos.setAdapter(new ListaItensVendaAdapter(getApplicationContext(), itens_venda));
+
+
+        ListView_ItensVendidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> listview, View view, int posicao, long l) {
                 confirmar_exclusao_do_produto(listview, posicao);
