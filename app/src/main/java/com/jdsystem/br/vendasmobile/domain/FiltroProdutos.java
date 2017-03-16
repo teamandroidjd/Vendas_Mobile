@@ -1,14 +1,12 @@
 package com.jdsystem.br.vendasmobile.domain;
 
-import android.widget.Button;
-
 import java.math.BigDecimal;
 
 /**
- * Created by eduardo.costa on 25/11/2016.
+ * Created by wks on 13/03/2017.
  */
 
-public class Produtos extends ItensPedido {
+public class FiltroProdutos {
 
     private String Descricao;
     private String CodigoManual;
@@ -33,7 +31,35 @@ public class Produtos extends ItensPedido {
     private String Tabpromo2;
     private String TipoEstoque;
 
-    public Produtos() {
+
+    public FiltroProdutos() {
+    }
+
+    public FiltroProdutos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1,  BigDecimal Preco2,BigDecimal Preco3,BigDecimal Preco4,BigDecimal Preco5,BigDecimal PrecoP1,BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, BigDecimal PrecoPadrao) {
+        this.Descricao = Descricao;
+        this.CodigoManual = CodigoManual;
+        this.Status = Status;
+        this.UnidVenda = UnidVenda;
+        this.Apresentacao = Apresentacao;
+        this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.Quantidade = Quantidade;
+        this.Tabela1 = Tabela1;
+        this.Tabela2 = Tabela2;
+        this.Tabela3 = Tabela3;
+        this.Tabela4 = Tabela4;
+        this.Tabela5 = Tabela5;
+        this.Tabpromo1 = Tabpromo1;
+        this.Tabpromo2 = Tabpromo2;
+        this.TipoEstoque = TipoEstoque;
+        this.PrecoPadrao = PrecoPadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+
+
     }
 
     public String getCodigoManual() {
@@ -211,33 +237,4 @@ public class Produtos extends ItensPedido {
         PrecoPadrao = precoPadrao;
     }
 
-
-
-
-    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1,  BigDecimal Preco2,BigDecimal Preco3,BigDecimal Preco4,BigDecimal Preco5,BigDecimal PrecoP1,BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, BigDecimal PrecoPadrao) {
-        this.Descricao = Descricao;
-        this.CodigoManual = CodigoManual;
-        this.Status = Status;
-        this.UnidVenda = UnidVenda;
-        this.Apresentacao = Apresentacao;
-        this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Quantidade = Quantidade;
-        this.Tabela1 = Tabela1;
-        this.Tabela2 = Tabela2;
-        this.Tabela3 = Tabela3;
-        this.Tabela4 = Tabela4;
-        this.Tabela5 = Tabela5;
-        this.Tabpromo1 = Tabpromo1;
-        this.Tabpromo2 = Tabpromo2;
-        this.TipoEstoque = TipoEstoque;
-        this.PrecoPadrao = PrecoPadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-
-    }
-
-    }
+}

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.design.widget.NavigationView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class act_ListContatos extends AppCompatActivity implements Runnable {
+public class act_ListContatos extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Runnable {
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     String sCodVend, URLPrincipal, usuario, senha, UsuarioLogado;
     SQLiteDatabase DB;
@@ -45,14 +46,19 @@ public class act_ListContatos extends AppCompatActivity implements Runnable {
     ProgressDialog pDialog;
     private EditText pesquisacliente;
     Handler handler = new Handler();
+    Toolbar toolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act__contatos);
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        } catch (Exception e){
+
+        }
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -98,7 +104,7 @@ public class act_ListContatos extends AppCompatActivity implements Runnable {
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                         ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
                         ft.commit();
-                    }else {
+                    } else {
                         frag = new FragmentFiltroContatos();
                         Bundle bundle = new Bundle();
                         bundle.putCharSequence("pesquisa", s);
@@ -115,25 +121,25 @@ public class act_ListContatos extends AppCompatActivity implements Runnable {
                 }
             });
 
-            /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
 
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(this);
+            navigationView.setNavigationItemSelectedListener(act_ListContatos.this);
 
             View header = navigationView.getHeaderView(0);
             TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
             SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
             UsuarioLogado = prefs.getString("usuario", null);
-            if(UsuarioLogado != null) {
+            if (UsuarioLogado != null) {
                 UsuarioLogado = prefs.getString("usuario", null);
                 usuariologado.setText("Olá " + UsuarioLogado + "!");
-            }else {
+            } else {
                 usuariologado.setText("Olá " + usuario + "!");
-            }*/
+            }
         }
         pDialog = new ProgressDialog(act_ListContatos.this);
         pDialog.setTitle("Aguarde");
@@ -148,15 +154,12 @@ public class act_ListContatos extends AppCompatActivity implements Runnable {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, actListPedidos.class);
-        Bundle params = new Bundle();
-        params.putString("codvendedor", sCodVend);
-        params.putString("usuario", usuario);
-        params.putString("senha", senha);
-        params.putString("urlPrincipal", URLPrincipal);
-        intent.putExtras(params);
-        startActivity(intent);
-        finish();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -181,8 +184,8 @@ public class act_ListContatos extends AppCompatActivity implements Runnable {
         return super.onOptionsItemSelected(item);
     }
 
-    /*@SuppressWarnings("StatementWithEmptyBody")
-    @Override
+    @SuppressWarnings("StatementWithEmptyBody")
+
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -231,7 +234,7 @@ public class act_ListContatos extends AppCompatActivity implements Runnable {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }*/
+    }
 
     public List<Contatos> carregarcontatos() {
 

@@ -2,34 +2,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="0dp"
-    android:layout_marginLeft="0dp"
-    android:layout_marginRight="0dp"
-    android:layout_marginTop="0dp"
-
+    android:layout_marginBottom="5dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="5dp"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="6dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="3dp"
         app:cardMaxElevation="3dp"
         app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="false">
+        app:cardUseCompatPadding="false"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
             android:background="@color/colorCardClie"
             android:orientation="vertical"
             android:padding="3dp">
@@ -172,168 +169,309 @@
                 </RelativeLayout>
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="210dp"
+                    android:background="@color/colorCardClie"
+                    android:orientation="vertical"
+                    >
+
+                <RelativeLayout
+                    android:id="@+id/lay"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/lbl7"
+                        android:id="@+id/tabpadrao"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tabela base:          R$ "
+                        android:text="Tabela padrão"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_precopadrao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecopadrao"
+                        android:text="R$ "
+                        android:textSize="13sp"
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecopadrao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100000,0000"
+                        android:layout_marginRight="20sp"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="13sp"
+                        android:textStyle="normal|bold"
+                        />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tab1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tabela 1"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="13sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtpreco"
+                        android:text="R$ "
+                        android:textSize="13sp"
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtpreco"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:gravity="right"
+                        android:layout_alignParentRight="true"
+                        android:text="100000,0000"
+                        android:layout_marginRight="20sp"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
 
-                </LinearLayout>
-                <LinearLayout
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/lbl8"
+                        android:id="@+id/tab2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar A:               R$ "
+                        android:text="Tabela 2"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecoauxiliara"
+                        android:text="R$ "
+                        android:textSize="13sp"
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecoauxiliara"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:layout_marginRight="20sp"
+                        android:layout_alignParentRight="true"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
-                </LinearLayout>
-                <LinearLayout
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/lbl9"
+                        android:id="@+id/tab3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar B:               R$ "
+                        android:text="Tabela 3"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecoauxiliarb"
+                        android:text="R$ "
+                        android:textSize="13sp"
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecoauxiliarb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:layout_marginRight="20sp"
+                        android:layout_alignParentRight="true"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
-                </LinearLayout>
-                <LinearLayout
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/lbl10"
+                        android:id="@+id/tab4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar C:               R$ "
+                        android:text="Tabela 4"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="R$ "
+                        android:textSize="13sp"
+                        android:layout_toLeftOf="@+id/txtprecoauxiliarc"
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecoauxiliarc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:layout_marginRight="20sp"
+                        android:layout_alignParentRight="true"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
-                </LinearLayout>
-                <LinearLayout
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/lbl11"
+                        android:id="@+id/tab5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Auxiliar D:               R$ "
+                        android:text="Tabela 5"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecoauxiliard"
+                        android:text="R$ "
+                        android:textSize="13sp"
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecoauxiliard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:layout_marginRight="20sp"
+                        android:layout_alignParentRight="true"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
 
-                </LinearLayout>
-                <LinearLayout
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/lbl12"
+                        android:id="@+id/tabp1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Promocional A:      R$ "
+                        android:text="Tabela Promo 1"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecopromocaoa"
+                        android:text="R$ "
+                        android:textSize="13sp"
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecopromocaoa"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:layout_marginRight="20sp"
+                        android:layout_alignParentRight="true"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
 
-                </LinearLayout>
-                <LinearLayout
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/lbl13"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tabp2"
+                        android:layout_width="220dp"
                         android:layout_height="wrap_content"
-                        android:text="Promocional B:      R$ "
+                        android:text="Tabela Promo 2"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecopromocaob"
+                        android:text="R$ "
+                        android:textSize="13sp"
+                        android:textColor="@color/colordescClie"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtprecopromocaob"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Preço de venda"
+                        android:text="100000,0000"
+                        android:layout_marginRight="20sp"
+                        android:layout_alignParentRight="true"
                         android:textColor="@color/colordescClie"
                         android:textSize="13sp"
                         android:textStyle="normal|bold" />
 
+                </RelativeLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:id="@+id/layquantidade">
 
                     <TextView
                         android:id="@+id/txt_estoque"

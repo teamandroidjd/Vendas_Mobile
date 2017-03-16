@@ -5,21 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context=".actDadosProdutos">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
 
         <LinearLayout
             android:id="@+id/linearLayoutprod"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
@@ -32,9 +34,9 @@
                     android:id="@+id/codprod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Código:"
+                    android:text="Código: "
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="40sp"
                     android:textStyle="normal|bold" />
 
                 <TextView
@@ -43,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:text="CÓDIGO"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="40sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -59,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:text="Descrição:"
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="40sp"
                     android:textStyle="normal|bold" />
 
                 <TextView
@@ -68,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:text="DESCRIÇÃO"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="40sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -83,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:text="Status"
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="35sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -98,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:text="Unidade"
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="35sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -112,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:text="Apresentação"
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="35sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -126,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:text="Fabricante"
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="35sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -140,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:text="Fornecedor"
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="35sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -154,7 +156,7 @@
                     android:layout_height="wrap_content"
                     android:text="Classe"
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="35sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -168,78 +170,339 @@
                     android:layout_height="wrap_content"
                     android:text="Marca"
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="35sp"
                     android:textStyle="normal|bold" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="50sp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/txtpreco"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Preço de venda"
+                    android:id="@+id/lnrtababpadrao"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txttabpadrao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço padrão"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_precopadrao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecopadrao"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecopadrao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="100000,0000"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lnrtabab1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txttab1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço de venda 1"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtpreco"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtpreco"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100000,0000"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lnrtabab2"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txttab2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço de venda 2"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecoauxiliara"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecoauxiliara"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100000,0000"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lnrtabab3"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txttab3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço de venda 3"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecoauxiliarb"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecoauxiliarb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="100000,0000"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lnrtabab4"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txttab4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço de venda 4"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecoauxiliarc"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecoauxiliarc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100000,0000"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lnrtabab5"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txttab5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço de venda 5"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecoauxiliard"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecoauxiliard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100000,0000"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lnrtabab6"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txttab6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço de venda P1"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecopromocaob"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecopromocaob"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="100000,0000"
+                        android:layout_alignParentRight="true"
+                        android:gravity="right"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/lnrtabab7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txttab7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preço de venda P2"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/prod_txv_simbol_preco7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/txtprecopromocaoa"
+                        android:text="R$ "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtprecopromocaoa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:text="100000,0000"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="35sp"
+                        android:textStyle="normal|bold" />
+
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/lnrtaEstoque"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txt_estoque"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Estoque: "
                     android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:textSize="40sp"
                     android:textStyle="normal|bold" />
 
                 <TextView
-                    android:id="@+id/txtprecoauxiliara"
+                    android:id="@+id/txt_qtdestoque"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Preço de venda"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
+                    android:text="1000000"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="40sp"
                     android:textStyle="normal|bold" />
 
-                <TextView
-                    android:id="@+id/txtprecoauxiliarb"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Preço de venda"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
-                    android:textStyle="normal|bold" />
-
-                <TextView
-                    android:id="@+id/txtprecoauxiliarc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Preço de venda"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
-                    android:textStyle="normal|bold" />
-
-                <TextView
-                    android:id="@+id/txtprecoauxiliard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Preço de venda"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
-                    android:textStyle="normal|bold" />
-
-                <TextView
-                    android:id="@+id/txtprecopromocaob"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Preço de venda"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
-                    android:textStyle="normal|bold" />
-
-                <TextView
-                    android:id="@+id/txtprecopromocaoa"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Preço de venda"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw720_40"
-                    android:textStyle="normal|bold" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -33,7 +33,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/adm_txt_pesquisacliente"
+            android:id="@+id/pesqcontato"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Pesquisa"
@@ -41,20 +41,11 @@
             android:singleLine="true" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/rl_fragment_container2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-        <ListView
-            android:id="@+id/adm_listview_cliente"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:cacheColorHint="@color/colorAccent"
-            android:fastScrollAlwaysVisible="true"
-            android:fastScrollEnabled="true">
-
-        </ListView>
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

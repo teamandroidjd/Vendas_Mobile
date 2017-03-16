@@ -22,6 +22,4 @@
         app:headerLayout="@layout/nav_header_act__list_produtos"
         app:menu="@menu/act_list_produtos_drawer" />
 
-
-
 </android.support.v4.widget.DrawerLayout>

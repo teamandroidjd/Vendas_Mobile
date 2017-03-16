@@ -7,39 +7,40 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.jdsystem.br.vendasmobile.act_ListProdutos;
+import com.jdsystem.br.vendasmobile.domain.FiltroProdutos;
 
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.domain.ItensPedido;
 import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
 import java.util.List;
 
 /**
- * Created by eduardo.costa on 25/11/2016.
+ * Created by wks on 13/03/2017.
  */
 
-public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapter.MyViewHolder> {
+public class ListAdapterFiltroProdutos extends RecyclerView.Adapter<ListAdapterFiltroProdutos.MyViewHolder> {
 
-    private List<Produtos> mList;
+    private List<FiltroProdutos> mList;
     private LayoutInflater mLayoutInflater;
     private RecyclerViewOnClickListenerHack mRecyclerViewOnClickListenerHack;
 
-    public ListProdutosAdapter(Context context, List<Produtos> Lista) {
+    public ListAdapterFiltroProdutos(Context context, List<FiltroProdutos> Lista) {
         mList = Lista;
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public ListAdapterFiltroProdutos.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = mLayoutInflater.inflate(R.layout.lstprodutos_card, viewGroup, false);
-        MyViewHolder mvh = new MyViewHolder(v);
+        ListAdapterFiltroProdutos.MyViewHolder mvh = new ListAdapterFiltroProdutos.MyViewHolder(v);
         return mvh;
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder myViewHolder, int position) {
+    public void onBindViewHolder(ListAdapterFiltroProdutos.MyViewHolder myViewHolder, int position) {
 
         myViewHolder.lblCodItem.setText(mList.get(position).getCodigoManual());
         myViewHolder.lblNomeItem.setText(mList.get(position).getDescricao());
@@ -89,6 +90,7 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
         }
 
 
+
     }
 
 
@@ -103,7 +105,7 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
         mRecyclerViewOnClickListenerHack = r;
     }
 
-    public void addListItem(Produtos c, int position) {
+    public void addListItem(FiltroProdutos c, int position) {
         mList.add(c);
         notifyItemInserted(position);
     }
@@ -136,7 +138,6 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
         public TextView tabpadrao, tab1, tab2, tab3, tab4, tab5, tabp1, tabp2;
         public LinearLayout layquantidade;
 
-
         public MyViewHolder(View itemView) {
             super(itemView);
 
@@ -166,7 +167,6 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
             tabp2 = (TextView) itemView.findViewById(R.id.tabp2);
 
             layquantidade = (LinearLayout) itemView.findViewById(R.id.layquantidade);
-
 
 
             itemView.setOnClickListener(this);

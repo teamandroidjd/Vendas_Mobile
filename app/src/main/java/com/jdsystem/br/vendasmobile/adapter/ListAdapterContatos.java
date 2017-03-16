@@ -75,8 +75,9 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
         notifyItemRemoved(position);
     }
 
-    /*public String ChamaDados(int position) {
-        return mList.get(position).getCODCLIENTE();*/
+    public String ChamaDados(int position) {
+        return mList.get(position).getNomeCont();
+    }
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

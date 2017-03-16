@@ -9,27 +9,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jdsystem.br.vendasmobile.adapter.ListProdutosAdapter;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.actDadosProdutos;
 import com.jdsystem.br.vendasmobile.act_ListProdutos;
-import com.jdsystem.br.vendasmobile.domain.Produtos;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterFiltroProdutos;
+import com.jdsystem.br.vendasmobile.adapter.ListProdutosAdapter;
+import com.jdsystem.br.vendasmobile.domain.FiltroProdutos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
 import java.util.List;
 
+/**
+ * Created by Usuário on 03/03/2017.
+ */
 
-public class ProdutosFragment extends Fragment implements RecyclerViewOnClickListenerHack {
-
+public class FragmentFiltroProdutos extends Fragment implements RecyclerViewOnClickListenerHack {
     private RecyclerView mRecyclerView;
-    private List<Produtos> mList;
+    private List<FiltroProdutos> mList;
+    CharSequence pesqprodutos;
 
-    @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        try {
         View view = inflater.inflate(R.layout.fragment_produtos, container, false);
+
+        Bundle params = getArguments();
+        if (params != null) {
+            pesqprodutos = params.getCharSequence("pesquisa");
+        }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_Prod);
         mRecyclerView.setHasFixedSize(true);
@@ -38,20 +45,20 @@ public class ProdutosFragment extends Fragment implements RecyclerViewOnClickLis
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        mList = ((act_ListProdutos) getActivity()).carregarprodutos();
-        ListProdutosAdapter adapter = new ListProdutosAdapter(getActivity(), mList);
+
+        mList = ((act_ListProdutos) getActivity()).pesquisarprodutos(pesqprodutos);
+        ListAdapterFiltroProdutos adapter = new ListAdapterFiltroProdutos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);
+
+
         return view;
-        } catch (Exception E) {
-            System.out.println("Error" + E);
-        }
-        return null;
     }
+
 
     @Override
     public void onClickListener(View view, int position) {
-        ListProdutosAdapter adapter = (ListProdutosAdapter) mRecyclerView.getAdapter();
+        ListAdapterFiltroProdutos adapter = (ListAdapterFiltroProdutos) mRecyclerView.getAdapter();
 
         String CodProd = adapter.ChamaDados(position);
         Intent intentp = new Intent(getActivity(), actDadosProdutos.class);
@@ -59,11 +66,11 @@ public class ProdutosFragment extends Fragment implements RecyclerViewOnClickLis
         params.putString("codproduto", CodProd);
         intentp.putExtras(params);
         startActivity(intentp);
-
     }
 
     @Override
     public void onLongClickListener(View view, int position) {
 
     }
+
 }

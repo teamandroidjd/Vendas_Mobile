@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
@@ -40,25 +41,25 @@ public class actDadosProdutos extends AppCompatActivity {
         TextView TAG_DESCRICAO = (TextView) findViewById(R.id.txt_descricao);
         TextView TAG_UNIVENDA = (TextView) findViewById(R.id.txtunvenda);
         TextView TAG_TAB1 = (TextView) findViewById(R.id.txttab1); // DESCRIÇÃO DA TABELA DE PREÇO
-        LinearLayout TAG_LINEAR1 = (LinearLayout) findViewById(R.id.lnrtabab1); // DESCRIÇÃO DO SIMBOLO R$
+        RelativeLayout TAG_LINEAR1 = (RelativeLayout) findViewById(R.id.lnrtabab1); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA1 = (TextView) findViewById(R.id.txtpreco); // PREÇO DA TABELA
         TextView TAG_TAB2 = (TextView) findViewById(R.id.txttab2); // DESCRIÇÃO DA TABELA DE PREÇO
-        LinearLayout TAG_LINEAR2 = (LinearLayout) findViewById(R.id.lnrtabab2); // DESCRIÇÃO DO SIMBOLO R$
+        RelativeLayout TAG_LINEAR2 = (RelativeLayout) findViewById(R.id.lnrtabab2); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA2 = (TextView) findViewById(R.id.txtprecoauxiliara);
         TextView TAG_TAB3 = (TextView) findViewById(R.id.txttab3); // DESCRIÇÃO DA TABELA DE PREÇO
-        LinearLayout TAG_LINEAR3 = (LinearLayout) findViewById(R.id.lnrtabab3); // DESCRIÇÃO DO SIMBOLO R$
+        RelativeLayout TAG_LINEAR3 = (RelativeLayout) findViewById(R.id.lnrtabab3); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA3 = (TextView) findViewById(R.id.txtprecoauxiliarb);
         TextView TAG_TAB4 = (TextView) findViewById(R.id.txttab4); // DESCRIÇÃO DA TABELA DE PREÇO
-        LinearLayout TAG_LINEAR4 = (LinearLayout) findViewById(R.id.lnrtabab4); // DESCRIÇÃO DO SIMBOLO R$
+        RelativeLayout TAG_LINEAR4 = (RelativeLayout) findViewById(R.id.lnrtabab4); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA4 = (TextView) findViewById(R.id.txtprecoauxiliarc);
         TextView TAG_TAB5 = (TextView) findViewById(R.id.txttab5); // DESCRIÇÃO DA TABELA DE PREÇO
-        LinearLayout TAG_LINEAR5 = (LinearLayout) findViewById(R.id.lnrtabab5); // DESCRIÇÃO DO SIMBOLO R$
+        RelativeLayout TAG_LINEAR5 = (RelativeLayout) findViewById(R.id.lnrtabab5); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA5 = (TextView) findViewById(R.id.txtprecoauxiliard);
         TextView TAG_TAB6 = (TextView) findViewById(R.id.txttab6); // DESCRIÇÃO DA TABELA DE PREÇO
-        LinearLayout TAG_LINEAR6 = (LinearLayout) findViewById(R.id.lnrtabab6); // DESCRIÇÃO DO SIMBOLO R$
+        RelativeLayout TAG_LINEAR6 = (RelativeLayout) findViewById(R.id.lnrtabab6); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDAP1 = (TextView) findViewById(R.id.txtprecopromocaoa);
         TextView TAG_TAB7 = (TextView) findViewById(R.id.txttab7); // DESCRIÇÃO DA TABELA DE PREÇO
-        LinearLayout TAG_LINEAR7 = (LinearLayout) findViewById(R.id.lnrtabab7); // DESCRIÇÃO DO SIMBOLO R$
+        RelativeLayout TAG_LINEAR7 = (RelativeLayout) findViewById(R.id.lnrtabab7); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDAP2 = (TextView) findViewById(R.id.txtprecopromocaob);
         TextView TAG_MARCA = (TextView) findViewById(R.id.txtmarca);
         TextView TAG_CLASSE = (TextView) findViewById(R.id.txtclasse);
@@ -68,6 +69,8 @@ public class actDadosProdutos extends AppCompatActivity {
         TextView TAG_ATIVO = (TextView) findViewById(R.id.txtStatus);
         LinearLayout TAG_LINEARESTOQUE = (LinearLayout) findViewById(R.id.lnrtaEstoque);
         TextView TAG_QTDESTOQUE = (TextView) findViewById(R.id.txt_qtdestoque);
+        TextView TAG_VLVENDAPADRAO = (TextView) findViewById(R.id.txtprecopadrao);
+        TextView TAG_TABPADRAO = (TextView) findViewById(R.id.txttabpadrao);
 
 
         Intent intent = getIntent();
@@ -110,6 +113,16 @@ public class actDadosProdutos extends AppCompatActivity {
                             SituProd = "Inativo";
                         }
                         TAG_ATIVO.setText("Status: " + SituProd);
+
+                        String Precopadrao = CursorProd.getString(CursorProd.getColumnIndex("VENDAPADRAO"));
+                        Precopadrao = Precopadrao.trim();
+                        if (!Precopadrao.equals("0,0000")) {
+                            BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(Precopadrao.replace(',', '.')));
+                            TAG_VLVENDAPADRAO.setText(vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                            TAG_TABPADRAO.setText("Tabela Padrão");
+                        } else {
+                            TAG_LINEAR1.setVisibility(View.GONE);
+                        }
 
                         String Preco = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA1"));
                         Preco = Preco.trim();
@@ -207,7 +220,6 @@ public class actDadosProdutos extends AppCompatActivity {
             } catch (Exception E) {
                 E.toString();
             }
-
         }
     }
 

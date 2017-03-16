@@ -18,13 +18,7 @@
         android:id="@+id/LinearLayoutTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
-
-        <Spinner
-            android:id="@+id/prod_sp_produtos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"></Spinner>
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/prod_txt_pesquisaproduto"
@@ -36,26 +30,13 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/LinearLayoutMeio"
+    <RelativeLayout
+        android:id="@+id/rl_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:orientation="vertical">
-
-        <ListView
-            android:id="@+id/prod_listview_produtotemp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fastScrollEnabled="true"
-            android:fastScrollAlwaysVisible="true"
-            android:cacheColorHint="@color/colorAccent">
-        </ListView>
-    </LinearLayout>
-
-
-
-
+    </RelativeLayout>
 
 </LinearLayout>
