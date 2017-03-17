@@ -216,6 +216,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/laytab1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -253,6 +254,7 @@
 
                 </RelativeLayout>
                 <RelativeLayout
+                    android:id="@+id/laytab2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -288,6 +290,7 @@
                         android:textStyle="normal|bold" />
                 </RelativeLayout>
                 <RelativeLayout
+                    android:id="@+id/laytab3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -323,6 +326,7 @@
                         android:textStyle="normal|bold" />
                 </RelativeLayout>
                 <RelativeLayout
+                    android:id="@+id/laytab4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -358,6 +362,7 @@
                         android:textStyle="normal|bold" />
                 </RelativeLayout>
                 <RelativeLayout
+                    android:id="@+id/laytab5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -394,6 +399,7 @@
 
                 </RelativeLayout>
                 <RelativeLayout
+                    android:id="@+id/laytabp1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -430,6 +436,7 @@
 
                 </RelativeLayout>
                 <RelativeLayout
+                    android:id="@+id/laytabp2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">

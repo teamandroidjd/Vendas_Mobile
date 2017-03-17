@@ -421,14 +421,14 @@
                     android:id="@+id/prod_txv_simbol_preco6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/txtprecopromocaob"
+                    android:layout_toLeftOf="@+id/txtprecopromocaoa"
                     android:text="R$ "
                     android:textColor="@color/colordescClie"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txtprecopromocaob"
+                    android:id="@+id/txtprecopromocaoa"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="100000,0000"
@@ -459,14 +459,14 @@
                     android:id="@+id/prod_txv_simbol_preco7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/txtprecopromocaoa"
+                    android:layout_toLeftOf="@+id/txtprecopromocaob"
                     android:text="R$ "
                     android:textColor="@color/colordescClie"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txtprecopromocaoa"
+                    android:id="@+id/txtprecopromocaob"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
