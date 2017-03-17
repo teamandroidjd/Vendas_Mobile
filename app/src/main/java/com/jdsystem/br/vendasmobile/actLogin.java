@@ -43,15 +43,15 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class actLogin extends AppCompatActivity implements Runnable {
     public static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public static final String COD_EMPRESA = "CODIGO_EMPRESA";
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String METHOD_NAME = "Login";
     private static final int REQUEST_READ_PHONE_STATE = 0;
-
     private SQLiteDatabase DB;
-
     private GoogleApiClient client;
 
     public void onAttachedToWindow() {
@@ -60,10 +60,10 @@ public class actLogin extends AppCompatActivity implements Runnable {
         window.setFormat(PixelFormat.RGB_565);
     }
 
-    public boolean onCreateOptionMenu(Menu menu) {
+    /*public boolean onCreateOptionMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_act_principal, menu);
         return true;
-    }
+    }*/
 
     private EditText edtUsuario;
     private EditText edtSenha;
@@ -147,8 +147,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 Verificar a Internet, se nao tiver acesso
                 Deverá fazer o login pela base local
                  */
-                String user = edtUsuario.getText().toString();
-                String pass = edtSenha.getText().toString();
+                final String user = edtUsuario.getText().toString();
+                final String pass = edtSenha.getText().toString();
                 Boolean ConexOk = VerificaConexao();
                 if (ConexOk == false) {
                     Dialogo.dismiss();
@@ -166,6 +166,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                         Intent intent = new Intent(actLogin.this, actListPedidos.class);
                                         Bundle params = new Bundle();
                                         params.putString("codvendedor", sCodVend);
+                                        params.putString("usuario", user);
+                                        params.putString("senha", pass);
                                         //params.putString("urlPrincipal", URLPrincipal);
                                         intent.putExtras(params);
                                         startActivity(intent);
@@ -264,8 +266,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                  final String CodVendedor;
                                  String CodEmpresa = null;
                                  final String UFVendedor;
-                                 String usuario = edtUsuario.getText().toString();
-                                 String pass = edtSenha.getText().toString();
+                                 final String usuario = edtUsuario.getText().toString();
+                                 final String pass = edtSenha.getText().toString();
                                  try {
                                      Boolean ConexOk = Util.checarConexaoCelular(actLogin.this);
                                      if (ConexOk == true) {
@@ -275,9 +277,13 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                          String sUsuario = (String) envelope.getResponse();
                                          System.out.println("Response::" + resultsRequestSOAP.toString());
 
+                                         if (sUsuario.equals("0")) {
+                                             Dialogo.cancel();
+                                             Toast.makeText(actLogin.this, "Usuário/senha inválido ou não habilitado. Verifique!", Toast.LENGTH_SHORT).show();
+                                             return;
+                                         }
                                          JSONObject jsonObj = new JSONObject(sUsuario);
                                          JSONArray JUsuario = jsonObj.getJSONArray("usuario");
-
                                          JSONObject user = JUsuario.getJSONObject(0);
 
                                          CodVendedor = user.getString("codvend");
@@ -326,24 +332,31 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                      handler.post(new Runnable() {
                                                          @Override
                                                          public void run() {
-                                                             Dialogo.setMessage("Sincronizando Empresas");
-                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
-                                                             actSincronismo.SincParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             Dialogo.setMessage("Atualizando dados da empresa");
+                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
+                                                             Dialogo.setMessage("Atualizando parâmetros");
+                                                             actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
+                                                             Dialogo.setMessage("Atualizando outras informações");
+                                                             actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
+                                                             Dialogo.setMessage("Atualizando outras informações");
+                                                             actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              handler.post(new Runnable() {
                                                                  @Override
                                                                  public void run() {
                                                                      Dialogo.setMessage("Atualizando Cadastro de Clientes");
-                                                                     actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true);
+                                                                     actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true,edtUsuario.getText().toString(), edtSenha.getText().toString());
                                                                      handler.post(new Runnable() {
                                                                          @Override
                                                                          public void run() {
                                                                              Dialogo.setMessage("Enviando pedidos...");
-                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                                              handler.post(new Runnable() {
                                                                                  @Override
                                                                                  public void run() {
-                                                                                     Dialogo.setMessage("Atualizando cadastro de Cidades/Bairros...");
-                                                                                     actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this);
+                                                                                     if (!UFVendedor.equals("")) {
+                                                                                         Dialogo.setMessage("Atualizando cadastro de Cidades/Bairros...");
+                                                                                         actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this,true);
+                                                                                     }
                                                                                      Dialogo.dismiss();
                                                                                      handler.post(new Runnable() {
                                                                                          @Override
@@ -352,6 +365,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                                                              Bundle params = new Bundle();
                                                                                              params.putString("codvendedor", CodVendedor);
                                                                                              params.putString("urlPrincipal", URLPrincipal);
+                                                                                             params.putString("usuario", usuario);
+                                                                                             params.putString("senha", pass);
                                                                                              IntVend.putExtras(params);
                                                                                              startActivity(IntVend);
                                                                                          }
@@ -369,18 +384,23 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                          @Override
                                                          public void run() {
                                                              Dialogo.setMessage("Sincronizando Empresas");
-                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
-                                                             actSincronismo.SincParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                             actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
+                                                             Dialogo.setMessage("Atualizando parâmetros");
+                                                             actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
+                                                             Dialogo.setMessage("Atualizando outras informações");
+                                                             actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
+                                                             Dialogo.setMessage("Atualizando outras informações");
+                                                             actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                              handler.post(new Runnable() {
                                                                  @Override
                                                                  public void run() {
                                                                      Dialogo.setMessage("Atualizando Cadastro de Clientes");
-                                                                     actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true);
+                                                                     actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true,edtUsuario.getText().toString(), edtSenha.getText().toString());
                                                                      handler.post(new Runnable() {
                                                                          @Override
                                                                          public void run() {
                                                                              Dialogo.setMessage("Enviando pedidos...");
-                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                                                                             actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,true);
                                                                              Dialogo.dismiss();
                                                                              handler.post(new Runnable() {
                                                                                  @Override
@@ -389,6 +409,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                                                      Bundle params = new Bundle();
                                                                                      params.putString("codvendedor", CodVendedor);
                                                                                      params.putString("urlPrincipal", URLPrincipal);
+                                                                                     params.putString("usuario", usuario);
+                                                                                     params.putString("senha", pass);
                                                                                      IntVend.putExtras(params);
                                                                                      startActivity(IntVend);
                                                                                  }

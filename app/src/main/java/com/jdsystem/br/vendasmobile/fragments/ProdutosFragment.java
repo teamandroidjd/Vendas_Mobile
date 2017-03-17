@@ -28,6 +28,7 @@ public class ProdutosFragment extends Fragment implements RecyclerViewOnClickLis
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
+        try {
         View view = inflater.inflate(R.layout.fragment_produtos, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_Prod);
@@ -37,11 +38,15 @@ public class ProdutosFragment extends Fragment implements RecyclerViewOnClickLis
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        //mList = ((act_ListProdutos) getActivity()).CarregarProdutos();
+        mList = ((act_ListProdutos) getActivity()).carregarprodutos();
         ListProdutosAdapter adapter = new ListProdutosAdapter(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);
         return view;
+        } catch (Exception E) {
+            System.out.println("Error" + E);
+        }
+        return null;
     }
 
     @Override

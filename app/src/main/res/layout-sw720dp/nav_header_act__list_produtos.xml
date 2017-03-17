@@ -13,9 +13,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logoinvertida"
+        android:layout_width="510dp"
+        android:layout_height="200dp"
+        android:background="@drawable/ico_logo_fv"
         android:layout_gravity="left" />
 
     <TextView

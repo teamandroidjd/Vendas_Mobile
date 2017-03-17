@@ -3,6 +3,7 @@ package com.jdsystem.br.vendasmobile.Controller;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.GravityCompat;
@@ -23,6 +24,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
 import com.jdsystem.br.vendasmobile.R;
@@ -52,9 +54,10 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
     private Intent TELA_QUE_CHAMOU_INTENT;
     private String TELA_QUE_CHAMOU;
     private String CodVendedor;
-    private String usuario, senha, URLPrincipal;
+    private String usuario, senha, URLPrincipal, NumPedido;
     private String CodEmpresa;
     public ProgressDialog dialog;
+    public SQLiteDatabase DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,9 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
         TELA_QUE_CHAMOU = TELA_QUE_CHAMOU_INTENT.getStringExtra("TELA_QUE_CHAMOU");
         CodVendedor = TELA_QUE_CHAMOU_INTENT.getStringExtra("CodVendedor");
         CodEmpresa = TELA_QUE_CHAMOU_INTENT.getStringExtra("codempresa");
+        usuario = TELA_QUE_CHAMOU_INTENT.getStringExtra("usuario");
+        senha = TELA_QUE_CHAMOU_INTENT.getStringExtra("senha");
+        NumPedido = TELA_QUE_CHAMOU_INTENT.getStringExtra("numpedido");
 
         array_spinner.add(PESQUISAR_CLIENTE_NOME);
         array_spinner.add(PESQUISAR_CLIENTE_FANTASIA);
@@ -95,6 +101,8 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                 Intent intent = new Intent(Lista_clientes.this, act_CadClientes.class);
                 Bundle params = new Bundle();
                 params.putString("codvendedor", CodVendedor);
+                params.putString("usuario", usuario);
+                params.putString("senha", senha);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -133,6 +141,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -141,13 +150,15 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
 
     private void mostrar_clientes_listview() {
 
+        DB = new ConfigDB(this).getReadableDatabase();
+
         SqliteClienteBean cliBean = new SqliteClienteBean();
         SqliteClienteDao cliDao = new SqliteClienteDao(this);
 
         final Cursor cursor = cliDao.buscar_todos_cliente(CodVendedor);
 
-        String[] colunas = new String[]{cliBean.C_CODIGO_CLIENTE_CURSOR,cliBean.C_NOME_DO_CLIENTE,cliBean.C_NOME_FANTASIA,cliBean.C_CIDADE_CLIENTE,cliBean.C_BAIRRO_CLIENTE};
-        int[] para = new int[]{R.id.adm_txv_clicodigo,R.id.adm_txv_cli_nome,R.id.adm_txv_cli_fantasia,R.id.adm_txv_cli_cidade,R.id.adm_txv_cli_bairro};
+        String[] colunas = new String[]{cliBean.C_CODIGO_CLIENTE_CURSOR, cliBean.C_NOME_DO_CLIENTE, cliBean.C_NOME_FANTASIA, cliBean.C_CIDADE_CLIENTE, cliBean.C_BAIRRO_CLIENTE};
+        int[] para = new int[]{R.id.adm_txv_clicodigo, R.id.adm_txv_cli_nome, R.id.adm_txv_cli_fantasia, R.id.adm_txv_cli_cidade, R.id.adm_txv_cli_bairro};
 
         AdapterClientes = new SimpleCursorAdapter(this, R.layout.lista_cliente_item, cursor, colunas, para, 0);
         adm_listview_cliente = (ListView) findViewById(R.id.adm_listview_cliente);
@@ -160,15 +171,60 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
 
                 switch (TELA_QUE_CHAMOU) {
                     case TELA_DE_VENDAS:
-                        Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
-                        Bundle params = new Bundle();
-                        params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                        params.putString("CodVendedor", CodVendedor);
-                        params.putString("numpedido", "0");
-                        params.putString("codempresa", CodEmpresa);
-                        intent.putExtras(params);
-                        startActivity(intent);
-                        finish();
+                        Cursor cursorbloqclie = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
+                        cursorbloqclie.moveToFirst();
+                        String BloqClie = cursorbloqclie.getString(cursorbloqclie.getColumnIndex("HABCRITSITCLIE"));
+                        cursorbloqclie.close();
+
+                        String bloqueio = cliente_cursor.getString(cursor.getColumnIndex("BLOQUEIO"));
+                        Double limitecred = cliente_cursor.getDouble(cursor.getColumnIndex("LIMITECRED"));
+                        int CodCliente = cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT"));
+                        if (BloqClie.equals("S")) {
+                            /*Boolean ConexOk = Util.checarConexaoCelular(Lista_clientes.this);
+                            if (ConexOk == true) {
+                                actSincronismo.RetornaInfoCliexPedido(CodVendedor, Lista_clientes.this, usuario, senha, CodCliente);
+                            }*/
+                            if (bloqueio.equals("01")) {
+                                if (NumPedido == null) {
+                                    Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                    Bundle params = new Bundle();
+                                    params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                                    params.putString("CodVendedor", CodVendedor);
+                                    params.putString("numpedido", "0");
+                                    params.putString("codempresa", CodEmpresa);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                    Bundle params = new Bundle();
+                                    params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                                    params.putString("CodVendedor", CodVendedor);
+                                    params.putString("numpedido", NumPedido);
+                                    params.putString("codempresa", CodEmpresa);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            } else {
+                                Util.msg_toast_personal(getBaseContext(), "Cliente sem permissão de compra.Verifique!", Util.ALERTA);
+                                return;
+                            }
+
+                        }
+                        if (BloqClie.equals("N")) {
+                            Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                            Bundle params = new Bundle();
+                            params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                            params.putString("CodVendedor", CodVendedor);
+                            params.putString("numpedido", "0");
+                            params.putString("codempresa", CodEmpresa);
+                            intent.putExtras(params);
+                            startActivity(intent);
+                            finish();
+                        }
+
+
                         break;
                 }
             }
@@ -223,8 +279,8 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
     public void run() {
         try {
             actSincronismo.run(this);
-            actSincronismo.SincronizarClientesEnvioStatic("0", this, true);
-            actSincronismo.SincronizarClientesStatic(CodVendedor, this, true);
+            actSincronismo.SincronizarClientesEnvioStatic("0", this, true, usuario, senha);
+            actSincronismo.SincronizarClientesStatic(CodVendedor, this, true, usuario, senha);
 
             //Toast.makeText(this, "Clientes atualizados com sucesso!", Toast.LENGTH_SHORT).show();
             Intent intent = (Lista_clientes.this).getIntent();

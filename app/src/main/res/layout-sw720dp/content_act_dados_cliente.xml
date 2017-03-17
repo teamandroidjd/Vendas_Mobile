@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.jdsystem.br.vendasmobile.actDadosCliente"
-    tools:showIn="@layout/activity_act_dados_cliente">
+    tools:showIn=".activity_act_dados_cliente">
 
     <TextView
         android:layout_width="wrap_content"

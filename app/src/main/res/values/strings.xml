@@ -88,4 +88,5 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="login">Login</string>
     <string name="title_activity_act__list_produtos">act_ListProdutos</string>
+    <string name="title_activity_act__contatos">act_Contatos</string>
 </resources>

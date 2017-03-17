@@ -170,7 +170,7 @@
                             android:id="@+id/EdtCep"
                             android:layout_width="251dp"
                             android:layout_height="wrap_content"
-                            android:elevation="1dp"
+                            android:elevation="1sp"
                             android:hint="CEP"
                             android:inputType="number"
                             android:maxLines="1" />

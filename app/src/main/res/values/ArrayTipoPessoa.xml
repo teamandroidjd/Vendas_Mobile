@@ -54,4 +54,12 @@
     <string-array name="tabela_preco">
         <item>Tabela Base</item>
     </string-array>
+    <string-array name="Tipo_contato">
+        <item>Selecione o tipo de contato</item>
+        <item>Cliente</item>
+        <item>Outros</item>
+    </string-array>
+    <string-array name="Cargo_espec">
+        <item>Selecione o Cargo/Especialidade</item>
+    </string-array>
 </resources>

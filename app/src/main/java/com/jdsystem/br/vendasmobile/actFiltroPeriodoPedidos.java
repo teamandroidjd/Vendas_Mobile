@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,11 +26,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.jdsystem.br.vendasmobile.R.drawable.calendar;
+
 public class actFiltroPeriodoPedidos extends AppCompatActivity {
 
 
-    private DatePicker dpResult, dpResultFinal;
+    private DatePickerDialog datePickerDialog;
+    private EditText dpResultFinal, dpResult;
     private Button btnConfirmar;
+
+    Calendar calendar;
 
     private int AnoInicio, AnoFim;
     private int MesInicio, MesFim;
@@ -37,6 +43,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
     private Date DataIni, DataFim;
 
     public String DataInicial, DataFinal;
+    int year, dayOfMonth, month;
 
     static final int DATE_DIALOG_ID_Inicio = 999;
     static final int DATE_DIALOG_ID_Fim = 998;
@@ -47,9 +54,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_filtro_periodo_pedidos);
 
-        setCurrentDateOnViewInicio();
-        setCurrentDateOnViewFim();
-
+        calendar = Calendar.getInstance();
 
         btnConfirmar = (Button)findViewById(R.id.btnConfirmar);
         btnConfirmar.setOnClickListener(new View.OnClickListener() {
@@ -67,145 +72,92 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
             }
         });
 
-        dpResultFinal = (DatePicker) findViewById(R.id.dpResultFinal);
+        dpResultFinal = (EditText) findViewById(R.id.dpResultFinal);
         dpResultFinal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(DATE_DIALOG_ID_Fim);
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+                datePickerDialog = new DatePickerDialog(actFiltroPeriodoPedidos.this, datePickerListener, year, month, dayOfMonth);
+                datePickerDialog.getDatePicker().setTag(DATE_DIALOG_ID_Fim);
+                datePickerDialog.setTitle("Data final");
+                datePickerDialog.show();
             }
         });
 
 
-        dpResult = (DatePicker) findViewById(R.id.dpResult);
+        dpResult = (EditText) findViewById(R.id.dpResult);
         dpResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(DATE_DIALOG_ID_Inicio);
+                year = calendar.get(Calendar.YEAR);
+                month = calendar.get(Calendar.MONTH);
+                dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+                datePickerDialog = new DatePickerDialog(actFiltroPeriodoPedidos.this, datePickerListener, year, month, dayOfMonth);
+                datePickerDialog.getDatePicker().setTag(DATE_DIALOG_ID_Inicio);
+                datePickerDialog.setTitle("Data inicial");
+                datePickerDialog.show();
             }
         });
     }
 
-    private void setCurrentDateOnViewFim() {
-       // tvDisplayDateFinal = (TextView) findViewById(R.id.tvDateFinal);
-        dpResultFinal = (DatePicker) findViewById(R.id.dpResultFinal);
-
-        final Calendar c = Calendar.getInstance();
-        AnoFim = c.get(Calendar.YEAR);
-        MesFim = c.get(Calendar.MONTH);
-        DiaFim = c.get(Calendar.DAY_OF_MONTH);
-
-        dpResultFinal.init(AnoFim, MesFim, DiaFim, null);
-
-        if ((MesFim + 1) == 12){
-            MesFim = 1;
-        }else {
-            MesFim = MesFim + 1;
-        }
-
-        // set current date into datepicker
-        DataFinal = AnoFim + "-" + Util.AcrescentaZeros(String.valueOf((MesFim)),2) + "-" + (DiaFim +1);
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            DataFim = (Date)formatter.parse(DiaFim + "/" + MesFim + "/" + AnoFim);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
 
-    }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DATE_DIALOG_ID_Inicio:
-                // set date picker as current date
-                return new DatePickerDialog(this, datePickerLstInicio,
-                        AnoInicio, MesInicio, DiaInicio);
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
 
-            case DATE_DIALOG_ID_Fim:
-                // set date picker as current date
-                return new DatePickerDialog(this, datePickerLstFim,
-                        AnoFim, MesFim, DiaFim);
-        }
-        return null;
-    }
 
-    private DatePickerDialog.OnDateSetListener datePickerLstInicio
-            = new DatePickerDialog.OnDateSetListener() {
+        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
 
-        // when dialog box is closed, below method will be called.
-        public void onDateSet(DatePicker view, int selectedYear,
-                              int selectedMonth, int selectedDay) {
-            AnoInicio = selectedYear;
-            MesInicio = selectedMonth;
-            DiaInicio = selectedDay;
-            // set selected date into datepicker also
-            dpResult.init(AnoInicio, MesInicio, DiaInicio, null);
+            int tag = ((Integer) view.getTag());
 
-            DataInicial = AnoInicio + "-" + Util.AcrescentaZeros(String.valueOf(MesInicio+1),2) + "-" + (DiaInicio);
-            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            try {
-                DataIni = (Date)formatter.parse(DiaInicio + "/" + (MesInicio+1) + "/" + AnoInicio);
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if (tag == DATE_DIALOG_ID_Inicio) {
+                AnoInicio = selectedYear;
+                MesInicio = selectedMonth;
+                DiaInicio = selectedDay;
+
+                dpResult.setText(DiaInicio + "/" + (MesInicio+1) + "/" + AnoInicio);
+
+                DataInicial = AnoInicio + "-" + Util.AcrescentaZeros(String.valueOf(MesInicio + 1), 2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaInicio),2);;
+                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                try {
+                    DataIni = (Date) formatter.parse(DiaInicio + "/" + (MesInicio + 1) + "/" + AnoInicio);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            } else if(tag == DATE_DIALOG_ID_Fim)
+            {
+                AnoFim = selectedYear;
+                MesFim = selectedMonth;
+                DiaFim = selectedDay;
+
+                dpResultFinal.setText(DiaFim + "/" + (MesFim+1) + "/" + AnoFim);
+
+                if ((MesFim + 1) == 12){
+                    MesFim = 1;
+                }else {
+                    MesFim = MesFim + 1;
+                }
+
+                DataFinal = AnoFim + "-" + Util.AcrescentaZeros(String.valueOf((MesFim)),2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaFim),2);
+                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                try {
+                    DataFim = (Date)formatter.parse(DiaFim + "/" + MesFim + "/" + AnoFim);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
     };
 
-    private DatePickerDialog.OnDateSetListener datePickerLstFim
-            = new DatePickerDialog.OnDateSetListener() {
 
-        // when dialog box is closed, below method will be called.
-        public void onDateSet(DatePicker view, int selectedYear,
-                              int selectedMonth, int selectedDay) {
-            AnoFim = selectedYear;
-            MesFim = selectedMonth;
-            DiaFim = selectedDay;
 
-            // set selected date into datepicker also
-            dpResultFinal.init(AnoFim, MesFim, DiaFim, null);
 
-            if ((MesFim + 1) == 12){
-                MesFim = 1;
-            }else {
-                MesFim = MesFim + 1;
-            }
-
-            // set current date into datepicker
-            DataFinal = AnoFim + "-" + Util.AcrescentaZeros(String.valueOf((MesFim)),2) + "-" + (DiaFim +1);
-            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            try {
-                DataFim = (Date)formatter.parse(DiaFim + "/" + MesFim + "/" + AnoFim);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-        }
-    };
-
-    private void setCurrentDateOnViewInicio() {
-
-        //tvDisplayDate = (TextView) findViewById(R.id.tvDate);
-        dpResult = (DatePicker) findViewById(R.id.dpResult);
-
-        final Calendar ci = Calendar.getInstance();
-        AnoInicio = ci.get(Calendar.YEAR);
-        MesInicio = ci.get(Calendar.MONTH);
-        DiaInicio = ci.get(Calendar.DAY_OF_MONTH);
-
-        dpResult.init(AnoInicio, MesInicio, DiaInicio, null);
-
-        DataInicial = AnoInicio + "-" + Util.AcrescentaZeros(String.valueOf(MesInicio+1 ),2) + "-" + DiaInicio;
-
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            DataIni = (Date)formatter.parse(DiaInicio + "/" + (MesInicio +1) + "/" + AnoInicio);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
 }

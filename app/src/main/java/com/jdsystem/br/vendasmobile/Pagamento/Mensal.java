@@ -68,25 +68,7 @@ public class Mensal implements iPagamento {
                             "N"
                     ));
 
-            Log.i("script", "+++++++++++++++++++++++++++++");
-            Log.i("script", "+++++++++++++++++++++++++++++");
-            Log.i("script", "Numero da Parcela : " + parcela);
-            Log.i("script", "Codigo do cliente : " + vendaCBean.getVendac_cli_codigo());
-            Log.i("script", "Nome do cliente : " + vendaCBean.getVendac_cli_nome());
-            Log.i("script", "Chave da venda : " + vendaCBean.getVendac_chave());
-            Log.i("script", "Data do movimento : " + Util.DataHojeSemHorasUSA());
-            Log.i("script", "Valor a receber : " + VALOR_PARCELA_DIVIDIDA.setScale(2, BigDecimal.ROUND_UP));
-            Log.i("script", "Data de vencimento : " + dateFormat.format(data_de_vencimento));
-            Log.i("script", "Data do pagamento : " + dateFormat.format(data_padrao));
-            Log.i("script", "Valor Pago : " + BigDecimal.ZERO);
-            Log.i("script", "Como recebeu : " + "");
-            Log.i("script", "Enviado : " + "N");
-            Log.i("script", "+++++++ REGISTRO GRAVADO COM SUCESSO ++++++");
 
-        }
-
-        if(pagamento.isComEntrada()){
-            //BaixaParcelaEntrada.baixar_parcela(pagamento,vendaCBean,ctx);
         }
 
 

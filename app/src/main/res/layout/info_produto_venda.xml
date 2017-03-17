@@ -102,6 +102,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:layout_below="@+id/txv04"
+        android:textColor="@color/colordescClie"
         android:entries="@array/tabela_preco"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">

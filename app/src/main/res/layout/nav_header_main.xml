@@ -11,12 +11,11 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="210dp"
         android:layout_height="90dp"
-        android:src="@drawable/ico_logo_fv"
+        android:background="@drawable/ico_logo_fv"
         android:layout_gravity="left" />
 
     <TextView

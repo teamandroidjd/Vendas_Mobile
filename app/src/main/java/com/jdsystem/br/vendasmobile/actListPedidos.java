@@ -37,6 +37,7 @@ import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentPedido;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,7 +57,7 @@ public class actListPedidos extends AppCompatActivity
     String UsuarioLogado;
     LinearLayout lnenhum;
 
-    String sCodVend, URLPrincipal;
+    String sCodVend, URLPrincipal,usuario, senha;
     SQLiteDatabase DB;
     private Context ctx;
     private AlertDialog dlg;
@@ -91,6 +92,8 @@ public class actListPedidos extends AppCompatActivity
                 CodClie = params.getString("CodCliente");
                 DtInicio = params.getString("datainicial");
                 DtFinal = params.getString("datafinal");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
             }
             if (DtInicio == null) {
                 DtInicio = "0";
@@ -140,6 +143,8 @@ public class actListPedidos extends AppCompatActivity
                                                                        Bundle params = new Bundle();
                                                                        params.putString("codvendedor", sCodVend);
                                                                        params.putString("urlPrincipal", URLPrincipal);
+                                                                       params.putString("usuario", usuario);
+                                                                       params.putString("senha", senha);
                                                                        params.putInt("SitPedido", SitPed);
                                                                        params.putInt("codclie", 0);
                                                                        params.putString("datainicial", "0");
@@ -177,6 +182,8 @@ public class actListPedidos extends AppCompatActivity
                                                     Bundle params = new Bundle();
                                                     params.putString("codvendedor", sCodVend);
                                                     params.putString("urlPrincipal", URLPrincipal);
+                                                    params.putString("usuario", usuario);
+                                                    params.putString("senha", senha);
                                                     params.putBoolean("consultapedido", true);
                                                     intent.putExtras(params);
                                                     //finish();
@@ -187,15 +194,6 @@ public class actListPedidos extends AppCompatActivity
             );
         } catch (Exception e) {
             e.toString();
-        }
-
-
-        FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
-        if (frag == null) {
-            frag = new FragmentPedido();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
-            ft.commit();
         }
 
         DB = new ConfigDB(this).getReadableDatabase();
@@ -245,6 +243,8 @@ public class actListPedidos extends AppCompatActivity
                                                 params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                                                 params.putString("CodVendedor", sCodVend);
                                                 params.putString("codempresa", sCodEmpresa);
+                                                params.putString("usuario", usuario);
+                                                params.putString("senha", senha);
                                                 intent.putExtras(params);
                                                 startActivityForResult(intent, 1);
                                             } catch (Exception E) {
@@ -262,6 +262,8 @@ public class actListPedidos extends AppCompatActivity
                             params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                             params.putString("CodVendedor", sCodVend);
                             params.putString("codempresa", sCodEmpresa);
+                            params.putString("usuario", usuario);
+                            params.putString("senha", senha);
                             intent.putExtras(params);
                             startActivityForResult(intent, 1);
                         }
@@ -346,6 +348,8 @@ public class actListPedidos extends AppCompatActivity
                     Bundle params = new Bundle();
                     params.putString("codvendedor", sCodVend);
                     params.putString("urlPrincipal", URLPrincipal);
+                    params.putString("usuario", usuario);
+                    params.putString("senha", senha);
                     params.putString("datainicial", DtInicio);
                     params.putString("datafinal", DtFinal);
                     params.putInt("SitPedido", SitPed);
@@ -370,6 +374,8 @@ public class actListPedidos extends AppCompatActivity
                     Bundle params = new Bundle();
                     params.putString("codvendedor", sCodVend);
                     params.putString("urlPrincipal", URLPrincipal);
+                    params.putString("usuario", usuario);
+                    params.putString("senha", senha);
                     params.putString("datainicial", DtInicio);
                     params.putString("datafinal", DtFinal);
                     params.putInt("SitPedido", SitPed);
@@ -399,6 +405,8 @@ public class actListPedidos extends AppCompatActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             params.putBoolean("fazpedido", false);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
@@ -411,15 +419,29 @@ public class actListPedidos extends AppCompatActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
 
+
+        } else if(id == R.id.nav_contatos){
+            Intent i = new Intent(actListPedidos.this, act_ListContatos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            i.putExtras(params);
+            startActivity(i);
 
         } else if (id == R.id.nav_sincronismo) {
             Intent intent = new Intent(actListPedidos.this, actSincronismo.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
 
@@ -437,7 +459,19 @@ public class actListPedidos extends AppCompatActivity
             @Override
             public void run() {
                 try {
-                    CarregarPedidos();
+                    //CarregarPedidos();
+                    FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
+                    if (frag == null) {
+                        frag = new FragmentPedido();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("usuario", usuario);
+                        bundle.putString("senha", senha);
+                        bundle.putString("CodVendedor", sCodVend);
+                        frag.setArguments(bundle);
+                        ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
+                        ft.commit();
+                    }
                 } catch (Exception E) {
 
                 } finally {
@@ -512,7 +546,7 @@ public class actListPedidos extends AppCompatActivity
 
                         String valor = String.valueOf(VlTotal);
                         java.math.BigDecimal venda = new java.math.BigDecimal(Double.parseDouble(valor.replace(',', '.')));
-                        String ValorTotal = venda.setScale(2, java.math.BigDecimal.ROUND_UP).toString();
+                        String ValorTotal = venda.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                         ValorTotal = ValorTotal.replace('.', ',');
 
                         String NumPedido = CursorPed.getString(CursorPed.getColumnIndex("NUMPED"));

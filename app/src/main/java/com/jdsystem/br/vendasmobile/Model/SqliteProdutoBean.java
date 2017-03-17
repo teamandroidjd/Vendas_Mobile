@@ -10,11 +10,11 @@ public class SqliteProdutoBean {
     //public static final String P_PRODUTO_SIMPLECURSOR = "CODITEMANUAL";
     public static final String P_PRODUTO_SIMPLECURSOR   = "_id";
     public static final String P_CODIGO_PRODUTO         = "CODITEMANUAL";
-    public static final String P_CODIGO_BARRAS          = "CODITEMANUAL";
+    public static final String P_CODIGOITEM             = "CODIGOITEM";
     public static final String P_DESCRICAO_PRODUTO      = "DESCRICAO";
     public static final String P_UNIDADE_MEDIDA         = "UNIVENDA";
     //public static final String P_CUSTO_PRODUTO        = "prd_custo";
-    // public static final String P_QUANTIDADE_PRODUTO  = "prd_quantidade";
+    public static final String P_QUANTIDADE_PRODUTO     = "QTDESTPROD";
     public static final String P_PRECO_PROD_PADRAO      = "VLVENDA1";
     public static final String P_PRECO_PROD_VLVENDA1    = "VENDAPADRAO";
     public static final String P_PRECO_PROD_VLVENDA2    = "VLVENDA2";
@@ -27,6 +27,18 @@ public class SqliteProdutoBean {
     public static final String P_STATUS_PRODUTO         = "ATIVO";
     public static final String P_APRESENTACAO_PRODUTO   = "APRESENTACAO";
 
+    public static final String P_DESCRICAO_TAB1   = "TAB1";
+    public static final String P_DESCRICAO_TAB2   = "TAB2";
+    public static final String P_DESCRICAO_TAB3   = "TAB3";
+    public static final String P_DESCRICAO_TAB4   = "TAB4";
+    public static final String P_DESCRICAO_TAB5   = "TAB5";
+    public static final String P_DESCRICAO_TAB6   = "TAB6";
+    public static final String P_DESCRICAO_TAB7   = "TAB7";
+
+
+
+
+
     private String prd_codigo;
     //private String prd_EAN13;
     private String prd_descricao;
@@ -38,6 +50,7 @@ public class SqliteProdutoBean {
     private String prd_categoria;
     private String prd_status;
     private String prd_apresentacao;
+
 
     public SqliteProdutoBean() {
     }

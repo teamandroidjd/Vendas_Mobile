@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
+import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.Util.Util;
@@ -23,12 +24,16 @@ public class Sqlite_VENDADAO {
     private SQLiteStatement stmt;
     private SQLiteDatabase db;
     private Cursor cursor;
+    private Boolean bAltera;
+    private boolean gravacao;
+    int numpedido;
 
 
-    public Sqlite_VENDADAO(Context ctx, String CodVend) {
+    public Sqlite_VENDADAO(Context ctx, String CodVend, Boolean bAltera) {
 
         this.ctx = ctx;
         this.CodVend = CodVend;
+        this.bAltera = bAltera;
     }
 
     public Long grava_venda(SqliteVendaCBean venda, List<SqliteVendaD_TempBean> itens_temp) {
@@ -52,11 +57,45 @@ public class Sqlite_VENDADAO {
         // aqui comeca a gravacao das 2 tabelas pedoper e peditens
 
         long id_venda = -1;
-        SQLiteDatabase db = new ConfigDB(ctx).getWritableDatabase();
-        db.beginTransaction();
+        db = new ConfigDB(ctx).getWritableDatabase();
 
         try {
-            ContentValues vendaC = new ContentValues();
+            /*if (bAltera.equals(true)) {
+                db.execSQL(" UPDATE PEDOPER SET CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() +
+                        "', DATAEMIS  = '" + venda.getVendac_datahoravenda().toString() +
+                        "', DATAPREVISTAENTREGA = '" + venda.getVendac_previsaoentrega().toString() +
+                        "', CODCLIE = " + venda.getVendac_cli_codigo().toString() +
+                        ", CODCLIE_EXT = " + venda.getVendac_cli_codigo_ext().toString() +
+                        ", NOMECLIE = '" + venda.getVendac_cli_nome().toString() +
+                        "', CODEMPRESA = " + venda.getCodEmpresa().toString() +
+                        ", CODVENDEDOR = " + CodVend +
+                        ", VLMERCAD = " + venda.getTotal().toString() +
+                        ", VALORTOTAL = " + venda.getTotal().toString() +
+                        ", VLDESCONTO = " + venda.getVendac_desconto().toString() +
+                        ", PERCDESCO = " + venda.getVendac_percdesconto().toString() +
+                        ", STATUS = '" + venda.getVendac_enviada().toString() +
+                        "', LATITUDEPEDIDO = " + venda.getVendac_latitude() +
+                        ", OBS = '" + venda.getObservacao().toString() +
+                        "', FLAGINTEGRADO = '" + 1 +
+                        "', LONGITUDEPEDIDO = " + venda.getVendac_longitude() +
+                        " WHERE CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() + "'");
+            } else*/ // {
+            db.execSQL("INSERT INTO PEDOPER (CHAVE_PEDIDO, DATAEMIS, DATAPREVISTAENTREGA, CODCLIE, CODCLIE_EXT, NOMECLIE, CODEMPRESA, CODVENDEDOR, " +
+                    "VALORTOTAL, VLDESCONTO,PERCDESCO, STATUS, LATITUDEPEDIDO, OBS, FLAGINTEGRADO, LONGITUDEPEDIDO, VLMERCAD) VALUES(" +
+                    "'" + venda.getVendac_chave().toString() + "','" + venda.getVendac_datahoravenda().toString() + "','" + venda.getVendac_previsaoentrega().toString() +
+                    "'," + venda.getVendac_cli_codigo().toString() + ",' " + venda.getVendac_cli_codigo_ext().toString().toString()
+                    + "',' " + venda.getVendac_cli_nome().toString() +
+                    "'," + venda.getCodEmpresa().toString() + ", '" + CodVend + "'," + venda.getVendac_valor().toString() +
+                    "," + venda.getVendac_desconto().toString() + ", '" + venda.getVendac_percdesconto().toString() + "', '" + venda.getVendac_enviada().toString() +
+                    "'," + venda.getVendac_latitude() + ",'" + venda.getObservacao().toString() + "','1'," + venda.getVendac_longitude() +
+                    "," + venda.getTotal().toString() + ");");
+            // }
+            id_venda = 1;
+        } catch (Exception E) {
+            System.out.println("Error" + E.toString());
+            id_venda = -1;
+        }
+            /*ContentValues vendaC = new ContentValues();
             vendaC.put(venda.CHAVE_DA_VENDA, venda.getVendac_chave());
             vendaC.put(venda.DATA_HORA_DA_VENDA, venda.getVendac_datahoravenda());
             vendaC.put(venda.PREVISAO_ENTREGA, venda.getVendac_previsaoentrega());
@@ -76,12 +115,37 @@ public class Sqlite_VENDADAO {
             vendaC.put(venda.INTEGRADO, "1");
             vendaC.put(venda.LONGITUDE, venda.getVendac_longitude());
 
-            id_venda = db.insert("PEDOPER", null, vendaC);
-
+            id_venda = db.insert("PEDOPER", null, vendaC);*/
+        /*if (bAltera == true) {
             if (id_venda != -1) {
                 boolean Erro = false;
-                for (int i = 0; i < venda.getItens_da_venda().size(); i++) {
-                    SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
+                try {
+                    for (int i = 0; i < venda.getItens_da_venda().size(); i++) {
+                        SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
+                        Cursor CursorItem = db.rawQuery(" SELECT DESCRICAO, CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
+                                + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "'", null);
+                        if (CursorItem.getCount() > 0) {
+                            db.execSQL(" UPDATE PEDITENS SET CHAVEPEDIDO = '" + vendaD_item.getVendac_chave().toString() +
+                                    "', NUMEROITEM = '" + vendaD_item.getVendad_nro_item().toString() +
+                                    "', CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
+                                    "', DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
+                                    "', UNIDADE = '" + vendaD_item.getVendad_prd_unidade().toString() +
+                                    "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
+                                    ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_UP).doubleValue() +
+                                    ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
+                                    " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
+                        } else {
+                            db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
+                                    " VALUES('" + vendaD_item.getVendac_chave() + "','" + vendaD_item.getVendad_nro_item() +
+                                    "', '" + vendaD_item.getVendad_prd_codigo() + "','" + vendaD_item.getVendad_prd_descricao()
+                                    + "','" + vendaD_item.getVendad_prd_unidade() + "'," + vendaD_item.getVendad_quantidade().toString() +
+                                    "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_UP).doubleValue() + "," +
+                                    vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
+                        }
+                        CursorItem.close();
+                    }
+
+                    /*SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
                     ContentValues vendaD = new ContentValues();
                     vendaD.put(vendaD_item.CHAVE_DA_VENDA, vendaD_item.getVendac_chave());
                     //vendaD.put(vendaD_item.NUMPED, vendaD_item.getVendac_prd_numped());
@@ -102,16 +166,214 @@ public class Sqlite_VENDADAO {
                 if (!Erro) {
                     db.setTransactionSuccessful();
                 }
+
+                } catch (SQLiteException e) {
+                    Util.log("SQLiteException grava_venda" + e.getMessage());
+                } /*finally {
+                db.endTransaction();
+                db.close();
             }
-        } catch (SQLiteException e) {
-            Util.log("SQLiteException grava_venda" + e.getMessage());
-        } finally {
-            db.endTransaction();
-            db.close();
+        }else*/
+        if (id_venda != -1) {
+            boolean Erro = false;
+            try {
+                Cursor numped = db.rawQuery("select NUMPED, CHAVE_PEDIDO from PEDOPER where CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() + "'", null);
+                numped.moveToFirst();
+                numpedido = numped.getInt(numped.getColumnIndex("NUMPED"));
+                numped.close();
+            } catch (Exception e) {
+                e.toString();
+            }
+            try {
+                for (int i = 0; i < venda.getItens_da_venda().size(); i++) {
+                    SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
+                    Cursor CursorItem = db.rawQuery(" SELECT DESCRICAO, CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
+                            + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "'", null);
+                    if (CursorItem.getCount() > 0) {
+                        db.execSQL(" UPDATE PEDITENS SET CHAVEPEDIDO = '" + vendaD_item.getVendac_chave().toString() +
+                                "', NUMPED = " + numpedido +
+                                " , NUMEROITEM = '" + vendaD_item.getVendad_nro_item().toString() +
+                                "', CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
+                                "', DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
+                                "', UNIDADE = '" + vendaD_item.getVendad_prd_unidade().toString() +
+                                "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
+                                ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
+                                ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
+                                " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
+                    } else {
+                        db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
+                                " VALUES('" + vendaD_item.getVendac_chave() + "','" + vendaD_item.getVendad_nro_item() +
+                                "', '" + vendaD_item.getVendad_prd_codigo() + "','" + vendaD_item.getVendad_prd_descricao()
+                                + "','" + vendaD_item.getVendad_prd_unidade() + "'," + vendaD_item.getVendad_quantidade().toString() +
+                                "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() + "," +
+                                vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
+                    }
+                    CursorItem.close();
+                }
+
+                    /*SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
+                    ContentValues vendaD = new ContentValues();
+                    vendaD.put(vendaD_item.CHAVE_DA_VENDA, vendaD_item.getVendac_chave());
+                    //vendaD.put(vendaD_item.NUMPED, vendaD_item.getVendac_prd_numped());
+                    vendaD.put(vendaD_item.NUMERO_ITEM, vendaD_item.getVendad_nro_item());
+                    //vendaD.put(vendaD_item.EAN, vendaD_item.getVendad_ean());
+                    vendaD.put(vendaD_item.CODPRODUTO, vendaD_item.getVendad_prd_codigo());
+                    vendaD.put(vendaD_item.DESCRICAOPROD, vendaD_item.getVendad_prd_descricao());
+                    vendaD.put(vendaD_item.UNIDADEPROD, vendaD_item.getVendad_prd_unidade());
+                    vendaD.put(vendaD_item.QUANTVENDIDA, vendaD_item.getVendad_quantidade().toString());
+                    vendaD.put(vendaD_item.PRECOPRODUTO, vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_UP).doubleValue());
+                    vendaD.put(vendaD_item.TOTALPRODUTO, vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue());
+
+                    if (db.insert("PEDITENS", null, vendaD) == -1) {
+                        Erro = true;
+                        break;
+                    }
+                }
+                if (!Erro) {
+                    db.setTransactionSuccessful();
+                }*/
+
+            } catch (SQLiteException e) {
+                Util.log("SQLiteException grava_venda" + e.getMessage());
+            } /*finally {
+                db.endTransaction();
+                db.close();*/
         }
         return id_venda;
+
     }
 
+    public Long grava_vendasalva(SqliteVendaCBean venda, List<SqliteVendaDBean> itens_temp) {
+
+        int numero_item = 1;
+        for (SqliteVendaDBean item_transf : itens_temp) {
+            SqliteVendaDBean vendaDBean = new SqliteVendaDBean();
+            //vendaDBean.setVendac_numped(venda.getVendac_id());
+            vendaDBean.setVendac_chave(venda.getVendac_chave());
+            vendaDBean.setVendad_nro_item(numero_item);
+            vendaDBean.setVendad_ean(item_transf.getVendad_ean());
+            vendaDBean.setVendad_prd_codigo(item_transf.getVendad_prd_codigo());
+            vendaDBean.setVendad_prd_descricao(item_transf.getVendad_prd_descricao());
+            vendaDBean.setVendad_quantidade(item_transf.getVendad_quantidade());
+            vendaDBean.setVendad_prd_unidade(item_transf.getVendad_prd_unidade());
+            vendaDBean.setVendad_preco_venda(item_transf.getVendad_preco_venda());
+            vendaDBean.setVendad_total(item_transf.getSubTotal());
+            venda.getItens_da_venda().add(vendaDBean);
+            //new Sqlite_VENDADAO(ctx,CodVend,true).excluir_um_item_da_venda(item_transf);
+            numero_item++;
+        }
+        // aqui comeca a gravacao das 2 tabelas pedoper e peditens
+
+        long id_venda = -1;
+        db = new ConfigDB(ctx).getWritableDatabase();
+
+        try {
+            if (bAltera.equals(true)) {
+                db.execSQL(" UPDATE PEDOPER SET CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() +
+                        "', DATAEMIS  = '" + venda.getVendac_datahoravenda().toString() +
+                        "', DATAPREVISTAENTREGA = '" + venda.getVendac_previsaoentrega().toString() +
+                        "', CODCLIE = " + venda.getVendac_cli_codigo().toString() +
+                        ", CODCLIE_EXT = " + venda.getVendac_cli_codigo_ext().toString() +
+                        ", NOMECLIE = '" + venda.getVendac_cli_nome().toString() +
+                        "', CODEMPRESA = " + venda.getCodEmpresa().toString() +
+                        ", CODVENDEDOR = " + CodVend +
+                        ", VLMERCAD = " + venda.getTotal().toString() +
+                        ", VALORTOTAL = " + venda.getVendac_valor().toString() +
+                        ", VLDESCONTO = " + venda.getVendac_desconto().toString() +
+                        ", PERCDESCO = " + venda.getVendac_percdesconto().toString() +
+                        ", STATUS = '" + venda.getVendac_enviada().toString() +
+                        "', LATITUDEPEDIDO = " + venda.getVendac_latitude() +
+                        ", OBS = '" + venda.getObservacao().toString() +
+                        "', FLAGINTEGRADO = '" + 1 +
+                        "', LONGITUDEPEDIDO = " + venda.getVendac_longitude() +
+                        " WHERE CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() + "'");
+            } else {
+                db.execSQL("INSERT INTO PEDOPER (CHAVE_PEDIDO, DATAEMIS, DATAPREVISTAENTREGA, CODCLIE, CODCLIE_EXT, NOMECLIE, CODEMPRESA, CODVENDEDOR, " +
+                        "VALORTOTAL, VLDESCONTO,PERCDESCO, STATUS, LATITUDEPEDIDO, OBS, FLAGINTEGRADO, LONGITUDEPEDIDO, VLMERCAD) VALUES(" +
+                        "'" + venda.getVendac_chave().toString() + "','" + venda.getVendac_datahoravenda().toString() + "','" + venda.getVendac_previsaoentrega().toString() +
+                        "'," + venda.getVendac_cli_codigo().toString() + ",' " + venda.getVendac_cli_codigo_ext().toString().toString()
+                        + "',' " + venda.getVendac_cli_nome().toString() +
+                        "'," + venda.getCodEmpresa().toString() + ", '" + CodVend + "'," + venda.getVendac_valor().toString() +
+                        "," + venda.getVendac_desconto().toString() + ", '" + venda.getVendac_percdesconto().toString() + "', '" + venda.getVendac_enviada().toString() +
+                        "'," + venda.getVendac_latitude() + ",'" + venda.getObservacao().toString() + "','1'," + venda.getVendac_longitude() +
+                        "," + venda.getTotal().toString() + ");");
+            }
+            id_venda = 1;
+        } catch (Exception E) {
+            System.out.println("Error" + E.toString());
+            id_venda = -1;
+        }
+
+        if (bAltera == true) {
+            if (id_venda != -1) {
+                boolean Erro = false;
+                try {
+                    for (int i = 0; i < venda.getItens_da_venda().size(); i++) {
+                        SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
+                        Cursor CursorItem = db.rawQuery(" SELECT CODITEMANUAL, DESCRICAO, CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
+                                + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "'", null);
+                        if (CursorItem.getCount() > 0) {
+                            db.execSQL(" UPDATE PEDITENS SET CHAVEPEDIDO = '" + vendaD_item.getVendac_chave().toString() +
+                                    "', NUMEROITEM = '" + vendaD_item.getVendad_nro_item().toString() +
+                                    "', CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
+                                    "', DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
+                                    "', UNIDADE = '" + vendaD_item.getVendad_prd_unidade().toString() +
+                                    "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
+                                    ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
+                                    ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
+                                    " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
+                        } else {
+                            db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
+                                    " VALUES('" + vendaD_item.getVendac_chave() + "','" + vendaD_item.getVendad_nro_item() +
+                                    "', '" + vendaD_item.getVendad_prd_codigo() + "','" + vendaD_item.getVendad_prd_descricao()
+                                    + "','" + vendaD_item.getVendad_prd_unidade() + "'," + vendaD_item.getVendad_quantidade().toString() +
+                                    "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() + "," +
+                                    vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
+                        }
+                        CursorItem.close();
+                    }
+
+
+                } catch (SQLiteException e) {
+                    Util.log("SQLiteException grava_venda" + e.getMessage());
+                }
+            }
+        } else if (id_venda != -1) {
+            boolean Erro = false;
+            try {
+                for (int i = 0; i < venda.getItens_da_venda().size(); i++) {
+                    SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
+                    Cursor CursorItem = db.rawQuery(" SELECT DESCRICAO, CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
+                            + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "'", null);
+                    if (CursorItem.getCount() > 0) {
+                        db.execSQL(" UPDATE PEDITENS SET CHAVEPEDIDO = '" + vendaD_item.getVendac_chave().toString() +
+                                "', NUMEROITEM = '" + vendaD_item.getVendad_nro_item().toString() +
+                                "', CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
+                                "', DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
+                                "', UNIDADE = '" + vendaD_item.getVendad_prd_unidade().toString() +
+                                "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
+                                ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
+                                ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
+                                " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
+                    } else {
+                        db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
+                                " VALUES('" + vendaD_item.getVendac_chave() + "','" + vendaD_item.getVendad_nro_item() +
+                                "', '" + vendaD_item.getVendad_prd_codigo() + "','" + vendaD_item.getVendad_prd_descricao()
+                                + "','" + vendaD_item.getVendad_prd_unidade() + "'," + vendaD_item.getVendad_quantidade().toString() +
+                                "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() + "," +
+                                vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
+                    }
+                    CursorItem.close();
+                }
+
+
+            } catch (SQLiteException e) {
+                Util.log("SQLiteException grava_venda" + e.getMessage());
+            }
+        }
+        return id_venda;
+
+    }
 
     public List<SqliteVendaCBean> lista_pedidos_do_cliente(Integer cli_codigo) {
         List<SqliteVendaCBean> lista_registros_vendaC = new ArrayList<SqliteVendaCBean>();
@@ -131,6 +393,7 @@ public class Sqlite_VENDADAO {
                 vendac.setVendac_formapgto(cursor.getString(cursor.getColumnIndex(vendac.FORMA_DE_PAGAMENTO)));
                 vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(4, BigDecimal.ROUND_UP));
                 vendac.setVendac_desconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.DESCONTO))));
+                vendac.setVendac_percdesconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PERCDESCONTO))));
                 //vendac.setVendac_pesototal(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PESO_TOTAL_DOS_PRODUTOS))));
                 vendac.setVendac_enviada(cursor.getString(cursor.getColumnIndex(vendac.VENDA_ENVIADA_SERVIDOR)));
                 vendac.setVendac_latitude(cursor.getDouble(cursor.getColumnIndex(vendac.LATITUDE)));
@@ -165,6 +428,7 @@ public class Sqlite_VENDADAO {
                 vendac.setVendac_formapgto(cursor.getString(cursor.getColumnIndex(vendac.FORMA_DE_PAGAMENTO)));
                 vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(2, BigDecimal.ROUND_UP));
                 vendac.setVendac_desconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.DESCONTO))));
+                vendac.setVendac_percdesconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PERCDESCONTO))));
                 //vendac.setVendac_pesototal(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PESO_TOTAL_DOS_PRODUTOS))));
                 vendac.setVendac_enviada(cursor.getString(cursor.getColumnIndex(vendac.VENDA_ENVIADA_SERVIDOR)));
                 vendac.setVendac_latitude(cursor.getDouble(cursor.getColumnIndex(vendac.LATITUDE)));
@@ -184,29 +448,34 @@ public class Sqlite_VENDADAO {
         List<SqliteVendaCBean> lista_registros_vendaC = new ArrayList<SqliteVendaCBean>();
         db = new ConfigDB(ctx).getReadableDatabase();
         SqliteVendaCBean vendac = new SqliteVendaCBean();
-        SqliteVendaDBean vendaD = new SqliteVendaDBean();
         try {
             cursor = db.rawQuery("select * from PEDOPER where NUMPED = '" + NumPedido + "'", null);
-            while (cursor.moveToNext()) {
-                vendac.setVendac_chave(cursor.getString(cursor.getColumnIndex(vendac.CHAVE_DA_VENDA)));
-                vendac.setVendac_datahoravenda(cursor.getString(cursor.getColumnIndex(vendac.DATA_HORA_DA_VENDA)));
-                vendac.setVendac_previsaoentrega(cursor.getString(cursor.getColumnIndex(vendac.PREVISAO_ENTREGA)));
-                vendac.setVendac_cli_codigo(cursor.getInt(cursor.getColumnIndex(vendac.CODIGO_DO_CLIENTE)));
-                vendac.setVendac_cli_nome(cursor.getString(cursor.getColumnIndex(vendac.NOME_DO_CLIENTE)));
-                vendac.setVendac_usu_codigo(cursor.getInt(cursor.getColumnIndex(vendac.CODIGO_DO_USUARIO_VENDEDOR)));
-                //vendac.setVendac_usu_nome(cursor.getString(cursor.getColumnIndex(vendac.NOME_DO_USUARIO_VENDEDOR)));
-                vendac.setVendac_formapgto(cursor.getString(cursor.getColumnIndex(vendac.FORMA_DE_PAGAMENTO)));
-                vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(2, BigDecimal.ROUND_UP));
-                vendac.setVendac_desconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.DESCONTO))));
-                //vendac.setVendac_pesototal(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PESO_TOTAL_DOS_PRODUTOS))));
-                vendac.setVendac_enviada(cursor.getString(cursor.getColumnIndex(vendac.VENDA_ENVIADA_SERVIDOR)));
-                vendac.setVendac_latitude(cursor.getDouble(cursor.getColumnIndex(vendac.LATITUDE)));
-                vendac.setVendac_longitude(cursor.getDouble(cursor.getColumnIndex(vendac.LONGITUDE)));
-                vendac.setObservacao(cursor.getString(cursor.getColumnIndex(vendac.OBSERVACAO)));
-                lista_registros_vendaC.add(vendac);
+            if (cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                do {
+                    vendac.setVendac_id(cursor.getInt(cursor.getColumnIndex(vendac.CODIGO_DA_VENDA)));
+                    vendac.setVendac_chave(cursor.getString(cursor.getColumnIndex(vendac.CHAVE_DA_VENDA)));
+                    vendac.setVendac_datahoravenda(cursor.getString(cursor.getColumnIndex(vendac.DATA_HORA_DA_VENDA)));
+                    vendac.setVendac_previsaoentrega(cursor.getString(cursor.getColumnIndex(vendac.PREVISAO_ENTREGA)));
+                    vendac.setVendac_cli_codigo(cursor.getInt(cursor.getColumnIndex(vendac.CODIGO_DO_CLIENTE)));
+                    vendac.setVendac_cli_nome(cursor.getString(cursor.getColumnIndex(vendac.NOME_DO_CLIENTE)));
+                    vendac.setVendac_cli_codigo_ext(cursor.getInt(cursor.getColumnIndex(vendac.CODIGOCLIE_EXT)));
+                    vendac.setVendac_usu_codigo(cursor.getInt(cursor.getColumnIndex(vendac.CODIGO_DO_USUARIO_VENDEDOR)));
+                    vendac.setCodEmpresa(cursor.getString(cursor.getColumnIndex(vendac.CODEMPRESA)));
+                    vendac.setCodVendedor(cursor.getString(cursor.getColumnIndex(vendac.CODIGO_DO_USUARIO_VENDEDOR)));
+                    //vendac.setVendac_usu_nome(cursor.getString(cursor.getColumnIndex(vendac.NOME_DO_USUARIO_VENDEDOR)));
+                    vendac.setVendac_formapgto(cursor.getString(cursor.getColumnIndex(vendac.FORMA_DE_PAGAMENTO)));
+                    vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(2, BigDecimal.ROUND_UP));
+                    vendac.setVendac_desconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.DESCONTO))));
+                    vendac.setVendac_percdesconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PERCDESCONTO))));
+                    //vendac.setVendac_pesototal(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PESO_TOTAL_DOS_PRODUTOS))));
+                    vendac.setVendac_enviada(cursor.getString(cursor.getColumnIndex(vendac.VENDA_ENVIADA_SERVIDOR)));
+                    vendac.setVendac_latitude(cursor.getDouble(cursor.getColumnIndex(vendac.LATITUDE)));
+                    vendac.setVendac_longitude(cursor.getDouble(cursor.getColumnIndex(vendac.LONGITUDE)));
+                    vendac.setObservacao(cursor.getString(cursor.getColumnIndex(vendac.OBSERVACAO)));
+                    lista_registros_vendaC.add(vendac);
+                } while (cursor.moveToNext());
             }
-
-
         } catch (SQLiteException e) {
             Util.log("SQLiteException buscar_vendas_nao_enviadas" + e.getMessage());
         } finally {
@@ -229,20 +498,22 @@ public class Sqlite_VENDADAO {
     public List<SqliteVendaDBean> buscar_itens_vendas_por_numeropedido(String Chave_Venda) {
         List<SqliteVendaDBean> lista_registros_vendaD = new ArrayList<SqliteVendaDBean>();
         db = new ConfigDB(ctx).getReadableDatabase();
-        SqliteVendaDBean vendaD = new SqliteVendaDBean();
+
         try {
             if (!Chave_Venda.equals("0")) {
                 cursor = db.rawQuery("select * from PEDITENS where CHAVEPEDIDO = '" + Chave_Venda + "'", null);
                 if (cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     do {
+                        SqliteVendaDBean vendaD = new SqliteVendaDBean();
+                        //vendaD.setVendad_prd_codigo(cursor.getString(cursor.getColumnIndex(vendaD.NUMPED)));
                         vendaD.setVendad_prd_codigo(cursor.getString(cursor.getColumnIndex("CODITEMANUAL")));
                         vendaD.setVendad_prd_descricao(cursor.getString(cursor.getColumnIndex("DESCRICAO")));
                         vendaD.setVendad_prd_unidade(cursor.getString(cursor.getColumnIndex("UNIDADE")));
-                        vendaD.setVendad_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex("QTDMENORPED"))).setScale(2, BigDecimal.ROUND_UP));
-                        vendaD.setVendad_preco_venda(new BigDecimal(cursor.getString(cursor.getColumnIndex("VLUNIT"))).setScale(4, BigDecimal.ROUND_UP));
+                        vendaD.setVendad_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex("QTDMENORPED")))); //.setScale(2, BigDecimal.ROUND_UP));
+                        vendaD.setVendad_preco_venda(new BigDecimal(cursor.getString(cursor.getColumnIndex("VLUNIT"))).setScale(4, BigDecimal.ROUND_HALF_UP));
                         vendaD.setVendad_total(new BigDecimal(cursor.getString(cursor.getColumnIndex("VLTOTAL"))).setScale(2, BigDecimal.ROUND_UP));
-                        lista_registros_vendaD.add(vendaD);
+                        lista_registros_vendaD.add((SqliteVendaDBean) vendaD);
                     } while (cursor.moveToNext());
                 }
             }
@@ -250,9 +521,122 @@ public class Sqlite_VENDADAO {
             Util.log("SQLiteException buscar_vendas_nao_enviadas" + e.getMessage());
         } finally {
             db.close();
+            cursor.close();
         }
         return lista_registros_vendaD;
     }
+
+    public SqliteVendaDBean altera_item_na_venda(SqliteVendaDBean item) {
+        SqliteVendaDBean produto = null;
+        db = new ConfigDB(ctx).getReadableDatabase();
+        try {
+            sql = "select * from PEDITENS where CODITEMANUAL = ? ";
+            cursor = db.rawQuery(sql, new String[]{item.getVendad_prd_codigo().toString()});
+            if (cursor.moveToFirst()) {
+                produto = new SqliteVendaDBean();
+                //produto.setVendad_eanTEMP(cursor.getString(cursor.getColumnIndex(produto.TEMP_EAN)));
+                produto.setVendad_prd_codigo(cursor.getString(cursor.getColumnIndex(produto.CODPRODUTO)));
+                produto.setVendad_prd_descricao(cursor.getString(cursor.getColumnIndex(produto.DESCRICAOPROD)));
+                produto.setVendad_prd_unidade(cursor.getString(cursor.getColumnIndex(produto.UNIDADEPROD)));
+                produto.setVendad_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.QUANTVENDIDA))));
+                produto.setVendad_preco_venda(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.PRECOPRODUTO))).setScale(4, BigDecimal.ROUND_HALF_UP));
+                produto.setVendad_total(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.TOTALPRODUTO))).setScale(2, BigDecimal.ROUND_HALF_UP));
+            }
+        } catch (SQLiteException e) {
+            Util.log("SQLiteException buscar_item_na_venda" + e.getMessage());
+        }
+        return produto;
+    } // função utilizada para pedidos em inserção onde ainda não tem numero de pedido
+
+    public boolean insere_item_na_venda(SqliteVendaDBean item) {
+
+        gravacao = false;
+        try {
+            try {
+                db = new ConfigDB(ctx).getWritableDatabase();
+                sql = "insert into PEDITENS (CODITEMANUAL,DESCRICAO,QTDMENORPED,VLUNIT,VLTOTAL,UNIDADE,CHAVEPEDIDO) values (?,?,?,?,?,?,?) ";
+                stmt = db.compileStatement(sql);
+                //stmt.bindString(1, item.getVendad_eanTEMP());
+                stmt.bindString(1, item.getVendad_prd_codigo());
+                stmt.bindString(2, item.getVendad_prd_descricao());
+                stmt.bindDouble(3, item.getVendad_quantidade().doubleValue());
+                stmt.bindDouble(4, item.getVendad_preco_venda().setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue());
+                stmt.bindDouble(5, item.getVendad_total().setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+                String und = item.getVendad_prd_unidade();
+                stmt.bindString(6, item.getVendad_prd_unidade());
+                stmt.bindString(7, item.getVendac_chave());
+                if (stmt.executeInsert() > 0) {
+                    gravacao = true;
+                }
+            } catch (SQLiteException e) {
+                Util.log("SQLiteException insere_item" + e.getMessage());
+                gravacao = false;
+            } finally {
+                db.close();
+                stmt.close();
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+        return gravacao;
+    }
+
+    public boolean atualizar_alteracao_item_na_venda(SqliteVendaDBean item) { // função utilizada para pedidos já salvo que tem numero de pedido.
+        gravacao = false;
+        try {
+            try {
+                db = new ConfigDB(ctx).getWritableDatabase();
+                sql = "UPDATE PEDITENS SET CODITEMANUAL = ?, DESCRICAO = ?,QTDMENORPED = ?, " +
+                        "VLUNIT = ?, VLTOTAL = ?, UNIDADE = ? where CODITEMANUAL =  " + item.getVendad_prd_codigo();
+                stmt = db.compileStatement(sql);
+                //stmt.bindString(1, item.getVendad_eanTEMP());
+                stmt.bindString(1, item.getVendad_prd_codigo());
+                stmt.bindString(2, item.getVendad_prd_descricao());
+                stmt.bindDouble(3, item.getVendad_quantidade().doubleValue());
+                stmt.bindDouble(4, item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue());
+                stmt.bindDouble(5, item.getVendad_total().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                String und = item.getVendad_prd_unidade();
+                stmt.bindString(6, item.getVendad_prd_unidade());
+                if (stmt.executeUpdateDelete() > 0) {
+                    gravacao = true;
+                }
+            } catch (SQLiteException e) {
+                Util.log("SQLiteException insere_item" + e.getMessage());
+                gravacao = false;
+            } finally {
+                db.close();
+                stmt.close();
+            }
+        } catch (Exception e) {
+            e.toString();
+        }
+        return gravacao;
+    }
+
+    public boolean atualizar_pedido_para_cancelado(String chaveped) {
+        boolean pedcancelado = false;
+        try {
+            db = new ConfigDB(ctx).getWritableDatabase();
+            Cursor pedcancel = db.rawQuery("SELECT CHAVE_PEDIDO, NUMPED FROM PEDOPER WHERE CHAVE_PEDIDO = '" + chaveped + "'", null);
+            pedcancel.moveToFirst();
+            if (pedcancel.getCount() == 1) {
+                String flagintegrado = "4";
+                db.execSQL("UPDATE PEDOPER SET FLAGINTEGRADO = '" + flagintegrado + "' WHERE CHAVE_PEDIDO = " + chaveped);
+                pedcancelado = true;
+            } else {
+                Toast.makeText(ctx, "Foram encontrados mais de um pedido com a mesma identificação. Verifique!", Toast.LENGTH_SHORT).show();
+                pedcancelado = false;
+            }
+            pedcancel.close();
+
+
+        } catch (SQLiteException e) {
+            Util.log("SQLiteException insere_item" + e.getMessage());
+            pedcancelado = false;
+        }
+
+        return pedcancelado;
+    } // função executa caso cliente exclua todos os itens de um pedido já salvo e depois tenta cancelar
 
     // select em todos os itens das vendas que ainda nao foram exportadas
     public List<SqliteVendaDBean> buscar_itens_das_vendas_nao_enviadas() {
@@ -270,7 +654,7 @@ public class Sqlite_VENDADAO {
                 vendad.setVendad_prd_codigo(cursor.getString(cursor.getColumnIndex(vendad.CODPRODUTO)));
                 vendad.setVendad_prd_descricao(cursor.getString(cursor.getColumnIndex(vendad.DESCRICAOPROD)));
                 vendad.setVendad_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendad.QUANTVENDIDA))));
-                vendad.setVendad_preco_venda(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendad.PRECOPRODUTO))).setScale(4,BigDecimal.ROUND_UP));
+                vendad.setVendad_preco_venda(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendad.PRECOPRODUTO))).setScale(4, BigDecimal.ROUND_UP));
                 vendad.setVendad_total(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendad.TOTALPRODUTO))));
                 lista_registros_vendaD.add(vendad);
             }
@@ -281,7 +665,6 @@ public class Sqlite_VENDADAO {
         }
         return lista_registros_vendaD;
     }
-
 
     public void atualiza_vendac_enviada(String vendac_chave) {
         try {
@@ -317,6 +700,5 @@ public class Sqlite_VENDADAO {
             stmt.close();
         }
     }
-
 
 }

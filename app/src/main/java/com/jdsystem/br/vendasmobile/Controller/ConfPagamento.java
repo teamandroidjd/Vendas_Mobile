@@ -50,8 +50,10 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     private String RECEBIMENTO_DIN_CAR_CHQ = "";
     private String COMENTRADA_SEMENTRADA = "";
     private String TIPO_PAGAMENTO = "";
+    private String ChavePedido = "";
     private Double SUBTOTAL_VENDA;
     private BigDecimal VALORRECEBIDO;
+    private Boolean AtuPedido;
 
     private ScrollView vScroll;
     private HorizontalScrollView hScroll;
@@ -75,6 +77,9 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         SUBTOTAL_VENDA = INTENT_SOBTOTAL_VENDA.getDoubleExtra("SUBTOTAL_VENDA", 0);
         INTENT_CLI_CODIGO = getIntent();
         CLI_CODIGO = INTENT_CLI_CODIGO.getIntExtra("CLI_CODIGO", 0);
+        ChavePedido = INTENT_CLI_CODIGO.getStringExtra("ChavePedido");
+        AtuPedido = INTENT_CLI_CODIGO.getBooleanExtra("AtuPedido", false);
+
 
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
@@ -83,6 +88,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         array_forma_pagamento.add("PARCELADO");
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_forma_pagamento);
         conf_spfpgto.setAdapter(arrayAdapter);
+
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -135,47 +141,22 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                             Integer.parseInt(conf_txtqtdparcelas.getText().toString()),
                             "",
                             "N"
-                    )
+                    ), AtuPedido, ChavePedido
             );
             //Util.msg_toast_personal(getBaseContext(), "SALVO COM SUCESSO", Util.SUCESSO);
             finish();
         }
-
-
     }
 
-
     private boolean validar_forma_de_pagamento() {
-
         boolean fechar = true;
-/*
-        // venda avista
-        if (TIPO_PAGAMENTO.equals("AVISTA")) {
-            if (conf_txtvalorrecebido.getText().toString().trim().length() > 0) {
-                BigDecimal valor_recebido = new BigDecimal(conf_txtvalorrecebido.getText().toString());
-                if (RECEBIMENTO_DIN_CAR_CHQ.equals("DINHEIRO") && valor_recebido.doubleValue() > SUBTOTAL_VENDA) {
-                    fechar = false;
-                    Util.msg_toast_personal(getBaseContext(), "Valor avista maior que valor da venda", Util.ALERTA);
-                } else if (RECEBIMENTO_DIN_CAR_CHQ.equals("DINHEIRO") && valor_recebido.doubleValue() < SUBTOTAL_VENDA) {
-                    fechar = false;
-                    Util.msg_toast_personal(getBaseContext(), "Valor avista menor que valor da venda", Util.ALERTA);
-                }
-            } else {
-                Util.msg_toast_personal(getBaseContext(), "informe o valor recebido", Util.ALERTA);
-            }
-        }
-*/
-
         if (TIPO_PAGAMENTO.equals("PARCELADO")) {
-
             // condicao sem entrada
             if (conf_txtqtdparcelas.getText().toString().trim().length() <= 0) {
                 fechar = false;
                 Util.msg_toast_personal(getBaseContext(), "informe a quantidade de parcelas", Util.ALERTA);
             }
-
         }
-
         return fechar;
     }
 
@@ -545,10 +526,36 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
                 BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                conf_valorparcela2.setVisibility(View.GONE);
+                conf_valorparcela3.setVisibility(View.GONE);
+                conf_valorparcela4.setVisibility(View.GONE);
+                conf_valorparcela5.setVisibility(View.GONE);
+                conf_valorparcela6.setVisibility(View.GONE);
+                conf_valorparcela7.setVisibility(View.GONE);
+                conf_valorparcela8.setVisibility(View.GONE);
+                conf_valorparcela9.setVisibility(View.GONE);
+                conf_valorparcela10.setVisibility(View.GONE);
+                conf_valorparcela11.setVisibility(View.GONE);
+                conf_valorparcela12.setVisibility(View.GONE);
+                conf_txtvalorrecebido.setVisibility(View.GONE);
+                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 conf_valorparcela.setText("Valor parcela: R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
             }
 
         } else {
+            conf_valorparcela2.setVisibility(View.GONE);
+            conf_valorparcela3.setVisibility(View.GONE);
+            conf_valorparcela4.setVisibility(View.GONE);
+            conf_valorparcela5.setVisibility(View.GONE);
+            conf_valorparcela6.setVisibility(View.GONE);
+            conf_valorparcela7.setVisibility(View.GONE);
+            conf_valorparcela8.setVisibility(View.GONE);
+            conf_valorparcela9.setVisibility(View.GONE);
+            conf_valorparcela10.setVisibility(View.GONE);
+            conf_valorparcela11.setVisibility(View.GONE);
+            conf_valorparcela12.setVisibility(View.GONE);
+            conf_txtvalorrecebido.setVisibility(View.GONE);
+            conf_txvlabelvalorrecebido.setVisibility(View.GONE);
             conf_valorparcela.setText("Valor parcela : 0,00");
         }
 

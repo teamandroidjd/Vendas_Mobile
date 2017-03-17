@@ -1,16 +1,19 @@
 package com.jdsystem.br.vendasmobile;
 
-import android.app.AlertDialog;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,58 +21,38 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.FilterQueryProvider;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.jdsystem.br.vendasmobile.Controller.Lista_produtos;
-import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
-import com.jdsystem.br.vendasmobile.Model.SqliteProdutoDao;
 import com.jdsystem.br.vendasmobile.Util.Util;
+import com.jdsystem.br.vendasmobile.domain.FiltroProdutos;
+import com.jdsystem.br.vendasmobile.domain.Produtos;
+import com.jdsystem.br.vendasmobile.fragments.FragmentFiltroProdutos;
+import com.jdsystem.br.vendasmobile.fragments.ProdutosFragment;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-public class act_ListProdutos extends ActionBarActivity
+
+public class act_ListProdutos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
 
-    String sCodVend, URLPrincipal;
-    public static String DESCRICAO_PRODUTO = "Descrição";
-    public static String CODIGO_PRODUTO = "Código";
-    public static String CATEGORIA_PRODUTO = "Classes";
+    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu;
     String UsuarioLogado;
 
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
-    private Spinner prod_sp_produtos;
-    private SimpleCursorAdapter adapter;
-    private List<String> array_spinner = new ArrayList<String>();
-    private ArrayAdapter<String> arrayAdapter;
-    private String selecao_spinner;
-    private String dtUltAtu;
-    private Cursor cursor;
     private EditText prod_txt_pesquisaproduto;
-    private ListView prod_listview_produtotemp;
-    private ListView prod_listview_itenstemp;
-    private AlertDialog.Builder alerta;
-    private AlertDialog dlg;
-    private ProgressDialog dialog;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+    private ProgressDialog dialog, pDialog;
+    SQLiteDatabase DB;
+    Produtos lstprodutos;
+    FiltroProdutos lstfiltprodutos;
+    Handler handler = new Handler();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +67,8 @@ public class act_ListProdutos extends ActionBarActivity
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
                 URLPrincipal = params.getString("urlPrincipal");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
                 //Pedido = params.getBoolean("pedido");
             }
         }
@@ -101,33 +86,54 @@ public class act_ListProdutos extends ActionBarActivity
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
         UsuarioLogado = prefs.getString("usuario", null);
-        usuariologado.setText("Olá " +UsuarioLogado+"!");
+        if (UsuarioLogado != null) {
+            UsuarioLogado = prefs.getString("usuario", null);
+            usuariologado.setText("Olá " + UsuarioLogado + "!");
+        } else {
+            usuariologado.setText("Olá " + usuario + "!");
+        }
 
-        // atualiza_listview_com_os_itens_da_venda();
 
-        array_spinner.add(DESCRICAO_PRODUTO);
-        array_spinner.add(CODIGO_PRODUTO);
-        array_spinner.add(CATEGORIA_PRODUTO);
-
-
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_spinner);
-        prod_sp_produtos = (Spinner) findViewById(R.id.prod_sp_produtos);
-        prod_sp_produtos.setAdapter(arrayAdapter);
-
-        prod_sp_produtos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        prod_txt_pesquisaproduto = (EditText) findViewById(R.id.prod_txt_pesquisaproduto);
+        prod_txt_pesquisaproduto.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onItemSelected(AdapterView<?> spinner, View view, int posicao, long id) {
-                selecao_spinner = spinner.getItemAtPosition(posicao).toString();
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                FragmentFiltroProdutos frag = (FragmentFiltroProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                if (frag == null) {
+                    frag = new FragmentFiltroProdutos();
+                    Bundle bundle = new Bundle();
+                    bundle.putCharSequence("pesquisa", s);
+                    frag.setArguments(bundle);
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                    ft.commit();
+                }else {
+                    frag = new FragmentFiltroProdutos();
+                    Bundle bundle = new Bundle();
+                    bundle.putCharSequence("pesquisa", s);
+                    frag.setArguments(bundle);
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                    ft.commit();
+                }
+            }
+
+            public void afterTextChanged(Editable s) {
             }
         });
-        carrega_produto_para_venda();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        pDialog = new ProgressDialog(act_ListProdutos.this);
+        pDialog.setTitle("Aguarde");
+        pDialog.setMessage("Carregando Contatos...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        Thread thread = new Thread(act_ListProdutos.this);
+        thread.start();
 
 
     }
@@ -150,8 +156,18 @@ public class act_ListProdutos extends ActionBarActivity
                 dialog.setTitle("Aguarde");
                 dialog.show();
 
-                Thread thread = new Thread(this);
-                thread.start();
+                try {
+                actSincronismo.run(act_ListProdutos.this);
+                actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true);
+
+                Intent intent = (act_ListProdutos.this).getIntent();
+                (act_ListProdutos.this).finish();
+                startActivity(intent);
+                } catch (Exception e){
+                    e.toString();
+                }
+                if (dialog.isShowing())
+                    dialog.dismiss();
 
             } else {
                 Toast.makeText(act_ListProdutos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
@@ -161,17 +177,26 @@ public class act_ListProdutos extends ActionBarActivity
     }
 
     public void run() {
-        try {
-            actSincronismo.run(act_ListProdutos.this);
-            actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true);
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                ProdutosFragment frag = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFrag");
+                    if (frag == null) {
+                    frag = new ProdutosFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
+                        ft.commit();
+                    }
+                } catch (Exception E) {
+                    System.out.println("Error" + E);
+                } finally {
+                    if (pDialog.isShowing())
+                        pDialog.dismiss();
+                }
+            }
 
-            Intent intent = (act_ListProdutos.this).getIntent();
-            (act_ListProdutos.this).finish();
-            startActivity(intent);
-        } finally {
-            if (dialog.isShowing())
-                dialog.dismiss();
-        }
+        });
 
     }
 
@@ -198,6 +223,8 @@ public class act_ListProdutos extends ActionBarActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
 
@@ -206,6 +233,8 @@ public class act_ListProdutos extends ActionBarActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
             //finish();
@@ -215,15 +244,29 @@ public class act_ListProdutos extends ActionBarActivity
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
             //finish();
 
-        } else if (id == R.id.nav_sincronismo) {
+        } else if(id == R.id.nav_contatos){
+            Intent i = new Intent(act_ListProdutos.this, act_ListContatos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            i.putExtras(params);
+            startActivity(i);
+
+        }else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListProdutos.this, actSincronismo.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
             params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -234,114 +277,172 @@ public class act_ListProdutos extends ActionBarActivity
         return true;
     }
 
-    private void carrega_produto_para_venda() {
+    public List<Produtos> carregarprodutos() {
 
-        SqliteProdutoBean prdBean = new SqliteProdutoBean();
-        SqliteProdutoDao prdDao = new SqliteProdutoDao(getApplicationContext());
+        DB = new ConfigDB(this).getReadableDatabase();
 
-        final Cursor cursor = prdDao.buscar_produtos(1);
+        ArrayList<Produtos> DadosLisProdutos = new ArrayList<Produtos>();
+
+        Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+        CursorParametro.moveToFirst();
+
+        Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS ORDER BY DESCRICAO", null);
+        cursorProdutos.moveToFirst();
+        if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
+            do {
+                String descricao  = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                String codigoManual= cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
+                String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
+                String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
+                String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
+
+                String ppadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("VENDAPADRAO"));
+                ppadrao = ppadrao.trim();
+                BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));
+
+                String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
+                p1 = p1.trim();
+                BigDecimal preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
+
+                String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
+                p2 = p2.trim();
+                BigDecimal preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
+
+                String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
+                p3 = p3.trim();
+                BigDecimal preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
+
+                String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
+                p4 = p4.trim();
+                BigDecimal preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
+
+                String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
+                p5 = p5.trim();
+                BigDecimal preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
+
+                String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
+                pp1 = pp1.trim();
+                BigDecimal precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
+
+                String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
+                pp2 = pp2.trim();
+                BigDecimal precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
+
+                String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+
+                String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
+
+                lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, precopadrao);
+                DadosLisProdutos.add(lstprodutos);
+            } while (cursorProdutos.moveToNext());
+            cursorProdutos.close();
+            CursorParametro.close();
 
 
-        String[] colunas = new String[]{
-                prdBean.P_PRODUTO_SIMPLECURSOR,
-                //prdBean.P_CODIGO_PRODUTO,
-                //prdBean.P_CODIGO_BARRAS,
-                prdBean.P_DESCRICAO_PRODUTO,
-                prdBean.P_UNIDADE_MEDIDA,
-                //prdBean.P_QUANTIDADE_PRODUTO,
-                //prdBean.P_CATEGORIA_PRODUTO,
-                prdBean.P_STATUS_PRODUTO,
-                prdBean.P_APRESENTACAO_PRODUTO,
-                prdBean.P_PRECO_PROD_PADRAO,   //VLVENDA1
-                prdBean.P_PRECO_PROD_VLVENDA2, //VLVENDA2
-                prdBean.P_PRECO_PROD_VLVENDA3, //VLVENDA3
-                prdBean.P_PRECO_PROD_VLVENDA4, //VLVENDA4
-                prdBean.P_PRECO_PROD_VLVENDA5, //VLVENDA5
-                prdBean.P_PRECO_PROD_VLVENDAP1,//PROMOCAO_A
-                prdBean.P_PRECO_PROD_VLVENDAP2//PROMOCAO_B
-        };
-
-        int[] to = new int[]{
-                R.id.txt_codprod,
-                //R.id.prod_txv_prd_codigobarras,
-                R.id.txt_descricao,
-                R.id.txtunvenda,
-                //R.id.prod_txv_prd_quantidade,
-                //R.id.prod_txv_prd_categoria,
-                R.id.txtStatus,
-                R.id.txtapres,
-                R.id.txtpreco,
-                R.id.txtprecoauxiliara,
-                R.id.txtprecoauxiliarb,
-                R.id.txtprecoauxiliarc,
-                R.id.txtprecoauxiliard,
-                R.id.txtprecopromocaoa,
-                R.id.txtprecopromocaob
-        };
-
-        try {
-            adapter = new SimpleCursorAdapter(this, R.layout.lstprodutos_card, cursor, colunas, to, 0);
-            prod_listview_produtotemp = (ListView) findViewById(R.id.prod_listview_produtotemp);
-            prod_listview_produtotemp.setAdapter(adapter);
-
-            prod_listview_produtotemp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> listView, View view, int posicao, long l) {
-                    Cursor produto = (Cursor) listView.getItemAtPosition(posicao);
-
-                    Intent intent = new Intent(getBaseContext(), actDadosProdutos.class);
-                    Bundle params = new Bundle();
-                    params.putString("codproduto", produto.getString(produto.getColumnIndex("CODITEMANUAL")));
-                    intent.putExtras(params);
-                    startActivity(intent);
-                }
-            });
-        } catch (Exception E) {
-            Toast.makeText(this, E.getMessage().toString(), Toast.LENGTH_SHORT).show();
-
+        } else {
+            Toast.makeText(this, "Nenhum produto encontrado!", Toast.LENGTH_SHORT).show();
         }
-        prod_txt_pesquisaproduto = (EditText) findViewById(R.id.prod_txt_pesquisaproduto);
-        prod_txt_pesquisaproduto.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
+        return DadosLisProdutos;
 
-            @Override
-            public void onTextChanged(CharSequence texto_digitado, int start, int before, int count) {
-                adapter.getFilter().filter(texto_digitado);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-
-        adapter.setFilterQueryProvider(new FilterQueryProvider() {
-            private Cursor cursor;
-
-            @Override
-            public Cursor runQuery(CharSequence valor) {
-                try {
-                    SqliteProdutoDao prdDao = new SqliteProdutoDao(getApplicationContext());
-                    if (selecao_spinner == DESCRICAO_PRODUTO) {
-                        this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.DESCRICAO_PRODUTO, 1);
-                    }
-                    if (selecao_spinner == CATEGORIA_PRODUTO) {
-                        this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.CATEGORIA_PRODUTO, 1);
-                    }
-                    if (selecao_spinner == CODIGO_PRODUTO) {
-                        this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.CODIGO_PRODUTO, 1);
-                    }
-                }catch (Exception e){
-                    e.toString();
-                }
-                return cursor;
-            }
-        });
     }
+
+    public List<FiltroProdutos> pesquisarprodutos(CharSequence valor_campo) {
+
+        pDialog = new ProgressDialog(act_ListProdutos.this);
+        pDialog.setTitle("Aguarde");
+        pDialog.setMessage("Realizando filtro...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        ProdutosFragment frag1 = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFrag");
+        if (frag1 != null) {
+            frag1.getActivity().getSupportFragmentManager().popBackStack();
+        }
+
+        ArrayList<FiltroProdutos> DadosLisProdutos = new ArrayList<FiltroProdutos>();
+
+        Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+        CursorParametro.moveToFirst();
+
+        Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE DESCRICAO LIKE '%" + valor_campo + "%' ORDER BY DESCRICAO", null);
+        cursorProdutos.moveToFirst();
+        if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
+
+            do {
+                String descricao  = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                String codigoManual= cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
+                String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
+                String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
+                String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
+
+                String ppadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("VENDAPADRAO"));
+                ppadrao = ppadrao.trim();
+                BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));
+
+                String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
+                p1 = p1.trim();
+                BigDecimal preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
+
+                String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
+                p2 = p2.trim();
+                BigDecimal preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
+
+                String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
+                p3 = p3.trim();
+                BigDecimal preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
+
+                String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
+                p4 = p4.trim();
+                BigDecimal preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
+
+                String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
+                p5 = p5.trim();
+                BigDecimal preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
+
+                String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
+                pp1 = pp1.trim();
+                BigDecimal precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
+
+                String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
+                pp2 = pp2.trim();
+                BigDecimal precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
+
+                String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+
+                String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
+
+
+                lstfiltprodutos = new FiltroProdutos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, precopadrao);
+                DadosLisProdutos.add(lstfiltprodutos);
+            } while (cursorProdutos.moveToNext());
+            cursorProdutos.close();
+            CursorParametro.close();
+
+        } else {
+            Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
+        }
+        if (pDialog.isShowing()) {
+            pDialog.dismiss();
+        }
+
+        return DadosLisProdutos;
+    }
+
 
 
 }

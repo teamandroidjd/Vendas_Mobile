@@ -22,7 +22,7 @@ import android.widget.Toast;
  */
 public class act_TH_dadosclie extends Fragment {
 
-    String sCodCliente;
+    int sCodCliente;
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -58,7 +58,7 @@ public class act_TH_dadosclie extends Fragment {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodCliente = params.getString("codCliente");
+                sCodCliente = params.getInt("codCliente");
             }
         }
 

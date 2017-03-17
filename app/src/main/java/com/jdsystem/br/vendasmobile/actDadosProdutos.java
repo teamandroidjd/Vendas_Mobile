@@ -13,7 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
@@ -37,12 +40,26 @@ public class actDadosProdutos extends AppCompatActivity {
         TextView TAG_CODMANUAL = (TextView) findViewById(R.id.txt_codprod);
         TextView TAG_DESCRICAO = (TextView) findViewById(R.id.txt_descricao);
         TextView TAG_UNIVENDA = (TextView) findViewById(R.id.txtunvenda);
-        TextView TAG_VLVENDA1 = (TextView) findViewById(R.id.txtpreco);
+        TextView TAG_TAB1 = (TextView) findViewById(R.id.txttab1); // DESCRIÇÃO DA TABELA DE PREÇO
+        RelativeLayout TAG_LINEAR1 = (RelativeLayout) findViewById(R.id.lnrtabab1); // DESCRIÇÃO DO SIMBOLO R$
+        TextView TAG_VLVENDA1 = (TextView) findViewById(R.id.txtpreco); // PREÇO DA TABELA
+        TextView TAG_TAB2 = (TextView) findViewById(R.id.txttab2); // DESCRIÇÃO DA TABELA DE PREÇO
+        RelativeLayout TAG_LINEAR2 = (RelativeLayout) findViewById(R.id.lnrtabab2); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA2 = (TextView) findViewById(R.id.txtprecoauxiliara);
+        TextView TAG_TAB3 = (TextView) findViewById(R.id.txttab3); // DESCRIÇÃO DA TABELA DE PREÇO
+        RelativeLayout TAG_LINEAR3 = (RelativeLayout) findViewById(R.id.lnrtabab3); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA3 = (TextView) findViewById(R.id.txtprecoauxiliarb);
+        TextView TAG_TAB4 = (TextView) findViewById(R.id.txttab4); // DESCRIÇÃO DA TABELA DE PREÇO
+        RelativeLayout TAG_LINEAR4 = (RelativeLayout) findViewById(R.id.lnrtabab4); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA4 = (TextView) findViewById(R.id.txtprecoauxiliarc);
+        TextView TAG_TAB5 = (TextView) findViewById(R.id.txttab5); // DESCRIÇÃO DA TABELA DE PREÇO
+        RelativeLayout TAG_LINEAR5 = (RelativeLayout) findViewById(R.id.lnrtabab5); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDA5 = (TextView) findViewById(R.id.txtprecoauxiliard);
+        TextView TAG_TAB6 = (TextView) findViewById(R.id.txttab6); // DESCRIÇÃO DA TABELA DE PREÇO
+        RelativeLayout TAG_LINEAR6 = (RelativeLayout) findViewById(R.id.lnrtabab6); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDAP1 = (TextView) findViewById(R.id.txtprecopromocaoa);
+        TextView TAG_TAB7 = (TextView) findViewById(R.id.txttab7); // DESCRIÇÃO DA TABELA DE PREÇO
+        RelativeLayout TAG_LINEAR7 = (RelativeLayout) findViewById(R.id.lnrtabab7); // DESCRIÇÃO DO SIMBOLO R$
         TextView TAG_VLVENDAP2 = (TextView) findViewById(R.id.txtprecopromocaob);
         TextView TAG_MARCA = (TextView) findViewById(R.id.txtmarca);
         TextView TAG_CLASSE = (TextView) findViewById(R.id.txtclasse);
@@ -50,6 +67,10 @@ public class actDadosProdutos extends AppCompatActivity {
         TextView TAG_FORNECEDOR = (TextView) findViewById(R.id.txtforncedor);
         TextView TAG_APRESENTACAO = (TextView) findViewById(R.id.txtapres);
         TextView TAG_ATIVO = (TextView) findViewById(R.id.txtStatus);
+        LinearLayout TAG_LINEARESTOQUE = (LinearLayout) findViewById(R.id.lnrtaEstoque);
+        TextView TAG_QTDESTOQUE = (TextView) findViewById(R.id.txt_qtdestoque);
+        TextView TAG_VLVENDAPADRAO = (TextView) findViewById(R.id.txtprecopadrao);
+        TextView TAG_TABPADRAO = (TextView) findViewById(R.id.txttabpadrao);
 
 
         Intent intent = getIntent();
@@ -60,8 +81,20 @@ public class actDadosProdutos extends AppCompatActivity {
             }
             try {
                 Cursor CursorProd = DB.rawQuery("SELECT CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA," +
-                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2,VENDAPADRAO, " +
+                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2,QTDESTPROD,VENDAPADRAO, " +
                         "ATIVO, APRESENTACAO FROM ITENS WHERE CODITEMANUAL = '" + (sCodProduto) + "'", null);
+
+                Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,TIPOCRITICQTDITEM FROM PARAMAPP", null);
+                CursorParametro.moveToFirst();
+                String tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                String tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                String tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                String tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                String tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                String tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                String tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+                String TipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
+                CursorParametro.close();
 
                 if (CursorProd.getCount() > 0) {
                     CursorProd.moveToFirst();
@@ -71,6 +104,7 @@ public class actDadosProdutos extends AppCompatActivity {
                         TAG_DESCRICAO.setText(CursorProd.getString(CursorProd.getColumnIndex("DESCRICAO")));
                         TAG_UNIVENDA.setText("Unidade de medida: " + CursorProd.getString(CursorProd.getColumnIndex("UNIVENDA")));
                         TAG_APRESENTACAO.setText("Apresentação: " + CursorProd.getString(CursorProd.getColumnIndex("APRESENTACAO")));
+                        String QtdEstoque = CursorProd.getString(CursorProd.getColumnIndex("QTDESTPROD"));
                         String Status = CursorProd.getString(CursorProd.getColumnIndex("ATIVO"));
                         String SituProd = null;
                         if (Status.equals("1")) {
@@ -80,48 +114,115 @@ public class actDadosProdutos extends AppCompatActivity {
                         }
                         TAG_ATIVO.setText("Status: " + SituProd);
 
+                        String Precopadrao = CursorProd.getString(CursorProd.getColumnIndex("VENDAPADRAO"));
+                        Precopadrao = Precopadrao.trim();
+                        if (!Precopadrao.equals("0,0000")) {
+                            BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(Precopadrao.replace(',', '.')));
+                            TAG_VLVENDAPADRAO.setText(vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                            TAG_TABPADRAO.setText("Tabela Padrão");
+                        } else {
+                            TAG_LINEAR1.setVisibility(View.GONE);
+                        }
+
                         String Preco = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA1"));
-                        BigDecimal venda = new BigDecimal(Double.parseDouble(Preco.replace(',', '.')));
-                        TAG_VLVENDA1.setText("Tabela base:      R$ " + venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        Preco = Preco.trim();
+                        if (!Preco.equals("0,0000")) {
+                            BigDecimal venda = new BigDecimal(Double.parseDouble(Preco.replace(',', '.')));
+                            TAG_VLVENDA1.setText(venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                            TAG_TAB1.setText(tab1);
+                        } else {
+                            TAG_LINEAR1.setVisibility(View.GONE);
+                        }
 
                         String PrecoAuxA = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA2"));
-                        BigDecimal vendaAuxA = new BigDecimal(Double.parseDouble(PrecoAuxA.replace(',', '.')));
-                        TAG_VLVENDA2.setText("Auxiliar A:           R$ " + vendaAuxA.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        PrecoAuxA = PrecoAuxA.trim();
+                        if (!PrecoAuxA.equals("0,0000")) {
+                            BigDecimal vendaAuxA = new BigDecimal(Double.parseDouble(PrecoAuxA.replace(',', '.')));
+                            TAG_TAB2.setText(tab2);
+                            TAG_VLVENDA2.setText(vendaAuxA.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        } else {
+                            TAG_LINEAR2.setVisibility(View.GONE);
+                        }
 
                         String PrecoAuxB = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA3"));
-                        BigDecimal vendaAuxb = new BigDecimal(Double.parseDouble(PrecoAuxB.replace(',', '.')));
-                        TAG_VLVENDA3.setText("Auxiliar B:           R$ " + vendaAuxb.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        PrecoAuxB = PrecoAuxB.trim();
+                        if (!PrecoAuxB.equals("0,0000")) {
+                            BigDecimal vendaAuxb = new BigDecimal(Double.parseDouble(PrecoAuxB.replace(',', '.')));
+                            TAG_TAB3.setText(tab3);
+                            TAG_VLVENDA3.setText(vendaAuxb.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        } else {
+                            TAG_LINEAR3.setVisibility(View.GONE);
+                        }
 
                         String PrecoAuxC = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA4"));
-                        BigDecimal vendaAuxC = new BigDecimal(Double.parseDouble(PrecoAuxC.replace(',', '.')));
-                        TAG_VLVENDA4.setText("Auxiliar C:           R$ " + vendaAuxC.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        PrecoAuxC = PrecoAuxC.trim();
+                        if (!PrecoAuxC.equals("0,0000")) {
+                            BigDecimal vendaAuxC = new BigDecimal(Double.parseDouble(PrecoAuxC.replace(',', '.')));
+                            TAG_TAB4.setText(tab4);
+                            TAG_VLVENDA4.setText(vendaAuxC.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        } else {
+                            TAG_LINEAR4.setVisibility(View.GONE);
+                        }
 
                         String PrecoAuxD = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA5"));
-                        BigDecimal vendaAuxD = new BigDecimal(Double.parseDouble(PrecoAuxD.replace(',', '.')));
-                        TAG_VLVENDA5.setText("Auxiliar D:           R$ " + vendaAuxD.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        PrecoAuxD = PrecoAuxD.trim();
+                        if (!PrecoAuxD.equals("0,0000")) {
+                            BigDecimal vendaAuxD = new BigDecimal(Double.parseDouble(PrecoAuxD.replace(',', '.')));
+                            TAG_TAB5.setText(tab5);
+                            TAG_VLVENDA5.setText(vendaAuxD.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        } else {
+                            TAG_LINEAR5.setVisibility(View.GONE);
+                        }
 
                         String PrecoPromoA = CursorProd.getString(CursorProd.getColumnIndex("VLVENDAP1"));
-                        BigDecimal vendaPromoA = new BigDecimal(Double.parseDouble(PrecoPromoA.replace(',', '.')));
-                        TAG_VLVENDAP1.setText("Promocional A:  R$ " + vendaPromoA.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        PrecoPromoA = PrecoPromoA.trim();
+                        if (!PrecoPromoA.equals("0,0000")) {
+                            BigDecimal vendaPromoA = new BigDecimal(Double.parseDouble(PrecoPromoA.replace(',', '.')));
+                            TAG_TAB6.setText(tab6);
+                            TAG_VLVENDAP1.setText(vendaPromoA.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        } else {
+                            TAG_LINEAR6.setVisibility(View.GONE);
+                        }
 
                         String PrecoPromoB = CursorProd.getString(CursorProd.getColumnIndex("VLVENDAP2"));
-                        BigDecimal vendaPromoB = new BigDecimal(Double.parseDouble(PrecoPromoB.replace(',', '.')));
-                        TAG_VLVENDAP2.setText("Promocional B:  R$ " + vendaPromoB.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        PrecoPromoB = PrecoPromoB.trim();
+                        if (!PrecoPromoB.equals("0,0000")) {
+                            BigDecimal vendaPromoB = new BigDecimal(Double.parseDouble(PrecoPromoB.replace(',', '.')));
+                            TAG_TAB7.setText(tab7);
+                            TAG_VLVENDAP2.setText(vendaPromoB.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+                        } else {
+                            TAG_LINEAR7.setVisibility(View.GONE);
+                        }
 
                         TAG_FABRICANTE.setText("Fabricante: " + CursorProd.getString(CursorProd.getColumnIndex("FABRICANTE")));
                         TAG_FORNECEDOR.setText("Fornecedor: " + CursorProd.getString(CursorProd.getColumnIndex("FORNECEDOR")));
                         TAG_CLASSE.setText("Classe: " + CursorProd.getString(CursorProd.getColumnIndex("CLASSE")));
                         TAG_MARCA.setText("Marca: " + CursorProd.getString(CursorProd.getColumnIndex("MARCA")));
+
+                        String QtdEstoqueNegativo = QtdEstoque.replaceAll("[1234567890,]", "").trim();
+                        if (TipoEstoque.equals("Q")) {
+                            TAG_QTDESTOQUE.setText(CursorProd.getString(CursorProd.getColumnIndex("QTDESTPROD")));
+                        }
+                        if (TipoEstoque.equals("D")) {
+                            if (QtdEstoque.equals("0,0000") || QtdEstoqueNegativo.equals("-") ) {
+                                TAG_QTDESTOQUE.setText("Indisponível");
+                            }else{
+                                TAG_QTDESTOQUE.setText("Disponível");
+                            }
+                        }
+                        if (TipoEstoque.equals("N")) {
+                            TAG_LINEARESTOQUE.setVisibility(View.GONE);
+                        }
                     }
                     while (CursorProd.moveToNext());
                     CursorProd.close();
                 }
-            }catch (Exception E){
+            } catch (Exception E) {
                 E.toString();
             }
-
         }
     }
+
     @Override
     public void onBackPressed() {
 

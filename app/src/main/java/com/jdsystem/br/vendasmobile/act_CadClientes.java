@@ -53,7 +53,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
     int CodCidade;
     int CodBairro;
     Boolean PesqCEP;
-    String NomeBairro, NomeCidade;
+    String NomeBairro, NomeCidade, usuario, senha;
     private Context ctx;
     private static ProgressDialog DialogECB;
 
@@ -108,6 +108,8 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodVend = params.getString("codvendedor");
+                usuario = params.getString("usuario");
+                senha = params.getString("senha");
             }
         }
 
@@ -725,10 +727,12 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            actSincronismo.SincronizarClientesEnvioStatic("0", act_CadClientes.this, false);
+                            actSincronismo.SincronizarClientesEnvioStatic("0", act_CadClientes.this, false,usuario,senha);
                             Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
                             Bundle params = new Bundle();
                             params.putString("codvendedor", sCodVend);
+                            params.putString("usuario", usuario);
+                            params.putString("senha", senha);
                             intent.putExtras(params);
                             startActivity(intent);
                             finish();

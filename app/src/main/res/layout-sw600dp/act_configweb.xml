@@ -42,9 +42,10 @@
         android:textAllCaps="true"/>
 
     <ImageView
-        android:layout_height="450dp"
-        android:layout_width="600dp"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
         app:srcCompat="@drawable/criptografia"
+        android:layout_below="@+id/btsalvhost"
         android:id="@+id/imageView4"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />

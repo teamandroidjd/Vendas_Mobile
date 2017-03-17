@@ -110,7 +110,7 @@
         <ListView
             android:id="@+id/ListView_ItensVendidos"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="435dp"
             android:layout_weight="1"
             android:cacheColorHint="@color/colorAccent"
             android:fastScrollAlwaysVisible="true"
@@ -137,6 +137,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+
         android:weightSum="1">
         <TextView
             android:id="@+id/venda_txv_desconto"
@@ -173,8 +174,12 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/lnrtotvenda"
         android:layout_width="match_parent"
-        android:layout_height="28dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/LinearLayoutBottom"
+        android:layout_toRightOf="@+id/LinearLayoutBottom"
         android:background="#afd8de"
         android:orientation="horizontal">
 
@@ -186,7 +191,7 @@
             android:paddingRight="6dp"
             android:text="Total da venda = 0,00"
             android:textColor="@color/ColorText"
-            android:textSize="@dimen/textsize_sw720"
+            android:textSize="@dimen/textsize_sw720_45"
             android:textStyle="bold" />
 
     </LinearLayout>
