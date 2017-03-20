@@ -102,22 +102,22 @@ public class act_ListProdutos extends AppCompatActivity
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                FragmentFiltroProdutos frag = (FragmentFiltroProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                FragmentFiltroProdutos frag = (FragmentFiltroProdutos) getSupportFragmentManager().findFragmentByTag("mainFragB");
                 if (frag == null) {
                     frag = new FragmentFiltroProdutos();
                     Bundle bundle = new Bundle();
                     bundle.putCharSequence("pesquisa", s);
                     frag.setArguments(bundle);
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragB");
                     ft.commit();
-                }else {
+                } else {
                     frag = new FragmentFiltroProdutos();
                     Bundle bundle = new Bundle();
                     bundle.putCharSequence("pesquisa", s);
                     frag.setArguments(bundle);
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragB");
                     ft.commit();
                 }
             }
@@ -128,7 +128,7 @@ public class act_ListProdutos extends AppCompatActivity
 
         pDialog = new ProgressDialog(act_ListProdutos.this);
         pDialog.setTitle("Aguarde");
-        pDialog.setMessage("Carregando Contatos...");
+        pDialog.setMessage("Carregando Produtos...");
         pDialog.setCancelable(false);
         pDialog.show();
 
@@ -157,13 +157,13 @@ public class act_ListProdutos extends AppCompatActivity
                 dialog.show();
 
                 try {
-                actSincronismo.run(act_ListProdutos.this);
-                actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true);
+                    actSincronismo.run(act_ListProdutos.this);
+                    actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true);
 
-                Intent intent = (act_ListProdutos.this).getIntent();
-                (act_ListProdutos.this).finish();
-                startActivity(intent);
-                } catch (Exception e){
+                    Intent intent = (act_ListProdutos.this).getIntent();
+                    (act_ListProdutos.this).finish();
+                    startActivity(intent);
+                } catch (Exception e) {
                     e.toString();
                 }
                 if (dialog.isShowing())
@@ -181,19 +181,19 @@ public class act_ListProdutos extends AppCompatActivity
             @Override
             public void run() {
                 try {
-                ProdutosFragment frag = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFrag");
+                    ProdutosFragment frag = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFragC");
                     if (frag == null) {
-                    frag = new ProdutosFragment();
+                        frag = new ProdutosFragment();
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
+                        ft.replace(R.id.rl_fragment_container, frag, "mainFragC");
                         ft.commit();
                     }
                 } catch (Exception E) {
                     System.out.println("Error" + E);
-                } finally {
-                    if (pDialog.isShowing())
-                        pDialog.dismiss();
                 }
+                if (pDialog.isShowing())
+                    pDialog.dismiss();
+
             }
 
         });
@@ -203,12 +203,21 @@ public class act_ListProdutos extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-        }
+        }*/
+        Intent intent = new Intent(act_ListProdutos.this, actListPedidos.class);
+        Bundle params = new Bundle();
+        params.putString("codvendedor", sCodVend);
+        params.putString("urlPrincipal", URLPrincipal);
+        params.putString("usuario", usuario);
+        params.putString("senha", senha);
+        intent.putExtras(params);
+        startActivity(intent);
+        finish();
     }
 
 
@@ -227,6 +236,7 @@ public class act_ListProdutos extends AppCompatActivity
             params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
+            finish();
 
         } else if (id == R.id.nav_produtos) {
             Intent i = new Intent(act_ListProdutos.this, act_ListProdutos.class);
@@ -237,7 +247,7 @@ public class act_ListProdutos extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
-            //finish();
+
 
         } else if (id == R.id.nav_pedidos) {
             Intent i = new Intent(act_ListProdutos.this, actListPedidos.class);
@@ -248,9 +258,9 @@ public class act_ListProdutos extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
-            //finish();
+            finish();
 
-        } else if(id == R.id.nav_contatos){
+        } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(act_ListProdutos.this, act_ListContatos.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
@@ -259,8 +269,9 @@ public class act_ListProdutos extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
+            finish();
 
-        }else if (id == R.id.nav_sincronismo) {
+        } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListProdutos.this, actSincronismo.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
@@ -290,8 +301,8 @@ public class act_ListProdutos extends AppCompatActivity
         cursorProdutos.moveToFirst();
         if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
             do {
-                String descricao  = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
-                String codigoManual= cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
                 String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
                 String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
                 String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
@@ -350,6 +361,9 @@ public class act_ListProdutos extends AppCompatActivity
             Toast.makeText(this, "Nenhum produto encontrado!", Toast.LENGTH_SHORT).show();
         }
 
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+
         return DadosLisProdutos;
 
     }
@@ -377,8 +391,8 @@ public class act_ListProdutos extends AppCompatActivity
         if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
 
             do {
-                String descricao  = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
-                String codigoManual= cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
                 String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
                 String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
                 String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
@@ -442,7 +456,6 @@ public class act_ListProdutos extends AppCompatActivity
 
         return DadosLisProdutos;
     }
-
 
 
 }

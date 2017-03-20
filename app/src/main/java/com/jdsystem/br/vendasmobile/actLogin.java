@@ -428,7 +428,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                                  }
 
                                              } catch (Exception E) {
-
+                                                 System.out.println("Login, falha no envio ou recebimento da validação de usuário para o aplicativo.Tente novamente.");
                                              }
                                          }
                                      } else {
@@ -454,11 +454,12 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                      }
                                  } catch (Exception E) {
                                      Dialogo.dismiss();
-                                     Toast.makeText(actLogin.this, "Sem conexão com o webservice!", Toast.LENGTH_LONG).show();
-                                     return;
+                                     System.out.println("Login, falha no envio ou recebimento da validação de usuário.Tente novamente.");
+
                                  }
                              } catch (Exception E) {
                                  Dialogo.dismiss();
+                                 System.out.println("Login, falha na montagem do arquivo JSON para envio.Tente novamente.");
                              }
                          }
                      }
@@ -484,6 +485,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
             return CodVend;
         } catch (Exception E) {
+            System.out.println("Login, falha no SQL da função CadastrarLogin.Tente novamente.");
             return 0;
         }
     }

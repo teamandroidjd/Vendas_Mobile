@@ -121,6 +121,12 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
 
                 dpResult.setText(DiaInicio + "/" + (MesInicio+1) + "/" + AnoInicio);
 
+                if ((MesInicio + 1) == 12){
+                    MesInicio = 1;
+                }else {
+                    //MesInicio = MesInicio + 1;
+                }
+
                 DataInicial = AnoInicio + "-" + Util.AcrescentaZeros(String.valueOf(MesInicio + 1), 2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaInicio),2);;
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 try {
@@ -151,6 +157,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+
 
         }
     };

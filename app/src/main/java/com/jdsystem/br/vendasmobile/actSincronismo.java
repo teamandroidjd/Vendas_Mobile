@@ -208,7 +208,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         Boolean sinccliente = SincronizarClientes(sCodVend, usuario, senha, DataUlt2);
         Boolean sincprodutos = SincronizarProdutos(usuario, senha, DataUlt2);
         Boolean sincclieenvio = SincronizarClientesEnvio();
-        Boolean sincpedenvio =  SincronizarPedidosEnvio();
+        Boolean sincpedenvio = SincronizarPedidosEnvio();
         Boolean sinctabelas = SincDescricaoTabelas();
         Boolean sincbloqueios = SincBloqueios();
         Boolean sincparametros = SincParametros();
@@ -357,7 +357,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
 
                             SeqClie++;
-                            
+
                             sinccliente = true;
                             cursor.close();
                             cursor1.close();
@@ -368,6 +368,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                         Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
                         CursorContatosEnv.moveToFirst();
+                        int CodClieExt = CursorContatosEnv.getInt(CursorContatosEnv.getColumnIndex("CODCLIE_EXT"));
                         if ((CursorContatosEnv.getCount() > 0)) {
                             DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente);
                             CursorContatosEnv.close();
@@ -448,10 +449,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 }
 
                                 try {
-                                    DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE ) VALUES(" +
+                                    DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT ) VALUES(" +
                                             "'" + NomeContato.trim() + "','" + CargoContato.trim() +
                                             "',' " + EmailContato.trim() + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
-                                            "," + CodCliente + ");");
+                                            "," + CodCliente + ", " + CodClieExt + ");");
 
                                 } catch (Exception E) {
                                     System.out.println("Error" + E);
@@ -767,7 +768,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 while (CursorClieEnv.moveToNext());
                 CursorClieEnv.close();
                 Dialog.dismiss();
-            }else {
+            } else {
                 sincclienvio = true;
             }
             //  if (Dialog.isShowing())
@@ -775,7 +776,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
-        return  sincclienvio;
+        return sincclienvio;
     }
 
     public boolean SincronizarPedidosEnvio() {
@@ -923,7 +924,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 sincpedenvio = true;
                 CursorPedido.close();
                 Dialog.dismiss();
-            }else {
+            } else {
                 sincpedenvio = true;
             }
 
@@ -1538,7 +1539,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 cursor1.close();
                             }
                             CursosEstado.close();
-                            SincAtualizaCidade(Estado, ctxEnv,true);
+                            SincAtualizaCidade(Estado, ctxEnv, true);
                         } catch (Exception E) {
                             // TODO Auto-generated catch block
                             E.printStackTrace();
@@ -2388,7 +2389,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 System.out.println("Response :" + resultsRequestSOAP.toString());
             }
         } catch (Exception e) {
-            System.out.println("Error" + e);
+            System.out.println("Sincronismo, falha no envio ou recebimento da validação de usuário.Tente novamente.");
         }
 
         try {
@@ -2919,6 +2920,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             }
 
             String CodCliente = null;
+            int CodClieExt = 0;
 
             DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
 
@@ -2988,9 +2990,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         + "','" + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
                             }
 
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
                             cursor1.moveToFirst();
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
+                            CodClieExt = cursor1.getInt(cursor1.getColumnIndex("CODCLIE_EXT"));
 
                             sinccliestatic = true;
                             cursor.close();
@@ -2999,6 +3002,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         } catch (Exception E) {
                             E.toString();
                         }
+
+
+                        DB.execSQL("DELETE FROM CONTATO");
 
                         String Contatos = c.getString(TAG_CONTATOSINFO);
                         Contatos = "{\"contatos\":" + Contatos + "\t}";
@@ -3074,18 +3080,15 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                     }
                                 }
 
-                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND NOME = '" + NomeContato + "'", null);
 
                                 try {
-                                    if (!(CursorContatosEnv.getCount() > 0)) {
-                                        DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE ) VALUES(" +
-                                                "'" + NomeContato + "','" + CargoContato +
-                                                "',' " + EmailContato + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
-                                                "," + CodCliente + ");");
+                                    DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT ) VALUES(" +
+                                            "'" + NomeContato + "','" + CargoContato +
+                                            "',' " + EmailContato + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
+                                            "," + CodCliente + ", " + CodClieExt + ");");
 
-                                    }
+                                    //}
                                     sinccliestatic = true;
-                                    CursorContatosEnv.close();
                                 } catch (Exception E) {
                                     System.out.println("Error" + E);
                                 }
@@ -3772,9 +3775,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
@@ -3782,9 +3782,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }

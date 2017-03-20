@@ -304,19 +304,19 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
             Boolean ConexOk = Util.checarConexaoCelular(this);
             if (vendenegativo.equals("N") && ConexOk == true) {
-
                 atualizaEstoqueItem(CodigoItem);
-
-                Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
-                CursItens.moveToFirst();
-                qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-                CursItens.close();
-
-                if (qtdestoque <= 0) {
-                    Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
-                    return;
-                }
             }
+
+            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+            CursItens.moveToFirst();
+            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+            CursItens.close();
+
+            if (qtdestoque <= 0) {
+                Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
+                return;
+            }
+
 
             final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
             final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
@@ -1024,17 +1024,18 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             if (vendenegativo.equals("N") && ConexOk == true) {
 
                 atualizaEstoqueItem(CodigoItem);
-
-                Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
-                CursItens.moveToFirst();
-                qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-                CursItens.close();
-
-                if (qtdestoque <= 0) {
-                    Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
-                    return;
-                }
             }
+
+            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+            CursItens.moveToFirst();
+            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+            CursItens.close();
+
+            if (qtdestoque <= 0) {
+                Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
+                return;
+            }
+
 
             final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
             final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);

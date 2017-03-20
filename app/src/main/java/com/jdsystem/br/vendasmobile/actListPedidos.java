@@ -304,6 +304,19 @@ public class actListPedidos extends AppCompatActivity
         thread.start();
 
         lnenhum = (LinearLayout) findViewById(R.id.lnenhum);
+
+        FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
+        if (frag == null) {
+            frag = new FragmentPedido();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("usuario", usuario);
+            bundle.putString("senha", senha);
+            bundle.putString("CodVendedor", sCodVend);
+            frag.setArguments(bundle);
+            ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
+            ft.commit();
+        }
     }
 
     @Override
@@ -314,6 +327,15 @@ public class actListPedidos extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+        /*Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+        Bundle params = new Bundle();
+        params.putString("codvendedor", sCodVend);
+        params.putString("urlPrincipal", URLPrincipal);
+        params.putString("usuario", usuario);
+        params.putString("senha", senha);
+        intent.putExtras(params);
+        startActivity(intent);
+        finish();*/
     }
 
     @Override
@@ -410,6 +432,7 @@ public class actListPedidos extends AppCompatActivity
             params.putBoolean("fazpedido", false);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
+            finish();
 
 
         } else if (id == R.id.nav_pedidos) {
@@ -423,6 +446,7 @@ public class actListPedidos extends AppCompatActivity
             params.putString("senha", senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
+            finish();
 
 
         } else if(id == R.id.nav_contatos){
@@ -434,6 +458,7 @@ public class actListPedidos extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
+            finish();
 
         } else if (id == R.id.nav_sincronismo) {
             Intent intent = new Intent(actListPedidos.this, actSincronismo.class);
@@ -444,6 +469,7 @@ public class actListPedidos extends AppCompatActivity
             params.putString("senha", senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
+            finish();
 
         }
 
@@ -459,19 +485,7 @@ public class actListPedidos extends AppCompatActivity
             @Override
             public void run() {
                 try {
-                    //CarregarPedidos();
-                    FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
-                    if (frag == null) {
-                        frag = new FragmentPedido();
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("usuario", usuario);
-                        bundle.putString("senha", senha);
-                        bundle.putString("CodVendedor", sCodVend);
-                        frag.setArguments(bundle);
-                        ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
-                        ft.commit();
-                    }
+                    CarregarPedidos();
                 } catch (Exception E) {
 
                 } finally {
@@ -505,7 +519,7 @@ public class actListPedidos extends AppCompatActivity
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND (PEDOPER.DATAEMIS BETWEEN '" + DtInicio + "' AND '" + DtFinal + "')" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal+1 + "')" +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
 
             } else {

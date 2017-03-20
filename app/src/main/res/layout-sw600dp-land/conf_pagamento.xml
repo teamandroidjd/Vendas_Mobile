@@ -157,7 +157,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
-                    android:layout_below="@+id/tit_parcela"
                     android:layout_toEndOf="@+id/conf_valorparcela"
                     android:layout_weight="1"
                     android:gravity="end"

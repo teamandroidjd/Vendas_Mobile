@@ -177,9 +177,22 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                         cursorbloqclie.close();
 
                         String bloqueio = cliente_cursor.getString(cursor.getColumnIndex("BLOQUEIO"));
-                        Double limitecred = cliente_cursor.getDouble(cursor.getColumnIndex("LIMITECRED"));
-                        int CodCliente = cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT"));
-                        if (BloqClie.equals("S")) {
+                        //Double limitecred = cliente_cursor.getDouble(cursor.getColumnIndex("LIMITECRED"));
+                        //int CodCliente = cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT"));
+                        String FlagIntegrado = cliente_cursor.getString(cursor.getColumnIndex("FLAGINTEGRADO"));
+
+                        if(FlagIntegrado.equals("1")){
+                            Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                            Bundle params = new Bundle();
+                            params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                            params.putString("CodVendedor", CodVendedor);
+                            params.putString("numpedido", "0");
+                            params.putString("codempresa", CodEmpresa);
+                            intent.putExtras(params);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else if (BloqClie.equals("S")) {
                             /*Boolean ConexOk = Util.checarConexaoCelular(Lista_clientes.this);
                             if (ConexOk == true) {
                                 actSincronismo.RetornaInfoCliexPedido(CodVendedor, Lista_clientes.this, usuario, senha, CodCliente);
@@ -210,7 +223,6 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                 Util.msg_toast_personal(getBaseContext(), "Cliente sem permissão de compra.Verifique!", Util.ALERTA);
                                 return;
                             }
-
                         }
                         if (BloqClie.equals("N")) {
                             Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
