@@ -88,7 +88,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
     private Handler handler = new Handler();
     private Intent Codigo;
-    private String NumPedido, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7, sCodvend, chavepedido;
+    private String NumPedido, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7, sCodvend, chavepedido, usuario, senha;
     private int CodigoItem, sprecoprincipal, tabanterior;
     SQLiteDatabase DB;
     private Double qtdestoque;
@@ -126,6 +126,8 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         NumPedido = Codigo.getStringExtra("numpedido");
         chavepedido = Codigo.getStringExtra("chave");
         sCodvend = Codigo.getStringExtra("CodVendedor");
+        usuario = Codigo.getStringExtra("usuario");
+        senha = Codigo.getStringExtra("senha");
 
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_spinner);
         prod_sp_produtos = (Spinner) findViewById(R.id.prod_sp_produtos);
@@ -1731,11 +1733,8 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     public void GravaPreferencias(int preco) {
 
         prefs = getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
-
         SharedPreferences.Editor prefsPrivateEditor = prefs.edit();
-
         prefsPrivateEditor.putInt("spreco", preco);
-
         prefsPrivateEditor.commit();
 
     }
@@ -1796,11 +1795,6 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     }
 
 
-    public void FinalizaPedidoProduto(View v) {
-
-        finish();
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -1847,7 +1841,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     public void run() {
         try {
             actSincronismo.run(Lista_produtos.this);
-            actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, true);
+            actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, true, usuario, senha);
 
             Intent intent = (Lista_produtos.this).getIntent();
             (Lista_produtos.this).finish();

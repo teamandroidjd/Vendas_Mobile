@@ -290,6 +290,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 params.putString("numpedido", NumPedido);
                 params.putString("chave", Chave_Venda);
                 params.putString("CodVendedor", sCodVend);
+                params.putString("usuario",usuario);
+                params.putString("senha",senha);
                 Lista_produtos.putExtras(params);
                 startActivity(Lista_produtos);
             }

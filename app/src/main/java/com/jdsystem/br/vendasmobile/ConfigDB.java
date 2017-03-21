@@ -88,7 +88,7 @@ public class ConfigDB extends SQLiteOpenHelper {
 
     private static String SQL_CONTATOS = (" CREATE TABLE IF NOT EXISTS CONTATO (" +
             "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
-            "    CODCLIENTE INTEGER           NOT NULL,                 " +
+            "    CODCLIENTE                   INTEGER,                  " +
             "    CODCLIE_EXT                  INTEGER,                  " +
             "    NOME                         VARCHAR (60)  NOT NULL,   " +
             "    CARGO                        VARCHAR (30),             " +
@@ -437,9 +437,9 @@ public class ConfigDB extends SQLiteOpenHelper {
 
             //MODIFICAÇÕES NA VERSÃO 5 DO BANCO DE DADOS
             try {
-
+                db.execSQL("ALTER TABLE CONTATO ADD CODCLIENTE INTEGER");
             } catch (Exception E) {
-                E.toString();
+                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODCLIENTE INTEGER");
             }
         }
     }
