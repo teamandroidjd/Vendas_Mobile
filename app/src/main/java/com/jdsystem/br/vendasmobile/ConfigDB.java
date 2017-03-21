@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 4;
+    public static int versao = 5;
 
     public ConfigDB(Context ctx) {
 
