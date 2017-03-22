@@ -723,11 +723,11 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(act_CadClientes.this);
             builder.setTitle("Sincronização");
             builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Deseja Sincronizar o Cliente cadastrado")
+            builder.setMessage("Deseja sincronizar o sliente cadastrado?")
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            actSincronismo.SincronizarClientesEnvioStatic("0", act_CadClientes.this, false,usuario,senha);
+                            actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false,usuario,senha);
                             Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
                             Bundle params = new Bundle();
                             params.putString("codvendedor", sCodVend);

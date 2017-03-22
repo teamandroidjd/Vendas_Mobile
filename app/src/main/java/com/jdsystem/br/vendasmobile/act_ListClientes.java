@@ -305,12 +305,21 @@ public class act_ListClientes extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-        }
+        }*/
+        Intent intent = new Intent(act_ListClientes.this, actListPedidos.class);
+        Bundle params = new Bundle();
+        params.putString("codvendedor", sCodVend);
+        params.putString("urlPrincipal", URLPrincipal);
+        params.putString("usuario", usuario);
+        params.putString("senha", senha);
+        intent.putExtras(params);
+        startActivity(intent);
+        finish();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -330,6 +339,7 @@ public class act_ListClientes extends AppCompatActivity
             params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
+            finish();
 
         } else if (id == R.id.nav_pedidos) {
             Intent intent = new Intent(act_ListClientes.this, actListPedidos.class);
@@ -340,6 +350,7 @@ public class act_ListClientes extends AppCompatActivity
             params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
+            finish();
 
         } else if(id == R.id.nav_contatos){
             Intent i = new Intent(act_ListClientes.this, act_ListContatos.class);
@@ -350,6 +361,7 @@ public class act_ListClientes extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
+            finish();
 
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListClientes.this, actSincronismo.class);
@@ -360,7 +372,7 @@ public class act_ListClientes extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
-            this.finish();
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

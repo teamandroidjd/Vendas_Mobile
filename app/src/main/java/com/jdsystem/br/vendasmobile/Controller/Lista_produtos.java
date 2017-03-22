@@ -88,7 +88,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
     private Handler handler = new Handler();
     private Intent Codigo;
-    private String NumPedido, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7, sCodvend, chavepedido;
+    private String NumPedido, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7, sCodvend, chavepedido, usuario, senha;
     private int CodigoItem, sprecoprincipal, tabanterior;
     SQLiteDatabase DB;
     private Double qtdestoque;
@@ -126,6 +126,8 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         NumPedido = Codigo.getStringExtra("numpedido");
         chavepedido = Codigo.getStringExtra("chave");
         sCodvend = Codigo.getStringExtra("CodVendedor");
+        usuario = Codigo.getStringExtra("usuario");
+        senha = Codigo.getStringExtra("senha");
 
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_spinner);
         prod_sp_produtos = (Spinner) findViewById(R.id.prod_sp_produtos);
@@ -304,19 +306,19 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
             Boolean ConexOk = Util.checarConexaoCelular(this);
             if (vendenegativo.equals("N") && ConexOk == true) {
-
                 atualizaEstoqueItem(CodigoItem);
-
-                Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
-                CursItens.moveToFirst();
-                qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-                CursItens.close();
-
-                if (qtdestoque <= 0) {
-                    Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
-                    return;
-                }
             }
+
+            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+            CursItens.moveToFirst();
+            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+            CursItens.close();
+
+            if (qtdestoque <= 0) {
+                Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
+                return;
+            }
+
 
             final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
             final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
@@ -1024,17 +1026,18 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             if (vendenegativo.equals("N") && ConexOk == true) {
 
                 atualizaEstoqueItem(CodigoItem);
-
-                Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
-                CursItens.moveToFirst();
-                qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-                CursItens.close();
-
-                if (qtdestoque <= 0) {
-                    Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
-                    return;
-                }
             }
+
+            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+            CursItens.moveToFirst();
+            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+            CursItens.close();
+
+            if (qtdestoque <= 0) {
+                Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
+                return;
+            }
+
 
             final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
             final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
@@ -1730,11 +1733,8 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     public void GravaPreferencias(int preco) {
 
         prefs = getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
-
         SharedPreferences.Editor prefsPrivateEditor = prefs.edit();
-
         prefsPrivateEditor.putInt("spreco", preco);
-
         prefsPrivateEditor.commit();
 
     }
@@ -1795,11 +1795,6 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     }
 
 
-    public void FinalizaPedidoProduto(View v) {
-
-        finish();
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -1846,7 +1841,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     public void run() {
         try {
             actSincronismo.run(Lista_produtos.this);
-            actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, true);
+            actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, true, usuario, senha);
 
             Intent intent = (Lista_produtos.this).getIntent();
             (Lista_produtos.this).finish();

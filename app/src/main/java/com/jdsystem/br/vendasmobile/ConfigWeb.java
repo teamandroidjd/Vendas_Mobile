@@ -79,17 +79,13 @@ public class ConfigWeb extends AppCompatActivity {
 
                             if (RetHost.equals("0")){
                                 DialogECB.cancel();
-                                Toast.makeText(ConfigWeb.this, "Host não encontrado!", Toast.LENGTH_SHORT).show();
-                                return;
                             }
                         }else {
                             DialogECB.cancel();
-                            Toast.makeText(ConfigWeb.this, "Sem conexão com a internet. Verifique!", Toast.LENGTH_SHORT).show();
-                            return;
                         }
                     } catch (Exception e) {
                         DialogECB.dismiss();
-                        System.out.println("Error" + e);
+                        System.out.println("ConfigWeb, falha no envio ou retorno da licença. Tente novamente.");
                     }
                 }
                 if (RetHost == null) {

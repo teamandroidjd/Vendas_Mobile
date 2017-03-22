@@ -147,6 +147,44 @@ public class SqliteClienteDao {
         return clientes;
     }
 
+    public SqliteClienteBean buscar_cliente_pelo_codigo_ext(String cli_codigo) {
+        db = new ConfigDB(ctx).getReadableDatabase();
+        SqliteClienteBean clientes = null;
+        try {
+            cursor = db.rawQuery("SELECT CLIENTES.*, CLIENTES.CODCLIE_INT as _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE," +
+                    " BAIRROS.DESCRICAO AS BAIRRO, ESTADOS.UF AS UF FROM CLIENTES LEFT OUTER JOIN " +
+                    " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
+                    " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
+                    " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
+                    " WHERE CODCLIE_EXT = ?  ", new String[]{cli_codigo});
+            if (cursor.moveToFirst()) {
+                clientes = new SqliteClienteBean();
+                clientes.setCli_codigo(cursor.getInt(cursor.getColumnIndex(clientes.C_CODIGO_CLIENTE)));
+                clientes.setCli_codigo_ext(cursor.getInt(cursor.getColumnIndex(clientes.C_CODIGO_CLIENTE_EXT)));
+                clientes.setCli_nome(cursor.getString(cursor.getColumnIndex(clientes.C_NOME_DO_CLIENTE)));
+                clientes.setCli_fantasia(cursor.getString(cursor.getColumnIndex(clientes.C_NOME_FANTASIA)));
+                clientes.setCli_endereco(cursor.getString(cursor.getColumnIndex(clientes.C_ENDERECO_CLIENTE)));
+                clientes.setCli_bairro(cursor.getString(cursor.getColumnIndex(clientes.C_BAIRRO_CLIENTE)));
+                clientes.setCli_cep(cursor.getString(cursor.getColumnIndex(clientes.C_CEP_CLIENTE)));
+                clientes.setCid_nome(cursor.getString(cursor.getColumnIndex(clientes.C_CIDADE_CLIENTE)));
+                clientes.setCli_tel1(cursor.getString(cursor.getColumnIndex(clientes.C_TELEFONE_CLIENTE)));
+                clientes.setCli_cpfcnpj(cursor.getString(cursor.getColumnIndex(clientes.C_CNPJCPF)));
+                clientes.setCli_rginscricaoest(cursor.getString(cursor.getColumnIndex(clientes.C_RGINSCRICAO_ESTADUAL)));
+                clientes.setCli_email(cursor.getString(cursor.getColumnIndex(clientes.C_EMAIL_CLIENTE)));
+                clientes.setCli_enviado(cursor.getString(cursor.getColumnIndex(clientes.C_ENVIADO)));
+                clientes.setCli_chave(cursor.getString(cursor.getColumnIndex(clientes.C_CHAVE_DO_CLIENTE)));
+                clientes.setCli_uf(cursor.getString(cursor.getColumnIndex(clientes.C_UF_CLIENTE)));
+                clientes.setCli_tel1(cursor.getString(cursor.getColumnIndex(clientes.C_TELEFONE_CLIENTE)));
+            }
+        } catch (SQLiteException e) {
+            Util.log("SQLiteException buscar_cliente_pelo_codigo" + e.getMessage());
+        } finally {
+            db.close();
+            cursor.close();
+        }
+        return clientes;
+    }
+
 
     /*public List<SqliteClienteBean> buscar_clientes_nao_enviados() {
         List<SqliteClienteBean> lista_de_clientes = new ArrayList<SqliteClienteBean>();

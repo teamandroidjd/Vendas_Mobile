@@ -56,7 +56,7 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
         try {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -154,12 +154,21 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-        }
+        }*/
+        Intent intent = new Intent(act_ListContatos.this, actListPedidos.class);
+        Bundle params = new Bundle();
+        params.putString("codvendedor", sCodVend);
+        params.putString("urlPrincipal", URLPrincipal);
+        params.putString("usuario", usuario);
+        params.putString("senha", senha);
+        intent.putExtras(params);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -197,6 +206,7 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
             params.putString("urlPrincipal", URLPrincipal);
             intent.putExtras(params);
             startActivity(intent);
+            finish();
         } else if (id == R.id.nav_produtos) {
             Intent iprod = new Intent(act_ListContatos.this, act_ListProdutos.class);
             Bundle params = new Bundle();
@@ -206,6 +216,7 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
             params.putString("senha", senha);
             iprod.putExtras(params);
             startActivity(iprod);
+            finish();
 
         } else if (id == R.id.nav_pedidos) {
             Intent iped = new Intent(act_ListContatos.this, actListPedidos.class);
@@ -216,10 +227,11 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
             params.putString("senha", senha);
             iped.putExtras(params);
             startActivity(iped);
+            finish();
 
-        } else if(id == R.id.nav_contatos){
+        } else if (id == R.id.nav_contatos) {
 
-        }else if (id == R.id.nav_sincronismo) {
+        } else if (id == R.id.nav_sincronismo) {
             Intent isinc = new Intent(act_ListContatos.this, actSincronismo.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
@@ -228,7 +240,7 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
             params.putString("senha", senha);
             isinc.putExtras(params);
             startActivity(isinc);
-            this.finish();
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -243,32 +255,36 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
         ArrayList<Contatos> DadosListContatos = new ArrayList<Contatos>();
 
 
-            Cursor cursorContatos = DB.rawQuery("SELECT NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, COMPLEMENTO, UF, CODVENDEDOR, CODBAIRRO, CODCIDADE, CODCLIENTE FROM CONTATO ORDER BY NOME", null);
-            cursorContatos.moveToFirst();
-            if (cursorContatos.getCount() > 0) {
-                do {
-                    String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
-                    String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
-                    String email = cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL"));
-                    String tel1 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL1"));
-                    String tel2 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL2"));
-                    String Doc = cursorContatos.getString(cursorContatos.getColumnIndex("DOCUMENTO"));
-                    String Data = cursorContatos.getString(cursorContatos.getColumnIndex("DATA"));
-                    String Cep = cursorContatos.getString(cursorContatos.getColumnIndex("CEP"));
-                    String Endereco = cursorContatos.getString(cursorContatos.getColumnIndex("ENDERECO"));
-                    String Num = cursorContatos.getString(cursorContatos.getColumnIndex("NUMERO"));
-                    String Compl = cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO"));
-                    String uf = cursorContatos.getString(cursorContatos.getColumnIndex("UF"));
+        Cursor cursorContatos = DB.rawQuery("SELECT NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, COMPLEMENTO, UF, CODVENDEDOR, CODBAIRRO, CODCIDADE, CODCLIENTE FROM CONTATO ORDER BY NOME", null);
+        cursorContatos.moveToFirst();
+        if (cursorContatos.getCount() > 0) {
+            do {
+                String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
+                String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
+                String email = cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL"));
+                String tel1 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL1"));
+                String tel2 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL2"));
+                String Doc = cursorContatos.getString(cursorContatos.getColumnIndex("DOCUMENTO"));
+                String Data = cursorContatos.getString(cursorContatos.getColumnIndex("DATA"));
+                String Cep = cursorContatos.getString(cursorContatos.getColumnIndex("CEP"));
+                String Endereco = cursorContatos.getString(cursorContatos.getColumnIndex("ENDERECO"));
+                String Num = cursorContatos.getString(cursorContatos.getColumnIndex("NUMERO"));
+                String Compl = cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO"));
+                String uf = cursorContatos.getString(cursorContatos.getColumnIndex("UF"));
 
 
-                    lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null, 0, 0);
-                    DadosListContatos.add(lstcontatos);
-                } while (cursorContatos.moveToNext());
-                cursorContatos.close();
+                lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null, 0, 0);
+                DadosListContatos.add(lstcontatos);
+            } while (cursorContatos.moveToNext());
+            cursorContatos.close();
 
-            } else {
-                Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
-            }
+        } else {
+            Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
+        }
+
+        if (pDialog.isShowing()) {
+            pDialog.dismiss();
+        }
 
         return DadosListContatos;
 
@@ -319,6 +335,9 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
         if (pDialog.isShowing()) {
             pDialog.dismiss();
         }
+        if (pDialog.isShowing()) {
+            pDialog.dismiss();
+        }
 
         return DadosListContatos;
     }
@@ -339,10 +358,10 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
                     }
                 } catch (Exception E) {
 
-                } finally {
-                    if (pDialog.isShowing())
-                        pDialog.dismiss();
                 }
+                if (pDialog.isShowing())
+                    pDialog.dismiss();
+
             }
 
 

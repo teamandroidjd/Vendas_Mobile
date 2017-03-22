@@ -116,13 +116,10 @@ public class actDadosProdutos extends AppCompatActivity {
 
                         String Precopadrao = CursorProd.getString(CursorProd.getColumnIndex("VENDAPADRAO"));
                         Precopadrao = Precopadrao.trim();
-                        if (!Precopadrao.equals("0,0000")) {
                             BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(Precopadrao.replace(',', '.')));
                             TAG_VLVENDAPADRAO.setText(vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
                             TAG_TABPADRAO.setText("Tabela Padrão");
-                        } else {
-                            TAG_LINEAR1.setVisibility(View.GONE);
-                        }
+
 
                         String Preco = CursorProd.getString(CursorProd.getColumnIndex("VLVENDA1"));
                         Preco = Preco.trim();

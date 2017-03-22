@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jdsystem.br.vendasmobile.R;
@@ -44,25 +45,9 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
         myViewHolder.lblCodItem.setText(mList.get(position).getCodigoManual());
         myViewHolder.lblNomeItem.setText(mList.get(position).getDescricao());
         myViewHolder.lblUnidItem.setText(mList.get(position).getUnidVenda());
-
-        myViewHolder.txtprecopadrao.setText(mList.get(position).getPrecoPadrao());
-        myViewHolder.lblPreco.setText(mList.get(position).getPreco1());
-        myViewHolder.lblpreco2.setText(mList.get(position).getPreco2());
-        myViewHolder.lblpreco3.setText(mList.get(position).getPreco3());
-        myViewHolder.lblpreco4.setText(mList.get(position).getPreco4());
-        myViewHolder.lblpreco5.setText(mList.get(position).getPreco5());
-        myViewHolder.lblprecop1.setText(mList.get(position).getPrecoP1());
-        myViewHolder.lblprecop2.setText(mList.get(position).getPrecoP2());
-        myViewHolder.lblApres.setText(mList.get(position).getApresentacao());
-
         myViewHolder.tabpadrao.setText("Tabela Padrão");
-        myViewHolder.tab1.setText(mList.get(position).getTabela1 ());
-        myViewHolder.tab2.setText(mList.get(position).getTabela2 ());
-        myViewHolder.tab3.setText(mList.get(position).getTabela3 ());
-        myViewHolder.tab4.setText(mList.get(position).getTabela4 ());
-        myViewHolder.tab5.setText(mList.get(position).getTabela5 ());
-        myViewHolder.tabp1.setText(mList.get(position).getTabpromo1 ());
-        myViewHolder.tabp2.setText(mList.get(position).getTabpromo2());
+        myViewHolder.txtprecopadrao.setText(mList.get(position).getPrecoPadrao());
+        myViewHolder.lblApres.setText(mList.get(position).getApresentacao());
 
         String QtdEstoqueNegativo = (mList.get(position).getQuantidade()).replaceAll("[1234567890,]", "").trim();
         String TipoEst = mList.get(position).getTipoEstoque();
@@ -88,6 +73,55 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
             myViewHolder.lblStatus.setText("Inativo");
         }
 
+      if ((mList.get(position).getPreco1()) != ("0,0000")) {
+            myViewHolder.lblPreco.setText(mList.get(position).getPreco1());
+            myViewHolder.tab1.setText(mList.get(position).getTabela1());
+        } else {
+            myViewHolder.laytab1.setVisibility(View.GONE);
+        }
+
+        if ((mList.get(position).getPreco2()) != ("0,0000")) {
+            myViewHolder.lblpreco2.setText(mList.get(position).getPreco2());
+            myViewHolder.tab2.setText(mList.get(position).getTabela2());
+       } else {
+           myViewHolder.laytab2.setVisibility(View.GONE);
+       }
+
+        if ((mList.get(position).getPreco3()) != ("0,0000")) {
+            myViewHolder.lblpreco3.setText(mList.get(position).getPreco3());
+            myViewHolder.tab3.setText(mList.get(position).getTabela3());
+        } else {
+            myViewHolder.laytab3.setVisibility(View.GONE);
+        }
+
+        if ((mList.get(position).getPreco4()) != ("0,0000")) {
+            myViewHolder.lblpreco4.setText(mList.get(position).getPreco4());
+            myViewHolder.tab4.setText(mList.get(position).getTabela4());
+        } else {
+            myViewHolder.laytab4.setVisibility(View.GONE);
+        }
+
+        if ((mList.get(position).getPreco5()) != ("0,0000")) {
+            myViewHolder.lblpreco5.setText(mList.get(position).getPreco5());
+            myViewHolder.tab5.setText(mList.get(position).getTabela5());
+        } else {
+            myViewHolder.laytab5.setVisibility(View.GONE);
+        }
+
+        if ((mList.get(position).getPrecoP1()) != ("0,0000")) {
+            myViewHolder.lblprecop1.setText(mList.get(position).getPrecoP1());
+            myViewHolder.tabp1.setText(mList.get(position).getTabpromo1());
+        } else {
+            myViewHolder.laytabp1.setVisibility(View.GONE);
+        }
+
+
+        if ((mList.get(position).getPrecoP2()) != ("0,0000")) {
+            myViewHolder.lblprecop2.setText(mList.get(position).getPrecoP2());
+            myViewHolder.tabp2.setText(mList.get(position).getTabpromo2());
+        } else {
+            myViewHolder.laytabp2.setVisibility(View.GONE);
+        }
 
     }
 
@@ -135,6 +169,7 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
         public TextView lblquantidade;
         public TextView tabpadrao, tab1, tab2, tab3, tab4, tab5, tabp1, tabp2;
         public LinearLayout layquantidade;
+        public RelativeLayout laytab1, laytab2, laytab3, laytab4, laytab5, laytabp1, laytabp2;
 
 
         public MyViewHolder(View itemView) {
@@ -166,6 +201,13 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
             tabp2 = (TextView) itemView.findViewById(R.id.tabp2);
 
             layquantidade = (LinearLayout) itemView.findViewById(R.id.layquantidade);
+            laytab1 = (RelativeLayout) itemView.findViewById(R.id.laytab1);
+            laytab2 = (RelativeLayout) itemView.findViewById(R.id.laytab2);
+            laytab3 = (RelativeLayout) itemView.findViewById(R.id.laytab3);
+            laytab4 = (RelativeLayout) itemView.findViewById(R.id.laytab4);
+            laytab5 = (RelativeLayout) itemView.findViewById(R.id.laytab5);
+            laytabp1 = (RelativeLayout) itemView.findViewById(R.id.laytabp1);
+            laytabp2 = (RelativeLayout) itemView.findViewById(R.id.laytabp2);
 
 
 

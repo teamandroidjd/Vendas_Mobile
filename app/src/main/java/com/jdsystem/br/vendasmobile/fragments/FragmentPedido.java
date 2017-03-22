@@ -167,7 +167,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
                                         }
                                     } else if ((selectedRadioButton.getText().toString().trim()).equals("Cancelar")) {
-                                        if (Status.equals("Orçamento")) {
+                                        if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                             boolean Cancelado = actSincronismo.CancelarPedidoAberto(NumPedido, getContext());
 
                                             if (Cancelado == true) {

@@ -2,12 +2,14 @@ package com.jdsystem.br.vendasmobile;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -33,6 +35,14 @@ import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentFiltroProdutos;
 import com.jdsystem.br.vendasmobile.fragments.ProdutosFragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +54,11 @@ public class act_ListProdutos extends AppCompatActivity
 
     String sCodVend, URLPrincipal, usuario, senha, dtUltAtu;
     String UsuarioLogado;
-
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private EditText prod_txt_pesquisaproduto;
-    private ProgressDialog dialog, pDialog;
+    private ProgressDialog pDialog;
     SQLiteDatabase DB;
+    int Flag = 0;
     Produtos lstprodutos;
     FiltroProdutos lstfiltprodutos;
     Handler handler = new Handler();
@@ -102,40 +112,38 @@ public class act_ListProdutos extends AppCompatActivity
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                FragmentFiltroProdutos frag = (FragmentFiltroProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+            }
+
+            public void afterTextChanged(Editable s) {
+                FragmentFiltroProdutos frag = (FragmentFiltroProdutos) getSupportFragmentManager().findFragmentByTag("mainFragB");
                 if (frag == null) {
                     frag = new FragmentFiltroProdutos();
                     Bundle bundle = new Bundle();
                     bundle.putCharSequence("pesquisa", s);
                     frag.setArguments(bundle);
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragB");
                     ft.commit();
-                }else {
+                } else {
                     frag = new FragmentFiltroProdutos();
                     Bundle bundle = new Bundle();
                     bundle.putCharSequence("pesquisa", s);
                     frag.setArguments(bundle);
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragB");
                     ft.commit();
                 }
-            }
-
-            public void afterTextChanged(Editable s) {
             }
         });
 
         pDialog = new ProgressDialog(act_ListProdutos.this);
         pDialog.setTitle("Aguarde");
-        pDialog.setMessage("Carregando Contatos...");
+        pDialog.setMessage("Carregando Produtos...");
         pDialog.setCancelable(false);
         pDialog.show();
 
         Thread thread = new Thread(act_ListProdutos.this);
         thread.start();
-
-
     }
 
     @Override
@@ -148,76 +156,82 @@ public class act_ListProdutos extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_sinc_cliente) {
-            Boolean ConexOk = Util.checarConexaoCelular(act_ListProdutos.this);
-            if (ConexOk == true) {
-                dialog = new ProgressDialog(this);
-                dialog.setCancelable(false);
-                dialog.setMessage("Sincronizando Produtos");
-                dialog.setTitle("Aguarde");
-                dialog.show();
+            if (item.getItemId() == R.id.menu_sinc_cliente) {
+                Boolean ConexOk = Util.checarConexaoCelular(act_ListProdutos.this);
+                if (ConexOk == true) {
+                    Flag = 1;
+                    pDialog = new ProgressDialog(this);
+                    pDialog.setCancelable(false);
+                    pDialog.setMessage("Sincronizando Produtos");
+                    pDialog.setTitle("Aguarde");
+                    pDialog.show();
 
-                try {
-                actSincronismo.run(act_ListProdutos.this);
-                actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true);
+                    Thread thread = new Thread(this);
+                    thread.start();
 
-                Intent intent = (act_ListProdutos.this).getIntent();
-                (act_ListProdutos.this).finish();
-                startActivity(intent);
-                } catch (Exception e){
-                    e.toString();
+                } else {
+                    Toast.makeText(act_ListProdutos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
+
                 }
-                if (dialog.isShowing())
-                    dialog.dismiss();
 
-            } else {
-                Toast.makeText(act_ListProdutos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
             }
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void run() {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                ProdutosFragment frag = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFrag");
-                    if (frag == null) {
+        if(Flag == 1) {
+            try {
+                actSincronismo.run(act_ListProdutos.this);
+                actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true, usuario, senha);
+
+                Intent intent = (act_ListProdutos.this).getIntent();
+                (act_ListProdutos.this).finish();
+                startActivity(intent);
+            } catch (Exception e) {
+                e.toString();
+            }
+        }else {
+            try {
+                ProdutosFragment frag = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFragC");
+                if (frag == null) {
                     frag = new ProdutosFragment();
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
-                        ft.commit();
-                    }
-                } catch (Exception E) {
-                    System.out.println("Error" + E);
-                } finally {
-                    if (pDialog.isShowing())
-                        pDialog.dismiss();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragC");
+                    ft.commit();
                 }
             }
-
-        });
+            catch (Exception e){
+                e.toString();
+            }
+        }
+        if (pDialog.isShowing())
+            pDialog.dismiss();
 
     }
 
-
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-        }
+        }*/
+        Intent intent = new Intent(act_ListProdutos.this, actListPedidos.class);
+        Bundle params = new Bundle();
+        params.putString("codvendedor", sCodVend);
+        params.putString("urlPrincipal", URLPrincipal);
+        params.putString("usuario", usuario);
+        params.putString("senha", senha);
+        intent.putExtras(params);
+        startActivity(intent);
+        finish();
     }
 
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_clientes) {
             Intent intent = new Intent(act_ListProdutos.this, act_ListClientes.class);
             Bundle params = new Bundle();
@@ -227,6 +241,7 @@ public class act_ListProdutos extends AppCompatActivity
             params.putString("senha", senha);
             intent.putExtras(params);
             startActivity(intent);
+            finish();
 
         } else if (id == R.id.nav_produtos) {
             Intent i = new Intent(act_ListProdutos.this, act_ListProdutos.class);
@@ -237,7 +252,7 @@ public class act_ListProdutos extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
-            //finish();
+
 
         } else if (id == R.id.nav_pedidos) {
             Intent i = new Intent(act_ListProdutos.this, actListPedidos.class);
@@ -248,9 +263,9 @@ public class act_ListProdutos extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
-            //finish();
+            finish();
 
-        } else if(id == R.id.nav_contatos){
+        } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(act_ListProdutos.this, act_ListContatos.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
@@ -259,8 +274,9 @@ public class act_ListProdutos extends AppCompatActivity
             params.putString("senha", senha);
             i.putExtras(params);
             startActivity(i);
+            finish();
 
-        }else if (id == R.id.nav_sincronismo) {
+        } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListProdutos.this, actSincronismo.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
@@ -290,8 +306,8 @@ public class act_ListProdutos extends AppCompatActivity
         cursorProdutos.moveToFirst();
         if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
             do {
-                String descricao  = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
-                String codigoManual= cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
                 String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
                 String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
                 String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
@@ -350,6 +366,9 @@ public class act_ListProdutos extends AppCompatActivity
             Toast.makeText(this, "Nenhum produto encontrado!", Toast.LENGTH_SHORT).show();
         }
 
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+
         return DadosLisProdutos;
 
     }
@@ -377,8 +396,8 @@ public class act_ListProdutos extends AppCompatActivity
         if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
 
             do {
-                String descricao  = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
-                String codigoManual= cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
                 String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
                 String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
                 String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
@@ -442,7 +461,5 @@ public class act_ListProdutos extends AppCompatActivity
 
         return DadosLisProdutos;
     }
-
-
 
 }
