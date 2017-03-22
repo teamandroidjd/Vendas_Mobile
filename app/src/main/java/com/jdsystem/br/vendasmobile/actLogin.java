@@ -509,4 +509,9 @@ public class actLogin extends AppCompatActivity implements Runnable {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        carregarpreferencias();
+    }
 }

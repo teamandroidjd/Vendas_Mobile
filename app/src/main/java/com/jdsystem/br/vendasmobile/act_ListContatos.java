@@ -82,7 +82,6 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
                     params.putString("urlPrincipal", URLPrincipal);
                     i.putExtras(params);
                     startActivity(i);
-                    finish();
 
                 }
             });

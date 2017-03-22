@@ -660,4 +660,19 @@ public class CadContatos extends AppCompatActivity {
             DialogECB.dismiss();
 
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent cadcont = new Intent(CadContatos.this, act_ListContatos.class);
+        Bundle params = new Bundle();
+        params.putString("codvendedor",sCodVend);
+        params.putString("urlPrincipal",URLPrincipal);
+        params.putString("usuario",usuario);
+        params.putString("senha",senha);
+        cadcont.putExtras(params);
+        startActivity(cadcont);
+        finish();
+
+        super.onBackPressed();
+    }
 }
