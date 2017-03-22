@@ -96,6 +96,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     public AlertDialog alerta;
     private Builder alerta1;
     private Spinner spntabpreco;
+    private static String nomeabrevemp;
 
     public static final String DATA_ENT = "DATA DE ENTREGA";
     public SharedPreferences prefs;
@@ -130,6 +131,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 sCodVend = params.getString("CodVendedor");
                 URLPrincipal = params.getString("urlPrincipal");
                 usuario = params.getString("usuario");
+                CodEmpresa = params.getString("codempresa");
                 senha = params.getString("senha");
             }
         }
@@ -192,7 +194,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             vendaCBean = new SqliteVendaCBean();
             vendaCBean = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_vendas_por_numeropedido(NumPedido.toString());
             Chave_Venda = vendaCBean.getVendac_chave();
-            CodEmpresa = vendaCBean.getCodEmpresa();
+            //CodEmpresa = vendaCBean.getCodEmpresa();
             CodVendedor = vendaCBean.getCodVendedor();
             DATA_DE_ENTREGA = vendaCBean.getVendac_previsaoentrega();
             ObsPedido = vendaCBean.getObservacao();
@@ -228,6 +230,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     params.putString("CodVendedor", sCodVend);
                     params.putString("codempresa", CodEmpresa);
                     params.putString("usuario", usuario);
+                    params.putInt("CLI_CODIGO", CLI_CODIGO);
                     params.putString("senha", senha);
                     params.putString("numpedido", NumPedido);
                     intent.putExtras(params);
@@ -240,6 +243,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                     params.putString("CodVendedor", sCodVend);
                     params.putString("codempresa", CodEmpresa);
+                    params.putInt("CLI_CODIGO", CLI_CODIGO);
                     params.putString("usuario", usuario);
                     params.putString("senha", senha);
                     intent.putExtras(params);
@@ -251,6 +255,111 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         venda_txv_empresa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!NumPedido.equals("0")) {
+                    nomeabrevemp = "0";
+                    try {
+                        Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+                        CursEmpr.moveToFirst();
+                        if (CursEmpr.getCount() > 1) {
+                            List<String> DadosListEmpresa = new ArrayList<String>();
+                            do {
+                                DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
+                            } while (CursEmpr.moveToNext());
+
+                            View viewEmp = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+
+                            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
+                            alertBuilder.setView(viewEmp);
+                            final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+
+                            ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                            ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
+                            spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                            spEmpresaInput.setAdapter(spArrayEmpresa);
+
+                            alertBuilder.setCancelable(true)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
+                                            try {
+                                                Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
+                                                CursEmpr2.moveToFirst();
+                                                if (CursEmpr2.getCount() > 0) {
+                                                    CodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
+                                                    nomeabrevemp = CursEmpr2.getString(CursEmpr2.getColumnIndex("NOMEABREV"));
+                                                    venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
+                                                }
+                                                CursEmpr2.close();
+
+                                            } catch (Exception E) {
+                                                System.out.println("Error" + E);
+                                            }
+                                        }
+                                    });
+                            Dialog dialog = alertBuilder.create();
+                            dialog.show();
+
+                        } /* else {
+                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
+
+                        }*/
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                } else {
+                    nomeabrevemp = "0";
+                    try {
+                        Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+                        CursEmpr.moveToFirst();
+                        if (CursEmpr.getCount() > 1) {
+                            List<String> DadosListEmpresa = new ArrayList<String>();
+                            do {
+                                DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
+                            } while (CursEmpr.moveToNext());
+
+                            View viewEmp = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+
+                            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
+                            alertBuilder.setView(viewEmp);
+                            final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+
+                            ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                            ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
+                            spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                            spEmpresaInput.setAdapter(spArrayEmpresa);
+
+                            alertBuilder.setCancelable(true)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
+                                            try {
+                                                Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
+                                                CursEmpr2.moveToFirst();
+                                                if (CursEmpr2.getCount() > 0) {
+                                                    CodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
+                                                    nomeabrevemp = CursEmpr2.getString(CursEmpr2.getColumnIndex("NOMEABREV"));
+                                                    venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
+                                                }
+                                                CursEmpr2.close();
+
+                                            } catch (Exception E) {
+                                                System.out.println("Error" + E);
+                                            }
+                                        }
+                                    });
+                            Dialog dialog = alertBuilder.create();
+                            dialog.show();
+
+                        }/* else {
+                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
+
+                        }*/
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
 
             }
         });

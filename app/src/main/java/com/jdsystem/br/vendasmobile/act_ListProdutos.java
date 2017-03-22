@@ -453,7 +453,7 @@ public class act_ListProdutos extends AppCompatActivity
             CursorParametro.close();
 
         } else {
-            Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Nenhum produto encontrado!", Toast.LENGTH_SHORT).show();
         }
         if (pDialog.isShowing()) {
             pDialog.dismiss();
