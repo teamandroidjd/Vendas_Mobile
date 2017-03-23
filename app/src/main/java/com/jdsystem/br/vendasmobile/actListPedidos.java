@@ -49,31 +49,23 @@ public class actListPedidos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
-    ProgressDialog pDialog;
     private Handler handler = new Handler();
-    public ListAdapterPedidos adapter;
-    SearchView sv;
-    Pedidos lstpedidos;
-    String UsuarioLogado;
-    LinearLayout lnenhum;
-
-    String sCodVend, URLPrincipal,usuario, senha;
-    SQLiteDatabase DB;
-    private Context ctx;
-    private AlertDialog dlg;
-
-    private GoogleApiClient client;
-    private static String sCodEmpresa;
-
     Integer SitPed = 0;
     String CodClie = "0";
     String DtInicio = "0";
     String DtFinal = "0";
-
-
+    String sCodVend, URLPrincipal,usuario, senha, UsuarioLogado, sCodEmpresa;
+    public ListAdapterPedidos adapter;
+    ProgressDialog pDialog;
+    SearchView sv;
+    Pedidos lstpedidos;
+    LinearLayout lnenhum;
+    SQLiteDatabase DB;
+    private Context ctx;
+    //private AlertDialog dlg;
+    private GoogleApiClient client;
     FloatingActionMenu mmPrinc_Pedido, mmPrincNovoPed;
     FloatingActionButton mmSitPedido, mmEmissaoPedido, mmCliePedido, mmNovoPedido;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,194 +97,15 @@ public class actListPedidos extends AppCompatActivity
                 CodClie = "0";
             }
         }
-        try {
-            mmPrinc_Pedido = (FloatingActionMenu) findViewById(R.id.mmPrinc_Pedido);
-            mmSitPedido = (FloatingActionButton) findViewById(R.id.mmSitPedido);
-            mmEmissaoPedido = (FloatingActionButton) findViewById(R.id.mmEmissaoPedido);
-            mmCliePedido = (FloatingActionButton) findViewById(R.id.mmCliePedido);
-
-            mmSitPedido.setOnClickListener(new View.OnClickListener() {
-                                               public void onClick(View v) {
-                                                   View viewSitPed = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
-
-                                                   AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
-                                                   alertBuilder.setView(viewSitPed);
-                                                   final Spinner spSituacaoPedido = (Spinner) viewSitPed.findViewById(R.id.spnSitPedido);
-
-                                                   alertBuilder.setCancelable(true)
-                                                           .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                               @Override
-                                                               public void onClick(DialogInterface dialog, int which) {
-                                                                   String NomeSitPed = spSituacaoPedido.getSelectedItem().toString();
-
-                                                                   if (NomeSitPed.equals("Orçamento")) {
-                                                                       SitPed = 1;
-                                                                   } else if (NomeSitPed.equals("Cancelado")) {
-                                                                       SitPed = 4;
-                                                                   } else if (NomeSitPed.equals("Faturado")) {
-                                                                       SitPed = 3;
-                                                                   } else if (NomeSitPed.equals("Sincronizado")) {
-                                                                       SitPed = 2;
-                                                                   } else if (NomeSitPed.equals("Gerar Venda")) {
-                                                                       SitPed = 5;
-                                                                   } else if (NomeSitPed.equals("Todos")) {
-                                                                       SitPed = 0;
-                                                                   }
-                                                                   try {
-                                                                       Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
-                                                                       Bundle params = new Bundle();
-                                                                       params.putString("codvendedor", sCodVend);
-                                                                       params.putString("urlPrincipal", URLPrincipal);
-                                                                       params.putString("usuario", usuario);
-                                                                       params.putString("senha", senha);
-                                                                       params.putInt("SitPedido", SitPed);
-                                                                       params.putInt("codclie", 0);
-                                                                       params.putString("datainicial", "0");
-                                                                       params.putString("datafinal", "0");
-
-                                                                       intent.putExtras(params);
-                                                                       finish();
-                                                                       startActivity(intent);
-
-                                                                   } catch (Exception E) {
-                                                                       E.toString();
-                                                                   }
-
-                                                               }
-                                                           });
-                                                   Dialog dialog = alertBuilder.create();
-                                                   dialog.show();
-                                               }
-                                           }
-
-
-            );
-            mmEmissaoPedido.setOnClickListener(new View.OnClickListener() {
-                                                   public void onClick(View v) {
-                                                       Intent intent = new Intent(actListPedidos.this, actFiltroPeriodoPedidos.class);
-                                                       //finish();
-                                                       startActivityForResult(intent, 3);
-                                                   }
-                                               }
-
-            );
-            mmCliePedido.setOnClickListener(new View.OnClickListener() {
-                                                public void onClick(View v) {
-                                                    Intent intent = new Intent(actListPedidos.this, act_ListClientes.class);
-                                                    Bundle params = new Bundle();
-                                                    params.putString("codvendedor", sCodVend);
-                                                    params.putString("urlPrincipal", URLPrincipal);
-                                                    params.putString("usuario", usuario);
-                                                    params.putString("senha", senha);
-                                                    params.putBoolean("consultapedido", true);
-                                                    intent.putExtras(params);
-                                                    //finish();
-                                                    startActivityForResult(intent, 2);
-                                                }
-                                            }
-
-            );
-        } catch (Exception e) {
-            e.toString();
-        }
-
-        DB = new ConfigDB(this).getReadableDatabase();
-
-
-        try {
-            mmPrincNovoPed = (FloatingActionMenu) findViewById(R.id.mmPrincNovoPed);
-            mmNovoPedido = (FloatingActionButton) findViewById(R.id.mmNovoPedido);
-
-            mmNovoPedido.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    sCodEmpresa = "0";
-                    try {
-                        Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
-                        CursEmpr.moveToFirst();
-                        if (CursEmpr.getCount() > 1) {
-                            List<String> DadosListEmpresa = new ArrayList<String>();
-                            do {
-                                DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
-                            } while (CursEmpr.moveToNext());
-
-                            View viewEmp = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
-
-                            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
-                            alertBuilder.setView(viewEmp);
-                            final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
-
-                            ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(actListPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
-                            ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
-                            spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
-                            spEmpresaInput.setAdapter(spArrayEmpresa);
-
-                            alertBuilder.setCancelable(true)
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
-                                            try {
-                                                Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
-                                                CursEmpr2.moveToFirst();
-                                                if (CursEmpr2.getCount() > 0) {
-                                                    sCodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
-                                                }
-                                                CursEmpr2.close();
-                                                Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
-                                                Bundle params = new Bundle();
-                                                params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                                                params.putString("CodVendedor", sCodVend);
-                                                params.putString("codempresa", sCodEmpresa);
-                                                params.putString("usuario", usuario);
-                                                params.putString("senha", senha);
-                                                intent.putExtras(params);
-                                                startActivityForResult(intent, 1);
-                                            } catch (Exception E) {
-                                                System.out.println("Error" + E);
-                                            }
-                                        }
-                                    });
-                            Dialog dialog = alertBuilder.create();
-                            dialog.show();
-
-                        } else {
-                            sCodEmpresa = CursEmpr.getString(CursEmpr.getColumnIndex("CODEMPRESA"));
-                            Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
-                            Bundle params = new Bundle();
-                            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                            params.putString("CodVendedor", sCodVend);
-                            params.putString("codempresa", sCodEmpresa);
-                            params.putString("usuario", usuario);
-                            params.putString("senha", senha);
-                            intent.putExtras(params);
-                            startActivityForResult(intent, 1);
-                        }
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            });
-
-        } catch (Exception e) {
-            e.toString();
-        }
+        declaraobjetos();
+        carregausuariologado();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        View header = navigationView.getHeaderView(0);
-        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
-        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        UsuarioLogado = prefs.getString("usuario", null);
-        usuariologado.setText("Olá " +UsuarioLogado+"!");
-
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
         pDialog = new ProgressDialog(actListPedidos.this);
         pDialog.setTitle("Aguarde...");
@@ -303,39 +116,215 @@ public class actListPedidos extends AppCompatActivity
         Thread thread = new Thread(actListPedidos.this);
         thread.start();
 
-        lnenhum = (LinearLayout) findViewById(R.id.lnenhum);
-
-        FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
-        if (frag == null) {
-            frag = new FragmentPedido();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Bundle bundle = new Bundle();
-            bundle.putString("usuario", usuario);
-            bundle.putString("senha", senha);
-            bundle.putString("CodVendedor", sCodVend);
-            frag.setArguments(bundle);
-            ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
-            ft.commit();
-        }
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+    private void carregausuariologado() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
+        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        UsuarioLogado = prefs.getString("usuario", null);
+        usuariologado.setText("Olá " +UsuarioLogado+"!");
+    }
+
+    private void declaraobjetos() {
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        lnenhum = (LinearLayout) findViewById(R.id.lnenhum);
+        DB = new ConfigDB(this).getReadableDatabase();
+        mmPrincNovoPed = (FloatingActionMenu) findViewById(R.id.mmPrincNovoPed);
+        mmNovoPedido = (FloatingActionButton) findViewById(R.id.mmNovoPedido);
+        mmPrinc_Pedido = (FloatingActionMenu) findViewById(R.id.mmPrinc_Pedido);
+        mmSitPedido = (FloatingActionButton) findViewById(R.id.mmSitPedido);
+        mmEmissaoPedido = (FloatingActionButton) findViewById(R.id.mmEmissaoPedido);
+        mmCliePedido = (FloatingActionButton) findViewById(R.id.mmCliePedido);
+    }
+
+    public void novopedido(View view){
+
+        sCodEmpresa = "0";
+        try {
+            Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+            CursEmpr.moveToFirst();
+            if (CursEmpr.getCount() > 1) {
+                List<String> DadosListEmpresa = new ArrayList<String>();
+                do {
+                    DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
+                } while (CursEmpr.moveToNext());
+
+                View viewEmp = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
+                alertBuilder.setView(viewEmp);
+                final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+
+                ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(actListPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
+                spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                spEmpresaInput.setAdapter(spArrayEmpresa);
+
+                alertBuilder.setCancelable(true)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
+                                try {
+                                    Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
+                                    CursEmpr2.moveToFirst();
+                                    if (CursEmpr2.getCount() > 0) {
+                                        sCodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
+                                    }
+                                    CursEmpr2.close();
+                                    Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
+                                    Bundle params = new Bundle();
+                                    params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                                    params.putString("CodVendedor", sCodVend);
+                                    params.putString("codempresa", sCodEmpresa);
+                                    params.putString("usuario", usuario);
+                                    params.putString("senha", senha);
+                                    intent.putExtras(params);
+                                    startActivityForResult(intent, 1);
+                                } catch (Exception E) {
+                                    System.out.println("Error" + E);
+                                }
+                            }
+                        });
+                Dialog dialog = alertBuilder.create();
+                dialog.show();
+
+            } else {
+                sCodEmpresa = CursEmpr.getString(CursEmpr.getColumnIndex("CODEMPRESA"));
+                Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
+                Bundle params = new Bundle();
+                params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                params.putString("CodVendedor", sCodVend);
+                params.putString("codempresa", sCodEmpresa);
+                params.putString("usuario", usuario);
+                params.putString("senha", senha);
+                intent.putExtras(params);
+                startActivityForResult(intent, 1);
+            }
+        } catch (Exception E) {
+            E.toString();
         }
-        /*Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+
+    }
+
+    public void filtrositped (View view){
+
+        View viewSitPed = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
+
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
+        alertBuilder.setView(viewSitPed);
+        final Spinner spSituacaoPedido = (Spinner) viewSitPed.findViewById(R.id.spnSitPedido);
+
+        alertBuilder.setCancelable(true)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String NomeSitPed = spSituacaoPedido.getSelectedItem().toString();
+
+                        if (NomeSitPed.equals("Orçamento")) {
+                            SitPed = 1;
+                        } else if (NomeSitPed.equals("Cancelado")) {
+                            SitPed = 4;
+                        } else if (NomeSitPed.equals("Faturado")) {
+                            SitPed = 3;
+                        } else if (NomeSitPed.equals("Sincronizado")) {
+                            SitPed = 2;
+                        } else if (NomeSitPed.equals("Gerar Venda")) {
+                            SitPed = 5;
+                        } else if (NomeSitPed.equals("Todos")) {
+                            SitPed = 0;
+                        }
+                        try {
+                            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+                            Bundle params = new Bundle();
+                            params.putString("codvendedor", sCodVend);
+                            params.putString("urlPrincipal", URLPrincipal);
+                            params.putString("usuario", usuario);
+                            params.putString("senha", senha);
+                            params.putInt("SitPedido", SitPed);
+                            params.putInt("codclie", 0);
+                            params.putString("datainicial", "0");
+                            params.putString("datafinal", "0");
+
+                            intent.putExtras(params);
+                            finish();
+                            startActivity(intent);
+
+                        } catch (Exception E) {
+                            E.toString();
+                        }
+
+                    }
+                });
+        Dialog dialog = alertBuilder.create();
+        dialog.show();
+
+    }
+
+    public void filtroemissaoped (View view){
+        Intent intent = new Intent(actListPedidos.this, actFiltroPeriodoPedidos.class);
+        //finish();
+        startActivityForResult(intent, 3);
+    }
+
+    public void filtrocliped (View view){
+        Intent intent = new Intent(actListPedidos.this, act_ListClientes.class);
         Bundle params = new Bundle();
         params.putString("codvendedor", sCodVend);
         params.putString("urlPrincipal", URLPrincipal);
         params.putString("usuario", usuario);
         params.putString("senha", senha);
+        params.putBoolean("consultapedido", true);
         intent.putExtras(params);
-        startActivity(intent);
-        finish();*/
+        //finish();
+        startActivityForResult(intent, 2);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(SitPed > 0){
+            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            intent.putExtras(params);
+            startActivity(intent);
+            finish();
+        } else if (!CodClie.equals("0")) {
+            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            intent.putExtras(params);
+            startActivity(intent);
+            finish();
+        } else if (!DtInicio.equals("0")) {
+            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor", sCodVend);
+            params.putString("urlPrincipal", URLPrincipal);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            intent.putExtras(params);
+            startActivity(intent);
+            finish();
+        }else {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+        }
+
     }
 
     @Override
@@ -485,7 +474,19 @@ public class actListPedidos extends AppCompatActivity
             @Override
             public void run() {
                 try {
-                    CarregarPedidos();
+                    FragmentPedido frag = (FragmentPedido) getSupportFragmentManager().findFragmentByTag("mainFrag");
+                    if (frag == null) {
+                        frag = new FragmentPedido();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("usuario", usuario);
+                        bundle.putString("senha", senha);
+                        bundle.putString("CodVendedor", sCodVend);
+                        frag.setArguments(bundle);
+                        ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
+                        ft.commit();
+                    }
+                    //CarregarPedidos();
                 } catch (Exception E) {
 
                 } finally {

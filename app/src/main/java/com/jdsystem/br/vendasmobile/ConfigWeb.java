@@ -1,10 +1,14 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -40,26 +44,22 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         if (ChaveAcesso != null) {
             edtChave.setText(ChaveAcesso);
         }
+    }
+    public void SalvarHost(View view){
+        if (edtChave.getText().length() == 0) {
+            edtChave.setError("Digite o caminho do host!");
+            edtChave.requestFocus();
+            return;
+        }
+        DialogECB = new ProgressDialog(ConfigWeb.this);
+        DialogECB.setTitle("Aguarde");
+        DialogECB.setMessage("Validando licença...");
+        DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        DialogECB.setIcon(R.drawable.icon_sync);
+        DialogECB.show();
 
-        btsalvhost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (edtChave.getText().length() == 0) {
-                    edtChave.setError("Digite o caminho do host!");
-                    edtChave.requestFocus();
-                    return;
-                }
-                DialogECB = new ProgressDialog(ConfigWeb.this);
-                DialogECB.setTitle("Aguarde");
-                DialogECB.setMessage("Validando licença...");
-                DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                DialogECB.setIcon(R.drawable.icon_sync);
-                DialogECB.show();
-
-                Thread td = new Thread(ConfigWeb.this);
-                td.start();
-            }
-        });
+        Thread td = new Thread(ConfigWeb.this);
+        td.start();
 
     }
 
@@ -84,47 +84,106 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         envelope.setOutputSoapObject(soap);
         HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSHOST);
         String RetHost = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ConfigWeb.this);
-            if (ConexOk == true) {
+        Boolean ConexOk = Util.checarConexaoCelular(ConfigWeb.this);
+        if (ConexOk == true) {
+            try {
                 Envio.call("", envelope);
+            } catch (Exception e) {
+                e.toString();
+                DialogECB.dismiss();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ConfigWeb.this, "Falha de comunicação com o servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                });
+                return;
+            }
+            try {
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetHost = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
-
-                if (RetHost.equals("0")) {
-                    DialogECB.dismiss();
-                    hd.post(new Runnable() {
-                        public void run() {
-                            Toast.makeText(ConfigWeb.this, "ConfigWeb, Não foi possível validar a licença. Tente novamente.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            } else {
+            } catch (Exception e) {
+                e.toString();
                 DialogECB.dismiss();
                 hd.post(new Runnable() {
+                    @Override
                     public void run() {
-                        Toast.makeText(ConfigWeb.this, "ConfigWeb, sem conexão com a internet. Tente novamente.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ConfigWeb.this, "Falha no retorno da informações do servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                 });
+                return;
             }
-        } catch (Exception e) {
+            if (RetHost.equals("0")) {
+                DialogECB.dismiss();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder validuser = new AlertDialog.Builder(ConfigWeb.this);
+                        validuser.setTitle(R.string.app_namesair);
+                        validuser.setIcon(R.drawable.logo_ico);
+                        validuser.setMessage("Não foi possivel validar a licença. Tente novamente!")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        return;
+                                    }
+                                });
+                        AlertDialog alert = validuser.create();
+                        alert.show();
+                    }
+                });
+                return;
+            } else if (RetHost == null) {
+                DialogECB.dismiss();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder validuser = new AlertDialog.Builder(ConfigWeb.this);
+                        validuser.setTitle(R.string.app_namesair);
+                        validuser.setIcon(R.drawable.logo_ico);
+                        validuser.setMessage("Não foi possível validar a licença devido a uma falha de comunicação com o servidor. Tente novamente!")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        return;
+                                    }
+                                });
+                        AlertDialog alert = validuser.create();
+                        alert.show();
+                    }
+                });
+                return;
+            }
+        } else {
             DialogECB.dismiss();
             hd.post(new Runnable() {
+                @Override
                 public void run() {
-                    Toast.makeText(ConfigWeb.this, "ConfigWeb, falha no envio ou retorno da licença. Tente novamente.", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+                    AlertDialog.Builder validuser = new AlertDialog.Builder(ConfigWeb.this);
+                    validuser.setTitle(R.string.app_namesair);
+                    validuser.setIcon(R.drawable.logo_ico);
+                    validuser.setMessage("Sem conexão com a internet. Verifique!")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    return;
+                                }
+                            })
+                            .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                                    startActivity(intent);
+                                }
+                            });
 
-        if (RetHost == null) {
-            DialogECB.dismiss();
-            hd.post(new Runnable() {
-                public void run() {
-                    Toast.makeText(ConfigWeb.this, "ConfigWeb, Não foi possível validar a licença. Verifique!", Toast.LENGTH_SHORT).show();
+                    AlertDialog alert = validuser.create();
+                    alert.show();
                 }
             });
+            return;
         }
         DialogECB.dismiss();
         SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();

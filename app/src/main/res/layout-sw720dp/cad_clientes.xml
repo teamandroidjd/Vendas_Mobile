@@ -185,6 +185,7 @@
                         android:layout_height="65dp"
                         android:background="@drawable/busca_cep"
                         android:id="@+id/btnBuscaCep"
+                        android:onClick="buscacepclie"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/textInputLayout2"
                         android:layout_toEndOf="@+id/textInputLayout2" /> />

@@ -69,7 +69,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     private BigDecimal TOTAL_DA_VENDA;
     private Integer CLI_CODIGO, CLI_CODIGO_ANT;
     private Integer CLI_CODIGO_EXT;
-    private String CodEmpresa, vendenegativo, numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7;
+    private String CodEmpresa, vendenegativo, numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7, CodClie_Int;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
     private int sprecoprincipal, tabanterior;
 
@@ -133,6 +133,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 usuario = params.getString("usuario");
                 CodEmpresa = params.getString("codempresa");
                 senha = params.getString("senha");
+                DATA_DE_ENTREGA = params.getString("dataentrega");
             }
         }
 
@@ -143,12 +144,19 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         CodEmpresa = CLI_CODIGO_INTENT.getStringExtra("codempresa");
         CLI_CODIGO_ANT = CLI_CODIGO;
 
-        prefs = getSharedPreferences(DATA_ENT, MODE_PRIVATE);
-        dataent = prefs.getString("dataentrega", null);
+        /*prefs = getSharedPreferences(DATA_ENT, MODE_PRIVATE);
+        dataent = prefs.getString("dataentrega", null);*/
 
-        if (dataent != null && dataent != "") {
+        if (dataent != null) {
             venda_txv_dataentrega.setText(dataent);
         }
+        /*if(DATA_DE_ENTREGA != null){
+            dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+            venda_txv_dataentrega.setText("Data de Entrega: " + dateFormatterBR.format(DATA_DE_ENTREGA));
+        }*/
+
+
+
 
         venda_txt_desconto.setOnKeyListener(this);
 
@@ -173,9 +181,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             CodVendedor = vendaCBean.getCodVendedor();
             DATA_DE_ENTREGA = vendaCBean.getVendac_previsaoentrega();
             ObsPedido = vendaCBean.getObservacao();
-            if(CLI_CODIGO_EXT != 0){
+            if (CLI_CODIGO_EXT != 0) {
                 venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO_EXT.toString() + " - " + vendaCBean.getVendac_cli_nome().toString());
-            }else {
+            } else {
                 venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO.toString() + " - " + vendaCBean.getVendac_cli_nome().toString());
             }
             venda_txt_desconto.setText(vendaCBean.getVendac_percdesconto().toString());
@@ -183,7 +191,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
             Alterar_Pedido_listview_e_calcula_total();
 
-        } else if(!NumPedido.equals("0") && CLI_CODIGO != 0){
+        } else if (!NumPedido.equals("0") && CLI_CODIGO != 0) {
             cliBean = new SqliteClienteBean();
             cliBean = new SqliteClienteDao(getApplicationContext()).buscar_cliente_pelo_codigo(CLI_CODIGO.toString());
             CLI_CODIGO_EXT = cliBean.getCli_codigo_ext();
@@ -246,6 +254,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     params.putInt("CLI_CODIGO", CLI_CODIGO);
                     params.putString("usuario", usuario);
                     params.putString("senha", senha);
+                    params.putString("dataentrega",DATA_DE_ENTREGA);
                     intent.putExtras(params);
                     startActivityForResult(intent, 1);
                     finish();
@@ -399,8 +408,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 params.putString("numpedido", NumPedido);
                 params.putString("chave", Chave_Venda);
                 params.putString("CodVendedor", sCodVend);
-                params.putString("usuario",usuario);
-                params.putString("senha",senha);
+                params.putString("usuario", usuario);
+                params.putString("senha", senha);
                 Lista_produtos.putExtras(params);
                 startActivity(Lista_produtos);
             }
@@ -1639,7 +1648,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                 String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                 Preco = Preco.replace('.', ',');
                                 info_txv_precoproduto.setText(Preco);
-                                info_txt_quantidadecomprada.selectAll();
+
+                                String qtd = String.valueOf(item.getVendad_quantidadeTEMP());
+                                info_txt_quantidadecomprada.setText(qtd);
+                                info_txt_quantidadecomprada.requestFocus();
+                                //info_txt_quantidadecomprada.selectAll();
 
 
                                 alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
@@ -2353,7 +2366,16 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                 String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                 Preco = Preco.replace('.', ',');
                                 info_txv_precoproduto.setText(Preco);
-                                info_txt_quantidadecomprada.selectAll();
+
+                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "'", null);
+                                cursor.moveToFirst();
+                                String qtdpedido = cursor.getString(cursor.getColumnIndex("QTDMENORPED"));
+                                cursor.close();
+
+                                info_txt_quantidadecomprada.setText(qtdpedido);
+                                info_txt_quantidadecomprada.requestFocus();
+
+                                //info_txt_quantidadecomprada.selectAll();
 
 
                                 alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
@@ -2544,9 +2566,10 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         builderAut.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 Chave_Venda = vendaCBean.getVendac_chave();
-                Cursor CursorPedido = DB.rawQuery(" SELECT NUMPED,CHAVE_PEDIDO FROM PEDOPER WHERE CHAVE_PEDIDO = " + Chave_Venda, null);
+                Cursor CursorPedido = DB.rawQuery(" SELECT NUMPED,CHAVE_PEDIDO, CODCLIE_EXT, CODCLIE FROM PEDOPER WHERE CHAVE_PEDIDO = " + Chave_Venda, null);
                 CursorPedido.moveToFirst();
                 numpedido = CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED"));
+                CodClie_Int = CursorPedido.getString(CursorPedido.getColumnIndex("CODCLIE"));
                 String chavepedido = CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO"));
                 numpedido = Util.AcrescentaZeros(numpedido.toString(), 4);
 
@@ -2630,14 +2653,37 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
     public void run() {
         try {
-            actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
-            Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
-            Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            intent.putExtras(params);
-            startActivityForResult(intent, 1);
-            finish();
+            boolean sitclieenvio;
+            boolean pedidoendiado;
+            Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '"+CodClie_Int+"'",null);
+            CursorClie.moveToFirst();
+            int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
+            String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
+            if(FlagIntegrado.equals(1)){
+                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodClie_Int,this,true,usuario,senha);
+                if(sitclieenvio == true){
+                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, this, true);
+                    if(pedidoendiado == true){
+                        Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
+                        Bundle params = new Bundle();
+                        params.putString("codvendedor", sCodVend);
+                        params.putString("urlPrincipal", URLPrincipal);
+                        intent.putExtras(params);
+                        startActivityForResult(intent, 1);
+                        finish();
+                    }
+                }
+
+            }else{
+                actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
+                Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
+                Bundle params = new Bundle();
+                params.putString("codvendedor", sCodVend);
+                params.putString("urlPrincipal", URLPrincipal);
+                intent.putExtras(params);
+                startActivityForResult(intent, 1);
+                finish();
+            }
         } finally {
             //
         }

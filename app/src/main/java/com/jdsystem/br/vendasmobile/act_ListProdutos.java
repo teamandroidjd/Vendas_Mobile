@@ -52,8 +52,7 @@ public class act_ListProdutos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
 
-    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu;
-    String UsuarioLogado;
+    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu,UsuarioLogado;
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private EditText prod_txt_pesquisaproduto;
     private ProgressDialog pDialog;
@@ -84,25 +83,13 @@ public class act_ListProdutos extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        View header = navigationView.getHeaderView(0);
-        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
-        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        UsuarioLogado = prefs.getString("usuario", null);
-        if (UsuarioLogado != null) {
-            UsuarioLogado = prefs.getString("usuario", null);
-            usuariologado.setText("Olá " + UsuarioLogado + "!");
-        } else {
-            usuariologado.setText("Olá " + usuario + "!");
-        }
-
+        carregausuariologado();
 
         prod_txt_pesquisaproduto = (EditText) findViewById(R.id.prod_txt_pesquisaproduto);
         prod_txt_pesquisaproduto.addTextChangedListener(new TextWatcher() {
@@ -144,6 +131,21 @@ public class act_ListProdutos extends AppCompatActivity
 
         Thread thread = new Thread(act_ListProdutos.this);
         thread.start();
+    }
+
+    private void carregausuariologado() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
+        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        UsuarioLogado = prefs.getString("usuario", null);
+        if (UsuarioLogado != null) {
+            UsuarioLogado = prefs.getString("usuario", null);
+            usuariologado.setText("Olá " + UsuarioLogado + "!");
+        } else {
+            usuariologado.setText("Olá " + usuario + "!");
+        }
     }
 
     @Override

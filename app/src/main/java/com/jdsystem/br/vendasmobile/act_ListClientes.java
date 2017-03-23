@@ -51,8 +51,9 @@ public class act_ListClientes extends AppCompatActivity
     ListView edtCliente;
     SearchView sv;
     Clientes lstclientes;
-    private Context ctx;
     String UsuarioLogado;
+    boolean sincclieenvio, sincclie;
+
 
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public static final String CONSULTA_CLIENTE = "CONSULTA_CLIENTE";
@@ -64,15 +65,12 @@ public class act_ListClientes extends AppCompatActivity
     private SimpleCursorAdapter AdapterClientes;
     private List<String> array_spinner = new ArrayList<String>();
     private ArrayAdapter<String> arrayAdapter;
-    private String selecao_spinner;
-    private Cursor cursor;
+    private String selecao_spinner,CodVendedor,usuario, senha, TELA_QUE_CHAMOU;
+    //private Cursor cursor;
     private EditText adm_txt_pesquisacliente;
     private ListView adm_listview_cliente;
     private Intent TELA_QUE_CHAMOU_INTENT;
-    private String TELA_QUE_CHAMOU;
-    private String CodVendedor;
     private ImageView imgStatus;
-    private String usuario, senha;
     public ProgressDialog dialog;
     public Boolean ConsultaPedido;
     public  int CadastroContato;
@@ -97,7 +95,8 @@ public class act_ListClientes extends AppCompatActivity
             }
         }
 
-        imgStatus = (ImageView) findViewById(R.id.imgStatus);
+        declaraobjetos();
+        carregausuariologado();
 
         FloatingActionButton cadclie = (FloatingActionButton) findViewById(R.id.cadclie);
         cadclie.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +107,7 @@ public class act_ListClientes extends AppCompatActivity
                 params.putString("codvendedor", sCodVend);
                 params.putString("usuario", usuario);
                 params.putString("senha", senha);
+                params.putString("urlPrincipal", URLPrincipal);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -115,19 +115,11 @@ public class act_ListClientes extends AppCompatActivity
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        View header = navigationView.getHeaderView(0);
-        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
-        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        UsuarioLogado = prefs.getString("usuario", null);
-        usuariologado.setText("Olá " +UsuarioLogado+"!");
 
         TELA_QUE_CHAMOU_INTENT = getIntent();
         TELA_QUE_CHAMOU = TELA_QUE_CHAMOU_INTENT.getStringExtra("TELA_QUE_CHAMOU");
@@ -136,13 +128,11 @@ public class act_ListClientes extends AppCompatActivity
         senha = TELA_QUE_CHAMOU_INTENT.getStringExtra("senha");
         CadastroContato = TELA_QUE_CHAMOU_INTENT.getIntExtra("cadcont",0);
 
-
         array_spinner.add(PESQUISAR_CLIENTE_NOME);
         array_spinner.add(PESQUISAR_CLIENTE_FANTASIA);
         array_spinner.add(PESQUISAR_CLIENTE_CIDADE);
         array_spinner.add(PESQUISAR_CLIENTE_BAIRRO);
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_spinner);
-        adm_sp_filtrarcliente = (Spinner) findViewById(R.id.adm_sp_filtrarcliente);
         adm_sp_filtrarcliente.setAdapter(arrayAdapter);
 
         adm_sp_filtrarcliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -159,6 +149,22 @@ public class act_ListClientes extends AppCompatActivity
 
         mostrar_clientes_listview();
 
+    }
+
+    private void carregausuariologado() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
+        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        UsuarioLogado = prefs.getString("usuario", null);
+        usuariologado.setText("Olá " +UsuarioLogado+"!");
+
+    }
+
+    private void declaraobjetos() {
+        imgStatus = (ImageView) findViewById(R.id.imgStatus);
+        adm_sp_filtrarcliente = (Spinner) findViewById(R.id.adm_sp_filtrarcliente);
     }
 
     @Override
@@ -302,7 +308,6 @@ public class act_ListClientes extends AppCompatActivity
         });
     }
 
-
     @Override
     public void onBackPressed() {
         /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -385,8 +390,24 @@ public class act_ListClientes extends AppCompatActivity
     public void run() {
         try {
             actSincronismo.run(this);
-            actSincronismo.SincronizarClientesEnvioStatic("0", this, true,usuario,senha);
-            actSincronismo.SincronizarClientesStatic(CodVendedor, this, true, usuario, senha);
+            sincclieenvio = actSincronismo.SincronizarClientesEnvioStatic("0", this, true,usuario,senha);
+            if (sincclieenvio == false) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), "Nenhum cliente a ser enviado.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, true, usuario, senha);
+            if (sincclie == false) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), "Nenhum cliente sincronizado. Verifique!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
             Intent intent = (act_ListClientes.this).getIntent();
             (act_ListClientes.this).finish();
@@ -395,7 +416,9 @@ public class act_ListClientes extends AppCompatActivity
             e.toString();
 
         }
-        if (dialog.isShowing())
+        if (dialog.isShowing()) {
             dialog.dismiss();
+        }
+
     }
 }

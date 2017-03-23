@@ -53,7 +53,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     private SQLiteDatabase DB;
     int codclie_ext;
     String limitecred;
-    String bloqueio, usuario, senha, Codvendedor;
+    String bloqueio, usuario, senha, Codvendedor,flagintegrado, codclie_inte;
 
 
     public View onCreateView(LayoutInflater inflater,
@@ -107,62 +107,87 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             final String NomeVendedor = adapter.ChamaNomeVendedor(position);
             final Boolean ConexOk = Util.checarConexaoCelular(view.getContext());
             //if (ConexOk == true) {
-                final String NumPedido = adapter.ChamaDados(position);
+            final String NumPedido = adapter.ChamaDados(position);
 
-                DB = new ConfigDB(getActivity()).getReadableDatabase();
+            DB = new ConfigDB(getActivity()).getReadableDatabase();
 
-                Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + "", null);
-                cursorped.moveToFirst();
-                codclie_ext = cursorped.getInt(cursorped.getColumnIndex("CODCLIE_EXT"));
-                cursorped.close();
+            final Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + "", null);
+            cursorped.moveToFirst();
+            codclie_ext = cursorped.getInt(cursorped.getColumnIndex("CODCLIE_EXT"));
+            codclie_inte = cursorped.getString(cursorped.getColumnIndex("CODCLIE"));
+            cursorped.close();
 
-                try {
-                    Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = " + codclie_ext + "", null);
+            try {
+                if(codclie_ext !=0) {
+                    Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, FLAGINTEGRADO, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = " + codclie_ext + "", null);
                     cursorclie.moveToFirst();
                     limitecred = cursorclie.getString(cursorclie.getColumnIndex("LIMITECRED"));
                     bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
                     cursorclie.close();
-                } catch (Exception e) {
-                    e.toString();
                 }
+            } catch (Exception e) {
+                e.toString();
+            }
 
 
-                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                final View formElementsView = inflater.inflate(R.layout.act_pergunta_list_pedido, null, false);
-                final RadioGroup genderRadioGroup = (RadioGroup) formElementsView.findViewById(R.id.genderRadioGroup);
-                new AlertDialog.Builder(getActivity()).setView(formElementsView)
-                        .setTitle("Pedido: " + NumPedido)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @TargetApi(11)
-                            public void onClick(DialogInterface dialog, int id) {
-                                int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-                                if (selectedId > 0) {
-                                    RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
-                                    if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
-                                        boolean sitclie;
-                                        boolean pedidoendiado;
-                                        if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
-                                            if (ConexOk == true) {
-                                                sitclie = actSincronismo.SituacaodoClientexPed(limitecred, getActivity(), usuario, senha, codclie_ext, bloqueio);
-                                                if (sitclie == true) {
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final View formElementsView = inflater.inflate(R.layout.act_pergunta_list_pedido, null, false);
+            final RadioGroup genderRadioGroup = (RadioGroup) formElementsView.findViewById(R.id.genderRadioGroup);
+            new AlertDialog.Builder(getActivity()).setView(formElementsView)
+                    .setTitle("Pedido: " + NumPedido)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @TargetApi(11)
+                        public void onClick(DialogInterface dialog, int id) {
+                            int selectedId = genderRadioGroup.getCheckedRadioButtonId();
+                            if (selectedId > 0) {
+                                RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
+                                if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
+                                    boolean sitclieenvio;
+                                    boolean pedidoendiado;
+                                    try {
+                                        Cursor cursorclie = DB.rawQuery("SELECT FLAGINTEGRADO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = '" + codclie_inte + "'", null);
+                                        cursorclie.moveToFirst();
+                                        flagintegrado = cursorclie.getString(cursorclie.getColumnIndex("FLAGINTEGRADO"));
+                                        cursorclie.close();
+                                    } catch (Exception e) {
+                                        e.toString();
+                                    }
+                                    if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
+                                        if (ConexOk == true) {
+                                            if(flagintegrado.equals("1")){
+                                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(codclie_inte,getActivity(),true,usuario,senha);
+                                                if(sitclieenvio == true){
                                                     pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
-                                                } else {
-                                                    Util.msg_toast_personal(getActivity(), "Cliente sem permissão de compra. Verifique!", Util.PADRAO);
+                                                    if(pedidoendiado == true){
+                                                        Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                                        ((actListPedidos) getActivity()).finish();
+                                                        startActivity(intent);
+                                                        Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                    }else{
+                                                        Util.msg_toast_personal(getActivity(), "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
+                                                        return;
+                                                    }
+                                                }else{
+                                                    Util.msg_toast_personal(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Util.PADRAO);
                                                     return;
                                                 }
-                                                if (pedidoendiado == false){
-                                                    Util.msg_toast_personal(getActivity(), "Problema no envio do pedido. Tente novamente!", Util.PADRAO);
+                                            }else {
+                                                pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
+                                                if(pedidoendiado == true){
+                                                    Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                                    ((actListPedidos) getActivity()).finish();
+                                                    startActivity(intent);
+                                                    Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                }else{
+                                                    Util.msg_toast_personal(getActivity(), "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
                                                     return;
                                                 }
-                                            } else {
-                                                Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
-                                                return;
                                             }
 
-                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                            ((actListPedidos) getActivity()).finish();
-                                            startActivity(intent);
-                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                        }else {
+                                            Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
+                                            return;
+                                        }
                                         } else {
                                             Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
                                         }
@@ -205,22 +230,22 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                 startActivity(Intent.createChooser(intentShareFile, "Compartilhar Pedido nº " + NumPedido));
                                             }
                                         } else {
-                                            Util.msg_toast_personal(getActivity(), "Não foi possivel compartilhar o Pedido nº " + NumPedido +".", Util.PADRAO);
+                                            Util.msg_toast_personal(getActivity(), "Não foi possivel compartilhar o Pedido nº " + NumPedido + ".", Util.PADRAO);
                                         }
                                     } else if ((selectedRadioButton.getText().toString().trim()).equals("Verificar Status")) {
                                         boolean statusatualizado;
                                         if (Status.equals("#")) {
                                             final String NumPedidoExt = adapter.PedidoExterno(position);
                                             statusatualizado = actSincronismo.AtualizaStatusPedido(NumPedidoExt, getContext());
-                                            if(statusatualizado == true) {
+                                            if (statusatualizado == true) {
                                                 Intent intent = ((actListPedidos) getActivity()).getIntent();
                                                 ((actListPedidos) getActivity()).finish();
                                                 startActivity(intent);
-                                            }else {
+                                            } else {
                                                 Intent intent = ((actListPedidos) getActivity()).getIntent();
                                                 ((actListPedidos) getActivity()).finish();
                                                 startActivity(intent);
-                                                Util.msg_toast_personal(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt +".", Util.PADRAO);
+                                                Util.msg_toast_personal(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt + ".", Util.PADRAO);
                                             }
                                         } else {
                                             Util.msg_toast_personal(getActivity(), "Somente Pedidos Sincronizados", Util.PADRAO);
@@ -257,12 +282,14 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);
                                 }
                             }
-                        }).show();
+                        }).
+
+                        show();
            /* } else {
                 Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
             }*/
-        } catch (Exception E) {
-            E.toString();
+                    } catch(Exception E){
+                E.toString();
+            }
         }
     }
-}

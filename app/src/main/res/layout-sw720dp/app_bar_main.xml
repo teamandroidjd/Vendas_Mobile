@@ -64,6 +64,7 @@
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/mmNovoPedido"
+            android:onClick="novopedido"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/compra"
@@ -112,6 +113,7 @@
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/mmSitPedido"
+            android:onClick="filtrositped"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/sit"
@@ -120,6 +122,7 @@
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/mmCliePedido"
+            android:onClick="filtrocliped"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/user"
@@ -128,6 +131,7 @@
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/mmEmissaoPedido"
+            android:onClick="filtroemissaoped"
             android:layout_width="31dp"
             android:layout_height="28dp"
             android:src="@drawable/calendar"

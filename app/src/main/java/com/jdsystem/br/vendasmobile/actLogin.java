@@ -60,7 +60,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
     private Handler handler = new Handler();
     public String Retorno = "0";
     public SharedPreferences prefs;
-    public String usuario, senha, URLPrincipal, sCodVend;
+    public String usuario, senha, URLPrincipal, sCodVend, UFVendedor;
+    private String CodVendedor = "0";
     public TextView copyright;
 
     public void onAttachedToWindow() {
@@ -88,80 +89,75 @@ public class actLogin extends AppCompatActivity implements Runnable {
             edtSenha.setText(senha);
             cbGravSenha.setChecked(true);
         }
-
-        btnEntrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final String user = edtUsuario.getText().toString();
-                final String pass = edtSenha.getText().toString();
-                Boolean ConexOk = VerificaConexao();
-                if (ConexOk == false) {
-                    Dialogo.dismiss();
-                    sCodVend = ValidarLogin(user, pass); // verifica se o usuário e senha  existe na base local do dispositivo
-                    if (sCodVend != null) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
-                        builder.setTitle(R.string.app_namesair);
-                        builder.setIcon(R.drawable.logo_ico);
-                        builder.setMessage("Sem conexão com a Internet! O Usuário será autenticado localmente. Não havendo possibilidade de" +
-                                " sincronização de " +
-                                "informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo.")
-                                .setCancelable(false)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Intent intent = new Intent(actLogin.this, actListPedidos.class);
-                                        Bundle params = new Bundle();
-                                        params.putString("codvendedor", sCodVend);
-                                        params.putString("usuario", user);
-                                        params.putString("senha", pass);
-                                        //params.putString("urlPrincipal", URLPrincipal);
-                                        intent.putExtras(params);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                })
-                                .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                                        startActivity(intent);
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                        return;
-                    }
-                } else {
-                    if (edtUsuario.getText().length() == 0) {
-                        edtUsuario.setError("Digite o nome do Usuário!");
-                        edtUsuario.requestFocus();
-                        return;
-
-                    } else if (edtSenha.getText().length() == 0) {
-                        edtSenha.setError("Digite a Senha!");
-                        edtSenha.requestFocus();
-                        return;
-                    }
-                    SharedPreferences.Editor editor = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE).edit();
-                    editor.putString("usuario", edtUsuario.getText().toString());
-                    if (cbGravSenha.isChecked()) {
-                        editor.putString("senha", edtSenha.getText().toString());
-                    } else {
-                        editor.putString("senha", null);
-                    }
-                    editor.commit();
-
-                    Dialogo = new ProgressDialog(actLogin.this);
-                    Dialogo.setIndeterminate(true);
-                    Dialogo.setMessage("Verificando e atualizando informações...");
-                    Dialogo.setTitle("Aguarde");
-                    Dialogo.show();
-
-                }
-                Thread thread = new Thread(actLogin.this);
-                thread.start();
-            }
-        });
         copyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
+    }
+    public void logar (View view){
+        final String user = edtUsuario.getText().toString();
+        final String pass = edtSenha.getText().toString();
+        Boolean ConexOk = VerificaConexao();
+        if (ConexOk == false) {
+            sCodVend = ValidarLogin(user, pass); // verifica se o usuário e senha  existe na base local do dispositivo
+            if (sCodVend != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Sem conexão com a Internet! O Usuário será autenticado localmente. Não havendo possibilidade de" +
+                        " sincronização de " +
+                        "informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo.")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(actLogin.this, actListPedidos.class);
+                                Bundle params = new Bundle();
+                                params.putString("codvendedor", sCodVend);
+                                params.putString("usuario", user);
+                                params.putString("senha", pass);
+                                //params.putString("urlPrincipal", URLPrincipal);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                                startActivity(intent);
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+            }
+        } else {
+            if (edtUsuario.getText().length() == 0) {
+                edtUsuario.setError("Digite o nome do Usuário!");
+                edtUsuario.requestFocus();
+                return;
+
+            } else if (edtSenha.getText().length() == 0) {
+                edtSenha.setError("Digite a Senha!");
+                edtSenha.requestFocus();
+                return;
+            }
+            SharedPreferences.Editor editor = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE).edit();
+            editor.putString("usuario", edtUsuario.getText().toString());
+            if (cbGravSenha.isChecked()) {
+                editor.putString("senha", edtSenha.getText().toString());
+            } else {
+                editor.putString("senha", null);
+            }
+            editor.commit();
+
+            Dialogo = new ProgressDialog(actLogin.this);
+            Dialogo.setIndeterminate(true);
+            Dialogo.setMessage("Verificando e atualizando informações...");
+            Dialogo.setTitle("Aguarde");
+            Dialogo.show();
+
+        }
+        Thread thread = new Thread(actLogin.this);
+        thread.start();
+
     }
 
     private void carregarpreferencias() {
@@ -225,234 +221,306 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
     @Override
     public void run() {
-        try {
-            int permissionCheck = ContextCompat.checkSelfPermission(actLogin.this, Manifest.permission.READ_PHONE_STATE);
-            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(actLogin.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+
+
+        int permissionCheck = ContextCompat.checkSelfPermission(actLogin.this, Manifest.permission.READ_PHONE_STATE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(actLogin.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+            Dialogo.dismiss();
+            return;
+        }
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+        soap.addProperty("aUsuario", edtUsuario.getText().toString());
+        soap.addProperty("aSenha", edtSenha.getText().toString());
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+
+
+        String CodEmpresa = null;
+        final String usuario = edtUsuario.getText().toString();
+        final String pass = edtSenha.getText().toString();
+        Boolean ConexOk = Util.checarConexaoCelular(actLogin.this);
+        if (ConexOk == true) {
+            try {
+                Envio.call("", envelope);
+            } catch (Exception e) {
+                e.toString();
                 Dialogo.dismiss();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actLogin.this, "Falha de comunicação com o servidor, tente novamente!", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                });
                 return;
             }
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-
-            SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-            soap.addProperty("aUsuario", edtUsuario.getText().toString());
-            soap.addProperty("aSenha", edtSenha.getText().toString());
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            envelope.setOutputSoapObject(soap);
-            HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-            final String CodVendedor;
-            String CodEmpresa = null;
-            final String UFVendedor;
-            final String usuario = edtUsuario.getText().toString();
-            final String pass = edtSenha.getText().toString();
             try {
-                Boolean ConexOk = Util.checarConexaoCelular(actLogin.this);
-                if (ConexOk == true) {
-                    Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                String sUsuario = (String) envelope.getResponse();
+                System.out.println("Response::" + resultsRequestSOAP.toString());
 
-                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                    String sUsuario = (String) envelope.getResponse();
-                    System.out.println("Response::" + resultsRequestSOAP.toString());
+                JSONObject jsonObj = new JSONObject(sUsuario);
+                JSONArray JUsuario = jsonObj.getJSONArray("usuario");
+                JSONObject user = JUsuario.getJSONObject(0);
 
-                    if (sUsuario.equals("0")) {
-                        Dialogo.cancel();
-                        Toast.makeText(actLogin.this, "Usuário/senha inválido ou não habilitado. Verifique!", Toast.LENGTH_SHORT).show();
+                CodVendedor = user.getString("codvend");
+                CodEmpresa = user.getString("codempresa");
+                UFVendedor = user.getString("uf");
+            } catch (Exception e) {
+                e.toString();
+                Dialogo.dismiss();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actLogin.this, "Falha no retorno da informações do servidor, tente novamente!", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    JSONObject jsonObj = new JSONObject(sUsuario);
-                    JSONArray JUsuario = jsonObj.getJSONArray("usuario");
-                    JSONObject user = JUsuario.getJSONObject(0);
+                });
+                return;
+            }
+            if (CodVendedor.equals("0")) {
+                Dialogo.dismiss();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder validuser = new AlertDialog.Builder(actLogin.this);
+                        validuser.setTitle(R.string.app_namesair);
+                        validuser.setIcon(R.drawable.logo_ico);
+                        validuser.setMessage("Usuário ou senha inválido. Verifique!")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        return;
+                                    }
+                                });
+                        AlertDialog alert = validuser.create();
+                        alert.show();
+                    }
+                });
+                return;
+            } else {
+                SharedPreferences.Editor edtEmp = getSharedPreferences(COD_EMPRESA, MODE_PRIVATE).edit();
+                edtEmp.putString("codempresa", CodEmpresa);
+                edtEmp.commit();
 
-                    CodVendedor = user.getString("codvend");
-                    CodEmpresa = user.getString("codempresa");
-                    UFVendedor = user.getString("uf");
+                DB = new ConfigDB(actLogin.this).getReadableDatabase();
+                Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
+                if (!(CursorUser.getCount() > 0)) {
+                    DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + CodVendedor + ", CODEMPRESA = " + CodEmpresa +
+                            " WHERE CODVEND = " + CodVendedor);
+                    CursorUser.close();
+                }
+                CadastrarLogin(usuario, pass, CodVendedor, CodEmpresa); // Cadastra usuário, senha e código do vendedor
 
-                    if (CodVendedor.equals("0")) {
-                        Dialogo.dismiss();
-                        Toast.makeText(actLogin.this, "Usuário ou Senha inválidos!", Toast.LENGTH_LONG).show();
-                        return;
-                    } else {
-                        SharedPreferences.Editor edtEmp = getSharedPreferences(COD_EMPRESA, MODE_PRIVATE).edit();
-                        edtEmp.putString("codempresa", CodEmpresa);
-                        edtEmp.commit();
+                String IMEI = "";
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                IMEI = telephonyManager.getDeviceId();
 
-                        DB = new ConfigDB(actLogin.this).getReadableDatabase();
-                        Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
-                        if (!(CursorUser.getCount() > 0)) {
-                            DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + CodVendedor + ", CODEMPRESA = " + CodEmpresa +
-                                    " WHERE CODVEND = " + CodVendedor);
-                            CursorUser.close();
+                SoapObject soapValida = new SoapObject(ConfigConex.NAMESPACE, "VerificaUsuario");
+                soapValida.addProperty("aUsuario", edtUsuario.getText().toString());
+                soapValida.addProperty("aEndMac", IMEI);
+
+                SoapSerializationEnvelope envelopeValida = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                envelopeValida.setOutputSoapObject(soapValida);
+                HttpTransportSE Envio2 = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                String HabUsuarioApp = "";
+                try {
+                    Envio2.call("", envelopeValida);
+                } catch (Exception e) {
+                    e.toString();
+                    Dialogo.dismiss();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(actLogin.this, "Falha de comunicação com o servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                        CadastrarLogin(usuario, pass, CodVendedor, CodEmpresa); // Cadastra usuário, senha e código do vendedor
+                    });
+                    return;
+                }
+                try {
+                    SoapObject resultsRequestSOAP2 = (SoapObject) envelopeValida.bodyIn;
+                    HabUsuarioApp = (String) envelopeValida.getResponse();
+                    System.out.println("Response::" + resultsRequestSOAP2.toString());
+                }catch (Exception e){
+                    e.toString();
+                    Dialogo.dismiss();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(actLogin.this, "Falha no retorno da informações do servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    });
+                    return;
+                }
+                Boolean ConexOkWifi = VerificaConexaoWifi();
+                if (HabUsuarioApp.equals("True") && ConexOkWifi == true) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Dialogo.setMessage("Sincronizando empresas");
+                        }
+                    });
+                    actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Dialogo.setMessage("Atualizando parâmetros");
+                        }
+                    });
+                    actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Dialogo.setMessage("Atualizando tabelas");
+                        }
+                    });
+                    actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Dialogo.setMessage("Atualizando bloqueios");
 
-                        String IMEI = "";
-                        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                        IMEI = telephonyManager.getDeviceId();
-
-                        SoapObject soapValida = new SoapObject(ConfigConex.NAMESPACE, "VerificaUsuario");
-                        soapValida.addProperty("aUsuario", edtUsuario.getText().toString());
-                        soapValida.addProperty("aEndMac", IMEI);
-
-                        SoapSerializationEnvelope envelopeValida = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                        envelopeValida.setOutputSoapObject(soapValida);
-                        HttpTransportSE Envio2 = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-                        String HabUsuarioApp = "";
-                        try {
-                            Envio2.call("", envelopeValida);
-                            SoapObject resultsRequestSOAP2 = (SoapObject) envelopeValida.bodyIn;
-
-                            HabUsuarioApp = (String) envelopeValida.getResponse();
-                            System.out.println("Response::" + resultsRequestSOAP2.toString());
-                            Boolean ConexOkWifi = VerificaConexaoWifi();
-
-                            if (HabUsuarioApp.equals("True") && ConexOkWifi == true) {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Dialogo.setMessage("Atualizando dados da empresa");
-                                        actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                        Dialogo.setMessage("Atualizando parâmetros");
-                                        actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                        Dialogo.setMessage("Atualizando outras informações");
-                                        actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                        Dialogo.setMessage("Atualizando outras informações");
-                                        actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                        handler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Dialogo.setMessage("Atualizando Cadastro de Clientes");
-                                                actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true, edtUsuario.getText().toString(), edtSenha.getText().toString());
-                                                handler.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Dialogo.setMessage("Enviando pedidos...");
-                                                        actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                                        handler.post(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                if (!UFVendedor.equals("")) {
-                                                                    Dialogo.setMessage("Atualizando cadastro de Cidades/Bairros...");
-                                                                    actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this, true);
-                                                                }
-                                                                Dialogo.dismiss();
-                                                                handler.post(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
-                                                                        Bundle params = new Bundle();
-                                                                        params.putString("codvendedor", CodVendedor);
-                                                                        params.putString("urlPrincipal", URLPrincipal);
-                                                                        params.putString("usuario", usuario);
-                                                                        params.putString("senha", pass);
-                                                                        IntVend.putExtras(params);
-                                                                        startActivity(IntVend);
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            } else if (HabUsuarioApp.equals("True")) {
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        Dialogo.setMessage("Sincronizando Empresas");
-                                    }
-                                });
-                                actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        Dialogo.setMessage("Atualizando parâmetros");
-                                    }
-                                });
-                                actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        Dialogo.setMessage("Atualizando tabelas");
-                                    }
-                                });
-                                actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                handler.post(new Runnable() {
-                                    public void run() {
-                                        Dialogo.setMessage("Atualizando bloqueios");
-
-                                    }
-                                });
-                                actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Dialogo.setMessage("Atualizando Cadastro de Clientes");
-                                    }
-                                });
-                                actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true, edtUsuario.getText().toString(), edtSenha.getText().toString());
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Dialogo.setMessage("Enviando pedidos...");
-                                    }
-                                });
-                                actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
-                                Dialogo.dismiss();
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
-                                        Bundle params = new Bundle();
-                                        params.putString("codvendedor", CodVendedor);
-                                        params.putString("urlPrincipal", URLPrincipal);
-                                        params.putString("usuario", usuario);
-                                        params.putString("senha", pass);
-                                        IntVend.putExtras(params);
-                                        startActivity(IntVend);
-                                    }
-                                });
-
-
-                            } else {
-                                Dialogo.dismiss();
-                                Toast.makeText(actLogin.this, "Limite de Usuários Atingido!", Toast.LENGTH_LONG).show();
-                                return;
+                        }
+                    });
+                    actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Dialogo.setMessage("Atualizando cadastro de clientes");
+                        }
+                    });
+                    actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true, edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Dialogo.setMessage("Enviando pedidos...");
+                        }
+                    });
+                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!UFVendedor.equals("")) {
+                                Dialogo.setMessage("Atualizando cadastro de cidades/bairros...");
                             }
-
-                        } catch (Exception E) {
-                            System.out.println("Login, falha no envio ou recebimento da validação de usuário para o aplicativo.Tente novamente.");
                         }
-                    }
+                    });
+                    actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this, true);
+                    Dialogo.dismiss();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
+                            Bundle params = new Bundle();
+                            params.putString("codvendedor", CodVendedor);
+                            params.putString("urlPrincipal", URLPrincipal);
+                            params.putString("usuario", usuario);
+                            params.putString("senha", pass);
+                            IntVend.putExtras(params);
+                            startActivity(IntVend);
+                        }
+                    });
+                } else if (HabUsuarioApp.equals("True")) {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Dialogo.setMessage("Sincronizando empresas");
+                        }
+                    });
+                    actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Dialogo.setMessage("Atualizando parâmetros");
+                        }
+                    });
+                    actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Dialogo.setMessage("Atualizando tabelas");
+                        }
+                    });
+                    actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        public void run() {
+                            Dialogo.setMessage("Atualizando bloqueios");
+
+                        }
+                    });
+                    actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Dialogo.setMessage("Atualizando cadastro de clientes");
+                        }
+                    });
+                    actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true, edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Dialogo.setMessage("Enviando pedidos...");
+                        }
+                    });
+                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    Dialogo.dismiss();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
+                            Bundle params = new Bundle();
+                            params.putString("codvendedor", CodVendedor);
+                            params.putString("urlPrincipal", URLPrincipal);
+                            params.putString("usuario", usuario);
+                            params.putString("senha", pass);
+                            IntVend.putExtras(params);
+                            startActivity(IntVend);
+                        }
+                    });
                 } else {
                     Dialogo.dismiss();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
-                    builder.setTitle(R.string.app_namesair);
-                    builder.setIcon(R.drawable.logo_ico);
-                    builder.setMessage("Sem Conexão com a Internet, Verifique!")
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    return;
-                                }
-                            })
-                            .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                                    startActivity(intent);
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+                            builder.setTitle(R.string.app_namesair);
+                            builder.setIcon(R.drawable.logo_ico);
+                            builder.setMessage("Limite de usuários atingido. Entre em contato com a empresa.")
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            return;
+                                        }
+                                    });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        }
+                    });
                 }
-            } catch (Exception E) {
-                Dialogo.dismiss();
-                System.out.println("Login, falha no envio ou recebimento da validação de usuário.Tente novamente.");
 
             }
-        } catch (Exception E) {
+        } else {
             Dialogo.dismiss();
-            System.out.println("Login, falha na montagem do arquivo JSON para envio.Tente novamente.");
+            AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage("Sem conexão com a internet, Verifique!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            return;
+                        }
+                    })
+                    .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                            startActivity(intent);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
+
     }
 
     private int CadastrarLogin(String NomeUsuario, String Senha, String CodVendedor, String CodEmpresa) {

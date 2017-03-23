@@ -42,7 +42,6 @@ public class FragmentClientePedido extends Fragment implements RecyclerViewOnCli
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-
         mList = ((act_ListClientesPedidos) getActivity()).CarregarClientesPedidos();
         ListAdapterClientesPedido adapter = new ListAdapterClientesPedido(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);

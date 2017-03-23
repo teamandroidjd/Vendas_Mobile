@@ -46,26 +46,16 @@ import java.util.List;
 
 public class act_CadClientes extends AppCompatActivity implements Runnable {
 
-    String sTipoPessoa, sUF, sCodVend;
+    String sTipoPessoa, sUF, sCodVend, NomeBairro, NomeCidade, usuario, senha,URLPrincipal;
     private Handler handler = new Handler();
-    ProgressDialog Dialogo;
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
-    int CodCidade;
-    int CodBairro;
+    int CodCidade, CodBairro;
     Boolean PesqCEP;
-    String NomeBairro, NomeCidade, usuario, senha;
-    private Context ctx;
+    ImageButton BtnPesqCep;
+    //private Context ctx;
     private static ProgressDialog DialogECB;
-
-    EditText nomerazao, nomefan,
-            nomecompleto, cnpjcpf,
-            Edtcpf, EdtRG, ie, endereco,
-            numero, cep, tel1, tel2, email, edtOBS, Complemento;
+    EditText nomerazao, nomefan, nomecompleto, cnpjcpf, Edtcpf, EdtRG, ie, endereco, numero, cep, tel1, tel2, email, edtOBS, Complemento;
     SQLiteDatabase DB;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
 
     @Override
@@ -73,35 +63,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cad_clientes);
 
-        spTipoPessoa = (Spinner) findViewById(R.id.spnTipoPessoa);
-        spUF = (Spinner) findViewById(R.id.spnUF);
-        spCidade = (Spinner) findViewById(R.id.spnCidade);
-        spBairro = (Spinner) findViewById(R.id.spnBairro);
-
-        nomerazao = (EditText) findViewById(R.id.EdtNomeRazao);
-        nomefan = (EditText) findViewById(R.id.EdtNomeFan);
-        cnpjcpf = (EditText) findViewById(R.id.EdtCnpjCpf);
-        ie = (EditText) findViewById(R.id.EdtIE);
-        endereco = (EditText) findViewById(R.id.EdtEndereco);
-        numero = (EditText) findViewById(R.id.EdtNumero);
-        Complemento = (EditText) findViewById(R.id.EdtComple);
-        email = (EditText) findViewById(R.id.EdtEmail);
-        cep = (EditText) findViewById(R.id.EdtCep);
-        tel1 = (EditText) findViewById(R.id.EdtTel1);
-        tel2 = (EditText) findViewById(R.id.EdtTel2);
-        Edtcpf = (EditText) findViewById(R.id.Edtcpf);
-        nomecompleto = (EditText) findViewById(R.id.EdtNomeCompleto);
-        EdtRG = (EditText) findViewById(R.id.EdtRG);
-        edtOBS = (EditText) findViewById(R.id.EdtOBS);
-
-        ImageButton BtnPesqCep = (ImageButton) findViewById(R.id.btnBuscaCep);
-        BtnPesqCep.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String sCEP = cep.getText().toString().replaceAll("[^0123456789]", "");
-                cadastraDadosCep(sCEP);
-            }
-        });
+        declaraobjetos();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -110,23 +72,9 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 sCodVend = params.getString("codvendedor");
                 usuario = params.getString("usuario");
                 senha = params.getString("senha");
+                URLPrincipal = params.getString("urlPrincipal");
             }
         }
-
-        final EditText etCNPJ = (EditText) findViewById(R.id.EdtCnpjCpf);
-        etCNPJ.addTextChangedListener(Mask.insert(Mask.CNPJ_MASK, etCNPJ));
-
-        final EditText etCPF = (EditText) findViewById(R.id.Edtcpf);
-        etCPF.addTextChangedListener(Mask.insert(Mask.CPF_MASK, etCPF));
-
-        final EditText etCEP = (EditText) findViewById(R.id.EdtCep);
-        etCEP.addTextChangedListener(Mask.insert(Mask.CEP_MASK, etCEP));
-
-        EditText etTelefone1 = (EditText) findViewById(R.id.EdtTel1);
-        etTelefone1.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone1));
-
-        EditText etTelefone2 = (EditText) findViewById(R.id.EdtTel2);
-        etTelefone2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone2));
 
         PesqCEP = false;
         NomeBairro = null;
@@ -160,13 +108,9 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     EdtRG.setVisibility(EditText.GONE);
                 }
             }
-
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-        DB = new ConfigDB(this).getReadableDatabase();
-
         spUF.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
@@ -253,11 +197,9 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         break;
                 }
                 Boolean ConexOk = VerificaConexao();
-                if(ConexOk == false){
-
+                if (ConexOk == false) {
                     int CodCidade = 0;
                     try {
-
                         Cursor cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
                         List<String> DadosList = new ArrayList<String>();
                         if (cursor.getCount() > 0) {
@@ -277,26 +219,20 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     } catch (Exception E) {
                         System.out.println("Error" + E);
                     }
-
                 }
-
-
                 Thread thread = new Thread(act_CadClientes.this);
                 thread.start();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
-
         spCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 Boolean ConexOk = VerificaConexao();
-                if(ConexOk == false){
-
+                if (ConexOk == false) {
                     NomeCidade = spCidade.getSelectedItem().toString();
                     Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
                     if (CurCidade.getCount() > 0) {
@@ -314,7 +250,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     } catch (Exception e) {
                         e.toString();
                     }
-
                     List<String> DadosListBairro = new ArrayList<String>();
                     if (CurBairro.getCount() > 0) {
                         CurBairro.moveToFirst();
@@ -330,8 +265,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spBairro.setAdapter(spinnerArrayAdapter);
 
-                }else {
-
+                } else {
                     NomeCidade = spCidade.getSelectedItem().toString();
                     Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
                     if (CurCidade.getCount() > 0) {
@@ -349,7 +283,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     } catch (Exception e) {
                         e.toString();
                     }
-
                     List<String> DadosListBairro = new ArrayList<String>();
                     if (CurBairro.getCount() > 0) {
                         CurBairro.moveToFirst();
@@ -364,17 +297,13 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spBairro.setAdapter(spinnerArrayAdapter);
-
                 }
-
             }
-
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
         spBairro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 NomeBairro = spBairro.getSelectedItem().toString();
@@ -388,16 +317,53 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 } catch (Exception E) {
                     System.out.println("Error" + E);
                 }
-
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
+    }
+
+    private void declaraobjetos() {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        DB = new ConfigDB(this).getReadableDatabase();
+        BtnPesqCep = (ImageButton) findViewById(R.id.btnBuscaCep);
+        spTipoPessoa = (Spinner) findViewById(R.id.spnTipoPessoa);
+        spUF = (Spinner) findViewById(R.id.spnUF);
+        spCidade = (Spinner) findViewById(R.id.spnCidade);
+        spBairro = (Spinner) findViewById(R.id.spnBairro);
+
+        nomerazao = (EditText) findViewById(R.id.EdtNomeRazao);
+        nomefan = (EditText) findViewById(R.id.EdtNomeFan);
+        cnpjcpf = (EditText) findViewById(R.id.EdtCnpjCpf);
+        ie = (EditText) findViewById(R.id.EdtIE);
+        endereco = (EditText) findViewById(R.id.EdtEndereco);
+        numero = (EditText) findViewById(R.id.EdtNumero);
+        Complemento = (EditText) findViewById(R.id.EdtComple);
+        email = (EditText) findViewById(R.id.EdtEmail);
+        cep = (EditText) findViewById(R.id.EdtCep);
+        tel1 = (EditText) findViewById(R.id.EdtTel1);
+        tel2 = (EditText) findViewById(R.id.EdtTel2);
+        Edtcpf = (EditText) findViewById(R.id.Edtcpf);
+        nomecompleto = (EditText) findViewById(R.id.EdtNomeCompleto);
+        EdtRG = (EditText) findViewById(R.id.EdtRG);
+        edtOBS = (EditText) findViewById(R.id.EdtOBS);
+
+        final EditText etCNPJ = (EditText) findViewById(R.id.EdtCnpjCpf);
+        etCNPJ.addTextChangedListener(Mask.insert(Mask.CNPJ_MASK, etCNPJ));
+
+        final EditText etCPF = (EditText) findViewById(R.id.Edtcpf);
+        etCPF.addTextChangedListener(Mask.insert(Mask.CPF_MASK, etCPF));
+
+        final EditText etCEP = (EditText) findViewById(R.id.EdtCep);
+        etCEP.addTextChangedListener(Mask.insert(Mask.CEP_MASK, etCEP));
+
+        EditText etTelefone1 = (EditText) findViewById(R.id.EdtTel1);
+        etTelefone1.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone1));
+
+        EditText etTelefone2 = (EditText) findViewById(R.id.EdtTel2);
+        etTelefone2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone2));
     }
 
     public boolean VerificaConexao() {
@@ -411,6 +377,11 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             conectado = false;
         }
         return conectado;
+    }
+
+    public void buscacepclie (View view){
+        String sCEP = cep.getText().toString().replaceAll("[^0123456789]", "");
+        cadastraDadosCep(sCEP);
     }
 
     public void cadastraDadosCep(String cep) {
@@ -504,7 +475,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     try {
                         NomeCidade = c.getString("cidade");
                         //int CodCidadeExt = c.getInt("id_cidade");
-                        NomeCidade = NomeCidade.replaceAll("'","");
+                        NomeCidade = NomeCidade.replaceAll("'", "");
 
                         Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                         if (CursorCidade.getCount() > 0) {
@@ -532,7 +503,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     try {
                         NomeBairro = c.getString("bairro");
                         int CodBairroExt = c.getInt("id_bairro");
-                        NomeBairro = NomeBairro.replaceAll("'","");
+                        NomeBairro = NomeBairro.replaceAll("'", "");
 
                         Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODCIDADE FROM BAIRROS WHERE CODCIDADE = " + CodCidade + " AND DESCRICAO = '" + NomeBairro + "'", null);
                         if (CursorBairro.getCount() > 0) {
@@ -548,8 +519,9 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         // TODO Auto-generated catch block
                         E.printStackTrace();
                     }
-
-                    endereco.setText(c.getString("logradouro"));
+                    String end = c.getString("logradouro");
+                    String tipoend = c.getString("tipo_logradouro");
+                    endereco.setText(tipoend+" "+end);
                     numero.requestFocus();
 
                     //Estado
@@ -617,6 +589,16 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             alert.show();
             return;
 
+        }else {
+            Intent i = new Intent(act_CadClientes.this, act_ListClientes.class);
+            Bundle params = new Bundle();
+            params.putString("codvendedor",sCodVend);
+            params.putString("usuario",usuario);
+            params.putString("senha",senha);
+            params.putString("urlPrincipal",URLPrincipal);
+            i.putExtras(params);
+            startActivity(i);
+            finish();
         }
         super.onBackPressed();
     }
@@ -653,7 +635,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 nomecompleto.setError("Digite o Nome Completo!");
                 nomecompleto.requestFocus();
                 return;
-            } else if(Util.validaCPF(Edtcpf.getText().toString().replaceAll("[^0123456789]", "")) == false){
+            } else if (Util.validaCPF(Edtcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
                 Edtcpf.setError("CPF inválido! Verifique");
                 Edtcpf.requestFocus();
                 return;
@@ -678,7 +660,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             cep.setError("Digite o CEP!");
             cep.requestFocus();
             return;
-        } else if(Util.validaEmail(email.getText().toString()) == false){
+        } else if (Util.validaEmail(email.getText().toString()) == false) {
             email.setError("E-mail inválido! Verifique.");
             email.requestFocus();
             return;
@@ -708,7 +690,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         "','" + NomeFantasia + "', '" + ie.getText().toString() + "', '" + email.getText().toString() +
                         "','" + tel1.getText().toString() + "', '" + tel2.getText().toString() + "', '" + endereco.getText().toString() +
                         "','" + numero.getText().toString() + "', '" + Complemento.getText().toString() +
-                        "',"  + CodBairro + ", '" + edtOBS.getText().toString() + "', " + CodCidade + ", '" + sUF +
+                        "'," + CodBairro + ", '" + edtOBS.getText().toString() + "', " + CodCidade + ", '" + sUF +
                         "','" + cep.getText().toString() + "', " + sCodVend + ", '" + sTipoPessoa + "', '" + "S" + "', '" + EdtRG.getText().toString() + "','"
                         + "1" + "');");
             }
@@ -723,11 +705,11 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(act_CadClientes.this);
             builder.setTitle("Sincronização");
             builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Deseja sincronizar o sliente cadastrado?")
+            builder.setMessage("Deseja sincronizar o cliente cadastrado?")
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false,usuario,senha);
+                            actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false, usuario, senha);
                             Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
                             Bundle params = new Bundle();
                             params.putString("codvendedor", sCodVend);
@@ -775,6 +757,57 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         nomecompleto.setText("");
         EdtRG.setText("");
         edtOBS.setText("");
+    }
+
+    public void consultacnpj(String cnpj) {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "CNPJ");
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE("https://www.receitaws.com.br/v1/cnpj/" + cnpj);
+        String RetCNPJ = null;
+
+        try {
+            Boolean ConexOk = true;
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetCNPJ = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+
+        try {
+            JSONObject jsonObj = new JSONObject(RetCNPJ);
+            JSONArray JCNPJ = jsonObj.getJSONArray("" +
+                    "");
+
+            DB = new ConfigDB(this).getReadableDatabase();
+
+            JSONObject c = JCNPJ.getJSONObject(0);
+            String nome = c.getString("nome");
+            String uf = c.getString("uf");
+            String tel1 = c.getString("telefone");
+            String bairro = c.getString("bairro");
+            String endereco = c.getString("logradouro");
+            String numero = c.getString("numero");
+            String cep = c.getString("cep");
+            String cidade = c.getString("municipio");
+            String nomefan = c.getString("fantasia");
+            String complemento = c.getString("complemento");
+
+
+
+
+        } catch (Exception E) {
+            E.printStackTrace();
+        }
     }
 
     @Override
