@@ -933,7 +933,8 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             Preco = Preco.replace('.', ',');
 
             info_txv_precoproduto.setText(Preco);
-            info_txt_quantidadecomprada.selectAll();
+            info_txt_quantidadecomprada.setText("");
+            //info_txt_quantidadecomprada.selectAll();
 
             alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                 @Override
@@ -1652,7 +1653,8 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             Preco = Preco.replace('.', ',');
 
             info_txv_precoproduto.setText(Preco);
-            info_txt_quantidadecomprada.selectAll();
+            info_txt_quantidadecomprada.setText("");
+            //info_txt_quantidadecomprada.selectAll();
 
             alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                 @Override

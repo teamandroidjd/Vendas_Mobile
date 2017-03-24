@@ -184,6 +184,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             conf_valorparcela12.setVisibility(View.GONE);
             conf_rbdinheiro.setVisibility(View.VISIBLE);
             conf_rgPagamentos.setVisibility(View.VISIBLE);
+            conf_txtqtdparcelas.setText("1");
             conf_txvlabelvalorrecebido.setVisibility(View.GONE);
             conf_txtvalorrecebido.setVisibility(View.GONE);
             conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
@@ -598,7 +599,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         Integer opcao_cartao_dinheiro_cheque = conf_rgPagamentos.getCheckedRadioButtonId();
         if (opcao_cartao_dinheiro_cheque == conf_rbdinheiro.getId()) {
             RECEBIMENTO_DIN_CAR_CHQ = "DINHEIRO";
-            conf_txtqtdparcelas.setText("0");
+            conf_txtqtdparcelas.setText("1");
         }
 
         conf_txtqtdparcelas.addTextChangedListener(new TextWatcher() {

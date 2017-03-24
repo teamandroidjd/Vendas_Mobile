@@ -79,7 +79,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
-                    android:hint="Registro de Identificação"
+                    android:hint="Número de documento"
                     android:inputType="textCapCharacters"
                     android:maxLength="15"
                     android:maxLines="1" />
@@ -173,6 +173,7 @@
 
                     <ImageButton
                         android:id="@+id/btnBuscaCep"
+                        android:onClick="buscacep"
                         android:layout_width="50dp"
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"

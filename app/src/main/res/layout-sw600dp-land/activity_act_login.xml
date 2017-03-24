@@ -93,6 +93,7 @@
                 android:textAllCaps="false"
                 android:textColor="#fff"
                 android:textSize="40sp"
+                android:onClick="logar"
                 android:id="@+id/btnEntrar" />
         </LinearLayout>
 

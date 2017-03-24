@@ -116,6 +116,7 @@
                 android:textAllCaps="false"
                 android:textColor="#fff"
                 android:textSize="40sp"
+                android:onClick="confirmafiltro"
                 android:id="@+id/btnConfirmar"
                 android:layout_weight="5.63" />
         </LinearLayout>

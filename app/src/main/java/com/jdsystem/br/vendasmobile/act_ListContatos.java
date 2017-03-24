@@ -69,78 +69,62 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
                 usuario = params.getString("usuario");
                 senha = params.getString("senha");
             }
-
-            FloatingActionButton CadContatos = (FloatingActionButton) findViewById(R.id.cadcontato);
-            CadContatos.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent i = new Intent(act_ListContatos.this, CadContatos.class);
-                    Bundle params = new Bundle();
-                    params.putString("codvendedor", sCodVend);
-                    params.putString("usuario", usuario);
-                    params.putString("senha", senha);
-                    params.putString("urlPrincipal", URLPrincipal);
-                    i.putExtras(params);
-                    startActivity(i);
-                    finish();
-
-                }
-            });
-
-            pesquisacliente = (EditText) findViewById(R.id.pesqcontato);
-            pesquisacliente.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    FragmentFiltroContatos frag = (FragmentFiltroContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                    if (frag == null) {
-                        frag = new FragmentFiltroContatos();
-                        Bundle bundle = new Bundle();
-                        bundle.putCharSequence("pesquisa", s);
-                        frag.setArguments(bundle);
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
-                        ft.commit();
-                    } else {
-                        frag = new FragmentFiltroContatos();
-                        Bundle bundle = new Bundle();
-                        bundle.putCharSequence("pesquisa", s);
-                        frag.setArguments(bundle);
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
-                        ft.commit();
-                    }
-
-
-                }
-
-                public void afterTextChanged(Editable s) {
-                }
-            });
-
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawer.setDrawerListener(toggle);
-            toggle.syncState();
-
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            navigationView.setNavigationItemSelectedListener(act_ListContatos.this);
-
-            View header = navigationView.getHeaderView(0);
-            TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
-            SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-            UsuarioLogado = prefs.getString("usuario", null);
-            if (UsuarioLogado != null) {
-                UsuarioLogado = prefs.getString("usuario", null);
-                usuariologado.setText("Olá " + UsuarioLogado + "!");
-            } else {
-                usuariologado.setText("Olá " + usuario + "!");
-            }
         }
+        FloatingActionButton CadContatos = (FloatingActionButton) findViewById(R.id.cadcontato);
+        CadContatos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(act_ListContatos.this, CadContatos.class);
+                Bundle params = new Bundle();
+                params.putString("codvendedor", sCodVend);
+                params.putString("usuario", usuario);
+                params.putString("senha", senha);
+                params.putString("urlPrincipal", URLPrincipal);
+                i.putExtras(params);
+                startActivity(i);
+
+            }
+        });
+        pesquisacliente = (EditText) findViewById(R.id.pesqcontato);
+        pesquisacliente.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                FragmentFiltroContatos frag = (FragmentFiltroContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                if (frag == null) {
+                    frag = new FragmentFiltroContatos();
+                    Bundle bundle = new Bundle();
+                    bundle.putCharSequence("pesquisa", s);
+                    frag.setArguments(bundle);
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
+                    ft.commit();
+                } else {
+                    frag = new FragmentFiltroContatos();
+                    Bundle bundle = new Bundle();
+                    bundle.putCharSequence("pesquisa", s);
+                    frag.setArguments(bundle);
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
+                    ft.commit();
+                }
+            }
+
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(act_ListContatos.this);
+
+        carregausuariologado();
+
         pDialog = new ProgressDialog(act_ListContatos.this);
         pDialog.setTitle("Aguarde");
         pDialog.setMessage("Carregando Contatos...");
@@ -150,6 +134,21 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
         Thread thread = new Thread(act_ListContatos.this);
         thread.start();
 
+    }
+
+    private void carregausuariologado() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(act_ListContatos.this);
+        View header = navigationView.getHeaderView(0);
+        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
+        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        UsuarioLogado = prefs.getString("usuario", null);
+        if (UsuarioLogado != null) {
+            UsuarioLogado = prefs.getString("usuario", null);
+            usuariologado.setText("Olá " + UsuarioLogado + "!");
+        } else {
+            usuariologado.setText("Olá " + usuario + "!");
+        }
     }
 
     @Override

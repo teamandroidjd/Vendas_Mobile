@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -166,7 +167,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return conectado;
     }
 
-
     @Override
     public void run() {
         DB = new ConfigDB(this).getReadableDatabase();
@@ -218,10 +218,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
         Intent i = new Intent(actSincronismo.this, actListPedidos.class);
         Bundle params = new Bundle();
-        params.putString("codvendedor",sCodVend);
-        params.putString("urlPrincipal",URLPrincipal);
-        params.putString("usuario",usuario);
-        params.putString("senha",senha);
+        params.putString("codvendedor", sCodVend);
+        params.putString("urlPrincipal", URLPrincipal);
+        params.putString("usuario", usuario);
+        params.putString("senha", senha);
         i.putExtras(params);
         startActivity(i);
         finish();
@@ -282,8 +282,15 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             System.out.println("Sincronismo Clientes, sem conexão com o servidor. Tente novamente.  ");
         }
         if (RetClientes.equals("0")) {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, "Nenhum cliente encontrado. Verifique!", Toast.LENGTH_SHORT).show();
+                }
+            });
             return sinccliente;
-        }else {
+
+        } else {
             Cursor cursorclie = DB.rawQuery("SELECT * FROM CLIENTES", null);
             cursorclie.moveToFirst();
             if (cursorclie.getCount() > 0) {
@@ -398,14 +405,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             System.out.println("Sincronismo Clientes, falha na atualização ou inclusão de clientes. Tente novamente");
                         }
 
-                        if(CodClienteExt == null){
+                        if (CodClienteExt == null) {
                             Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
                             CursorContatosEnv.moveToFirst();
                             if ((CursorContatosEnv.getCount() > 0)) {
                                 DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente);
                                 CursorContatosEnv.close();
                             }
-                        }else {
+                        } else {
                             Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIE_EXT = " + CodClienteExt, null);
                             CursorContatosEnv.moveToFirst();
                             if ((CursorContatosEnv.getCount() > 0)) {
@@ -414,7 +421,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             }
 
                         }
-
 
 
                         String Contatos = c.getString(TAG_CONTATOSINFO);
@@ -492,8 +498,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 }
 
                                 try {
-                                    if(!NomeContato.equals("0") || !CargoContato.equals("0") || !EmailContato.equals("0") || !Tel1Contato.equals("0") ||
-                                       !Tel1Contato.equals("0") || !Tel2Contato.equals("0") ) {
+                                    if (!NomeContato.equals("0") || !CargoContato.equals("0") || !EmailContato.equals("0") || !Tel1Contato.equals("0") ||
+                                            !Tel1Contato.equals("0") || !Tel2Contato.equals("0")) {
                                         DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT ) VALUES(" +
                                                 "'" + NomeContato.trim() + "','" + CargoContato.trim() +
                                                 "',' " + EmailContato.trim() + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
@@ -874,6 +880,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS")).trim();
                             String line_separator = System.getProperty("line.separator");
                             String OBS = Observacao.replaceAll("\n|" + line_separator, "");
+                            String vldesconto = CursorPedido.getString(CursorPedido.getColumnIndex("VLDESCONTO"));
+                            if (vldesconto == null) {
+                                vldesconto = "0";
+                            } else {
+                                vldesconto = vldesconto.replace(".", ",");
+                            }
 
 
                             JPedidos = "{codclie_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODCLIE_EXT")) + "'," +
@@ -883,7 +895,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                     "valor_frete: '" + ValorFrete + "'," +
                                     "valor_seguro: '" + ValorSeguro + "'," +
                                     "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
-                                    "valor_desconto: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLPERCACRES")).replace(".", ",") + "'," +
+                                    "valor_desconto: '" + vldesconto + "'," +
                                     "obs_pedido: '" + OBS + "'," +
                                     "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
                                     "chavepedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
@@ -1372,33 +1384,26 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         Cursor CursorPedido;
         String RetClieEnvio = null;
 
-        ProgressDialog Dialog = null;
-        if (bdialog == false) {
-            Dialog = new ProgressDialog(ctxPedEnv);
-            Dialog.setTitle("Aguarde");
-            Dialog.setMessage("Enviando pedidos");
-            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            Dialog.setIcon(R.drawable.icon_sync);
-            Dialog.show();
-        }
-
         try {
             CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE FLAGINTEGRADO = '5' ", null);
 
             int jumpTime = 0;
             final int totalProgressTime = CursorPedido.getCount();
-            //Dialog.setMax(totalProgressTime);
-            //Dialog.setProgress(jumpTime);
             CursorPedido.moveToFirst();
 
             if (CursorPedido.getCount() > 0) {
                 CursorPedido.moveToFirst();
                 do {
                     for (int i = 0; i < CursorPedido.getCount(); i++) {
-                        do try {
+                        try {
                             jumpTime += 1;
-                            //Dialog.setProgress(jumpTime);
-                            //Dialog.setMessage("Sincronizando Tabelas - Pedidos");
+
+                            int CodClie_Int = CursorPedido.getInt(CursorPedido.getColumnIndex("CODCLIE"));
+
+                            Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "'", null);
+                            CursorClie.moveToFirst();
+                            int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
+                            String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
 
                             String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
                             if (Util.isNullOrEmpty(ValorFrete)) {
@@ -1412,16 +1417,22 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS"));
                             String line_separator = System.getProperty("line.separator");
                             String OBS = Observacao.replaceAll("\n|" + line_separator, "");
+                            String vldesconto = CursorPedido.getString(CursorPedido.getColumnIndex("VLDESCONTO"));
+                            if (vldesconto == null) {
+                                vldesconto = "0";
+                            } else {
+                                vldesconto = vldesconto.replace(".", ",");
+                            }
 
 
-                            JPedidos = "{codclie_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODCLIE_EXT")) + "'," +
+                            JPedidos = "{codclie_ext: '" + CodClie_Ext + "'," +
                                     "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
                                     "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
                                     "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
                                     "valor_frete: '" + ValorFrete + "'," +
                                     "valor_seguro: '" + ValorSeguro + "'," +
                                     "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
-                                    "valor_desconto: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLPERCACRES")).replace(".", ",") + "'," +
+                                    "valor_desconto: '" + vldesconto + "'," +
                                     "obs_pedido: '" + OBS + "'," +
                                     "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
                                     "chavepedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
@@ -1512,17 +1523,13 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         } catch (Exception E) {
                             E.printStackTrace();
                         }
-                        while (jumpTime < totalProgressTime);
                     }
-
                     JPedidos = "";
                 }
                 while (CursorPedido.moveToNext());
                 CursorPedido.close();
             }
 
-            /*if (Dialog.isShowing())
-                Dialog.dismiss();*/
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
@@ -1631,21 +1638,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return AtualizaEst;
     }
 
-    public static boolean SincAtualizaCidade(String UF, Context ctxEnv, boolean bdialog) {
+    public static boolean SincAtualizaCidade(String UF, final Context ctxEnv, boolean bdialog) {
         boolean sincatucidade = false;
-
-        ProgressDialog Dialog = null;
-        if (bdialog == false) {
-            Dialog = new ProgressDialog(ctxEnv);
-            Dialog.setTitle("Aguarde");
-            Dialog.setMessage("Enviando pedidos");
-            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            Dialog.setProgress(0);
-            Dialog.setIcon(R.drawable.icon_sync);
-            Dialog.setMax(0);
-            Dialog.show();
-        }
-
+        int CodCidadeExt;
         int CodCidade = 0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -1666,14 +1661,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             if (ConexOk == true) {
                 Envio.call("", envelope);
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
                 RetCidades = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
         }
-
         try {
             JSONObject jsonObj = new JSONObject(RetCidades);
             JSONArray JCidades = jsonObj.getJSONArray("cidades");
@@ -1688,7 +1681,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         JSONObject c = JCidades.getJSONObject(jumpTime);
                         jumpTime += 1;
                         String NomeCidade = c.getString("cidade");
-                        int CodCidadeExt = c.getInt("id_cidade");
+                        CodCidadeExt = c.getInt("id_cidade");
                         NomeCidade = NomeCidade.replaceAll("'", "");
 
                         Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
@@ -1770,8 +1763,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     try {
                         JSONObject c = JBairros.getJSONObject(jumpTime);
                         jumpTime += 1;
-                        DialogECB.setProgress(jumpTime);
-                        DialogECB.setMessage("Sincronizando Tabelas - Bairros");
                         String NomeBairro = c.getString("bairro");
                         int CodBairroExt = c.getInt("id_bairro");
 
@@ -1855,9 +1846,20 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String METHOD_NAMEENVIO = "CadastrarPedidos";
         DB = new ConfigDB(ctxEnv).getReadableDatabase();
         Cursor CursorPedido;
+        Cursor CursorCliente;
+        int CodClie_Ext = 0;
+        int CodClie_Int;
 
         try {
             CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "' ", null);
+            CursorPedido.moveToFirst();
+            CodClie_Int = CursorPedido.getInt(CursorPedido.getColumnIndex("CODCLIE"));
+
+            CursorCliente = DB.rawQuery("SELECT CODCLIE_EXT FROM CLIENTES WHERE CODCLIE_INT = " + CodClie_Int + "", null);
+            CursorCliente.moveToFirst();
+            CodClie_Ext = CursorCliente.getInt(CursorCliente.getColumnIndex("CODCLIE_EXT"));
+            CursorCliente.close();
+
             if (bdialog == false) {
                 Dialog = new ProgressDialog(ctxEnv);
                 Dialog.setTitle("Aguarde...");
@@ -1883,7 +1885,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 Dialog.setMax(totalProgressTime);
                 Dialog.setProgress(jumpTime);
             }
-            CursorPedido.moveToFirst();
+            //CursorPedido.moveToFirst();
             if (CursorPedido.getCount() > 0) {
                 CursorPedido.moveToFirst();
                 do {
@@ -1912,9 +1914,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             } else {
                                 vldesconto = vldesconto.replace(".", ",");
                             }
-
-
-                            JPedidos = "{codclie_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODCLIE_EXT")) + "'," +
+                            JPedidos = "{codclie_ext: '" + CodClie_Ext + "'," +
                                     "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
                                     "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
                                     "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
@@ -1927,6 +1927,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                     "chavepedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
                                     "codempresa: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODEMPRESA")) + "'," +
                                     "cod_vendedor: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODVENDEDOR")) + "',";
+
 
                             String PedItems = "";
                             Cursor CursorItensEnv = DB.rawQuery(" SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" +
@@ -1957,7 +1958,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             do {
                                 PedParcelas = PedParcelas + "{chavepedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
                                         "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
-                                        "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")) + "'," +
+                                        "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")).replace(".", ",") + "'," +
                                         "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
 
                                 if (!CursorParcelasEnv.isLast()) {
@@ -2161,18 +2162,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     public static boolean SincParametrosStatic(String sUsuario, String sSenha, Context ctxEnv, Boolean bdialog) {
         boolean sincparaetrosstatic = false;
 
-        ProgressDialog Dialog = null;
-        if (bdialog == false) {
-            Dialog = new ProgressDialog(ctxEnv);
-            Dialog.setTitle("Aguarde...");
-            Dialog.setMessage("Atualizando parâmetros");
-            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            Dialog.setProgress(0);
-            Dialog.setIcon(R.drawable.icon_sync);
-            Dialog.setMax(0);
-            Dialog.show();
-        }
-
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -2251,18 +2240,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
     public static boolean SincDescricaoTabelasStatic(String sUsuario, String sSenha, Context ctxEnv, boolean bdialog) {
         boolean sinctabelasstatic = false;
-
-        ProgressDialog Dialog = null;
-        if (bdialog == false) {
-            Dialog = new ProgressDialog(ctxEnv);
-            Dialog.setTitle("Aguarde...");
-            Dialog.setMessage("Atualizando Tabelas");
-            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            Dialog.setProgress(0);
-            Dialog.setIcon(R.drawable.icon_sync);
-            Dialog.setMax(0);
-            Dialog.show();
-        }
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -2346,18 +2323,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     public static boolean SincBloqueiosStatic(String sUsuario, String sSenha, Context ctxEnv, boolean bdialog) {
         boolean sincbloqstatic = false;
 
-        ProgressDialog Dialog = null;
-        if (bdialog == false) {
-            Dialog = new ProgressDialog(ctxEnv);
-            Dialog.setTitle("Aguarde...");
-            Dialog.setMessage("Atualizando Tabelas");
-            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            Dialog.setProgress(0);
-            Dialog.setIcon(R.drawable.icon_sync);
-            Dialog.setMax(0);
-            Dialog.show();
-        }
-
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -2428,18 +2393,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
     public static boolean SincEmpresas(String sUsuario, String sSenha, Context ctxEnv, Boolean bdialog) {
         boolean sincempresastatic = false;
-
-        ProgressDialog Dialog = null;
-        if (bdialog == false) {
-            Dialog = new ProgressDialog(ctxEnv);
-            Dialog.setTitle("Aguarde...");
-            Dialog.setMessage("Atualizando parâmetros");
-            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            Dialog.setProgress(0);
-            Dialog.setIcon(R.drawable.icon_sync);
-            Dialog.setMax(0);
-            Dialog.show();
-        }
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -2539,18 +2492,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String METHOD_NAMEENVIO = "Cadastrar";
         DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
 
-        ProgressDialog Dialog = null;
-        if (bDialogo == false) {
-            Dialog = new ProgressDialog(ctxEnvClie);
-            Dialog.setTitle("Aguarde...");
-            Dialog.setMessage("Sincronizando Clientes");
-            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            Dialog.setProgress(0);
-            Dialog.setIcon(R.drawable.icon_sync);
-            Dialog.setMax(0);
-            Dialog.show();
-        }
-
         try {
             Cursor CursorClieEnv = null;
             if (CodClie_Int.equals("0")) {
@@ -2582,6 +2523,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 CursorClieEnv.moveToFirst();
                 do {
                     for (int i = 0; i < CursorClieEnv.getCount(); i++) {
+                        //String OBS = CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")).trim().replaceAll("\n"," ");
+                        //OBS = OBS.replaceAll("\n"," ");
                         do {
                             try {
                                 jumpTime += 1;
@@ -2599,7 +2542,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "cidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) + "'," +
                                         "estado: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) + "'," +
                                         "cep: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) + "'," +
-                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")) + "'," +
+                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")).trim().replaceAll("\n", " ") + "'," +
                                         "identidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) + "'," +
                                         "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")) + "'}," +
                                         "{email: ''}]," +
@@ -2671,9 +2614,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 }
                             } catch (Exception E) {
                                 E.toString();
-                                if (bDialogo == false) {
-                                    Dialog.dismiss();
-                                }
                                 return sincclieenvstatic;
                             }
                         }
@@ -2695,11 +2635,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 }
                 while (CursorClieEnv.moveToNext());
                 CursorClieEnv.close();
+            } else {
+                sincclieenvstatic = true;
             }
-            if (bDialogo == false) {
-                if (Dialog.isShowing())
-                    Dialog.dismiss();
-            }
+
+
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
@@ -2770,11 +2710,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         StrictMode.setThreadPolicy(policy);
 
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        if(senha != null) {
+        if (senha != null) {
             soap.addProperty("aParam", "D" + DtUlt);
             soap.addProperty("aUsuario", usuario);
             soap.addProperty("aSenha", senha);
-        }else {
+        } else {
             soap.addProperty("aParam", "D" + DtUlt);
             soap.addProperty("aUsuario", user);
             soap.addProperty("aSenha", pass);
@@ -2972,7 +2912,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
         String RetClientes = null;
 
         try {
@@ -2988,7 +2928,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
         if (RetClientes.equals("0")) {
             return sinccliestatic;
-        }else {
+        } else {
             Cursor cursorclie = DB.rawQuery("SELECT * FROM CLIENTES", null);
             cursorclie.moveToFirst();
             if (cursorclie.getCount() > 0) {
@@ -3107,14 +3047,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             E.toString();
                         }
 
-                        if(CodClieExt == null){
+                        if (CodClieExt == null) {
                             Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
                             CursorContatosEnv.moveToFirst();
                             if ((CursorContatosEnv.getCount() > 0)) {
                                 DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente);
                                 CursorContatosEnv.close();
                             }
-                        }else {
+                        } else {
                             Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIE_EXT = " + CodClieExt, null);
                             CursorContatosEnv.moveToFirst();
                             if ((CursorContatosEnv.getCount() > 0)) {
@@ -3200,8 +3140,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
 
                                 try {
-                                    if(!NomeContato.equals("0") || !CargoContato.equals("0") || !EmailContato.equals("0") || !Tel1Contato.equals("0") ||
-                                            !Tel1Contato.equals("0") || !Tel2Contato.equals("0") ) {
+                                    if (!NomeContato.equals("0") || !CargoContato.equals("0") || !EmailContato.equals("0") || !Tel1Contato.equals("0") ||
+                                            !Tel1Contato.equals("0") || !Tel2Contato.equals("0")) {
                                         DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT ) VALUES(" +
                                                 "'" + NomeContato.trim() + "','" + CargoContato.trim() +
                                                 "',' " + EmailContato.trim() + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
@@ -3905,5 +3845,19 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         super.onStop();
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(actSincronismo.this, actListPedidos.class);
+        Bundle params = new Bundle();
+        params.getString("codvendedor", sCodVend);
+        params.getString("usuario", usuario);
+        params.getString("senha", senha);
+        params.getString("urlPrincipal", URLPrincipal);
+        i.putExtras(params);
+        startActivity(i);
+        finish();
+        super.onBackPressed();
     }
 }

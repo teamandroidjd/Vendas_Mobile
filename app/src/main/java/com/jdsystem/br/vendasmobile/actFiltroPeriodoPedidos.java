@@ -56,23 +56,9 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
 
         calendar = Calendar.getInstance();
 
-        btnConfirmar = (Button)findViewById(R.id.btnConfirmar);
-        btnConfirmar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (DataIni.before(DataFim) || (DataIni.equals(DataFim))) {
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("datainicial", DataInicial);
-                    returnIntent.putExtra("datafinal", DataFinal);
-                    setResult(3, returnIntent);
-                    finish();
-                }else {
-                    Util.msg_toast_personal(actFiltroPeriodoPedidos.this,"Data Inicial Maior que a Data Final", Toast.LENGTH_SHORT);
-                }
-            }
-        });
+        declaraobjetos();
 
-        dpResultFinal = (EditText) findViewById(R.id.dpResultFinal);
+
         dpResultFinal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,8 +73,6 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
             }
         });
 
-
-        dpResult = (EditText) findViewById(R.id.dpResult);
         dpResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,8 +88,24 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
         });
     }
 
+    private void declaraobjetos() {
+        btnConfirmar = (Button)findViewById(R.id.btnConfirmar);
+        dpResultFinal = (EditText) findViewById(R.id.dpResultFinal);
+        dpResult = (EditText) findViewById(R.id.dpResult);
+    }
 
+    public void confirmafiltro(View view){
+        if (DataIni.before(DataFim) || (DataIni.equals(DataFim))) {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("datainicial", DataInicial);
+            returnIntent.putExtra("datafinal", DataFinal);
+            setResult(3, returnIntent);
+            finish();
+        }else {
+            Util.msg_toast_personal(actFiltroPeriodoPedidos.this,"Data Inicial Maior que a Data Final", Toast.LENGTH_SHORT);
+        }
 
+    }
 
     private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
 
@@ -157,14 +157,6 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
-
         }
     };
-
-
-
-
-
-
 }
