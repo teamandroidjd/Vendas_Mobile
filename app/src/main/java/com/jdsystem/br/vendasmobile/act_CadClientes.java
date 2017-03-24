@@ -735,30 +735,10 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             android.app.AlertDialog alert = builder.create();
             alert.show();
 
-            clearText();
         } catch (Exception E) {
             //Toast.makeText(this, "Não foi possivel salvar o CLiente!", Toast.LENGTH_SHORT).show();
             System.out.println("Error" + E);
         }
-    }
-
-    public void clearText() {
-
-        nomerazao.setText("");
-        nomefan.setText("");
-        cnpjcpf.setText("");
-        ie.setText("");
-        endereco.setText("");
-        numero.setText("");
-        Complemento.setText("");
-        email.setText("");
-        cep.setText("");
-        tel1.setText("");
-        tel2.setText("");
-        Edtcpf.setText("");
-        nomecompleto.setText("");
-        EdtRG.setText("");
-        edtOBS.setText("");
     }
 
     public void consultacnpj(String cnpj) {

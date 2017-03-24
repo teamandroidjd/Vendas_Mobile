@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -354,29 +355,29 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade);
                         try {
                             if (cursor.getCount() > 0) {
-                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '"+ c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
-                                        "', NOMEFAN = '"+ c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '"+ c.getString(TAG_RG).trim() +"', LIMITECRED = '"+ c.getString(TAG_LIMITECRED) +"', BLOQUEIO = '"+ c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '"+ c.getString(TAG_INSCESTADUAL) +"', EMAIL = '"+ c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '"+ Tel1 +"', TEL2 = '"+ Tel2 +"', ENDERECO = '"+ c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
-                                        "', NUMERO = '"+ c.getString(TAG_NUMERO) +"', COMPLEMENT = '"+ c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
-                                        "', CODBAIRRO = '"+ CodBairro +"', OBS = '"+ c.getString(TAG_OBS) +"', CODCIDADE = '"+ CodCidade +"', UF = '"+ CodEstado +
-                                        "', CEP = '"+ c.getString(TAG_CEP) +"', CODCLIE_EXT = '"+ c.getString(TAG_CODIGO) +"', " +
-                                        " TIPOPESSOA = '"+ c.getString(TAG_TIPO) +"', ATIVO = '"+ c.getString(TAG_ATIVO) +"'" +
-                                        ", CODVENDEDOR = '"+ CodVendedor +"', FLAGINTEGRADO = '2' " +
-                                        " WHERE CNPJ_CPF = '"+ c.getString(TAG_CNPJCPF) +"'");
+                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
+                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
+                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
+                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
+                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
+                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
+                                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
+                                        "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
+                                        " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
+                                        ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
+                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
                             } else {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, REGIDENT, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                                         "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED,BLOQUEIO, ATIVO, FLAGINTEGRADO) VALUES(" +
-                                        "'"+ c.getString(TAG_CNPJCPF) +"','"+ c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +"','"+ c.getString(TAG_RG).trim() +
-                                        "',' "+ c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +"',' "+ c.getString(TAG_INSCESTADUAL) +"',' "+ c.getString(TAG_EMAILS) +
-                                        "',' "+ Tel1 +"', '"+ Tel2 +"', '"+ c.getString(TAG_LOGRADOURO).trim() +
-                                        "',' "+ c.getString(TAG_NUMERO).trim() +"', '"+ c.getString(TAG_COMPLEMENTO).trim() +
-                                        "',' "+ CodBairro +"','"+ c.getString(TAG_OBS) +"','"+ CodCidade +"','"+ CodEstado +
-                                        "',' "+ c.getString(TAG_CEP) +"', '"+ c.getString(TAG_CODIGO) +
-                                        "',' "+ CodVendedor +"','"+ c.getString(TAG_TIPO) +"','"+ c.getString(TAG_LIMITECRED) +"','"+ c.getString(TAG_BLOQUEIO) +"','"+ c.getString(TAG_ATIVO) +
-                                        "',' "+ "2" +"');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
+                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") + "','" + c.getString(TAG_RG).trim() +
+                                        "',' " + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
+                                        "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO).trim() +
+                                        "',' " + c.getString(TAG_NUMERO).trim() + "', '" + c.getString(TAG_COMPLEMENTO).trim() +
+                                        "',' " + CodBairro + "','" + c.getString(TAG_OBS) + "','" + CodCidade + "','" + CodEstado +
+                                        "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
+                                        "',' " + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_LIMITECRED) + "','" + c.getString(TAG_BLOQUEIO) + "','" + c.getString(TAG_ATIVO) +
+                                        "',' " + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
                                 /*DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
                                         "', REGIDENT = '" + c.getString(TAG_RG).trim() + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
@@ -501,9 +502,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                     if (!NomeContato.equals("0") || !CargoContato.equals("0") || !EmailContato.equals("0") || !Tel1Contato.equals("0") ||
                                             !Tel1Contato.equals("0") || !Tel2Contato.equals("0")) {
                                         DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT ) VALUES(" +
-                                                "'"+ NomeContato.trim() +"','"+ CargoContato.trim() +
-                                                "',' "+ EmailContato.trim() +"',' "+ Tel1Contato +"',' "+ Tel2Contato +"'" +
-                                                ","+ CodCliente +", '"+ CodClienteExt +"');");
+                                                "'" + NomeContato.trim() + "','" + CargoContato.trim() +
+                                                "',' " + EmailContato.trim() + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
+                                                "," + CodCliente + ", '" + CodClienteExt + "');");
                                     }
 
                                 } catch (Exception E) {
@@ -607,47 +608,47 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         try {
                             if (CursItens.getCount() > 0) {
                                 CursItens.moveToFirst();
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '"+ CItens.getString(TAG_CODMANUAL).trim() +
-                                        "', DESCRICAO = '"+ CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "', FABRICANTE = '"+ CItens.getString(TAG_FABRICANTE).trim() +
-                                        "', FORNECEDOR = '"+ CItens.getString(TAG_FORNECEDOR).trim() +
-                                        "', CLASSE = '"+ CItens.getString(TAG_CLASSE).trim() +
-                                        "', MARCA = '"+ CItens.getString(TAG_MARCA).trim() +
-                                        "', UNIVENDA = '"+ CItens.getString(TAG_UNIVENDA).trim() +
-                                        "', VLVENDA1 = '"+ CItens.getString(TAG_VLVENDA1).trim() +
-                                        "', VLVENDA2 = '"+ CItens.getString(TAG_VLVENDA2).trim() +
-                                        "', VLVENDA3 = '"+ CItens.getString(TAG_VLVENDA3).trim() +
-                                        "', VLVENDA4 = '"+ CItens.getString(TAG_VLVENDA4).trim() +
-                                        "', VLVENDA5 = '"+ CItens.getString(TAG_VLVENDA5).trim() +
-                                        "', VLVENDAP1 = '"+ CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "', VENDAPADRAO = '"+ CItens.getString(TAG_VENDAPADRAO).trim() +
-                                        "', VLVENDAP2 = '"+ CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', ATIVO = '"+ CItens.getString(TAG_ATIVO) +
-                                        "', QTDESTPROD = '"+ CItens.getString(TAG_QTDESTOQUE) +
-                                        "', APRESENTACAO = '"+ CItens.getString(TAG_APRESENTACAO).trim() +"'" +
-                                        " WHERE CODIGOITEM = "+ CItens.getString(TAG_CODIGOITEM));
+                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
+                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
+                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim() +
+                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim() +
+                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim() +
+                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim() +
+                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
+                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
+                                        "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
+                                        "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
+                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() + "'" +
+                                        " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             } else {
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
                                         "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
-                                        "ATIVO, QTDESTPROD, APRESENTACAO) VALUES(" + "'"+ CItens.getString(TAG_CODIGOITEM) +
-                                        "',' "+ CItens.getString(TAG_CODMANUAL).trim() +
-                                        "',' "+ CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "',' "+ CItens.getString(TAG_FABRICANTE).trim() +
-                                        "',' "+ CItens.getString(TAG_FORNECEDOR).trim() +
-                                        "',' "+ CItens.getString(TAG_CLASSE).trim() +
-                                        "',' "+ CItens.getString(TAG_MARCA).trim() +
-                                        "',' "+ CItens.getString(TAG_UNIVENDA).trim() +
-                                        "',' "+ CItens.getString(TAG_VLVENDA1).trim() +
-                                        "',' "+ CItens.getString(TAG_VLVENDA2).trim() +
-                                        "',' "+ CItens.getString(TAG_VLVENDA3).trim() +
-                                        "',' "+ CItens.getString(TAG_VLVENDA4).trim() +
-                                        "',' "+ CItens.getString(TAG_VLVENDA5).trim() +
-                                        "',' "+ CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "',' "+ CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "',' "+ CItens.getString(TAG_VENDAPADRAO).trim() +
-                                        "',' "+ CItens.getString(TAG_ATIVO) +
-                                        "',' "+ CItens.getString(TAG_QTDESTOQUE) +
-                                        "',' "+ CItens.getString(TAG_APRESENTACAO).trim() + "');");
+                                        "ATIVO, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
+                                        "',' " + CItens.getString(TAG_CODMANUAL).trim() +
+                                        "',' " + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
+                                        "',' " + CItens.getString(TAG_FABRICANTE).trim() +
+                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim() +
+                                        "',' " + CItens.getString(TAG_CLASSE).trim() +
+                                        "',' " + CItens.getString(TAG_MARCA).trim() +
+                                        "',' " + CItens.getString(TAG_UNIVENDA).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA1).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA3).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA4).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
+                                        "',' " + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "',' " + CItens.getString(TAG_ATIVO) +
+                                        "',' " + CItens.getString(TAG_QTDESTOQUE) +
+                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
 
                                 //está tendo que atualizar cadas item que é incluso para tirar os espaçõs em alguns campos, pois somente na inserção não tira.
                                 /*DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
@@ -724,27 +725,27 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         Dialog.setMessage("Enviando clientes");
                                     }
                                 });
-                                Jcliente = "{razao_social: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")).trim() +"'," +
-                                        "nome_fantasia: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN")).trim() +"'," +
-                                        "tipo: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) +"'," +
-                                        "cnpj_cpf: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) +"'," +
-                                        "inscricao_estadual: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")).trim() +"'," +
-                                        "Logradouro: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ENDERECO")).trim() +"'," +
-                                        "numero: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NUMERO")).trim() +"'," +
-                                        "codvendedor: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODVENDEDOR")) +"'," +
-                                        "complemento: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("COMPLEMENT")).trim() +"'," +
-                                        "bairro: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("BAIRRO")) +"'," +
-                                        "cidade: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) +"'," +
-                                        "estado: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) +"'," +
-                                        "cep: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) +"'," +
-                                        "observacao: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")).trim() +"'," +
-                                        "identidade: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) +"'," +
-                                        "emails: [{email: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")).trim() +"'}," +
+                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")).trim() + "'," +
+                                        "nome_fantasia: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN")).trim() + "'," +
+                                        "tipo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) + "'," +
+                                        "cnpj_cpf: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'," +
+                                        "inscricao_estadual: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")).trim() + "'," +
+                                        "Logradouro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ENDERECO")).trim() + "'," +
+                                        "numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NUMERO")).trim() + "'," +
+                                        "codvendedor: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODVENDEDOR")) + "'," +
+                                        "complemento: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("COMPLEMENT")).trim() + "'," +
+                                        "bairro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("BAIRRO")) + "'," +
+                                        "cidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) + "'," +
+                                        "estado: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) + "'," +
+                                        "cep: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) + "'," +
+                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")).trim() + "'," +
+                                        "identidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) + "'," +
+                                        "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")).trim() + "'}," +
                                         "{email: ''}]," +
-                                        "ativo: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ATIVO")) +"'," +
-                                        "telefones: [{numero: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL1")) +"'}," +
-                                        "{numero: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL2")) +"'}," +
-                                        "{numero: '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TELFAX")) +"'}]";
+                                        "ativo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ATIVO")) + "'," +
+                                        "telefones: [{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL1")) + "'}," +
+                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL2")) + "'}," +
+                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TELFAX")) + "'}]";
 
                                 String Contatos = "";
                                 Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " +
@@ -752,29 +753,29 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                                 CursorContatosEnv.moveToFirst();
                                 while (CursorContatosEnv.moveToNext()) {
-                                    Contatos = Contatos + "{nome: '"+ CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("NOME")).trim() +"'," +
-                                            "cargo: '"+ CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CARGO")).trim() +"'," +
-                                            "emails: [{email: '"+ CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("EMAIL")).trim() +"'}]," +
-                                            "telefones: [{numero: '"+ CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL1")) +"'," +
-                                            "numero: '"+ CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL2")) +"'}]},";
+                                    Contatos = Contatos + "{nome: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("NOME")).trim() + "'," +
+                                            "cargo: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CARGO")).trim() + "'," +
+                                            "emails: [{email: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("EMAIL")).trim() + "'}]," +
+                                            "telefones: [{numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL1")) + "'," +
+                                            "numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL2")) + "'}]},";
                                 }
 
                                 if (Contatos != "") {
-                                    Jcliente = Jcliente + ",contatos: " + "["+ Contatos +"]";
+                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
                                 } else {
                                     Contatos = "{nome: ''," +
                                             "cargo: ''," +
                                             "emails: [{email: ''}]," +
                                             "telefones: [{numero: ''," +
                                             "numero: ''}]}";
-                                    Jcliente = Jcliente + ",contatos: " + "["+ Contatos +"]";
+                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
                                 }
                                 String Dependentes = "{nome: ''," +
                                         "dataadesao: ''," +
                                         "datanascimento: ''," +
                                         "redident: ''," +
                                         "codclie: ''}";
-                                Jcliente = Jcliente + ",dependentes: " + "["+ Dependentes +"]}";
+                                Jcliente = Jcliente + ",dependentes: " + "[" + Dependentes + "]}";
 
                                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                                 StrictMode.setThreadPolicy(policy);
@@ -815,10 +816,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     }
                     try {
                         if (!CodClie_ext.equals("0")) {
-                            Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) +"'", null);
+                            Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'", null);
                             if (CursClieAtu.getCount() > 0) {
                                 CursClieAtu.moveToFirst();
-                                DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = "+ CodClie_ext +" WHERE CNPJ_CPF = '"+ CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) +"'");
+                                DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + CodClie_ext + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'");
                             }
                             sincclienvio = true;
                             CursClieAtu.close();
@@ -1640,7 +1641,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
     public static boolean SincAtualizaCidade(String UF, final Context ctxEnv, boolean bdialog) {
         boolean sincatucidade = false;
-        int CodCidadeExt;
+        int CodCidadeExt = 0;
         int CodCidade = 0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -1693,32 +1694,35 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             CodCidadeExt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT"));
                             cursor1.close();
                             CursorCidade.close();
-                            SincAtualizaBairro(CodCidadeExt, ctxEnv);
                             sincatucidade = true;
+                            //SincAtualizaBairro(CodCidadeExt, ctxEnv);
+                            final int finalCodCidadeExt = CodCidadeExt;
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    actSincronismo.SincAtualizaBairro(finalCodCidadeExt, ctxEnv);
+                                }
+                            });
                         }
+
+
                     } catch (Exception E) {
                         E.toString();
+                        sincatucidade = false;
                     }
                 }
+
 
             }
         } catch (JSONException e) {
             e.toString();
+            sincatucidade = false;
         }
         return sincatucidade;
     }
 
     private static void SincAtualizaBairro(int codCidade, Context ctxEnv) {
-
-        DialogECB = new ProgressDialog(ctxEnv);
-        DialogECB.setTitle("Aguarde...");
-        DialogECB.setMessage("Sincronizando");
-        DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        DialogECB.setProgress(0);
-        DialogECB.setIcon(R.drawable.icon_sync);
-        DialogECB.setMax(0);
-        DialogECB.show();
-
         int CodBairro = 0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -1735,12 +1739,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String RetBairros = null;
 
         try {
-            Boolean ConexOk = true;
-            //Boolean ConexOk = actLogin.VerificaConexao();
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
             if (ConexOk == true) {
                 Envio.call("", envelope);
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
                 RetBairros = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
             }
@@ -1753,9 +1755,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             JSONArray JBairros = jsonObj.getJSONArray("bairros");
 
             int jumpTime = 0;
-            DialogECB.setProgress(jumpTime);
             final int totalProgressTime = JBairros.length();
-            DialogECB.setMax(totalProgressTime);
             DB = new ConfigDB(ctxEnv).getReadableDatabase();
 
             for (int i = 0; i < JBairros.length(); i++) {
@@ -1787,7 +1787,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         CursorBairro.close();
 
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
                         E.toString();
                     }
                 }
@@ -1795,9 +1794,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         } catch (JSONException e) {
             e.toString();
         }
-        if (DialogECB.isShowing())
-            DialogECB.dismiss();
-
     }
 
     public static boolean CancelarPedidoAberto(String NumPedido, Context ctxCanc) {
@@ -1860,17 +1856,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             CodClie_Ext = CursorCliente.getInt(CursorCliente.getColumnIndex("CODCLIE_EXT"));
             CursorCliente.close();
 
-            if (bdialog == false) {
-                Dialog = new ProgressDialog(ctxEnv);
-                Dialog.setTitle("Aguarde...");
-                Dialog.setMessage("Sincronizando Pedido Nº: " + NumPedido);
-                Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                Dialog.setProgress(0);
-                Dialog.setIcon(R.drawable.icon_sync);
-                Dialog.setMax(0);
-                Dialog.show();
-            }
-
             SharedPreferences prefs = ctxEnv.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
             usuario = prefs.getString("usuario", null);
             senha = prefs.getString("senha", null);
@@ -1881,11 +1866,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
             int jumpTime = 0;
             final int totalProgressTime = CursorPedido.getCount();
-            if (bdialog == false) {
-                Dialog.setMax(totalProgressTime);
-                Dialog.setProgress(jumpTime);
-            }
-            //CursorPedido.moveToFirst();
+
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
             if (CursorPedido.getCount() > 0) {
                 CursorPedido.moveToFirst();
                 do {

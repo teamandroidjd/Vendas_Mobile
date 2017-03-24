@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +23,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
 import org.json.JSONArray;
@@ -34,7 +40,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CadContatos extends AppCompatActivity {
+public class CadContatos extends AppCompatActivity implements Runnable {
     String sCodVend, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente;
     Boolean PesqCEP;
     ImageButton BtnPesqCep;
@@ -45,8 +51,10 @@ public class CadContatos extends AppCompatActivity {
     LinearLayout linearcheck1, linearcheck2, lineartxtsemana, linearrazao;
     TextView razaosocial;
     //private CheckBox domingo, segunda, terca, quarta, quinta, sexta;
+    private Handler handler = new Handler();
     SQLiteDatabase DB;
     private static ProgressDialog DialogECB;
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,267 +76,280 @@ public class CadContatos extends AppCompatActivity {
                 //sTipoContato = params.getString("C");
                 //            }
             }
+        }
 
-            TipoContato.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position) {
-                        case 0:
-                            sTipoContato = "Selecione o tipo de contato";
-                            break;
-                        case 1:
-                            sTipoContato = "C";
-                            break;
-                        case 2:
-                            sTipoContato = "O";
-                            break;
-                    }
-                    if (sTipoContato == "O") {
-                        CodCliente = 0;
-                        linearrazao.setVisibility(View.GONE);
-                        linearcheck1.setVisibility(EditText.VISIBLE);
-                        linearcheck2.setVisibility(EditText.VISIBLE);
-                        lineartxtsemana.setVisibility(EditText.VISIBLE);
-                    } else if (sTipoContato == "C" && CodCliente == 0) {
-                        linearcheck1.setVisibility(EditText.GONE);
-                        linearcheck2.setVisibility(EditText.GONE);
-                        lineartxtsemana.setVisibility(EditText.GONE);
-                        Intent i = new Intent(CadContatos.this, act_ListClientes.class);
-                        Bundle params = new Bundle();
-                        params.putString("codvendedor", sCodVend);
-                        params.putString("usuario", usuario);
-                        params.putString("senha", senha);
-                        params.putInt("cadcont", 1);
-                        i.putExtras(params);
-                        startActivity(i);
-                    } else if (CodCliente != 0) {
-                        TipoContato.setSelection(1);
-                        linearrazao.setVisibility(View.VISIBLE);
-                        razaosocial.setText(NomeCliente);
-                        linearcheck1.setVisibility(View.GONE);
-                        linearcheck2.setVisibility(View.GONE);
-                        lineartxtsemana.setVisibility(View.GONE);
-                    } else {
-                        linearrazao.setVisibility(View.GONE);
-                        linearcheck1.setVisibility(View.GONE);
-                        linearcheck2.setVisibility(View.GONE);
-                        lineartxtsemana.setVisibility(View.GONE);
-                    }
-                }
+        PesqCEP = false;
+        NomeBairro = null;
+        NomeCidade = null;
 
-                public void onNothingSelected(AdapterView<?> parent) {
+        TipoContato.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        sTipoContato = "Selecione o tipo de contato";
+                        break;
+                    case 1:
+                        sTipoContato = "C";
+                        break;
+                    case 2:
+                        sTipoContato = "O";
+                        break;
                 }
-            });
-            spUF.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position) {
-                        case 1:
-                            sUF = "AC"; //Acre
-                            break;
-                        case 2:
-                            sUF = "AL"; // Alagoas
-                            break;
-                        case 3:
-                            sUF = "AP"; //Amapá
-                            break;
-                        case 4:
-                            sUF = "AM";//Amazonas
-                            break;
-                        case 5:
-                            sUF = "BA";//Bahia
-                            break;
-                        case 6:
-                            sUF = "CE";//Ceará
-                            break;
-                        case 7:
-                            sUF = "DF";//Distrito Federal
-                            break;
-                        case 8:
-                            sUF = "ES";//Espírito Santo
-                            break;
-                        case 9:
-                            sUF = "GO";//Goiás
-                            break;
-                        case 10:
-                            sUF = "MA";//Maranhão
-                            break;
-                        case 11:
-                            sUF = "MT";//Mato Grosso
-                            break;
-                        case 12:
-                            sUF = "MS";//Mato Grosso do Sul
-                            break;
-                        case 13:
-                            sUF = "MG";//Minas Gerais
-                            break;
-                        case 14:
-                            sUF = "PA";//Pará
-                            break;
-                        case 15:
-                            sUF = "PB";//Paraíba
-                            break;
-                        case 16:
-                            sUF = "PR";//Paraná
-                            break;
-                        case 17:
-                            sUF = "PE";//Pernambuco
-                            break;
-                        case 18:
-                            sUF = "PI";//Piauí
-                            break;
-                        case 19:
-                            sUF = "RJ";//Rio de Janeiro
-                            break;
-                        case 20:
-                            sUF = "RN"; //Rio Grande do Norte
-                            break;
-                        case 21:
-                            sUF = "RS";//Rio Grande do Sul
-                            break;
-                        case 22:
-                            sUF = "RO"; //Rondônia
-                            break;
-                        case 23:
-                            sUF = "RR"; //Roraima
-                            break;
-                        case 24:
-                            sUF = "SC";//Santa Catarina
-                            break;
-                        case 25:
-                            sUF = "SP";//São Paulo
-                            break;
-                        case 26:
-                            sUF = "SE";//Sergipe
-                            break;
-                        case 27:
-                            sUF = "TO";//Tocantins
-                            break;
-                    }
-                    Boolean ConexOk = Util.checarConexaoCelular(ctx);
-                    if (ConexOk == false) {
-                        int CodCidade = 0;
-                        try {
-                            Cursor cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                            List<String> DadosList = new ArrayList<String>();
-                            if (cursor.getCount() > 0) {
-                                cursor.moveToFirst();
-                                do {
-                                    String Cidade = cursor.getString(cursor.getColumnIndex("DESCRICAO"));
-                                    CodCidade = cursor.getInt(cursor.getColumnIndex("CODCIDADE_EXT"));
-                                    DadosList.add(Cidade);
-                                } while (cursor.moveToNext());
-                                cursor.close();
+                if (sTipoContato == "O") {
+                    CodCliente = 0;
+                    linearrazao.setVisibility(View.GONE);
+                    linearcheck1.setVisibility(EditText.VISIBLE);
+                    linearcheck2.setVisibility(EditText.VISIBLE);
+                    lineartxtsemana.setVisibility(EditText.VISIBLE);
+                } else if (sTipoContato == "C" && CodCliente == 0) {
+                    linearcheck1.setVisibility(EditText.GONE);
+                    linearcheck2.setVisibility(EditText.GONE);
+                    lineartxtsemana.setVisibility(EditText.GONE);
+                    Intent i = new Intent(CadContatos.this, act_ListClientes.class);
+                    Bundle params = new Bundle();
+                    params.putString("codvendedor", sCodVend);
+                    params.putString("usuario", usuario);
+                    params.putString("senha", senha);
+                    params.putInt("cadcont", 1);
+                    i.putExtras(params);
+                    startActivity(i);
+                } else if (CodCliente != 0) {
+                    TipoContato.setSelection(1);
+                    linearrazao.setVisibility(View.VISIBLE);
+                    razaosocial.setText(NomeCliente);
+                    linearcheck1.setVisibility(View.GONE);
+                    linearcheck2.setVisibility(View.GONE);
+                    lineartxtsemana.setVisibility(View.GONE);
+                } else {
+                    linearrazao.setVisibility(View.GONE);
+                    linearcheck1.setVisibility(View.GONE);
+                    linearcheck2.setVisibility(View.GONE);
+                    lineartxtsemana.setVisibility(View.GONE);
+                }
+            }
 
-                                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
-                                ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
-                                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                                spCidade.setAdapter(spinnerArrayAdapter);
-                            }
-                        } catch (Exception E) {
-                            System.out.println("Error" + E);
-                        }
-                    }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        spUF.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 1:
+                        sUF = "AC"; //Acre
+                        break;
+                    case 2:
+                        sUF = "AL"; // Alagoas
+                        break;
+                    case 3:
+                        sUF = "AP"; //Amapá
+                        break;
+                    case 4:
+                        sUF = "AM";//Amazonas
+                        break;
+                    case 5:
+                        sUF = "BA";//Bahia
+                        break;
+                    case 6:
+                        sUF = "CE";//Ceará
+                        break;
+                    case 7:
+                        sUF = "DF";//Distrito Federal
+                        break;
+                    case 8:
+                        sUF = "ES";//Espírito Santo
+                        break;
+                    case 9:
+                        sUF = "GO";//Goiás
+                        break;
+                    case 10:
+                        sUF = "MA";//Maranhão
+                        break;
+                    case 11:
+                        sUF = "MT";//Mato Grosso
+                        break;
+                    case 12:
+                        sUF = "MS";//Mato Grosso do Sul
+                        break;
+                    case 13:
+                        sUF = "MG";//Minas Gerais
+                        break;
+                    case 14:
+                        sUF = "PA";//Pará
+                        break;
+                    case 15:
+                        sUF = "PB";//Paraíba
+                        break;
+                    case 16:
+                        sUF = "PR";//Paraná
+                        break;
+                    case 17:
+                        sUF = "PE";//Pernambuco
+                        break;
+                    case 18:
+                        sUF = "PI";//Piauí
+                        break;
+                    case 19:
+                        sUF = "RJ";//Rio de Janeiro
+                        break;
+                    case 20:
+                        sUF = "RN"; //Rio Grande do Norte
+                        break;
+                    case 21:
+                        sUF = "RS";//Rio Grande do Sul
+                        break;
+                    case 22:
+                        sUF = "RO"; //Rondônia
+                        break;
+                    case 23:
+                        sUF = "RR"; //Roraima
+                        break;
+                    case 24:
+                        sUF = "SC";//Santa Catarina
+                        break;
+                    case 25:
+                        sUF = "SP";//São Paulo
+                        break;
+                    case 26:
+                        sUF = "SE";//Sergipe
+                        break;
+                    case 27:
+                        sUF = "TO";//Tocantins
+                        break;
                 }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            });
-            spCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    Boolean ConexOk = Util.checarConexaoCelular(ctx);
-                    if (ConexOk == false) {
-                        NomeCidade = spCidade.getSelectedItem().toString();
-                        Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
-                        if (CurCidade.getCount() > 0) {
-                            CurCidade.moveToFirst();
-                            CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
-                        }
-                        CurCidade.close();
-                        Cursor CurBairro = null;
-                        try {
-                            if (PesqCEP.equals(false)) {
-                                CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
-                            } else {
-                                CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                        }
-                        List<String> DadosListBairro = new ArrayList<String>();
-                        if (CurBairro.getCount() > 0) {
-                            CurBairro.moveToFirst();
-                            do {
-                                String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
-                                DadosListBairro.add(Bairro);
-                            } while (CurBairro.moveToNext());
-                        }
-                        CurBairro.close();
-
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
-                        ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
-                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                        spBairro.setAdapter(spinnerArrayAdapter);
-                    } else {
-                        NomeCidade = spCidade.getSelectedItem().toString();
-                        Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
-                        if (CurCidade.getCount() > 0) {
-                            CurCidade.moveToFirst();
-                            CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
-                        }
-                        CurCidade.close();
-                        Cursor CurBairro = null;
-                        try {
-                            if (PesqCEP.equals(false)) {
-                                CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
-                            } else {
-                                CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                        }
-                        List<String> DadosListBairro = new ArrayList<String>();
-                        if (CurBairro.getCount() > 0) {
-                            CurBairro.moveToFirst();
-                            do {
-                                String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
-                                DadosListBairro.add(Bairro);
-                            } while (CurBairro.moveToNext());
-                        }
-                        CurBairro.close();
-
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
-                        ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
-                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                        spBairro.setAdapter(spinnerArrayAdapter);
-                    }
-                }
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                }
-            });
-            spBairro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    NomeBairro = spBairro.getSelectedItem().toString();
+                Boolean ConexOk = Util.checarConexaoCelular(CadContatos.this);
+                if (ConexOk == false) {
+                    int CodCidade = 0;
                     try {
-                        Cursor CurBai = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
-                        if (CurBai.getCount() > 0) {
-                            CurBai.moveToFirst();
-                            CodBairro = CurBai.getInt(CurBai.getColumnIndex("CODBAIRRO"));
+                        Cursor cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
+                        List<String> DadosList = new ArrayList<String>();
+                        if (cursor.getCount() > 0) {
+                            cursor.moveToFirst();
+                            do {
+                                String Cidade = cursor.getString(cursor.getColumnIndex("DESCRICAO"));
+                                CodCidade = cursor.getInt(cursor.getColumnIndex("CODCIDADE_EXT"));
+                                DadosList.add(Cidade);
+                            } while (cursor.moveToNext());
+                            cursor.close();
+
+                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                            ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                            spCidade.setAdapter(spinnerArrayAdapter);
                         }
-                        CurBai.close();
                     } catch (Exception E) {
                         System.out.println("Error" + E);
                     }
                 }
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
+                Thread thread = new Thread(CadContatos.this);
+                thread.start();
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        spCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                Boolean ConexOk = Util.checarConexaoCelular(CadContatos.this);
+                if (ConexOk == false) {
+                    NomeCidade = spCidade.getSelectedItem().toString();
+                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
+                    if (CurCidade.getCount() > 0) {
+                        CurCidade.moveToFirst();
+                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
+                    }
+                    CurCidade.close();
+                    Cursor CurBairro = null;
+                    try {
+                        if (PesqCEP.equals(false)) {
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
+                        } else {
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+                    List<String> DadosListBairro = new ArrayList<String>();
+                    if (CurBairro.getCount() > 0) {
+                        CurBairro.moveToFirst();
+                        do {
+                            String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
+                            DadosListBairro.add(Bairro);
+                        } while (CurBairro.moveToNext());
+                    }
+                    CurBairro.close();
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+                    ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                    spBairro.setAdapter(spinnerArrayAdapter);
+
+                } else {
+                    NomeCidade = spCidade.getSelectedItem().toString();
+                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
+                    if (CurCidade.getCount() > 0) {
+                        CurCidade.moveToFirst();
+                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
+                    }
+                    CurCidade.close();
+                    Cursor CurBairro = null;
+                    try {
+                        if (PesqCEP.equals(false)) {
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
+                        } else {
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+                    List<String> DadosListBairro = new ArrayList<String>();
+                    if (CurBairro.getCount() > 0) {
+                        CurBairro.moveToFirst();
+                        do {
+                            String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
+                            DadosListBairro.add(Bairro);
+                        } while (CurBairro.moveToNext());
+                    }
+                    CurBairro.close();
+
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+                    ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                    spBairro.setAdapter(spinnerArrayAdapter);
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        spBairro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                NomeBairro = spBairro.getSelectedItem().toString();
+                try {
+                    Cursor CurBai = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
+                    if (CurBai.getCount() > 0) {
+                        CurBai.moveToFirst();
+                        CodBairro = CurBai.getInt(CurBai.getColumnIndex("CODBAIRRO"));
+                    }
+                    CurBai.close();
+                } catch (Exception E) {
+                    System.out.println("Error" + E);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     private void declaraobjetos() {
-
+        DB = new ConfigDB(CadContatos.this).getReadableDatabase();
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         BtnPesqCep = (ImageButton) findViewById(R.id.btnBuscaCep);
         TipoContato = (Spinner) findViewById(R.id.spnTipoContato);
         TipoCargoEspec = (Spinner) findViewById(R.id.spnCargoEspec);
@@ -373,7 +394,7 @@ public class CadContatos extends AppCompatActivity {
         if (sTipoContato == "Selecione o tipo de contato") {
             Toast.makeText(this, "Informe o tipo de contato!", Toast.LENGTH_SHORT).show();
             return;
-        } else  if(sTipoContato == "C" && CodCliente == 0){
+        } else if (sTipoContato == "C" && CodCliente == 0) {
             Toast.makeText(this, "Informe o cliente para cadastrar esse contato!", Toast.LENGTH_SHORT).show();
             return;
         } else if (nome.getText().length() == 0) {
@@ -462,7 +483,7 @@ public class CadContatos extends AppCompatActivity {
         Toast.makeText(this, "Contato Salvo com sucesso!", Toast.LENGTH_SHORT).show();
     }
 
-    public void cadastraDadosCep(String cep) {
+    public boolean cadastraDadosCep(String cep) {
         String Estado = null;
         String Cidade = null;
         Boolean AtualizaEst = true;
@@ -501,7 +522,8 @@ public class CadContatos extends AppCompatActivity {
             } else {
                 DialogECB.cancel();
                 Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
-                return;
+                PesqCEP = false;
+                return PesqCEP;
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
@@ -596,10 +618,9 @@ public class CadContatos extends AppCompatActivity {
                         // TODO Auto-generated catch block
                         E.printStackTrace();
                     }
-
                     String end = c.getString("logradouro");
                     String tipoend = c.getString("tipo_logradouro");
-                    endereco.setText(tipoend+" "+end);
+                    endereco.setText(tipoend + " " + end);
                     numero.requestFocus();
 
                     //Estado
@@ -608,7 +629,6 @@ public class CadContatos extends AppCompatActivity {
                     sUF = Estado;
                     ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEstado);
                     arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-
                     spUF.setAdapter(arrayAdapterUF);
 
                     //Cidade
@@ -629,6 +649,7 @@ public class CadContatos extends AppCompatActivity {
 
                 }
             }
+            PesqCEP = true;
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -636,9 +657,10 @@ public class CadContatos extends AppCompatActivity {
         if (DialogECB.isShowing())
             DialogECB.dismiss();
 
+        return PesqCEP;
     }
 
-    public void buscacep(View view){
+    public void buscacep(View view) {
         String sCEP = cep.getText().toString().replaceAll("[^0123456789]", "");
         cadastraDadosCep(sCEP);
     }
@@ -647,13 +669,70 @@ public class CadContatos extends AppCompatActivity {
     public void onBackPressed() {
         Intent cadcont = new Intent(CadContatos.this, act_ListContatos.class);
         Bundle params = new Bundle();
-        params.putString("codvendedor",sCodVend);
-        params.putString("urlPrincipal",URLPrincipal);
-        params.putString("usuario",usuario);
-        params.putString("senha",senha);
+        params.putString("codvendedor", sCodVend);
+        params.putString("urlPrincipal", URLPrincipal);
+        params.putString("usuario", usuario);
+        params.putString("senha", senha);
         cadcont.putExtras(params);
         startActivity(cadcont);
         finish();
         super.onBackPressed();
+    }
+
+    public void run() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                /*int CodCidade = 0;
+                try {
+
+                    Cursor cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
+                    List<String> DadosList = new ArrayList<String>();
+                    if (cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        do {
+                            String Cidade = cursor.getString(cursor.getColumnIndex("DESCRICAO"));
+                            CodCidade = cursor.getInt(cursor.getColumnIndex("CODCIDADE_EXT"));
+                            DadosList.add(Cidade);
+                        } while (cursor.moveToNext());
+                        cursor.close();
+
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                        ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                        spCidade.setAdapter(spinnerArrayAdapter);
+                    }
+                } catch (Exception E) {
+                    System.out.println("Error" + E);
+                }*/
+
+            }
+        });
+
+    }
+
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("act_CadClientes Page")
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 }
