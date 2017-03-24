@@ -253,32 +253,45 @@ public class act_ListContatos extends AppCompatActivity implements NavigationVie
 
         ArrayList<Contatos> DadosListContatos = new ArrayList<Contatos>();
 
+        try {
+            Cursor cursorContatos = DB.rawQuery("SELECT CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+                    "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
+                    "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
+                    "CONTATO.CODVENDEDOR, CONTATO.CODBAIRRO, " +
+                    "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CONTATO.CODCLIENTE, CLIENTES.CODCLIE_EXT " +
+                    "FROM CONTATO " +
+                    "JOIN CLIENTES ON CONTATO.CODCLIE_EXT = CLIENTES.CODCLIE_EXT" +
+                    " ORDER BY NOME", null);
+            cursorContatos.moveToFirst();
+            if (cursorContatos.getCount() > 0) {
+                do {
+                    String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
+                    String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
+                    String email = cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL"));
+                    String tel1 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL1"));
+                    String tel2 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL2"));
+                    String Doc = cursorContatos.getString(cursorContatos.getColumnIndex("DOCUMENTO"));
+                    String Data = cursorContatos.getString(cursorContatos.getColumnIndex("DATA"));
+                    String Cep = cursorContatos.getString(cursorContatos.getColumnIndex("CEP"));
+                    String Endereco = cursorContatos.getString(cursorContatos.getColumnIndex("ENDERECO"));
+                    String Num = cursorContatos.getString(cursorContatos.getColumnIndex("NUMERO"));
+                    String Compl = cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO"));
+                    String uf = cursorContatos.getString(cursorContatos.getColumnIndex("UF"));
+                    int codClieExt = cursorContatos.getInt(cursorContatos.getColumnIndex("CLIENTES.CODCLIE_EXT"));
+                    String nomeCliente = cursorContatos.getString(cursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
 
-        Cursor cursorContatos = DB.rawQuery("SELECT NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, COMPLEMENTO, UF, CODVENDEDOR, CODBAIRRO, CODCIDADE, CODCLIENTE FROM CONTATO ORDER BY NOME", null);
-        cursorContatos.moveToFirst();
-        if (cursorContatos.getCount() > 0) {
-            do {
-                String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
-                String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
-                String email = cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL"));
-                String tel1 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL1"));
-                String tel2 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL2"));
-                String Doc = cursorContatos.getString(cursorContatos.getColumnIndex("DOCUMENTO"));
-                String Data = cursorContatos.getString(cursorContatos.getColumnIndex("DATA"));
-                String Cep = cursorContatos.getString(cursorContatos.getColumnIndex("CEP"));
-                String Endereco = cursorContatos.getString(cursorContatos.getColumnIndex("ENDERECO"));
-                String Num = cursorContatos.getString(cursorContatos.getColumnIndex("NUMERO"));
-                String Compl = cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO"));
-                String uf = cursorContatos.getString(cursorContatos.getColumnIndex("UF"));
 
+                    lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
+                            0, 0, codClieExt, nomeCliente);
+                    DadosListContatos.add(lstcontatos);
+                } while (cursorContatos.moveToNext());
+                cursorContatos.close();
 
-                lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null, 0, 0);
-                DadosListContatos.add(lstcontatos);
-            } while (cursorContatos.moveToNext());
-            cursorContatos.close();
-
-        } else {
-            Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception E) {
+            Toast.makeText(this, "Houve um problema ao acessar a base de dados. Favor entrar em contato com o suporte técnico JD System.", Toast.LENGTH_SHORT).show();
         }
 
         if (pDialog.isShowing()) {

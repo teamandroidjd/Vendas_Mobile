@@ -2405,7 +2405,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         soap.addProperty("aSenha", sSenha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 15000);
         String RetEmpresa = null;
 
         try {
