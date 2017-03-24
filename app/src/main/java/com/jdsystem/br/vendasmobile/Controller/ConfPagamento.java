@@ -89,6 +89,10 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_forma_pagamento);
         conf_spfpgto.setAdapter(arrayAdapter);
 
+        if (AtuPedido == false) {
+            conf_rbboleto.setChecked(true);
+        }
+
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -165,6 +169,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     public void onItemSelected(AdapterView<?> spinner, View view, int position, long id) {
 
         TIPO_PAGAMENTO = spinner.getItemAtPosition(position).toString();
+
+
 
         if (TIPO_PAGAMENTO.equals("À VISTA")) {
 

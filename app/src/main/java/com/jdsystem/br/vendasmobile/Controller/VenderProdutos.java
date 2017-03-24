@@ -134,10 +134,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         CodEmpresa = CLI_CODIGO_INTENT.getStringExtra("codempresa");
         CLI_CODIGO_ANT = CLI_CODIGO;
 
-        /*prefs = getSharedPreferences(DATA_ENT, MODE_PRIVATE);
-        dataent = prefs.getString("dataentrega", null);*/
-
-        if (dataent != null) {
+        prefs = getSharedPreferences(DATA_ENT, MODE_PRIVATE);
+        dataent = prefs.getString("dataentrega", null);
+        if (dataent != null && dataent != "") {
             venda_txv_dataentrega.setText(dataent);
         }
 
@@ -355,6 +354,10 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 venda_txv_codigo_cliente.requestFocus();
             }
         }
+        if (!NumPedido.equals("0") && (dataent == null || dataent == "")) {
+            dataent = "Data da entrega: " + Util.FormataDataDDMMAAAA(DATA_DE_ENTREGA);
+            venda_txv_dataentrega.setText(dataent);
+        }
     }
 
     private void cancelarvenda() {
@@ -374,8 +377,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                 setResult(1, it);
 
                                 new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+
                                 SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                                editor.putString("dataentrega", null);
+                                editor.putString("dataentrega", "");
+                                editor.commit();
+
                                 finish();
                             }
                         })
@@ -400,8 +406,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                 setResult(1, it);
 
                                 //new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+
                                 SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                                editor.putString("dataentrega", null);
+                                editor.putString("dataentrega", "");
+                                editor.commit();
+
                                 finish();
                             }
                         })
@@ -426,9 +435,14 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                         .setCancelable(false)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                finalzarvenda(false);
+                                //finalzarvenda(false);
+
+                                new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+
                                 SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                                editor.putString("dataentrega", null);
+                                editor.putString("dataentrega", "");
+                                editor.commit();
+
                                 finish();
                                 Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
                                 Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
@@ -459,8 +473,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                         .setCancelable(false)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+
                                 SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                                editor.putString("dataentrega", null);
+                                editor.putString("dataentrega", "");
+                                editor.commit();
+
                                 finish();
                                 Boolean pedcancelado = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).atualizar_pedido_para_cancelado(Chave_Venda);
                                 if (pedcancelado == true) {
@@ -505,8 +522,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
             setResult(1, it);
             new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+
             SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-            editor.putString("dataentrega", null);
+            editor.putString("dataentrega", "");
+            editor.commit();
+
             finish();
         }
     }
@@ -678,8 +698,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 newDate.set(year, monthOfYear, dayOfMonth);
                 venda_txv_dataentrega.setText("Data de Entrega: " + dateFormatterBR.format(newDate.getTime()));
                 DATA_DE_ENTREGA = dateFormatterUSA.format(newDate.getTime());
-                Util.log(DATA_DE_ENTREGA);
-                SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+               // Util.log(DATA_DE_ENTREGA);
+                DATA_DE_ENTREGA.toString();
+
+
+               SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
                 editor.putString("dataentrega", venda_txv_dataentrega.getText().toString());
                 editor.commit();
             }
@@ -852,6 +875,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     vendaCBean.setCodEmpresa(CodEmpresa);
                     vendaCBean.setVendac_latitude(gps.getLatitude());
                     vendaCBean.setVendac_longitude(gps.getLongitude());
+
+                    SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                    editor.putString("dataentrega", "");
+                    editor.commit();
+
                     Sqlite_VENDADAO gravavenda = null;
                     if (NumPedido.equals("0")) {
                         gravavenda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false);
@@ -2528,8 +2556,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
                             setResult(1, it);
                             new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+
                             SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                            editor.putString("dataentrega", null);
+                            editor.putString("dataentrega", "");
+                            editor.commit();
+
                             finish();
                         }
                     })
@@ -2546,8 +2577,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
             setResult(1, it);
             new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+
             SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-            editor.putString("dataentrega", null);
+            editor.putString("dataentrega", "");
+            editor.commit();
+
             finish();
         }
     }
