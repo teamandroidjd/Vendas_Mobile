@@ -608,6 +608,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         String NomePessoa = null;
         String NomeFantasia = null;
         String CpfCnpj = null;
+        String CEP;
 
         if (sTipoPessoa == "J") {
             if (nomerazao.getText().length() == 0) {
@@ -660,11 +661,12 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             cep.setError("Digite o CEP!");
             cep.requestFocus();
             return;
-        } else if (Util.validaEmail(email.getText().toString()) == false) {
+        }else if (Util.validaEmail(email.getText().toString()) == false) {
             email.setError("E-mail inválido! Verifique.");
             email.requestFocus();
             return;
         }
+        CEP = cep.getText().toString().replaceAll("[.-]","");
 
         Cursor CursorClieCons = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                 " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
@@ -678,20 +680,20 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         "', TEL1 = '" + tel1.getText().toString() + "', TEL2 = '" + tel2.getText().toString() + "', ENDERECO = '" + endereco.getText().toString() +
                         "', NUMERO = '" + numero.getText().toString() + "', COMPLEMENT = '" + Complemento.getText().toString() +
                         "', CODBAIRRO = '" + CodBairro + "', OBS = '" + edtOBS.getText().toString() + "', CODCIDADE = '" + CodCidade + "', UF = '" + sUF +
-                        "', CEP = '" + cep.getText().toString() + "', " +
+                        "', CEP = '" + CEP + "', " +
                         " TIPOPESSOA = '" + sTipoPessoa + "', REGIDENT = '" + EdtRG.getText().toString() + "', ATIVO = 'S'" +
                         ", CODVENDEDOR = " + sCodVend +
                         " WHERE CNPJ_CPF = '" + CpfCnpj + "'");
             } else {
                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                        "CEP, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT, FLAGINTEGRADO) VALUES(" +
-                        "'" + CpfCnpj + "', '" + NomePessoa +
-                        "','" + NomeFantasia + "', '" + ie.getText().toString() + "', '" + email.getText().toString() +
-                        "','" + tel1.getText().toString() + "', '" + tel2.getText().toString() + "', '" + endereco.getText().toString() +
-                        "','" + numero.getText().toString() + "', '" + Complemento.getText().toString() +
-                        "'," + CodBairro + ", '" + edtOBS.getText().toString() + "', " + CodCidade + ", '" + sUF +
-                        "','" + cep.getText().toString() + "', " + sCodVend + ", '" + sTipoPessoa + "', '" + "S" + "', '" + EdtRG.getText().toString() + "','"
+                        "CEP, CODVENDEDOR, TIPOPESSOA, ATIVO, BLOQUEIO, REGIDENT, FLAGINTEGRADO) VALUES(" +
+                        "'"+ CpfCnpj +"', '"+ NomePessoa +
+                        "','"+ NomeFantasia +"', '"+ ie.getText().toString() +"', '"+ email.getText().toString() +
+                        "','"+ tel1.getText().toString() +"', '"+ tel2.getText().toString() +"', '"+ endereco.getText().toString() +
+                        "','"+ numero.getText().toString() +"', '"+ Complemento.getText().toString() +
+                        "',"+ CodBairro +", '"+ edtOBS.getText().toString() +"', "+ CodCidade +", '"+ sUF +
+                        "','"+ CEP +"', "+ sCodVend +", '"+ sTipoPessoa +"', '" + "S" + "', '" + "01"+ "', '"+ EdtRG.getText().toString() +"','"
                         + "1" + "');");
             }
             CursorClieCons.close();
@@ -803,8 +805,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             String complemento = c.getString("complemento");
 
 
-
-
         } catch (Exception E) {
             E.printStackTrace();
         }
@@ -843,14 +843,10 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
 
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("act_CadClientes Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
+                .setName("act_CadClientes Page")
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)
@@ -862,9 +858,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
@@ -872,9 +865,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }

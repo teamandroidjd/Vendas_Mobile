@@ -92,6 +92,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     private int CodigoItem, sprecoprincipal, tabanterior;
     SQLiteDatabase DB;
     private Double qtdestoque;
+    private boolean sincprod;
 
     private SharedPreferences prefs;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
@@ -1843,7 +1844,22 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     public void run() {
         try {
             actSincronismo.run(Lista_produtos.this);
-            actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, true, usuario, senha);
+            sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, true, usuario, senha);
+            if (sincprod == false) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), "Não foi possivel sincronizar os produtos. Tente novamente.", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), "Produtos sincronizados com sucesso!", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
 
             Intent intent = (Lista_produtos.this).getIntent();
             (Lista_produtos.this).finish();

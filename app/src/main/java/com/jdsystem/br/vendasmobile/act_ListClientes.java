@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
@@ -398,6 +399,13 @@ public class act_ListClientes extends AppCompatActivity
                         Toast.makeText(getApplication(), "Nenhum cliente a ser enviado.", Toast.LENGTH_SHORT).show();
                     }
                 });
+            } else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), "Novos clientes enviados com sucesso!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
             sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, true, usuario, senha);
             if (sincclie == false) {
@@ -405,6 +413,13 @@ public class act_ListClientes extends AppCompatActivity
                     @Override
                     public void run() {
                         Toast.makeText(getApplication(), "Nenhum cliente sincronizado. Verifique!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), "Clientes sincronizados com sucesso!", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

@@ -156,7 +156,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         boolean fechar = true;
         if (TIPO_PAGAMENTO.equals("PARCELADO")) {
             // condicao sem entrada
-            if (conf_txtqtdparcelas.getText().toString().trim().length() <= 0) {
+            if (conf_txtqtdparcelas.getText().toString().trim().equals("") || conf_txtqtdparcelas.getText().toString().trim().equals("0")) {
                 fechar = false;
                 Util.msg_toast_personal(getBaseContext(), "informe a quantidade de parcelas", Util.ALERTA);
             }
@@ -234,7 +234,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     }
 
     public void calcular_valor_parcela(CharSequence valor_digitado) {
-        if (valor_digitado.length() > 0) {
+        if (valor_digitado.equals("0")) {
             String QUANTIDADE_PARCELAS = conf_txtqtdparcelas.getText().toString();
             if (Integer.parseInt(QUANTIDADE_PARCELAS) == 1) {
                 conf_valorparcela2.setVisibility(View.GONE);

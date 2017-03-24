@@ -177,15 +177,19 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
 
                 switch (TELA_QUE_CHAMOU) {
                     case TELA_DE_VENDAS:
-                        Cursor cursorbloqclie = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
-                        cursorbloqclie.moveToFirst();
-                        String BloqClie = cursorbloqclie.getString(cursorbloqclie.getColumnIndex("HABCRITSITCLIE"));
-                        cursorbloqclie.close();
-
-                        String bloqueio = cliente_cursor.getString(cursor.getColumnIndex("BLOQUEIO"));
-                        //Double limitecred = cliente_cursor.getDouble(cursor.getColumnIndex("LIMITECRED"));
-                        //int CodCliente = cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT"));
-                        String FlagIntegrado = cliente_cursor.getString(cursor.getColumnIndex("FLAGINTEGRADO"));
+                        String BloqClie = null;
+                        String bloqueio = null;
+                        String FlagIntegrado = null;
+                        try {
+                            Cursor cursorbloqclie = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
+                            cursorbloqclie.moveToFirst();
+                            BloqClie = cursorbloqclie.getString(cursorbloqclie.getColumnIndex("HABCRITSITCLIE"));
+                            cursorbloqclie.close();
+                            bloqueio = cliente_cursor.getString(cursor.getColumnIndex("BLOQUEIO"));
+                            FlagIntegrado = cliente_cursor.getString(cursor.getColumnIndex("FLAGINTEGRADO"));
+                        }catch (Exception e){
+                            e.toString();
+                        }
 
                         if(FlagIntegrado.equals("1")){
                             if (NumPedido == null) {
@@ -330,6 +334,13 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                         Toast.makeText(getApplication(), "Nenhum cliente a ser enviado.", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), "Novos clientes enviados com sucesso!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
             sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, true, usuario, senha);
             if (sincclie == false) {
@@ -337,6 +348,13 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                     @Override
                     public void run() {
                         Toast.makeText(getApplication(), "Nenhum cliente sincronizado. Verifique!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), "Clientes sincronizados com sucesso!", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

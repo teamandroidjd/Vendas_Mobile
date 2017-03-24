@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
@@ -90,6 +91,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     public AlertDialog alerta, dlg;
     private Builder alerta1;
     private Spinner spntabpreco;
+    private static String nomeabrevemp;
+    Handler handler = new Handler();
 
     public static final String DATA_ENT = "DATA DE ENTREGA";
     public SharedPreferences prefs;
@@ -141,7 +144,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         }
 
         venda_txt_desconto.setOnKeyListener(this);
-
         venda_txt_desconto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -353,6 +355,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO.toString() + " - " + cliBean.getCli_nome().toString());
                 venda_txv_codigo_cliente.requestFocus();
             }
+
+
         }
         if (!NumPedido.equals("0") && (dataent == null || dataent == "")) {
             dataent = "Data da entrega: " + Util.FormataDataDDMMAAAA(DATA_DE_ENTREGA);
@@ -698,11 +702,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 newDate.set(year, monthOfYear, dayOfMonth);
                 venda_txv_dataentrega.setText("Data de Entrega: " + dateFormatterBR.format(newDate.getTime()));
                 DATA_DE_ENTREGA = dateFormatterUSA.format(newDate.getTime());
-               // Util.log(DATA_DE_ENTREGA);
-                DATA_DE_ENTREGA.toString();
-
-
-               SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                Util.log(DATA_DE_ENTREGA);
+                SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
                 editor.putString("dataentrega", venda_txv_dataentrega.getText().toString());
                 editor.commit();
             }
@@ -2577,7 +2578,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
             setResult(1, it);
             new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
-
             SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
             editor.putString("dataentrega", "");
             editor.commit();
@@ -2645,7 +2645,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
                             Thread thread = new Thread(VenderProdutos.this);
                             thread.start();
-                            Toast.makeText(VenderProdutos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_SHORT).show();
+
                         }
 
                     });
@@ -2709,15 +2709,22 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         try {
             boolean sitclieenvio;
             boolean pedidoendiado;
-            Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '"+CodClie_Int+"'",null);
+            Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "'", null);
             CursorClie.moveToFirst();
             int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
             String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
-            if(FlagIntegrado.equals(1)){
-                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodClie_Int,this,true,usuario,senha);
-                if(sitclieenvio == true){
-                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, this, true);
-                    if(pedidoendiado == true){
+            if (FlagIntegrado.equals("1")) {
+                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodClie_Int, this, true, usuario, senha);
+                if (sitclieenvio == true) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(VenderProdutos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
+                    if (pedidoendiado == true) {
+                        dialog.dismiss();
                         Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
                         Bundle params = new Bundle();
                         params.putString("codvendedor", sCodVend);
@@ -2725,11 +2732,17 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                         intent.putExtras(params);
                         startActivityForResult(intent, 1);
                         finish();
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(VenderProdutos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }
-
-            }else{
-                actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
+            } else {
+                dialog.dismiss();
                 Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
                 Bundle params = new Bundle();
                 params.putString("codvendedor", sCodVend);
@@ -2737,9 +2750,17 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 intent.putExtras(params);
                 startActivityForResult(intent, 1);
                 finish();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(VenderProdutos.this, "Houve uma falha ao enviar o pedido. Tente novamente!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        } finally {
-            //
+        } catch (Exception e){
+            e.toString();
         }
+
     }
 }

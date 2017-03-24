@@ -61,6 +61,7 @@ public class act_ListProdutos extends AppCompatActivity
     Produtos lstprodutos;
     FiltroProdutos lstfiltprodutos;
     Handler handler = new Handler();
+    boolean sincprod;
 
 
     @Override
@@ -185,8 +186,22 @@ public class act_ListProdutos extends AppCompatActivity
         if(Flag == 1) {
             try {
                 actSincronismo.run(act_ListProdutos.this);
-                actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true, usuario, senha);
-
+                sincprod= actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true, usuario, senha);
+                if (sincprod == false) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplication(), "Não foi possivel sincronizar os produtos. Tente novamente.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }else{
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplication(), "Produtos sincronizados com sucesso!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
                 Intent intent = (act_ListProdutos.this).getIntent();
                 (act_ListProdutos.this).finish();
                 startActivity(intent);
