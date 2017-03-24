@@ -188,15 +188,27 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                         String FlagIntegrado = cliente_cursor.getString(cursor.getColumnIndex("FLAGINTEGRADO"));
 
                         if(FlagIntegrado.equals("1")){
-                            Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
-                            Bundle params = new Bundle();
-                            params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                            params.putString("CodVendedor", CodVendedor);
-                            params.putString("numpedido", "0");
-                            params.putString("codempresa", CodEmpresa);
-                            intent.putExtras(params);
-                            startActivity(intent);
-                            finish();
+                            if (NumPedido == null) {
+                                Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                Bundle params = new Bundle();
+                                params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                                params.putString("CodVendedor", CodVendedor);
+                                params.putString("numpedido", "0");
+                                params.putString("codempresa", CodEmpresa);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                Bundle params = new Bundle();
+                                params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                                params.putString("CodVendedor", CodVendedor);
+                                params.putString("numpedido", NumPedido);
+                                params.putString("codempresa", CodEmpresa);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+                            }
                         }
                         else if (BloqClie.equals("S")) {
                             /*Boolean ConexOk = Util.checarConexaoCelular(Lista_clientes.this);
@@ -232,15 +244,27 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                             }
                         }
                         if (BloqClie.equals("N")) {
-                            Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
-                            Bundle params = new Bundle();
-                            params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                            params.putString("CodVendedor", CodVendedor);
-                            params.putString("numpedido", "0");
-                            params.putString("codempresa", CodEmpresa);
-                            intent.putExtras(params);
-                            startActivity(intent);
-                            finish();
+                            if (NumPedido == null) {
+                                Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                Bundle params = new Bundle();
+                                params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                                params.putString("CodVendedor", CodVendedor);
+                                params.putString("numpedido", "0");
+                                params.putString("codempresa", CodEmpresa);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                Bundle params = new Bundle();
+                                params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                                params.putString("CodVendedor", CodVendedor);
+                                params.putString("numpedido", NumPedido);
+                                params.putString("codempresa", CodEmpresa);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+                            }
                         }
 
 

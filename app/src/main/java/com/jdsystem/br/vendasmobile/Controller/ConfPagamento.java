@@ -598,7 +598,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         Integer opcao_cartao_dinheiro_cheque = conf_rgPagamentos.getCheckedRadioButtonId();
         if (opcao_cartao_dinheiro_cheque == conf_rbdinheiro.getId()) {
             RECEBIMENTO_DIN_CAR_CHQ = "DINHEIRO";
-            conf_txtqtdparcelas.setText("0");
+            //conf_txtqtdparcelas.setText("0");
         }
 
         conf_txtqtdparcelas.addTextChangedListener(new TextWatcher() {

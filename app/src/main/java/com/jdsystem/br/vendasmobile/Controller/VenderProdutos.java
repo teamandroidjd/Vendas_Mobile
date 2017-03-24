@@ -67,50 +67,40 @@ import java.util.Random;
 public class VenderProdutos extends Activity implements View.OnKeyListener, Runnable {
 
     private BigDecimal TOTAL_DA_VENDA;
-    private Integer CLI_CODIGO, CLI_CODIGO_ANT;
-    private Integer CLI_CODIGO_EXT;
-    private String CodEmpresa, vendenegativo, numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7, CodClie_Int;
+    private Integer CLI_CODIGO, CLI_CODIGO_ANT, CLI_CODIGO_EXT;
+    private String CodEmpresa, vendenegativo, numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7, CodVendedor, ObsPedido, NumPedido, CodClie_Int;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
     private int sprecoprincipal, tabanterior;
 
-    private ListView ListView_ItensVendidos;
+    private ListView ListView_ItensVendidos, prod_listview_produtotemp;
     private List<SqliteVendaD_TempBean> itens_temp = new ArrayList<>();
     //private List<SqliteVendaDBean> itens_ped = new ArrayList<>();
     private List<SqliteVendaDBean> itens_venda = new ArrayList<>();
 
-    private TextView venda_txv_total_da_Venda;
     private EditText venda_txt_desconto;
     private Double DESCONTO_PADRAO_VENDEDOR, qtdestoque;
-    private SimpleDateFormat dateFormatterBR;
-    private SimpleDateFormat dateFormatterUSA;
+    private SimpleDateFormat dateFormatterBR, dateFormatterUSA;
     private DatePickerDialog datePicker;
-    private TextView venda_txv_datavenda, venda_txv_codigo_cliente, venda_txv_empresa;
-    private TextView venda_txv_dataentrega, venda_txv_desconto;
-    private String DATA_DE_ENTREGA, CodVendedor, ObsPedido, NumPedido;
+    private TextView venda_txv_datavenda, venda_txv_codigo_cliente, venda_txv_empresa, venda_txv_dataentrega, venda_txv_desconto, venda_txv_total_da_Venda;
     private Toolbar toolbar;
     private SqliteClienteBean cliBean;
-    public String Chave_Venda, dataent;
-    public String sCodVend, URLPrincipal, spreco, COD_PRODUTO, usuario, senha, DataHoraVenda;
+    public String Chave_Venda, dataent, sCodVend, URLPrincipal, spreco, COD_PRODUTO, usuario, senha, DataHoraVenda, nomeabrevemp, DATA_DE_ENTREGA;
     public ProgressDialog dialog;
     public Long venda_ok;
-    public AlertDialog alerta;
+    public AlertDialog alerta, dlg;
     private Builder alerta1;
     private Spinner spntabpreco;
-    private static String nomeabrevemp;
 
     public static final String DATA_ENT = "DATA DE ENTREGA";
     public SharedPreferences prefs;
 
     private SimpleCursorAdapter adapter;
-    private ListView prod_listview_produtotemp;
-
 
     private SqliteVendaCBean vendaCBean;
     private SqliteVendaDBean vendaDBean;
 
     private SqliteConfPagamentoDao confDao;
     private SqliteConfPagamentoBean confBean;
-    private AlertDialog dlg;
     SQLiteDatabase DB;
 
     @Override
@@ -150,13 +140,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         if (dataent != null) {
             venda_txv_dataentrega.setText(dataent);
         }
-        /*if(DATA_DE_ENTREGA != null){
-            dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-            venda_txv_dataentrega.setText("Data de Entrega: " + dateFormatterBR.format(DATA_DE_ENTREGA));
-        }*/
-
-
-
 
         venda_txt_desconto.setOnKeyListener(this);
 
@@ -170,6 +153,152 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
         });
 
+        carregadadosAlterarpedido();
+
+        venda_txv_codigo_cliente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alterarcliente();
+
+            }
+        });
+        venda_txv_empresa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alterarempresa();
+            }
+        });
+
+        carregarempresa();
+
+
+        DESCONTO_PADRAO_VENDEDOR = new SqliteParametroDao(this).busca_parametros().getP_desconto_do_vendedor();
+
+        if (NumPedido.equals("0")) {
+            CLI_CODIGO_EXT = Integer.valueOf(cliBean.getCli_codigo_ext().toString());
+            //CLI_CODIGO_EXT = vendaCBean.getVendac_cli_codigo_ext();
+        }
+
+
+        FloatingActionButton incluirProduto = (FloatingActionButton) findViewById(R.id.fab_inclui_produto);
+        incluirProduto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
+                Bundle params = new Bundle();
+                params.putString("numpedido", NumPedido);
+                params.putString("chave", Chave_Venda);
+                params.putString("CodVendedor", sCodVend);
+                params.putString("usuario",usuario);
+                params.putString("senha",senha);
+                Lista_produtos.putExtras(params);
+                startActivity(Lista_produtos);
+            }
+        });
+
+        // atualiza_listview_e_calcula_total();
+
+        toolbar = (Toolbar) findViewById(R.id.inc_toolbar);
+        toolbar.inflateMenu(R.menu.menu_vender_produtos);
+        toolbar.findViewById(R.id.finalizar_venda).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finalzarvenda(true);
+            }
+        });
+
+        toolbar.findViewById(R.id.cancel_venda).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelarvenda();
+
+            }
+        });
+
+        toolbar.findViewById(R.id.item_formapgto).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                incluirformadepagamento();
+
+            }
+        });
+        toolbar.findViewById(R.id.item_dtentrega).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePicker.setTitle("Entrega Prevista");
+                datePicker.show();
+            }
+        });
+
+        toolbar.findViewById(R.id.item_obspedido).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                incluirobs();
+
+            }
+        });
+    }
+
+    private void incluirobs() {
+        View view = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_obs_pedido, null);
+        final EditText userInput = (EditText) view.findViewById(R.id.inputobspedido);
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
+        alertBuilder.setView(view);
+
+        if (!ObsPedido.equals("")) {
+            userInput.setText(ObsPedido);
+
+        }
+        alertBuilder.setCancelable(true)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ObsPedido = String.valueOf(userInput.getText());
+
+
+                    }
+                });
+        Dialog dialog = alertBuilder.create();
+        dialog.show();
+    }
+
+    private void incluirformadepagamento() {
+        if (venda_txt_desconto.getText().toString().isEmpty()) {
+            venda_txt_desconto.setText("0");
+        }
+        if (verifica_limite_desconto()) {
+            Boolean AtuPed = true;
+            if (NumPedido.equals("0")) {
+                AtuPed = false;
+            }
+            if (!NumPedido.equals("0")) {
+                itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
+                if (!itens_venda.isEmpty()) {
+                    AtuPed = true;
+                    Intent it = new Intent(getBaseContext(), ConfPagamento.class);
+                    it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
+                    it.putExtra("CLI_CODIGO", CLI_CODIGO);
+                    it.putExtra("AtuPedido", AtuPed);
+                    it.putExtra("ChavePedido", Chave_Venda);
+                    startActivity(it);
+                }
+            } else {
+                itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
+                if (!itens_temp.isEmpty()) {
+                    Intent it = new Intent(getBaseContext(), ConfPagamento.class);
+                    it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
+                    it.putExtra("CLI_CODIGO", CLI_CODIGO);
+                    it.putExtra("AtuPedido", AtuPed);
+                    it.putExtra("ChavePedido", Chave_Venda);
+                    startActivity(it);
+                } else {
+                    Util.msg_toast_personal(getBaseContext(), "Adicione itens na venda", Util.PADRAO);
+                }
+            }
+        }
+    }
+
+    private void carregadadosAlterarpedido() {
         if (!NumPedido.equals("0") && (CLI_CODIGO == 0)) {
             vendaCBean = new SqliteVendaCBean();
             vendaCBean = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_vendas_por_numeropedido(NumPedido.toString());
@@ -225,155 +354,164 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO.toString() + " - " + cliBean.getCli_nome().toString());
                 venda_txv_codigo_cliente.requestFocus();
             }
-
-
         }
-        venda_txv_codigo_cliente.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!NumPedido.equals("0")) {
-                    Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
-                    Bundle params = new Bundle();
-                    params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                    params.putString("CodVendedor", sCodVend);
-                    params.putString("codempresa", CodEmpresa);
-                    params.putString("usuario", usuario);
-                    params.putInt("CLI_CODIGO", CLI_CODIGO);
-                    params.putString("senha", senha);
-                    params.putString("numpedido", NumPedido);
-                    intent.putExtras(params);
-                    startActivityForResult(intent, 1);
-                    finish();
+    }
 
-                } else {
-                    Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
-                    Bundle params = new Bundle();
-                    params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                    params.putString("CodVendedor", sCodVend);
-                    params.putString("codempresa", CodEmpresa);
-                    params.putInt("CLI_CODIGO", CLI_CODIGO);
-                    params.putString("usuario", usuario);
-                    params.putString("senha", senha);
-                    params.putString("dataentrega",DATA_DE_ENTREGA);
-                    intent.putExtras(params);
-                    startActivityForResult(intent, 1);
-                    finish();
-                }
-            }
-        });
-        venda_txv_empresa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!NumPedido.equals("0")) {
-                    nomeabrevemp = "0";
-                    try {
-                        Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
-                        CursEmpr.moveToFirst();
-                        if (CursEmpr.getCount() > 1) {
-                            List<String> DadosListEmpresa = new ArrayList<String>();
-                            do {
-                                DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
-                            } while (CursEmpr.moveToNext());
+    private void cancelarvenda() {
+        if (NumPedido.equals("0")) {
+            itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
 
-                            View viewEmp = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+            if (!itens_temp.isEmpty()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Deseja realmente cancelar a venda?")
+                        .setCancelable(false)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent it = new Intent();
+                                it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
+                                setResult(1, it);
 
-                            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
-                            alertBuilder.setView(viewEmp);
-                            final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+                                new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+                                SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                                editor.putString("dataentrega", null);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Deseja realmente cancelar a venda?")
+                        .setCancelable(false)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent it = new Intent();
+                                it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
+                                setResult(1, it);
 
-                            ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
-                            ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
-                            spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
-                            spEmpresaInput.setAdapter(spArrayEmpresa);
-
-                            alertBuilder.setCancelable(true)
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
-                                            try {
-                                                Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
-                                                CursEmpr2.moveToFirst();
-                                                if (CursEmpr2.getCount() > 0) {
-                                                    CodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
-                                                    nomeabrevemp = CursEmpr2.getString(CursEmpr2.getColumnIndex("NOMEABREV"));
-                                                    venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
-                                                }
-                                                CursEmpr2.close();
-
-                                            } catch (Exception E) {
-                                                System.out.println("Error" + E);
-                                            }
-                                        }
-                                    });
-                            Dialog dialog = alertBuilder.create();
-                            dialog.show();
-
-                        } /* else {
-                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
-
-                        }*/
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                } else {
-                    nomeabrevemp = "0";
-                    try {
-                        Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
-                        CursEmpr.moveToFirst();
-                        if (CursEmpr.getCount() > 1) {
-                            List<String> DadosListEmpresa = new ArrayList<String>();
-                            do {
-                                DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
-                            } while (CursEmpr.moveToNext());
-
-                            View viewEmp = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
-
-                            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
-                            alertBuilder.setView(viewEmp);
-                            final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
-
-                            ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
-                            ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
-                            spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
-                            spEmpresaInput.setAdapter(spArrayEmpresa);
-
-                            alertBuilder.setCancelable(true)
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
-                                            try {
-                                                Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
-                                                CursEmpr2.moveToFirst();
-                                                if (CursEmpr2.getCount() > 0) {
-                                                    CodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
-                                                    nomeabrevemp = CursEmpr2.getString(CursEmpr2.getColumnIndex("NOMEABREV"));
-                                                    venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
-                                                }
-                                                CursEmpr2.close();
-
-                                            } catch (Exception E) {
-                                                System.out.println("Error" + E);
-                                            }
-                                        }
-                                    });
-                            Dialog dialog = alertBuilder.create();
-                            dialog.show();
-
-                        }/* else {
-                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
-
-                        }*/
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
+                                //new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+                                SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                                editor.putString("dataentrega", null);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
 
             }
-        });
+
+        } else if (!NumPedido.equals("0")) {
+            itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
+            if (!itens_venda.isEmpty()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Deseja realmente cancelar a alteração do pedido?")
+                        .setCancelable(false)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                finalzarvenda(false);
+                                SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                                editor.putString("dataentrega", null);
+                                finish();
+                                Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                                Bundle params = new Bundle();
+                                params.putString("codvendedor", sCodVend);
+                                params.putString("usuario", usuario);
+                                params.putString("senha", senha);
+                                params.putString("urlPrincipal", URLPrincipal);
+                                i.putExtras(params);
+                                startActivity(i);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Não existe produto incluso neste pedido " + NumPedido + ". O mesmo será cancelado. Deseja continuar?")
+                        .setCancelable(false)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+                                editor.putString("dataentrega", null);
+                                finish();
+                                Boolean pedcancelado = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).atualizar_pedido_para_cancelado(Chave_Venda);
+                                if (pedcancelado == true) {
+                                    Toast.makeText(VenderProdutos.this, "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                                    Bundle params = new Bundle();
+                                    params.putString("codvendedor", sCodVend);
+                                    params.putString("usuario", usuario);
+                                    params.putString("senha", senha);
+                                    params.putString("urlPrincipal", URLPrincipal);
+                                    i.putExtras(params);
+                                    startActivity(i);
+                                    finish();
+                                } else {
+                                    Toast.makeText(VenderProdutos.this, " Houve um problema ao cancelar o pedido. Verifique!", Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                                    Bundle params = new Bundle();
+                                    params.putString("codvendedor", sCodVend);
+                                    params.putString("usuario", usuario);
+                                    params.putString("senha", senha);
+                                    params.putString("urlPrincipal", URLPrincipal);
+                                    i.putExtras(params);
+                                    startActivity(i);
+                                    finish();
+                                }
 
 
+                            }
+                        })
+                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+
+            }
+        } else {
+            Intent it = new Intent();
+            it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
+            setResult(1, it);
+            new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+            SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
+            editor.putString("dataentrega", null);
+            finish();
+        }
+    }
+
+    private void carregarempresa() {
         DB = new ConfigDB(this).getReadableDatabase();
         //TextView venda_txv_empresa = (TextView) findViewById(R.id.venda_txv_empresa);
         try {
@@ -390,264 +528,144 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         } catch (Exception E) {
             Toast.makeText(this, E.toString(), Toast.LENGTH_SHORT).show();
         }
+    }
 
-        DESCONTO_PADRAO_VENDEDOR = new SqliteParametroDao(this).busca_parametros().getP_desconto_do_vendedor();
+    private void alterarcliente() {
+        if (!NumPedido.equals("0")) {
+            Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+            Bundle params = new Bundle();
+            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+            params.putString("CodVendedor", sCodVend);
+            params.putString("codempresa", CodEmpresa);
+            params.putString("usuario", usuario);
+            params.putInt("CLI_CODIGO", CLI_CODIGO);
+            params.putString("senha", senha);
+            params.putString("numpedido", NumPedido);
+            intent.putExtras(params);
+            startActivityForResult(intent, 1);
+            finish();
 
-        if (NumPedido.equals("0")) {
-            CLI_CODIGO_EXT = Integer.valueOf(cliBean.getCli_codigo_ext().toString());
-            //CLI_CODIGO_EXT = vendaCBean.getVendac_cli_codigo_ext();
+        } else {
+            Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+            Bundle params = new Bundle();
+            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+            params.putString("CodVendedor", sCodVend);
+            params.putString("codempresa", CodEmpresa);
+            params.putInt("CLI_CODIGO", CLI_CODIGO);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            intent.putExtras(params);
+            startActivityForResult(intent, 1);
+            finish();
         }
+    }
 
+    private void alterarempresa() {
+        if (!NumPedido.equals("0")) {
+            nomeabrevemp = "0";
+            try {
+                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+                CursEmpr.moveToFirst();
+                if (CursEmpr.getCount() > 1) {
+                    List<String> DadosListEmpresa = new ArrayList<String>();
+                    do {
+                        DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
+                    } while (CursEmpr.moveToNext());
 
-        FloatingActionButton incluirProduto = (FloatingActionButton) findViewById(R.id.fab_inclui_produto);
-        incluirProduto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
-                Bundle params = new Bundle();
-                params.putString("numpedido", NumPedido);
-                params.putString("chave", Chave_Venda);
-                params.putString("CodVendedor", sCodVend);
-                params.putString("usuario", usuario);
-                params.putString("senha", senha);
-                Lista_produtos.putExtras(params);
-                startActivity(Lista_produtos);
-            }
-        });
+                    View viewEmp = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
 
-        // atualiza_listview_e_calcula_total();
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
+                    alertBuilder.setView(viewEmp);
+                    final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
 
-        toolbar = (Toolbar) findViewById(R.id.inc_toolbar);
-        toolbar.inflateMenu(R.menu.menu_vender_produtos);
-        toolbar.findViewById(R.id.finalizar_venda).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finalzarvenda(true);
-            }
-        });
+                    ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                    ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
+                    spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                    spEmpresaInput.setAdapter(spArrayEmpresa);
 
-        toolbar.findViewById(R.id.cancel_venda).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (NumPedido.equals("0")) {
-                    itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
-
-                    if (!itens_temp.isEmpty()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
-                        builder.setTitle(R.string.app_namesair);
-                        builder.setIcon(R.drawable.logo_ico);
-                        builder.setMessage("Deseja realmente cancelar a venda?")
-                                .setCancelable(false)
-                                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Intent it = new Intent();
-                                        it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
-                                        setResult(1, it);
-
-                                        new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
-                                        SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                                        editor.putString("dataentrega", null);
-                                        finish();
-                                    }
-                                })
-                                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                        return;
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
-                        builder.setTitle(R.string.app_namesair);
-                        builder.setIcon(R.drawable.logo_ico);
-                        builder.setMessage("Deseja realmente cancelar a venda?")
-                                .setCancelable(false)
-                                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Intent it = new Intent();
-                                        it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
-                                        setResult(1, it);
-
-                                        //new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
-                                        SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                                        editor.putString("dataentrega", null);
-                                        finish();
-                                    }
-                                })
-                                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                        return;
-
-                    }
-
-                } else if (!NumPedido.equals("0")) {
-                    itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
-                    if (!itens_venda.isEmpty()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
-                        builder.setTitle(R.string.app_namesair);
-                        builder.setIcon(R.drawable.logo_ico);
-                        builder.setMessage("Deseja realmente cancelar a alteração do pedido?")
-                                .setCancelable(false)
-                                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        finalzarvenda(false);
-                                        Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
-                                        Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
-                                        Bundle params = new Bundle();
-                                        params.putString("codvendedor", sCodVend);
-                                        params.putString("usuario", usuario);
-                                        params.putString("senha", senha);
-                                        params.putString("urlPrincipal", URLPrincipal);
-                                        i.putExtras(params);
-                                        startActivity(i);
-                                        finish();
-                                    }
-                                })
-                                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                        return;
-
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
-                        builder.setTitle(R.string.app_namesair);
-                        builder.setIcon(R.drawable.logo_ico);
-                        builder.setMessage("Não existe produto incluso neste pedido " + NumPedido + ". O mesmo será cancelado. Deseja continuar?")
-                                .setCancelable(false)
-                                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Boolean pedcancelado = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).atualizar_pedido_para_cancelado(Chave_Venda);
-                                        if (pedcancelado == true) {
-                                            Toast.makeText(VenderProdutos.this, "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
-                                            Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
-                                            Bundle params = new Bundle();
-                                            params.putString("codvendedor", sCodVend);
-                                            params.putString("usuario", usuario);
-                                            params.putString("senha", senha);
-                                            params.putString("urlPrincipal", URLPrincipal);
-                                            i.putExtras(params);
-                                            startActivity(i);
-                                            finish();
-                                        } else {
-                                            Toast.makeText(VenderProdutos.this, " Houve um problema ao cancelar o pedido. Verifique!", Toast.LENGTH_SHORT).show();
-                                            Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
-                                            Bundle params = new Bundle();
-                                            params.putString("codvendedor", sCodVend);
-                                            params.putString("usuario", usuario);
-                                            params.putString("senha", senha);
-                                            params.putString("urlPrincipal", URLPrincipal);
-                                            i.putExtras(params);
-                                            startActivity(i);
-                                            finish();
+                    alertBuilder.setCancelable(true)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
+                                    try {
+                                        Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
+                                        CursEmpr2.moveToFirst();
+                                        if (CursEmpr2.getCount() > 0) {
+                                            CodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
+                                            nomeabrevemp = CursEmpr2.getString(CursEmpr2.getColumnIndex("NOMEABREV"));
+                                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
                                         }
+                                        CursEmpr2.close();
 
-
+                                    } catch (Exception E) {
+                                        System.out.println("Error" + E);
                                     }
-                                })
-                                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
+                                }
+                            });
+                    Dialog dialog = alertBuilder.create();
+                    dialog.show();
+
+                } /* else {
+                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
+
+                        }*/
+            } catch (Exception E) {
+                E.toString();
+            }
+        } else {
+            nomeabrevemp = "0";
+            try {
+                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+                CursEmpr.moveToFirst();
+                if (CursEmpr.getCount() > 1) {
+                    List<String> DadosListEmpresa = new ArrayList<String>();
+                    do {
+                        DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
+                    } while (CursEmpr.moveToNext());
+
+                    View viewEmp = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
+                    alertBuilder.setView(viewEmp);
+                    final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+
+                    ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                    ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
+                    spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                    spEmpresaInput.setAdapter(spArrayEmpresa);
+
+                    alertBuilder.setCancelable(true)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
+                                    try {
+                                        Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
+                                        CursEmpr2.moveToFirst();
+                                        if (CursEmpr2.getCount() > 0) {
+                                            CodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
+                                            nomeabrevemp = CursEmpr2.getString(CursEmpr2.getColumnIndex("NOMEABREV"));
+                                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
+                                        }
+                                        CursEmpr2.close();
+
+                                    } catch (Exception E) {
+                                        System.out.println("Error" + E);
                                     }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
-                        return;
+                                }
+                            });
+                    Dialog dialog = alertBuilder.create();
+                    dialog.show();
 
-                    }
-                } else {
-                    Intent it = new Intent();
-                    it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
-                    setResult(1, it);
-                    new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
-                    SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                    editor.putString("dataentrega", null);
-                    finish();
-                }
+                }/* else {
+                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
+
+                        }*/
+            } catch (Exception E) {
+                E.toString();
             }
-        });
-
-        toolbar.findViewById(R.id.item_formapgto).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (venda_txt_desconto.getText().toString().isEmpty()) {
-                    venda_txt_desconto.setText("0");
-                }
-                if (verifica_limite_desconto()) {
-                    Boolean AtuPed = true;
-                    if (NumPedido.equals("0")) {
-                        AtuPed = false;
-                    }
-                    if (!NumPedido.equals("0")) {
-                        itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
-                        if (!itens_venda.isEmpty()) {
-                            AtuPed = true;
-                            Intent it = new Intent(getBaseContext(), ConfPagamento.class);
-                            it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
-                            it.putExtra("CLI_CODIGO", CLI_CODIGO);
-                            it.putExtra("AtuPedido", AtuPed);
-                            it.putExtra("ChavePedido", Chave_Venda);
-                            startActivity(it);
-                        }
-                    } else {
-                        itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
-                        if (!itens_temp.isEmpty()) {
-                            Intent it = new Intent(getBaseContext(), ConfPagamento.class);
-                            it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
-                            it.putExtra("CLI_CODIGO", CLI_CODIGO);
-                            it.putExtra("AtuPedido", AtuPed);
-                            it.putExtra("ChavePedido", Chave_Venda);
-                            startActivity(it);
-                        } else {
-                            Util.msg_toast_personal(getBaseContext(), "Adicione itens na venda", Util.PADRAO);
-                        }
-                    }
-                }
-            }
-        });
-        toolbar.findViewById(R.id.item_dtentrega).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePicker.setTitle("Entrega Prevista");
-                datePicker.show();
-            }
-        });
-
-        toolbar.findViewById(R.id.item_obspedido).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View view = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_obs_pedido, null);
-                final EditText userInput = (EditText) view.findViewById(R.id.inputobspedido);
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
-                alertBuilder.setView(view);
-
-                if (!ObsPedido.equals("")) {
-                    userInput.setText(ObsPedido);
-
-                }
-                alertBuilder.setCancelable(true)
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ObsPedido = String.valueOf(userInput.getText());
-
-
-                            }
-                        });
-                Dialog dialog = alertBuilder.create();
-                dialog.show();
-            }
-        });
+        }
     }
 
     private void setDateTimeField() {
@@ -671,6 +689,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     @Override
     public void onResume() {
         super.onResume();
+        carregarempresa();
+        carregadadosAlterarpedido();
         if (venda_txt_desconto.getText().toString().isEmpty()) {
             venda_txt_desconto.setText("0");
         }

@@ -84,7 +84,8 @@
 
         <activity
             android:name=".Controller.ConfPagamento"
-            android:label="Formas de Pagamento" />
+            android:label="Formas de Pagamento"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".actFiltroPeriodoPedidos"
             android:label="Filtro por Emissão" />
