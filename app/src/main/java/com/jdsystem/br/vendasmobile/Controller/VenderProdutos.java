@@ -91,7 +91,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     public AlertDialog alerta, dlg;
     private Builder alerta1;
     private Spinner spntabpreco;
-    private static String nomeabrevemp;
     Handler handler = new Handler();
 
     public static final String DATA_ENT = "DATA DE ENTREGA";
@@ -318,7 +317,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             }
             venda_txt_desconto.setText(vendaCBean.getVendac_percdesconto().toString());
             DataHoraVenda = vendaCBean.getVendac_datahoravenda();
-            venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
+            venda_txv_datavenda.setText("Data/Hora Venda : " + Util.FormataDataDDMMAAAA_ComHoras(vendaCBean.getVendac_datahoravenda()));
             Alterar_Pedido_listview_e_calcula_total();
 
         } else if (!NumPedido.equals("0") && CLI_CODIGO != 0) {
@@ -338,7 +337,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             ObsPedido = vendaCBean.getObservacao();
             DataHoraVenda = vendaCBean.getVendac_datahoravenda();
             venda_txt_desconto.setText(vendaCBean.getVendac_percdesconto().toString());
-            venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
+            venda_txv_datavenda.setText("Data/Hora Venda : " + Util.FormataDataDDMMAAAA_ComHoras(vendaCBean.getVendac_datahoravenda()));
 
         } else {
             if (CLI_CODIGO.equals(0)) {
@@ -355,8 +354,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO.toString() + " - " + cliBean.getCli_nome().toString());
                 venda_txv_codigo_cliente.requestFocus();
             }
-
-
         }
         if (!NumPedido.equals("0") && (dataent == null || dataent == "")) {
             dataent = "Data da entrega: " + Util.FormataDataDDMMAAAA(DATA_DE_ENTREGA);
@@ -507,8 +504,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                     startActivity(i);
                                     finish();
                                 }
-
-
                             }
                         })
                         .setNegativeButton("Não", new DialogInterface.OnClickListener() {
@@ -519,7 +514,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 AlertDialog alert = builder.create();
                 alert.show();
                 return;
-
             }
         } else {
             Intent it = new Intent();
@@ -630,10 +624,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     Dialog dialog = alertBuilder.create();
                     dialog.show();
 
-                } /* else {
-                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
-
-                        }*/
+                }
             } catch (Exception E) {
                 E.toString();
             }
@@ -682,10 +673,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     Dialog dialog = alertBuilder.create();
                     dialog.show();
 
-                }/* else {
-                            venda_txv_empresa.setText("Empresa: " + nomeabrevemp);
-
-                        }*/
+                }
             } catch (Exception E) {
                 E.toString();
             }
@@ -703,6 +691,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 venda_txv_dataentrega.setText("Data de Entrega: " + dateFormatterBR.format(newDate.getTime()));
                 DATA_DE_ENTREGA = dateFormatterUSA.format(newDate.getTime());
                 Util.log(DATA_DE_ENTREGA);
+
                 SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
                 editor.putString("dataentrega", venda_txv_dataentrega.getText().toString());
                 editor.commit();
@@ -714,7 +703,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     public void onResume() {
         super.onResume();
         carregarempresa();
-        carregadadosAlterarpedido();
+        //carregadadosAlterarpedido();
         if (venda_txt_desconto.getText().toString().isEmpty()) {
             venda_txt_desconto.setText("0");
         }
@@ -2578,6 +2567,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
             setResult(1, it);
             new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+
             SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
             editor.putString("dataentrega", "");
             editor.commit();

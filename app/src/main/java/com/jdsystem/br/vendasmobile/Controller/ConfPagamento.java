@@ -203,7 +203,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             conf_txtqtdparcelas.setVisibility(View.VISIBLE);
             conf_rbdinheiro.setVisibility(View.GONE);
             conf_valorparcela.setVisibility(View.VISIBLE);
-            conf_txtqtdparcelas.setText("1");
+            conf_txtqtdparcelas.setFocusable(true);
+            conf_txtqtdparcelas.setText("");
             conf_rgPagamentos.setVisibility(View.VISIBLE);
         }
     }

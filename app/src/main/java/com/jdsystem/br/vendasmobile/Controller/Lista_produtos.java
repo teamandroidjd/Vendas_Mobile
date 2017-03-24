@@ -1681,9 +1681,9 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                             Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getApplicationContext(), sCodvend, true);
 
                             itemBean2.setVendad_prd_codigo(COD_PRODUTO);
-                            //itemBean3 = itemDao.altera_item_na_venda(itemBean2);
+                            itemBean3 = itemDao.altera_item_na_venda(itemBean2);
 
-                            //if (itemBean3 != null) {
+                            if (itemBean3 == null) {
                             itemBean1.setVendad_prd_codigo(COD_PRODUTO);
                             itemBean1.setVendad_prd_descricao(DESCRICAO);
                             itemBean1.setVendad_prd_unidade(UNIDADE);
@@ -1706,11 +1706,11 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                             } else {
                                 Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
                             }
-                                                /*} else {
-                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
-                                                }*/
+                            } else {
+                                Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                            }
 
-                            //}
+
                         } else {
                             Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
                         }
