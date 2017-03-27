@@ -93,7 +93,13 @@
             android:name=".act_ListContatos"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Lista de contatos"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
         <activity android:name=".CadContatos"
             android:label="Cadastro de contatos"
             android:windowSoftInputMode="stateHidden">

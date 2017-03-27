@@ -46,7 +46,7 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
         mRecyclerView.setLayoutManager(llm);
 
 
-        mList = ((act_ListContatos) getActivity()).pesquisarcontatos(pesqcontato);
+        mList = ((act_ListContatos) getActivity()).listarContatos();
         ListAdapterFiltroContatos adapter = new ListAdapterFiltroContatos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);

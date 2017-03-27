@@ -40,4 +40,5 @@ dependencies {
     compile 'com.github.clans:fab:1.6.2'
 
     compile 'org.jetbrains:annotations-java5:15.0'
+    compile 'com.android.support:design:24.2.1'
 }

@@ -44,7 +44,6 @@ public class ListAdapterFiltroContatos extends RecyclerView.Adapter<ListAdapterF
     public void onBindViewHolder(MyViewHolder myViewHolder, int position) {
 
         Log.i("LOG", "onBindViewHolder()");
-        myViewHolder.NOME.setText(mList.get(position).getNomeCont());
         //myViewHolder.numCnpj.setText(mList.get(position).getCnpj());
         myViewHolder.CARGO.setText(mList.get(position).getCargo());
         //myViewHolder.numEndereco.setText(mList.get(position).getNumEndereco());
@@ -55,6 +54,29 @@ public class ListAdapterFiltroContatos extends RecyclerView.Adapter<ListAdapterF
        /* myViewHolder.telefone.setText(mList.get(position).getTelefone());
         myViewHolder.telefone2.setText(mList.get(position).getTelefone2());
         myViewHolder.email.setText(mList.get(position).getEmail());*/
+
+        //myViewHolder.NOMERAZAO.setText(mList.get(position).getNOMECLIENTE());
+        //myViewHolder.NOME.setText(mList.get(position).getNomeCont());
+
+        String nomeContato = mList.get(position).getNomeCont();
+        String nomeCliente = mList.get(position).getNOMECLIENTE();
+
+        /*if((nomeContato.isEmpty())&&(nomeCliente.isEmpty())){
+            myViewHolder.NOME.setVisibility(View.GONE);
+            myViewHolder.NOMERAZAO.setVisibility(View.GONE);
+        } else*/
+        if ((!nomeCliente.isEmpty()) && (nomeContato.isEmpty())) {
+            myViewHolder.NOME.setVisibility(View.GONE);
+            myViewHolder.NOMERAZAO.setText(mList.get(position).getNOMECLIENTE());
+        } else if ((nomeCliente.isEmpty()) && (!nomeContato.isEmpty())) {
+            myViewHolder.NOME.setText(mList.get(position).getNomeCont());
+            myViewHolder.NOMERAZAO.setVisibility(View.GONE);
+        } else //if ((!nomeCliente.isEmpty()) && (!nomeContato.isEmpty())){
+        {
+            myViewHolder.NOME.setText(mList.get(position).getNomeCont());
+            myViewHolder.NOME.setVisibility(View.VISIBLE);
+            myViewHolder.NOMERAZAO.setText(mList.get(position).getNOMECLIENTE());
+        }
 
     }
 
@@ -99,6 +121,8 @@ public class ListAdapterFiltroContatos extends RecyclerView.Adapter<ListAdapterF
         private int CODVENDEDOR;
         private int CODBAIRRO;
         private int CODCLIENTE;
+        private int CODCLIE_EXT;
+        private TextView NOMERAZAO;
 
 
         public MyViewHolder(View itemView) {
@@ -112,6 +136,7 @@ public class ListAdapterFiltroContatos extends RecyclerView.Adapter<ListAdapterF
             EMAIL = (TextView) itemView.findViewById(R.id.lblEmailContato);
             TEL1 = (TextView) itemView.findViewById(R.id.lblTel1Contato);
             TEL2 = (TextView) itemView.findViewById(R.id.lblTel2Contato);
+            NOMERAZAO = (TextView) itemView.findViewById(R.id.lbl_nome_cliente_contato);
             /*telefone = (TextView) itemView.findViewById(R.id.lblTel);
             telefone2 = (TextView) itemView.findViewById(R.id.lblTel2);
             email = (TextView) itemView.findViewById(R.id.lblEmail);*/

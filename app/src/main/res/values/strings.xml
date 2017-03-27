@@ -89,4 +89,5 @@
     <string name="login">Login</string>
     <string name="title_activity_act__list_produtos">act_ListProdutos</string>
     <string name="title_activity_act__contatos">act_Contatos</string>
+    <string name="search_hint">Pesquisar</string>
 </resources>

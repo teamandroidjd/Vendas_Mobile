@@ -22,12 +22,11 @@ public class FiltroContatos {
     private int CODVENDEDOR;
     private int CODBAIRRO;
     private int CODCLIENTE;
-
-    public FiltroContatos() {
-    }
+    private int CODCLIE_EXT;
+    private String NOMERAZAO;
 
     public FiltroContatos(String nmcont, String cargo, String email, String telefone1, String telefone2, String doc, String data, String cep, String endereco,
-                          String num, String compl, int cidade, int bairro, String uf, int codvend, int codclieint) {
+                          String num, String compl, int cidade, int bairro, String uf, int codvend, int codclieint, int codClieExt, String nomeCliente) {
 
         NOME = nmcont;
         //Cnpj = nCnpj;
@@ -48,6 +47,8 @@ public class FiltroContatos {
         UF = uf;
         CODVENDEDOR = codvend;
         CODCLIENTE = codclieint;
+        CODCLIE_EXT = codClieExt;
+        NOMERAZAO = nomeCliente;
 
 
 
@@ -169,5 +170,16 @@ public class FiltroContatos {
 
     public void setCODCLIENTE(int codclieint) {
         this.CODCLIENTE = codclieint;
+    }
+
+    public int getCODCLIEEXT() {return CODCLIE_EXT;}
+
+    public void setCODCLIEEXT(int codcliente) {
+        this.CODCLIE_EXT = codcliente;
+    }
+    public String getNOMECLIENTE() {return NOMERAZAO;}
+
+    public void setNOMECLIENTE(String nomecliente) {
+        this.NOMERAZAO = nomecliente;
     }
 }
