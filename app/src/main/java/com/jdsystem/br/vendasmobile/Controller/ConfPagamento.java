@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile.Controller;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -33,6 +34,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static android.R.layout.simple_spinner_dropdown_item;
+
 
 public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, Spinner.OnItemSelectedListener {
 
@@ -54,12 +57,13 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     private Double SUBTOTAL_VENDA;
     private BigDecimal VALORRECEBIDO;
     private Boolean AtuPedido;
-
+    public SharedPreferences prefs;
+    public static final String DADOS_PG = "DADOS DO PAGAMENTO";
     private ScrollView vScroll;
     private HorizontalScrollView hScroll;
     private float mx, my;
     private float curX, curY;
-
+    private String din_boleto, avista_parcelado;
     private Intent INTENT_SOBTOTAL_VENDA, INTENT_CLI_CODIGO;
     private Integer CLI_CODIGO;
     private RadioButton conf_rbdinheiro, conf_rbboleto;
@@ -71,6 +75,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
         declaraObjetosListeners();
 
+
+
         new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
 
         INTENT_SOBTOTAL_VENDA = getIntent();
@@ -79,21 +85,47 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         CLI_CODIGO = INTENT_CLI_CODIGO.getIntExtra("CLI_CODIGO", 0);
         ChavePedido = INTENT_CLI_CODIGO.getStringExtra("ChavePedido");
         AtuPedido = INTENT_CLI_CODIGO.getBooleanExtra("AtuPedido", false);
-
-
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
         VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
         array_forma_pagamento.add("À VISTA");
         array_forma_pagamento.add("PARCELADO");
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_forma_pagamento);
+        arrayAdapter = new ArrayAdapter<String>(this, simple_spinner_dropdown_item, array_forma_pagamento);
         conf_spfpgto.setAdapter(arrayAdapter);
 
         if (AtuPedido == false) {
             conf_rbboleto.setChecked(true);
         }
 
+        declaraPreferencias();
     }
+
+    private void declaraPreferencias() {
+        int sppg = 0;
+        prefs = getSharedPreferences(DADOS_PG, MODE_PRIVATE);
+        avista_parcelado = prefs.getString("avista_parcelado", null);
+        din_boleto = prefs.getString("din_boleto", null);
+
+        if (avista_parcelado != null && avista_parcelado != "") {
+            if (avista_parcelado.equals("À VISTA")) {
+                sppg = arrayAdapter.getPosition("À VISTA");
+                conf_spfpgto.setSelection(sppg);
+
+            } if (avista_parcelado.equals("PARCELADO")) {
+                sppg = arrayAdapter.getPosition("PARCELADO");
+                conf_spfpgto.setSelection(sppg);
+            }
+        }
+
+        if (din_boleto != null && din_boleto != "") {
+            if (din_boleto.equals("DINHEIRO")) {
+                conf_rbdinheiro.setChecked(true);
+            } if (din_boleto.equals("BOLETO")) {
+                conf_rbboleto.setChecked(true);
+            }
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float curX, curY;
@@ -147,7 +179,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                             "N"
                     ), AtuPedido, ChavePedido
             );
-            //Util.msg_toast_personal(getBaseContext(), "SALVO COM SUCESSO", Util.SUCESSO);
+
+            SharedPreferences.Editor editor = getSharedPreferences(DADOS_PG, MODE_PRIVATE).edit();
+            editor.putString("avista_parcelado", TIPO_PAGAMENTO);
+            editor.putString("din_boleto", RECEBIMENTO_DIN_CAR_CHQ);
+            editor.commit();
+
             finish();
         }
     }
@@ -169,8 +206,6 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     public void onItemSelected(AdapterView<?> spinner, View view, int position, long id) {
 
         TIPO_PAGAMENTO = spinner.getItemAtPosition(position).toString();
-
-
 
         if (TIPO_PAGAMENTO.equals("À VISTA")) {
 
@@ -235,7 +270,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     }
 
     public void calcular_valor_parcela(CharSequence valor_digitado) {
-        if (valor_digitado.equals("0")) {
+        String vl = valor_digitado.toString();
+        if (!vl.equals("0") && !vl.equals("")) {
             String QUANTIDADE_PARCELAS = conf_txtqtdparcelas.getText().toString();
             if (Integer.parseInt(QUANTIDADE_PARCELAS) == 1) {
                 conf_valorparcela2.setVisibility(View.GONE);

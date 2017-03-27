@@ -69,38 +69,34 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
     private BigDecimal TOTAL_DA_VENDA;
     private Integer CLI_CODIGO, CLI_CODIGO_ANT, CLI_CODIGO_EXT;
-    private String CodEmpresa, vendenegativo, numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7, CodVendedor, ObsPedido, NumPedido, CodClie_Int;
+    private String CodEmpresa, vendenegativo, numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7, CodVendedor;
+    private String ObsPedido, NumPedido, CodClie_Int, DATA_DE_ENTREGA;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
     private int sprecoprincipal, tabanterior;
-
     private ListView ListView_ItensVendidos, prod_listview_produtotemp;
     private List<SqliteVendaD_TempBean> itens_temp = new ArrayList<>();
     //private List<SqliteVendaDBean> itens_ped = new ArrayList<>();
     private List<SqliteVendaDBean> itens_venda = new ArrayList<>();
-
     private EditText venda_txt_desconto;
     private Double DESCONTO_PADRAO_VENDEDOR, qtdestoque;
     private SimpleDateFormat dateFormatterBR, dateFormatterUSA;
     private DatePickerDialog datePicker;
-    private TextView venda_txv_datavenda, venda_txv_codigo_cliente, venda_txv_empresa, venda_txv_dataentrega, venda_txv_desconto, venda_txv_total_da_Venda;
+    private TextView venda_txv_datavenda, venda_txv_codigo_cliente, venda_txv_empresa, venda_txv_dataentrega;
+    private TextView venda_txv_desconto, venda_txv_total_da_Venda;
     private Toolbar toolbar;
     private SqliteClienteBean cliBean;
-    public String Chave_Venda, dataent, sCodVend, URLPrincipal, spreco, COD_PRODUTO, usuario, senha, DataHoraVenda, nomeabrevemp, DATA_DE_ENTREGA;
+    public String Chave_Venda, dataent, sCodVend, URLPrincipal, spreco, COD_PRODUTO, usuario, senha, DataHoraVenda, nomeabrevemp;
     public ProgressDialog dialog;
     public Long venda_ok;
     public AlertDialog alerta, dlg;
     private Builder alerta1;
     private Spinner spntabpreco;
     Handler handler = new Handler();
-
     public static final String DATA_ENT = "DATA DE ENTREGA";
     public SharedPreferences prefs;
-
     private SimpleCursorAdapter adapter;
-
     private SqliteVendaCBean vendaCBean;
     private SqliteVendaDBean vendaDBean;
-
     private SqliteConfPagamentoDao confDao;
     private SqliteConfPagamentoBean confBean;
     SQLiteDatabase DB;
@@ -171,14 +167,12 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
         carregarempresa();
 
-
         DESCONTO_PADRAO_VENDEDOR = new SqliteParametroDao(this).busca_parametros().getP_desconto_do_vendedor();
 
         if (NumPedido.equals("0")) {
             CLI_CODIGO_EXT = Integer.valueOf(cliBean.getCli_codigo_ext().toString());
             //CLI_CODIGO_EXT = vendaCBean.getVendac_cli_codigo_ext();
         }
-
 
         FloatingActionButton incluirProduto = (FloatingActionButton) findViewById(R.id.fab_inclui_produto);
         incluirProduto.setOnClickListener(new View.OnClickListener() {
@@ -211,7 +205,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             @Override
             public void onClick(View v) {
                 cancelarvenda();
-
             }
         });
 
@@ -219,9 +212,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             @Override
             public void onClick(View v) {
                 incluirformadepagamento();
-
             }
         });
+
         toolbar.findViewById(R.id.item_dtentrega).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -234,7 +227,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             @Override
             public void onClick(View v) {
                 incluirobs();
-
             }
         });
     }
@@ -247,15 +239,12 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
         if (!ObsPedido.equals("")) {
             userInput.setText(ObsPedido);
-
         }
         alertBuilder.setCancelable(true)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ObsPedido = String.valueOf(userInput.getText());
-
-
                     }
                 });
         Dialog dialog = alertBuilder.create();
@@ -405,7 +394,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                 Intent it = new Intent();
                                 it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
                                 setResult(1, it);
-
                                 //new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
 
                                 SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
@@ -423,7 +411,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 AlertDialog alert = builder.create();
                 alert.show();
                 return;
-
             }
 
         } else if (!NumPedido.equals("0")) {
@@ -465,7 +452,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 AlertDialog alert = builder.create();
                 alert.show();
                 return;
-
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
                 builder.setTitle(R.string.app_namesair);

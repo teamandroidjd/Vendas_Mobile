@@ -30,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lnr1"
+        android:padding="3dp"
         android:orientation="vertical">
 
         <Spinner
@@ -116,6 +117,7 @@
     </LinearLayout>
 
     <ScrollView
+        android:padding="3dp"
         android:id="@+id/scrollView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
