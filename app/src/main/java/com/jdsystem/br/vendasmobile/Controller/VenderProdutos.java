@@ -2618,7 +2618,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                             dialog.setCancelable(false);
                             dialog.setTitle("Aguarde");
                             dialog.show();
-
                             Thread thread = new Thread(VenderProdutos.this);
                             thread.start();
 
@@ -2695,7 +2694,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(VenderProdutos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(VenderProdutos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                     });
                     pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
@@ -2712,30 +2711,55 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(VenderProdutos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(VenderProdutos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                             }
                         });
                     }
                 }
             } else {
-                dialog.dismiss();
-                Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
-                Bundle params = new Bundle();
-                params.putString("codvendedor", sCodVend);
-                params.putString("urlPrincipal", URLPrincipal);
-                intent.putExtras(params);
-                startActivityForResult(intent, 1);
-                finish();
+                pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
+                if (pedidoendiado == true) {
+                    dialog.dismiss();
+                    Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
+                    Bundle params = new Bundle();
+                    params.putString("codvendedor", sCodVend);
+                    params.putString("urlPrincipal", URLPrincipal);
+                    intent.putExtras(params);
+                    startActivityForResult(intent, 1);
+                    finish();
 
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(VenderProdutos.this, "Houve uma falha ao enviar o pedido. Tente novamente!", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(VenderProdutos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }else {
+                    dialog.dismiss();
+                    Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
+                    Bundle params = new Bundle();
+                    params.putString("codvendedor", sCodVend);
+                    params.putString("urlPrincipal", URLPrincipal);
+                    intent.putExtras(params);
+                    startActivityForResult(intent, 1);
+                    finish();
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(VenderProdutos.this, "Houve uma falha ao enviar o pedido. Tente novamente!", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+
             }
         } catch (Exception e){
             e.toString();
+        }
+        if (dialog.isShowing()){
+            dialog.dismiss();
         }
 
     }

@@ -111,6 +111,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                 params.putString("codvendedor", CodVendedor);
                 params.putString("usuario", usuario);
                 params.putString("senha", senha);
+                params.putInt("listaclie",0);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -391,5 +392,10 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                 dialog.dismiss();
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

@@ -30,6 +30,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
 import org.json.JSONArray;
@@ -46,13 +47,12 @@ import java.util.List;
 
 public class act_CadClientes extends AppCompatActivity implements Runnable {
 
-    String sTipoPessoa, sUF, sCodVend, NomeBairro, NomeCidade, usuario, senha,URLPrincipal;
+    String sTipoPessoa, sUF, sCodVend, NomeBairro, NomeCidade, usuario, senha,URLPrincipal,nomeRazao;
     private Handler handler = new Handler();
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
-    int CodCidade, CodBairro;
+    int CodCidade, CodBairro, telaInvocada,codClieExt;
     Boolean PesqCEP;
     ImageButton BtnPesqCep;
-    //private Context ctx;
     private static ProgressDialog DialogECB;
     EditText nomerazao, nomefan, nomecompleto, cnpjcpf, Edtcpf, EdtRG, ie, endereco, numero, cep, tel1, tel2, email, edtOBS, Complemento;
     SQLiteDatabase DB;
@@ -73,6 +73,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 usuario = params.getString("usuario");
                 senha = params.getString("senha");
                 URLPrincipal = params.getString("urlPrincipal");
+                telaInvocada = params.getInt("listaclie");
             }
         }
 
@@ -333,7 +334,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         spUF = (Spinner) findViewById(R.id.spnUF);
         spCidade = (Spinner) findViewById(R.id.spnCidade);
         spBairro = (Spinner) findViewById(R.id.spnBairro);
-
         nomerazao = (EditText) findViewById(R.id.EdtNomeRazao);
         nomefan = (EditText) findViewById(R.id.EdtNomeFan);
         cnpjcpf = (EditText) findViewById(R.id.EdtCnpjCpf);
@@ -364,6 +364,8 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
 
         EditText etTelefone2 = (EditText) findViewById(R.id.EdtTel2);
         etTelefone2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone2));
+
+        //Edtcpf.setOnFocusChangeListener(this);
     }
 
     public boolean VerificaConexao() {
@@ -609,6 +611,8 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         String NomeFantasia = null;
         String CpfCnpj = null;
         String CEP;
+        boolean validacliente;
+        validacliente = validarclientes();
 
         if (sTipoPessoa == "J") {
             if (nomerazao.getText().length() == 0) {
@@ -627,10 +631,25 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 cnpjcpf.setError("CNPJ inválido! Verifique");
                 cnpjcpf.requestFocus();
                 return;
+            } else if (validacliente == true) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(act_CadClientes.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("CNPJ já cadastrado para o cliente "+ nomeRazao +" código "+ codClieExt +". Verifique!!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cnpjcpf.requestFocus();
+                                cnpjcpf.selectAll();
+                            }
+                        });
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
+                return;
             }
             NomePessoa = nomerazao.getText().toString();
             NomeFantasia = nomefan.getText().toString();
-            CpfCnpj = cnpjcpf.getText().toString();
+            CpfCnpj = cnpjcpf.getText().toString().replaceAll("[^0123456789]", "");
         } else if (sTipoPessoa == "F") {
             if (nomecompleto.getText().length() == 0) {
                 nomecompleto.setError("Digite o Nome Completo!");
@@ -639,6 +658,21 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             } else if (Util.validaCPF(Edtcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
                 Edtcpf.setError("CPF inválido! Verifique");
                 Edtcpf.requestFocus();
+                return;
+            } else if (validacliente == true) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(act_CadClientes.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("CPF já cadastrado para o cliente "+ nomeRazao +" código "+ codClieExt +". Verifique!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Edtcpf.requestFocus();
+                                Edtcpf.selectAll();
+                            }
+                        });
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
                 return;
             } else if (EdtRG.getText().length() == 0) {
                 EdtRG.setError("Digite a Identidade!");
@@ -711,25 +745,97 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false, usuario, senha);
-                            Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
-                            Bundle params = new Bundle();
-                            params.putString("codvendedor", sCodVend);
-                            params.putString("usuario", usuario);
-                            params.putString("senha", senha);
-                            intent.putExtras(params);
-                            startActivity(intent);
-                            finish();
+                            boolean sitclieenvio;
+                            if (telaInvocada == 0) {
+                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false, usuario, senha);
+                                if (sitclieenvio == true) {
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(act_CadClientes.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+                                    Bundle params = new Bundle();
+                                    params.putString("CodVendedor", sCodVend);
+                                    params.putString("usuario", usuario);
+                                    params.putString("senha", senha);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+
+                                } else {
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(act_CadClientes.this, "Não foi possivel sincronizar o cliente. Tente novamente!", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+                                    Bundle params = new Bundle();
+                                    params.putString("CodVendedor", sCodVend);
+                                    params.putString("usuario", usuario);
+                                    params.putString("senha", senha);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            } else {
+                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false, usuario, senha);
+                                if (sitclieenvio == true) {
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(act_CadClientes.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
+                                    Bundle params = new Bundle();
+                                    params.putString("codvendedor", sCodVend);
+                                    params.putString("usuario", usuario);
+                                    params.putString("senha", senha);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(act_CadClientes.this, "Não foi possivel sincronizar o cliente. Tente novamente!", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
+                                    Bundle params = new Bundle();
+                                    params.putString("codvendedor", sCodVend);
+                                    params.putString("usuario", usuario);
+                                    params.putString("senha", senha);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+                                }
+
+                            }
                         }
                     })
                     .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
-                            Bundle params = new Bundle();
-                            params.putString("codvendedor", sCodVend);
-                            intent.putExtras(params);
-                            startActivity(intent);
-                            finish();
+                            if (telaInvocada == 0) {
+                                Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+                                Bundle params = new Bundle();
+                                params.putString("CodVendedor", sCodVend);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+
+                            } else {
+                                Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
+                                Bundle params = new Bundle();
+                                params.putString("codvendedor", sCodVend);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+
+                            }
                         }
                     });
             android.app.AlertDialog alert = builder.create();
@@ -848,4 +954,57 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+    private boolean validarclientes() {
+        boolean clientecadastrado = false;
+        if (sTipoPessoa == "J") {
+            String CNPJ = cnpjcpf.getText().toString().replaceAll("[^0123456789]", "");
+            Cursor CursorClie = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
+                    " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
+                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + cnpjcpf.getText().toString().replaceAll("[^0123456789]", "") + "'", null);
+            CursorClie.moveToFirst();
+            try {
+                if (CursorClie.getCount() > 0) {
+                    nomeRazao = CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO"));
+                    int codClieInt = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_INT"));
+                    codClieExt = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
+                    clientecadastrado = true;
+                } else {
+                }
+                CursorClie.close();
+            } catch (Exception e) {
+                e.toString();
+            }
+        } else {
+            String CPF = Edtcpf.getText().toString().replaceAll("[^0123456789]", "");
+            Cursor CursorClie = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
+                    " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
+                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + Edtcpf.getText().toString().replaceAll("[^0123456789]", "") + "'", null);
+            CursorClie.moveToFirst();
+            try {
+                if (CursorClie.getCount() > 0) {
+                    nomeRazao = CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO"));
+                    int codClieInt = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_INT"));
+                    codClieExt = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
+                    clientecadastrado = true;
+                } else {
+                }
+                CursorClie.close();
+            } catch (Exception e) {
+                e.toString();
+            }
+        }
+        return clientecadastrado;
+    }
+
+    /*@Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if(sTipoPessoa.equals("F") && hasFocus == false){
+            if(validarclientes()){
+                Edtcpf.requestFocus();
+                Edtcpf.selectAll();
+                return;
+            }
+        }
+    }*/
 }

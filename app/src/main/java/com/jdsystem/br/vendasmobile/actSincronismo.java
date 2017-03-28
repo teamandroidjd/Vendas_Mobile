@@ -378,7 +378,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
                                         "',' " + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_LIMITECRED) + "','" + c.getString(TAG_BLOQUEIO) + "','" + c.getString(TAG_ATIVO) +
                                         "',' " + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
-                                /*DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
+                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
                                         "', REGIDENT = '" + c.getString(TAG_RG).trim() + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
                                         "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
@@ -388,7 +388,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
                                         " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
                                         ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");*/
+                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
                             }
 
                             Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
@@ -651,7 +651,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
 
                                 //está tendo que atualizar cadas item que é incluso para tirar os espaçõs em alguns campos, pois somente na inserção não tira.
-                                /*DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
+                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
                                         "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
                                         "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
                                         "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
@@ -669,7 +669,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
                                         "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
-                                        "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));*/
+                                        "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             }
                             sincprodutos = true;
                             CursItens.close();
@@ -1838,7 +1838,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         Boolean pedenviado = false;
 
         String JPedidos = null;
-        ProgressDialog Dialog = null;
         String METHOD_NAMEENVIO = "CadastrarPedidos";
         DB = new ConfigDB(ctxEnv).getReadableDatabase();
         Cursor CursorPedido;
@@ -1867,18 +1866,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             int jumpTime = 0;
             final int totalProgressTime = CursorPedido.getCount();
 
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
             if (CursorPedido.getCount() > 0) {
                 CursorPedido.moveToFirst();
                 do {
                     for (int i = 0; i < CursorPedido.getCount(); i++) {
                         do try {
                             jumpTime += 1;
-                            if (bdialog == false) {
-                                Dialog.setProgress(jumpTime);
-                                Dialog.setMessage("Sincronizando Tabelas - Pedidos");
-                            }
 
                             String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
                             if (Util.isNullOrEmpty(ValorFrete)) {
@@ -2003,10 +1996,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 }
                 while (CursorPedido.moveToNext());
                 CursorPedido.close();
-            }
-            if (bdialog == false) {
-                if (Dialog.isShowing())
-                    Dialog.dismiss();
             }
         } catch (Exception E) {
             System.out.println("Error" + E);
@@ -2388,7 +2377,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         soap.addProperty("aSenha", sSenha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 15000);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 60000);
         String RetEmpresa = null;
 
         try {
@@ -2402,6 +2391,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             }
         } catch (Exception e) {
             System.out.println("Sincronismo, falha no envio ou recebimento da validação de usuário.Tente novamente.");
+            return sincempresastatic;
         }
 
         try {
@@ -2426,7 +2416,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         String Email = c.getString("email");
                         String Ativo = c.getString("ativo");
 
-                        byte[] imgRecebida = null;
+                        /*byte[] imgRecebida = null;
 
                         try {
                             String LogoEmpresa = c.getString("logo");
@@ -2434,22 +2424,22 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             Bitmap imgLogo = BitmapFactory.decodeByteArray(imgRecebida, 0, imgRecebida.length);
                         } catch (Exception e) {
                             e.toString();
-                        }
+                        }*/
 
                         Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
                         if (CursorEmpresa.getCount() > 0) {
                             DB.execSQL(" UPDATE EMPRESAS SET CODEMPRESA = '" + CodEmpresa + "', NOMEEMPRE = '" + NomeEmpresa + "', NOMEABREV = '" + NomeAbreviado + "'," +
-                                    " CNPJ = '" + Cnpj + "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', EMAIL = '" + Email + "', ATIVO = '" + Ativo + "'," +
-                                    " LOGO = '" + imgRecebida + "'" +
+                                    " CNPJ = '" + Cnpj + "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', EMAIL = '" + Email + "', ATIVO = '" + Ativo + "'" +
+                                    //" LOGO = '" + imgRecebida + "'" +
                                     " WHERE CODEMPRESA = " + CodEmpresa);
                             Cursor cursor1 = DB.rawQuery(" SELECT CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
                             cursor1.moveToFirst();
                             //CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
                             cursor1.close();
                         } else {
-                            DB.execSQL(" INSERT INTO EMPRESAS (CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO, LOGO)" +
+                            DB.execSQL(" INSERT INTO EMPRESAS (CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO)" +
                                     " VALUES(" + CodEmpresa + ",'" + NomeEmpresa + "', '" + NomeAbreviado + "','" + Cnpj + "','" + Tel1 + "','" + Tel2 +
-                                    "','" + Email + "','" + Ativo + "', '" + imgRecebida + "' );");
+                                    "','" + Email + "','" + Ativo + "' );");
                             Cursor cursor1 = DB.rawQuery(" SELECT CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
                             sincempresastatic = true;
                             cursor1.close();
@@ -2459,11 +2449,13 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                     } catch (Exception E) {
                         E.toString();
+                        return sincempresastatic;
                     }
                 }
             }
         } catch (JSONException e) {
             e.toString();
+            return sincempresastatic;
         }
         return sincempresastatic;
     }
@@ -2619,7 +2611,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 while (CursorClieEnv.moveToNext());
                 CursorClieEnv.close();
             } else {
-                sincclieenvstatic = true;
+                sincclieenvstatic = false;
             }
 
 

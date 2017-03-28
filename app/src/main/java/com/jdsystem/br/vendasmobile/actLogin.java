@@ -91,7 +91,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
         }
         copyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
     }
-    public void logar (View view){
+
+    public void logar(View view) {
         final String user = edtUsuario.getText().toString();
         final String pass = edtSenha.getText().toString();
         Boolean ConexOk = VerificaConexao();
@@ -124,6 +125,22 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                 startActivity(intent);
                             }
                         });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return;
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Atenção! O Usuário ou a senha informada são inválidos; ou não existe esse usuário " + edtUsuario.getText().toString() + " cadastrado neste aparelho. Caso seja a primeira utilização, é necessário se conectar online" +
+                        " para que o aparelho cadastre esse usuário e posteriormente seja possível se conectar offline.Verifique essas informações e tente novamente.")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
+                            }
+                        });
+
                 AlertDialog alert = builder.create();
                 alert.show();
                 return;
@@ -347,7 +364,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                     SoapObject resultsRequestSOAP2 = (SoapObject) envelopeValida.bodyIn;
                     HabUsuarioApp = (String) envelopeValida.getResponse();
                     System.out.println("Response::" + resultsRequestSOAP2.toString());
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.toString();
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
@@ -358,6 +375,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                         }
                     });
                     return;
+
                 }
                 Boolean ConexOkWifi = VerificaConexaoWifi();
                 if (HabUsuarioApp.equals("True") && ConexOkWifi == true) {
@@ -485,7 +503,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
                             builder.setTitle(R.string.app_namesair);
                             builder.setIcon(R.drawable.logo_ico);
-                            builder.setMessage("Limite de usuários atingido. Entre em contato com a empresa.")
+                            builder.setMessage("Limite de usuários atingido ou não habilitado. Entre em contato com a empresa.")
                                     .setCancelable(false)
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -520,7 +538,6 @@ public class actLogin extends AppCompatActivity implements Runnable {
             AlertDialog alert = builder.create();
             alert.show();
         }
-
     }
 
     private int CadastrarLogin(String NomeUsuario, String Senha, String CodVendedor, String CodEmpresa) {
@@ -555,7 +572,6 @@ public class actLogin extends AppCompatActivity implements Runnable {
             CursorLogin.close();
             return sCodVend;
         } else {
-            Dialogo.dismiss();
             Toast.makeText(actLogin.this, "Usuário ou Senha inválidos!", Toast.LENGTH_LONG).show();
             return null;
         }

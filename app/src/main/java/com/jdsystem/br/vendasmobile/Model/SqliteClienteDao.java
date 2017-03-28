@@ -222,7 +222,7 @@ public class SqliteClienteDao {
         SqliteClienteBean clientes = new SqliteClienteBean();
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+            cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, FLAGINTEGRADO, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                     " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                     " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +

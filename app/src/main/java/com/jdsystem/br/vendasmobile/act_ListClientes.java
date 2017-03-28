@@ -112,6 +112,7 @@ public class act_ListClientes extends AppCompatActivity
                 params.putString("usuario", usuario);
                 params.putString("senha", senha);
                 params.putString("urlPrincipal", URLPrincipal);
+                params.putInt("listaclie",1);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -211,12 +212,13 @@ public class act_ListClientes extends AppCompatActivity
                 cliBean.C_BAIRRO_CLIENTE, cliBean.C_UF_CLIENTE, cliBean.C_TELEFONE_CLIENTE, cliBean.C_CNPJCPF, cliBean.C_ENVIADO };
         final int[] para;
 
-        if (cliBean.C_ENVIADO == "S") {
+        if (cliBean.C_ENVIADO == "1") {
             para = new int[]{R.id.lblCodClie, R.id.lblNomerazao, R.id.lblNomeFanClie, R.id.lblCidade, R.id.lblBairro, R.id.lblEstado,
-                    R.id.lblTel, R.id.lblCNPJ, R.drawable.bola_azul};
+                    R.id.lblTel, R.id.lblCNPJ, R.id.bola_laranja};
+
         } else {
             para = new int[]{R.id.lblCodClie, R.id.lblNomerazao, R.id.lblNomeFanClie, R.id.lblCidade, R.id.lblBairro, R.id.lblEstado,
-                    R.id.lblTel, R.id.lblCNPJ, R.drawable.bola_vermelha};
+                    R.id.lblTel, R.id.lblCNPJ, 0};
         }
 
         //AdapterClientes = new SimpleCursorAdapter(this, R.layout.lstclientes_card, cursor, colunas, para, 0);
