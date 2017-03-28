@@ -27,6 +27,7 @@ import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -287,10 +288,15 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_valorparcela12.setVisibility(View.GONE);
                 conf_txtvalorrecebido.setVisibility(View.GONE);
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+
+              /*  BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
                 BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parcela 1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
+                conf_valorparcela.setText("Parcela 1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));*/
+
+                BigDecimal valor_parcela = new BigDecimal(SUBTOTAL_VENDA.toString());
+                conf_valorparcela.setText("Parcela 1/" + QUANTIDADE_PARCELAS + ": R$ " + valor_parcela.toString().replace('.', ','));
+
             } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 2) {
                 conf_valorparcela.setVisibility(View.VISIBLE);
                 conf_valorparcela2.setVisibility(View.VISIBLE);
@@ -308,9 +314,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor,2,BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_DOWN).toString().replace('.', ',')+" ");
             } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 3) {
                 conf_valorparcela.setVisibility(View.VISIBLE);
                 conf_valorparcela2.setVisibility(View.VISIBLE);
@@ -328,10 +337,13 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_DOWN).toString().replace('.', ',')+" ");
+                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_DOWN).toString().replace('.', ',')+" ");
             } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 4) {
                 conf_valorparcela.setVisibility(View.VISIBLE);
                 conf_valorparcela2.setVisibility(View.VISIBLE);
@@ -349,8 +361,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -371,8 +386,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -394,8 +412,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -418,8 +439,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -443,8 +467,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -469,8 +496,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -496,8 +526,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -524,8 +557,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.  1/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.  2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.  3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.  4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -553,8 +589,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
+                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
                 conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
@@ -569,9 +608,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             } else {
                 BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
                 BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, RoundingMode.HALF_UP);
+                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+                BigDecimal recalculo = valor_parcela.multiply(divisor);
+                BigDecimal diferenca = valor_venda.subtract(recalculo);
+                BigDecimal parc_1 = valor_parcela.add(diferenca);
                 conf_valorparcela2.setVisibility(View.GONE);
-                conf_valorparcela3.setVisibility(View.GONE);
+                conf_valorparcela3.setVisibility(View.VISIBLE);
                 conf_valorparcela4.setVisibility(View.GONE);
                 conf_valorparcela5.setVisibility(View.GONE);
                 conf_valorparcela6.setVisibility(View.GONE);
@@ -583,7 +625,14 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 conf_valorparcela12.setVisibility(View.GONE);
                 conf_txtvalorrecebido.setVisibility(View.GONE);
                 conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                conf_valorparcela.setText("Valor parcela: R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
+
+                if (parc_1.equals(valor_parcela)) {
+                    conf_valorparcela.setText("Valor das parcelas: R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                    conf_valorparcela3.setText("Quantidade de parcelas: " + QUANTIDADE_PARCELAS + " parcelas");
+                } else {
+                    conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                    conf_valorparcela3.setText("Demais parcelas:  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',')+" ");
+                }
             }
 
         } else {

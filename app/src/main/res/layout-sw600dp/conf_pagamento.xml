@@ -182,7 +182,7 @@
                     android:textColor="@color/colordescClie"
                     android:textSize="25dp"
                     android:textStyle="bold"
-                    android:layout_below="@+id/conf_valorparcela2"
+                    android:layout_below="@+id/conf_valorparcela"
                     />
 
                 <TextView

@@ -172,7 +172,7 @@
                     android:id="@+id/conf_valorparcela3"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/conf_valorparcela2"
+                    android:layout_below="@+id/conf_valorparcela"
                     android:layout_marginTop="5dp"
                     android:layout_weight="1"
                     android:text="Parcela 3/12: R$ 1000,00"
