@@ -1,7 +1,9 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -33,6 +35,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jdsystem.br.vendasmobile.Controller.Lista_produtos;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
 import com.jdsystem.br.vendasmobile.Util.Util;
@@ -220,6 +223,22 @@ public class act_ListClientes extends AppCompatActivity
         AdapterClientes = new SimpleCursorAdapter(this, R.layout.lstclientes_card, cursor, colunas, para, 0);
         adm_listview_cliente = (ListView) findViewById(R.id.adm_listview_cliente);
         adm_listview_cliente.setAdapter(AdapterClientes);
+
+        if (cursor.getCount() <= 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(act_ListClientes.this);
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage("Não existe nenhum cliente sincronizado. Favor clicar no botão SINCRONIZAR ou ir no menu Sincronização de dados e clicar no botão Sincronizar.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            return;
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
         adm_listview_cliente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listview, View view, int posicao, long id) {
@@ -304,6 +323,11 @@ public class act_ListClientes extends AppCompatActivity
                 if (selecao_spinner == PESQUISAR_CLIENTE_BAIRRO) {
                     this.cursor = cli.buscar_cliente_na_pesquisa_edittext(valor.toString(), cli.NOME_BAIRRO, sCodVend);
                 }
+
+                if (cursor.getCount() <= 0) {
+                    Toast.makeText(act_ListClientes.this, "Nenhum cliente encontrado!", Toast.LENGTH_SHORT).show();
+                }
+
                 return cursor;
             }
         });

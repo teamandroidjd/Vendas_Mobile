@@ -239,6 +239,21 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             prod_listview_produtotemp = (ListView) findViewById(R.id.prod_listview_produtotemp);
             prod_listview_produtotemp.setAdapter(adapter);
 
+            if (cursor.getCount() <= 0) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(Lista_produtos.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Não existe nenhum produto sincronizado para ser associado ao pedido. Favor clicar no botão SINCRONIZAR.")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                return;
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+
             prod_listview_produtotemp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> listView, View view, int posicao, long l) {
@@ -284,6 +299,11 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 if (selecao_spinner == CODIGO_PRODUTO) {
                     this.cursor = prdDao.buscar_produto_na_pesquisa_edittext(valor.toString(), prdDao.CODIGO_PRODUTO, 2);
                 }
+
+                if (cursor.getCount() <= 0) {
+                    Toast.makeText(Lista_produtos.this, "Nenhum produto encontrado!", Toast.LENGTH_SHORT).show();
+                }
+
                 return cursor;
             }
         });

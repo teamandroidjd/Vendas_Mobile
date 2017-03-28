@@ -1,8 +1,10 @@
 package com.jdsystem.br.vendasmobile;
 
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jdsystem.br.vendasmobile.Controller.Lista_produtos;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.domain.FiltroProdutos;
 import com.jdsystem.br.vendasmobile.domain.Produtos;
@@ -380,7 +383,18 @@ public class act_ListProdutos extends AppCompatActivity
 
 
         } else {
-            Toast.makeText(this, "Nenhum produto encontrado!", Toast.LENGTH_SHORT).show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(act_ListProdutos.this);
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage("Não existe nenhum produto sincronizado. Favor clicar no botão SINCRONIZAR ou ir no menu Sincronização de dados e clicar no botão Sincronizar.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            return;
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
 
         if (pDialog.isShowing())

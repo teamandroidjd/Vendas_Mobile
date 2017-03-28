@@ -1,7 +1,9 @@
 package com.jdsystem.br.vendasmobile.Controller;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -169,6 +171,22 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
         AdapterClientes = new SimpleCursorAdapter(this, R.layout.lista_cliente_item, cursor, colunas, para, 0);
         adm_listview_cliente = (ListView) findViewById(R.id.adm_listview_cliente);
         adm_listview_cliente.setAdapter(AdapterClientes);
+
+        if (cursor.getCount() <= 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(Lista_clientes.this);
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage("Não existe nenhum cliente sincronizado para ser associado ao pedido. Favor clicar no botão SINCRONIZAR.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            return;
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
         adm_listview_cliente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listview, View view, int posicao, long id) {
@@ -317,6 +335,11 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                 if (selecao_spinner == PESQUISAR_CLIENTE_BAIRRO) {
                     this.cursor = cli.buscar_cliente_na_pesquisa_edittext(valor.toString(), cli.NOME_BAIRRO, CodVendedor);
                 }
+
+                if (cursor.getCount() <= 0) {
+                    Toast.makeText(Lista_clientes.this, "Nenhum cliente encontrado!", Toast.LENGTH_SHORT).show();
+                }
+
                 return cursor;
             }
         });
