@@ -41,8 +41,18 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jdsystem.br.vendasmobile.R.id.url;
 
 
 public class act_CadClientes extends AppCompatActivity implements Runnable {
@@ -52,7 +62,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
     int CodCidade, CodBairro, telaInvocada,codClieExt;
     Boolean PesqCEP;
-    ImageButton BtnPesqCep;
+    ImageButton BtnPesqCep, BtnconsultaCNPJ;
     private static ProgressDialog DialogECB;
     EditText nomerazao, nomefan, nomecompleto, cnpjcpf, Edtcpf, EdtRG, ie, endereco, numero, cep, tel1, tel2, email, edtOBS, Complemento;
     SQLiteDatabase DB;
@@ -327,6 +337,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
     }
 
     private void declaraobjetos() {
+
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         DB = new ConfigDB(this).getReadableDatabase();
         BtnPesqCep = (ImageButton) findViewById(R.id.btnBuscaCep);
@@ -847,38 +858,40 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         }
     }
 
-    public void consultacnpj(String cnpj) {
+    public void consultacnpj(View view)  {
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        String CNPJ = cnpjcpf.getText().toString().replaceAll("[^0123456789]", "");
+        cadastraDadosCNPJ(CNPJ);
+    }
 
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "CNPJ");
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE("https://www.receitaws.com.br/v1/cnpj/" + cnpj);
-        String RetCNPJ = null;
+    private void cadastraDadosCNPJ(String cnpj)  {
+        /*HttpURLConnection  urlConnection = null;
 
         try {
-            Boolean ConexOk = true;
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                RetCNPJ = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            }
+            URL url = new URL("https://www.receitaws.com.br/v1/cnpj/" + cnpj);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setReadTimeout(15001);
+            urlConnection.setConnectTimeout(15001);
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.connect();
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
         } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
+            e.printStackTrace();
+        }*/
 
-        try {
-            JSONObject jsonObj = new JSONObject(RetCNPJ);
-            JSONArray JCNPJ = jsonObj.getJSONArray("" +
-                    "");
+
+
+
+        /*try {
+            //JSONObject jsonObj = new JSONObject(in);
+            //JSONArray JCNPJ = jsonObj.getJSONArray("" +
+                   // "");
 
             DB = new ConfigDB(this).getReadableDatabase();
 
-            JSONObject c = JCNPJ.getJSONObject(0);
+            //JSONObject c = JCNPJ.getJSONObject(0);
             String nome = c.getString("nome");
             String uf = c.getString("uf");
             String tel1 = c.getString("telefone");
@@ -893,7 +906,8 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
 
         } catch (Exception E) {
             E.printStackTrace();
-        }
+        }*/
+
     }
 
     @Override

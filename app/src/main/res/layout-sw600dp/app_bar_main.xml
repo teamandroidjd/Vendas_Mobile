@@ -25,6 +25,7 @@
     <include layout="@layout/content_main" />
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/mmPrincNovoPed"
+        android:onClick="teste"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

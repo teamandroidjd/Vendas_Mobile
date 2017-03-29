@@ -74,20 +74,20 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtCnpjCpf"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="CNPJ"
-                    android:maxLength="19"
-                    android:inputType="number"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/EdtCnpjCpf"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="CNPJ"
+                        android:inputType="number"
+                        android:maxLength="19"
+                        android:maxLines="1" />
+
+                </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -99,8 +99,8 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Registro de Identidade"
-                    android:maxLength="15"
                     android:inputType="number"
+                    android:maxLength="15"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -158,13 +158,12 @@
                 <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    >
+                    android:layout_weight="3">
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/textInputLayout2"
                         android:layout_width="251dp"
-                        android:layout_height="52dp"
-                        android:id="@+id/textInputLayout2">
+                        android:layout_height="52dp">
 
                         <EditText
                             android:id="@+id/EdtCep"
@@ -177,14 +176,14 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <ImageButton
+                        android:id="@+id/btnBuscaCep"
                         android:layout_width="50dp"
                         android:layout_height="40dp"
-                        android:background="@drawable/busca_cep"
-                        android:id="@+id/btnBuscaCep"
-                        android:onClick="buscacepclie"
                         android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/textInputLayout2"
                         android:layout_toRightOf="@+id/textInputLayout2"
-                        android:layout_toEndOf="@+id/textInputLayout2" />
+                        android:background="@drawable/busca_cep"
+                        android:onClick="buscacepclie" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -271,8 +270,8 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Telefone"
-                    android:maxLength="15"
                     android:inputType="phone"
+                    android:maxLength="15"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
@@ -286,8 +285,8 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Telefone 2"
-                    android:maxLength="15"
                     android:inputType="phone"
+                    android:maxLength="15"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 

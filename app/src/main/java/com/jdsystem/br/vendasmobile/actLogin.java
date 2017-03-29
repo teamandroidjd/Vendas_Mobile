@@ -167,6 +167,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
             Dialogo = new ProgressDialog(actLogin.this);
             Dialogo.setIndeterminate(true);
+            Dialogo.setCancelable(false);
             Dialogo.setMessage("Verificando e atualizando informações...");
             Dialogo.setTitle("Aguarde");
             Dialogo.show();
