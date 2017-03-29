@@ -211,7 +211,7 @@ public class actDadosProdutos extends AppCompatActivity {
                     TAG_MARCA.setText("Marca: " + CursorProd.getString(CursorProd.getColumnIndex("MARCA")));
 
                     String QtdEstoqueNegativo = QtdEstoque.replaceAll("[1234567890,]", "").trim();
-                    if (TipoEstoque.equals("Q")) {
+                    if (TipoEstoque.equals("Q") || TipoEstoque.equals("")) {
                         TAG_QTDESTOQUE.setText(CursorProd.getString(CursorProd.getColumnIndex("QTDESTPROD")));
                     }
                     if (TipoEstoque.equals("D")) {

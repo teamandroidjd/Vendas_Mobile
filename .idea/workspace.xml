@@ -14,16 +14,14 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Firebase" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f58d3410-3a1b-45ee-8164-7b562682296f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/consultacnpj.png" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/forcavendas.apk" afterPath="" />
+    <list default="true" id="f58d3410-3a1b-45ee-8164-7b562682296f" name="Default" comment="Validação do CPF CNPJ ao tirar o foco do campo. Tratamento na pesquisa do CEP para quando estiver incomplento ou quando retornar CEP não encontrado tanto no cadastro do cliente quanto no cadastro de contato.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadContatos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadContatos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/cad_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/cad_clientes.xml" />
     </list>
     <ignored path="Vendas_Mobile.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -58,68 +56,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="actListPedidos.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="142" column="38" selection-start-line="142" selection-start-column="38" selection-end-line="142" selection-end-column="38" />
-              <folding>
-                <element signature="method#carregausuariologado#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#declaraobjetos#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#filtrositped#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#filtroemissaoped#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#filtrocliped#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#onBackPressed#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#onActivityResult#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#onNavigationItemSelected#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#run#0;class#actListPedidos#0" expanded="false" />
-                <element signature="method#CarregarPedidos#0;class#actListPedidos#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="activity_act_listpedidos.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_act_listpedidos.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="12" column="29" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="app_bar_main.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="24" column="45" selection-start-line="24" selection-start-column="45" selection-end-line="24" selection-end-column="45" />
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="act_CadClientes.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="act_CadClientes.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-854">
-              <caret line="115" column="0" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+            <state relative-caret-position="348">
+              <caret line="452" column="9" selection-start-line="452" selection-start-column="9" selection-end-line="452" selection-end-column="9" />
               <folding>
-                <element signature="method#onNothingSelected#0;class#3229:4644" expanded="false" />
-                <element signature="class#4690:9476" expanded="false" />
-                <element signature="class#9526:13884" expanded="false" />
-                <element signature="class#13934:14789" expanded="false" />
+                <element signature="class#3260:4676" expanded="false" />
+                <element signature="method#onNothingSelected#0;class#3260:4676" expanded="false" />
+                <element signature="class#4722:9508" expanded="false" />
+                <element signature="method#onItemSelected#0;class#4722:9508" expanded="false" />
+                <element signature="class#9558:13916" expanded="false" />
+                <element signature="class#13966:14821" expanded="false" />
+                <element signature="method#declaraobjetos#0;class#act_CadClientes#0" expanded="false" />
                 <element signature="method#VerificaConexao#0;class#act_CadClientes#0" expanded="false" />
-                <element signature="method#buscacepclie#0;class#act_CadClientes#0" expanded="false" />
-                <element signature="method#cadastraDadosCep#0;class#act_CadClientes#0" expanded="false" />
                 <element signature="method#onBackPressed#0;class#act_CadClientes#0" expanded="false" />
-                <element signature="method#btnsalvar#0;class#act_CadClientes#0" expanded="false" />
                 <element signature="method#consultacnpj#0;class#act_CadClientes#0" expanded="false" />
                 <element signature="method#cadastraDadosCNPJ#0;class#act_CadClientes#0" expanded="false" />
                 <element signature="method#run#0;class#act_CadClientes#0" expanded="false" />
@@ -127,87 +78,7 @@
                 <element signature="method#onStart#0;class#act_CadClientes#0" expanded="false" />
                 <element signature="method#onStop#0;class#act_CadClientes#0" expanded="false" />
                 <element signature="method#validarclientes#0;class#act_CadClientes#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="actSincronismo.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1364">
-              <caret line="2889" column="56" selection-start-line="2889" selection-start-column="56" selection-end-line="2889" selection-end-column="56" />
-              <folding>
-                <element signature="method#VerificaConexao#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#run#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarClientesEnvio#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarPedidosEnvio#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincDescricaoTabelas#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincBloqueios#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincParametros#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#run#1;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaBairro#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaCidade#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaEstado#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarPedidosEnvioStatic#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincAtuEstado#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#CancelarPedidoAberto#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#AutorizaPedidoAberto#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#AtualizaStatusPedido#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaqtdClientes#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarProdutosStatic#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaInfoCliexPedido#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SituacaodoClientexPed#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#generateLayout#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#GerarPdf#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#createHeadings#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#createTotal#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#printPageNumber#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#InserirRodape#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#createContent#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#initializeFonts#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#getIndexApiAction#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#onStart#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#onStop#0;class#actSincronismo#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cad_clientes.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/cad_clientes.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="89" column="56" selection-start-line="89" selection-start-column="56" selection-end-line="89" selection-end-column="56" />
-              <folding />
-            </state>
-          </provider>
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="14" column="5" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="act_ListClientes.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListClientes.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="328" column="17" selection-start-line="326" selection-start-column="16" selection-end-line="328" selection-end-column="17" />
-              <folding>
-                <element signature="method#carregausuariologado#0;class#act_ListClientes#0" expanded="false" />
-                <element signature="method#declaraobjetos#0;class#act_ListClientes#0" expanded="false" />
-                <element signature="method#onCreateOptionsMenu#0;class#act_ListClientes#0" expanded="false" />
-                <element signature="method#onBackPressed#0;class#act_ListClientes#0" expanded="false" />
-                <element signature="method#onNavigationItemSelected#0;class#act_ListClientes#0" expanded="false" />
+                <element signature="method#onFocusChange#0;class#act_CadClientes#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -1901,7 +1772,7 @@
       <map>
         <entry key="C:\Users\wks\AndroidStudioProjects\Vendas_Mobile" value="4470161408144" />
         <entry key="C:\Users\wks\AndroidStudioProjects\Vendas_Mobile - Copia" value="4463356366511" />
-        <entry key="C:\WSGE PROJETOS\Vendas_Mobile" value="4465087385391" />
+        <entry key="C:\WSGE PROJETOS\Vendas_Mobile" value="4465137246154" />
         <entry key="C:\Wsge(2005)\Vendas_Mobile" value="4445629819452" />
         <entry key="D:\Clone projeto\Vendas_Mobile" value="4465301361589" />
       </map>
@@ -2207,7 +2078,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-land/cad_clientes.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/cad_clientes.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/cad_clientes.xml" />
@@ -2217,7 +2087,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListContatos.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_act_list_client_pedidos.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_dadosclie.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_act_filtro_periodo_pedidos.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-land/activity_act_filtro_periodo_pedidos.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_act_filtro_periodo_pedidos.xml" />
@@ -2236,7 +2105,6 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_cad_contatos.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadContatos.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/conf_pagamento.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-land/conf_pagamento.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/conf_pagamento.xml" />
@@ -2251,13 +2119,16 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/HttpClient.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_main.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_act_listpedidos.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/cad_clientes.xml" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/content_act__list_produtos.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadContatos.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java" />
       </list>
     </option>
   </component>
@@ -2320,10 +2191,6 @@
               <option name="myItemId" value="Vendas_Mobile" />
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Gradle Scripts" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidBuildScriptsGroupNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -2378,7 +2245,7 @@
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="android.sdk.path" value="C:/../rafael.costa/AppData/Local/Android/Sdk" />
     <property name="last_opened_file_path" value="C:/Vendas_Mobile_11" />
-    <property name="device.picker.selection" value="Nexus_5X_API_22" />
+    <property name="device.picker.selection" value="G4AZB60250828KE" />
     <property name="UI_DESIGNER_EDITOR_MODE.NlPaletteManager-NlPreviewForm.SHOW" value="false" />
     <property name="ExportApk.ApkPath" value="C:\WSGE PROJETOS\Vendas_Mobile\app" />
     <property name="ExportApk.Flavors" value="" />
@@ -2914,7 +2781,14 @@
       <option name="project" value="LOCAL" />
       <updated>1490730587309</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Corrigido o erro do botão de incluir novo pedido e filtro.">
+      <created>1490788985702</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1490788985702</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -2935,7 +2809,7 @@
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33788395" sideWeight="0.50642675" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3319616" sideWeight="0.50899744" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32583547" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32647464" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -2949,7 +2823,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24871466" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3319616" sideWeight="0.49357328" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3319616" sideWeight="0.49100256" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -3034,7 +2908,8 @@
     <MESSAGE value="Criado preferencias na forma de pagamento&#10;Corrigido a divisão das parcelas que não apareciam mais" />
     <MESSAGE value="Acertado para que a diferença de centavos das parcelas fique na primeira parcela" />
     <MESSAGE value="Validação no cadastro de cliente se já existe o CNPJ ou CPF já cadastrado." />
-    <option name="LAST_COMMIT_MESSAGE" value="Validação no cadastro de cliente se já existe o CNPJ ou CPF já cadastrado." />
+    <MESSAGE value="Corrigido o erro do botão de incluir novo pedido e filtro." />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrigido o erro do botão de incluir novo pedido e filtro." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -3395,21 +3270,21 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java</url>
-          <line>278</line>
+          <line>279</line>
           <properties />
           <option name="timeStamp" value="984" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java</url>
-          <line>486</line>
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java</url>
+          <line>112</line>
           <properties />
-          <option name="timeStamp" value="999" />
+          <option name="timeStamp" value="1057" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java</url>
-          <line>144</line>
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java</url>
+          <line>212</line>
           <properties />
-          <option name="timeStamp" value="1037" />
+          <option name="timeStamp" value="1058" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-field">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteClienteBean.java</url>
@@ -3418,40 +3293,11 @@
           <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="1043" />
+      <option name="time" value="1059" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosCliente.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="31" column="43" selection-start-line="31" selection-start-column="43" selection-end-line="31" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_dadosclie.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="406">
-          <caret line="82" column="35" selection-start-line="82" selection-start-column="35" selection-end-line="82" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_contclie.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-238">
-          <caret line="68" column="22" selection-start-line="68" selection-start-column="22" selection-end-line="68" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigConex.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="25" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://D:/../rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/app/DatePickerDialog.java" />
     <entry file="file://D:/../rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/app/ActivityThread.java" />
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigDB.java">
@@ -3459,21 +3305,6 @@
         <state relative-caret-position="221">
           <caret line="141" column="21" selection-start-line="141" selection-start-column="14" selection-end-line="141" selection-end-column="21" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListContatos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="41" column="58" selection-start-line="41" selection-start-column="58" selection-end-line="41" selection-end-column="58" />
-          <folding>
-            <element signature="method#carregausuariologado#0;class#act_ListContatos#0" expanded="false" />
-            <element signature="method#onBackPressed#0;class#act_ListContatos#0" expanded="false" />
-            <element signature="method#onCreateOptionsMenu#0;class#act_ListContatos#0" expanded="false" />
-            <element signature="method#onOptionsItemSelected#0;class#act_ListContatos#0" expanded="false" />
-            <element signature="method#carregarcontatos#0;class#act_ListContatos#0" expanded="false" />
-            <element signature="method#run#0;class#act_ListContatos#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3518,36 +3349,6 @@
       </provider>
     </entry>
     <entry file="file://C:/../rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/widget/AdapterView.java" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadContatos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="552">
-          <caret line="241" column="17" selection-start-line="241" selection-start-column="17" selection-end-line="241" selection-end-column="17" />
-          <folding>
-            <element signature="class#3076:5415" expanded="false" />
-            <element signature="e#13711#13719#0" expanded="false" />
-            <element signature="e#14206#14214#0" expanded="false" />
-            <element signature="method#onNothingSelected#0;class#10317:14693" expanded="false" />
-            <element signature="class#14743:15598" expanded="false" />
-            <element signature="method#declaraobjetos#0;class#CadContatos#0" expanded="false" />
-            <element signature="method#btnsalvarcontato#0;class#CadContatos#0" expanded="false" />
-            <element signature="e#30457#30465#0" expanded="false" />
-            <element signature="e#30626#30634#0" expanded="false" />
-            <element signature="e#30971#30979#0" expanded="false" />
-            <element signature="e#31114#31122#0" expanded="false" />
-            <element signature="e#31578#31586#0" expanded="false" />
-            <element signature="e#31729#31737#0" expanded="false" />
-            <element signature="method#buscacep#0;class#CadContatos#0" expanded="false" />
-            <element signature="method#onBackPressed#0;class#CadContatos#0" expanded="false" />
-            <element signature="method#run#0;class#CadContatos#0" expanded="false" />
-            <element signature="e#33041#34422#0" expanded="false" />
-            <element signature="e#34421#34422#0" expanded="false" />
-            <element signature="method#getIndexApiAction#0;class#CadContatos#0" expanded="false" />
-            <element signature="method#onStart#0;class#CadContatos#0" expanded="false" />
-            <element signature="method#onStop#0;class#CadContatos#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/domain/FiltroContatos.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="595">
@@ -3661,6 +3462,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-797">
           <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -3676,19 +3478,6 @@
         <state relative-caret-position="-746">
           <caret line="239" column="18" selection-start-line="239" selection-start-column="18" selection-end-line="239" selection-end-column="18" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="486" column="90" selection-start-line="486" selection-start-column="11" selection-end-line="486" selection-end-column="90" />
-          <folding>
-            <element signature="e#12641#12651#0" expanded="false" />
-            <element signature="e#17071#17092#0" expanded="false" />
-            <element signature="e#17408#17609#0" expanded="false" />
-            <element signature="e#17608#17609#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3757,26 +3546,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="169" column="39" selection-start-line="169" selection-start-column="39" selection-end-line="169" selection-end-column="39" />
-          <folding>
-            <element signature="method#carregarpreferencias#0;class#actLogin#0" expanded="false" />
-            <element signature="method#declaraobjetos#0;class#actLogin#0" expanded="false" />
-            <element signature="method#VerificaConexao#0;class#actLogin#0" expanded="false" />
-            <element signature="method#VerificaConexaoWifi#0;class#actLogin#0" expanded="false" />
-            <element signature="method#onBackPressed#0;class#actLogin#0" expanded="false" />
-            <element signature="method#run#0;class#actLogin#0" expanded="false" />
-            <element signature="method#CadastrarLogin#0;class#actLogin#0" expanded="false" />
-            <element signature="method#ValidarLogin#0;class#actLogin#0" expanded="false" />
-            <element signature="method#onCreateOptionsMenu#0;class#actLogin#0" expanded="false" />
-            <element signature="method#onOptionsItemSelected#0;class#actLogin#0" expanded="false" />
-            <element signature="method#onResume#0;class#actLogin#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="663">
@@ -3824,14 +3593,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="5" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
@@ -3854,35 +3615,131 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/act_list_produtos.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-854">
-          <caret line="115" column="0" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+        <state relative-caret-position="204">
+          <caret line="12" column="38" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/app_bar_act__list_produtos.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="24" column="42" selection-start-line="24" selection-start-column="42" selection-end-line="24" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/content_act__list_produtos.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="35" column="35" selection-start-line="35" selection-start-column="35" selection-end-line="35" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="67" column="82" selection-start-line="67" selection-start-column="82" selection-end-line="67" selection-end-column="82" />
           <folding>
-            <element signature="method#onNothingSelected#0;class#3229:4644" expanded="false" />
-            <element signature="class#4690:9476" expanded="false" />
-            <element signature="class#9526:13884" expanded="false" />
-            <element signature="class#13934:14789" expanded="false" />
-            <element signature="method#VerificaConexao#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#buscacepclie#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#cadastraDadosCep#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#onBackPressed#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#btnsalvar#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#consultacnpj#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#cadastraDadosCNPJ#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#run#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#getIndexApiAction#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#onStart#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#onStop#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#validarclientes#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#onCreate#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#carregausuariologado#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#declaraobjetos#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#novopedido#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#filtrositped#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#filtroemissaoped#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#filtrocliped#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#onBackPressed#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#onActivityResult#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#run#0;class#actListPedidos#0" expanded="false" />
+            <element signature="method#CarregarPedidos#0;class#actListPedidos#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="251">
+          <caret line="136" column="24" selection-start-line="136" selection-start-column="24" selection-end-line="136" selection-end-column="24" />
+          <folding>
+            <element signature="e#5671#5692#0" expanded="true" />
+            <element signature="method#carregarpreferencias#0;class#actLogin#0" expanded="false" />
+            <element signature="method#declaraobjetos#0;class#actLogin#0" expanded="false" />
+            <element signature="method#VerificaConexao#0;class#actLogin#0" expanded="false" />
+            <element signature="method#VerificaConexaoWifi#0;class#actLogin#0" expanded="false" />
+            <element signature="method#onBackPressed#0;class#actLogin#0" expanded="false" />
+            <element signature="method#run#0;class#actLogin#0" expanded="false" />
+            <element signature="method#CadastrarLogin#0;class#actLogin#0" expanded="false" />
+            <element signature="method#ValidarLogin#0;class#actLogin#0" expanded="false" />
+            <element signature="method#onCreateOptionsMenu#0;class#actLogin#0" expanded="false" />
+            <element signature="method#onOptionsItemSelected#0;class#actLogin#0" expanded="false" />
+            <element signature="method#onResume#0;class#actLogin#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadContatos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="457" column="64" selection-start-line="457" selection-start-column="64" selection-end-line="457" selection-end-column="64" />
+          <folding>
+            <element signature="method#onCreate#0;class#CadContatos#0" expanded="false" />
+            <element signature="class#3076:5415" expanded="false" />
+            <element signature="class#5461:10267" expanded="false" />
+            <element signature="class#10317:14693" expanded="false" />
+            <element signature="method#onNothingSelected#0;class#10317:14693" expanded="false" />
+            <element signature="class#14743:15598" expanded="false" />
+            <element signature="method#declaraobjetos#0;class#CadContatos#0" expanded="false" />
+            <element signature="method#cadastraDadosCep#0;class#CadContatos#0" expanded="false" />
+            <element signature="method#buscacep#0;class#CadContatos#0" expanded="false" />
+            <element signature="method#onBackPressed#0;class#CadContatos#0" expanded="false" />
+            <element signature="method#run#0;class#CadContatos#0" expanded="false" />
+            <element signature="method#getIndexApiAction#0;class#CadContatos#0" expanded="false" />
+            <element signature="method#onStart#0;class#CadContatos#0" expanded="false" />
+            <element signature="method#onStop#0;class#CadContatos#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListContatos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="199" column="25" selection-start-line="199" selection-start-column="25" selection-end-line="199" selection-end-column="25" />
+          <folding>
+            <element signature="method#onCreate#0;class#act_ListContatos#0" expanded="false" />
+            <element signature="method#carregausuariologado#0;class#act_ListContatos#0" expanded="false" />
+            <element signature="method#onBackPressed#0;class#act_ListContatos#0" expanded="false" />
+            <element signature="method#onOptionsItemSelected#0;class#act_ListContatos#0" expanded="false" />
+            <element signature="method#onNavigationItemSelected#0;class#act_ListContatos#0" expanded="false" />
+            <element signature="method#carregarcontatos#0;class#act_ListContatos#0" expanded="false" />
+            <element signature="method#run#0;class#act_ListContatos#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1364">
-          <caret line="2889" column="56" selection-start-line="2889" selection-start-column="56" selection-end-line="2889" selection-end-column="56" />
+        <state relative-caret-position="977">
+          <caret line="2754" column="82" selection-start-line="2754" selection-start-column="82" selection-end-line="2754" selection-end-column="82" />
           <folding>
             <element signature="method#VerificaConexao#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#run#0;class#actSincronismo#0" expanded="false" />
@@ -3895,13 +3752,11 @@
             <element signature="method#RetornaBairro#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#RetornaCidade#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#RetornaEstado#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarPedidosEnvioStatic#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#SincAtuEstado#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#CancelarPedidoAberto#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#AutorizaPedidoAberto#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#AtualizaStatusPedido#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#RetornaqtdClientes#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarProdutosStatic#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#RetornaInfoCliexPedido#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#SituacaodoClientexPed#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#generateLayout#0;class#actSincronismo#0" expanded="false" />
@@ -3919,21 +3774,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="142" column="38" selection-start-line="142" selection-start-column="38" selection-end-line="142" selection-end-column="38" />
+        <state relative-caret-position="-1156">
+          <caret line="72" column="45" selection-start-line="72" selection-start-column="45" selection-end-line="72" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="217" column="85" selection-start-line="217" selection-start-column="85" selection-end-line="217" selection-end-column="85" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="452" column="9" selection-start-line="452" selection-start-column="9" selection-end-line="452" selection-end-column="9" />
           <folding>
-            <element signature="method#carregausuariologado#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#declaraobjetos#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#filtrositped#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#filtroemissaoped#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#filtrocliped#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#onBackPressed#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#onActivityResult#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#onNavigationItemSelected#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#run#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#CarregarPedidos#0;class#actListPedidos#0" expanded="false" />
+            <element signature="class#3260:4676" expanded="false" />
+            <element signature="method#onNothingSelected#0;class#3260:4676" expanded="false" />
+            <element signature="class#4722:9508" expanded="false" />
+            <element signature="method#onItemSelected#0;class#4722:9508" expanded="false" />
+            <element signature="class#9558:13916" expanded="false" />
+            <element signature="class#13966:14821" expanded="false" />
+            <element signature="method#declaraobjetos#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#VerificaConexao#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#onBackPressed#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#consultacnpj#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#cadastraDadosCNPJ#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#run#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#getIndexApiAction#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#onStart#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#onStop#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#validarclientes#0;class#act_CadClientes#0" expanded="false" />
+            <element signature="method#onFocusChange#0;class#act_CadClientes#0" expanded="false" />
           </folding>
         </state>
       </provider>

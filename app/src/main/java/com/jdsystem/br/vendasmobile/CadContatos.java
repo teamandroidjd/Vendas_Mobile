@@ -489,15 +489,6 @@ public class CadContatos extends AppCompatActivity implements Runnable {
         Boolean AtualizaEst = true;
         PesqCEP = true;
 
-        DialogECB = new ProgressDialog(CadContatos.this);
-        DialogECB.setTitle("Aguarde...");
-        DialogECB.setMessage("");
-        DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        DialogECB.setProgress(0);
-        DialogECB.setIcon(R.drawable.icon_sync);
-        DialogECB.setMax(0);
-        DialogECB.show();
-
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -521,12 +512,19 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                 System.out.println("Response :" + resultsRequestSOAP.toString());
             } else {
                 DialogECB.cancel();
-                Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_LONG).show();
                 PesqCEP = false;
                 return PesqCEP;
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
+        }
+
+        if (RetDadosEndereco.equals("CEP não Encontrado")) {
+            DialogECB.dismiss();
+            Toast.makeText(CadContatos.this, "CEP não encontrado na base de dados. Verifique se está correto e tente novamente.", Toast.LENGTH_LONG).show();
+            endereco.setText("");
+            return PesqCEP;
         }
 
         try {
@@ -662,6 +660,19 @@ public class CadContatos extends AppCompatActivity implements Runnable {
 
     public void buscacep(View view) {
         String sCEP = cep.getText().toString().replaceAll("[^0123456789]", "");
+
+        if (sCEP.length() < 8) {
+            cep.setError("CEP incompleto. Verifique!");
+            cep.requestFocus();
+            return;
+        }
+        DialogECB = new ProgressDialog(CadContatos.this);
+        DialogECB.setTitle("Aguarde.");
+        DialogECB.setMessage("Pesquisando o CEP informado...");
+        DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        DialogECB.setIcon(R.drawable.icon_sync);
+        DialogECB.show();
+
         cadastraDadosCep(sCEP);
     }
 

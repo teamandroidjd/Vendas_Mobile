@@ -55,12 +55,12 @@ import java.util.List;
 import static com.jdsystem.br.vendasmobile.R.id.url;
 
 
-public class act_CadClientes extends AppCompatActivity implements Runnable {
+public class act_CadClientes extends AppCompatActivity implements Runnable, View.OnFocusChangeListener {
 
-    String sTipoPessoa, sUF, sCodVend, NomeBairro, NomeCidade, usuario, senha,URLPrincipal,nomeRazao;
+    String sTipoPessoa, sUF, sCodVend, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao;
     private Handler handler = new Handler();
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
-    int CodCidade, CodBairro, telaInvocada,codClieExt;
+    int CodCidade, CodBairro, telaInvocada, codClieExt;
     Boolean PesqCEP;
     ImageButton BtnPesqCep, BtnconsultaCNPJ;
     private static ProgressDialog DialogECB;
@@ -119,6 +119,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     EdtRG.setVisibility(EditText.GONE);
                 }
             }
+
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
@@ -376,7 +377,8 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         EditText etTelefone2 = (EditText) findViewById(R.id.EdtTel2);
         etTelefone2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone2));
 
-        //Edtcpf.setOnFocusChangeListener(this);
+        Edtcpf.setOnFocusChangeListener(this);
+        cnpjcpf.setOnFocusChangeListener(this);
     }
 
     public boolean VerificaConexao() {
@@ -392,8 +394,20 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         return conectado;
     }
 
-    public void buscacepclie (View view){
+    public void buscacepclie(View view) {
         String sCEP = cep.getText().toString().replaceAll("[^0123456789]", "");
+        if (sCEP.length() < 8) {
+            cep.setError("CEP incompleto. Verifique!");
+            cep.requestFocus();
+            return;
+        }
+        DialogECB = new ProgressDialog(act_CadClientes.this);
+        DialogECB.setTitle("Aguarde.");
+        DialogECB.setMessage("Pesquisando o CEP informado...");
+        DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        DialogECB.setIcon(R.drawable.icon_sync);
+        DialogECB.show();
+
         cadastraDadosCep(sCEP);
     }
 
@@ -402,15 +416,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         String Cidade = null;
         Boolean AtualizaEst = true;
         PesqCEP = true;
-
-        DialogECB = new ProgressDialog(act_CadClientes.this);
-        DialogECB.setTitle("Aguarde...");
-        DialogECB.setMessage("");
-        DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        DialogECB.setProgress(0);
-        DialogECB.setIcon(R.drawable.icon_sync);
-        DialogECB.setMax(0);
-        DialogECB.show();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -426,31 +431,32 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         String RetDadosEndereco = null;
 
         try {
-            //Boolean ConexOk = true;
-            //Boolean ConexOk = actLogin.VerificaConexao();
-            if (VerificaConexao() == true) {
+            Boolean ConexOK = Util.checarConexaoCelular(this);
+            if (ConexOK == true) {
                 Envio.call("", envelope);
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
                 RetDadosEndereco = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
             } else {
-                DialogECB.cancel();
-                Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
+                DialogECB.dismiss();
+                Toast.makeText(act_CadClientes.this, "Sem conexão com a internet! Verifique e tente novamente.", Toast.LENGTH_LONG).show();
                 return;
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
         }
+        if(RetDadosEndereco.equals("CEP não Encontrado")){
+            DialogECB.dismiss();
+            Toast.makeText(act_CadClientes.this, "CEP não encontrado na base de dados. Verifique se está correto e tente novamente.", Toast.LENGTH_LONG).show();
+            endereco.setText("");
+            return;
+        }
 
         try {
             JSONObject jsonObj = new JSONObject(RetDadosEndereco);
             JSONArray JEndereco = jsonObj.getJSONArray("cep");
-
             int jumpTime = 0;
-            DialogECB.setProgress(jumpTime);
             final int totalProgressTime = JEndereco.length();
-            DialogECB.setMax(totalProgressTime);
             DB = new ConfigDB(this).getReadableDatabase();
 
             for (int i = 0; i < JEndereco.length(); i++) {
@@ -458,8 +464,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                     JSONObject c = JEndereco.getJSONObject(jumpTime);
                     try {
                         jumpTime += 1;
-                        DialogECB.setProgress(jumpTime);
-                        DialogECB.setMessage("Sincronizando Tabelas - Estados");
                         String SiglaEstado = c.getString("uf");
 
                         Cursor CursosEstado = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
@@ -480,8 +484,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         }
                         CursosEstado.close();
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
-                        E.printStackTrace();
                     }
 
                     //Cadastrar Cidades
@@ -508,7 +510,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         }
                         CursorCidade.close();
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
                         E.printStackTrace();
                     }
 
@@ -529,12 +530,11 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                         }
                         CursorBairro.close();
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
                         E.printStackTrace();
                     }
                     String end = c.getString("logradouro");
                     String tipoend = c.getString("tipo_logradouro");
-                    endereco.setText(tipoend+" "+end);
+                    endereco.setText(tipoend + " " + end);
                     numero.requestFocus();
 
                     //Estado
@@ -602,13 +602,13 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             alert.show();
             return;
 
-        }else {
+        } else {
             Intent i = new Intent(act_CadClientes.this, act_ListClientes.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor",sCodVend);
-            params.putString("usuario",usuario);
-            params.putString("senha",senha);
-            params.putString("urlPrincipal",URLPrincipal);
+            params.putString("codvendedor", sCodVend);
+            params.putString("usuario", usuario);
+            params.putString("senha", senha);
+            params.putString("urlPrincipal", URLPrincipal);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -638,25 +638,6 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 cnpjcpf.setError("Digite o CNPJ!");
                 cnpjcpf.requestFocus();
                 return;
-            } else if (Util.validaCNPJ(cnpjcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
-                cnpjcpf.setError("CNPJ inválido! Verifique");
-                cnpjcpf.requestFocus();
-                return;
-            } else if (validacliente == true) {
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(act_CadClientes.this);
-                builder.setTitle(R.string.app_namesair);
-                builder.setIcon(R.drawable.logo_ico);
-                builder.setMessage("CNPJ já cadastrado para o cliente "+ nomeRazao +" código "+ codClieExt +". Verifique!!")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                cnpjcpf.requestFocus();
-                                cnpjcpf.selectAll();
-                            }
-                        });
-                android.app.AlertDialog alert = builder.create();
-                alert.show();
-                return;
             }
             NomePessoa = nomerazao.getText().toString();
             NomeFantasia = nomefan.getText().toString();
@@ -666,28 +647,9 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 nomecompleto.setError("Digite o Nome Completo!");
                 nomecompleto.requestFocus();
                 return;
-            } else if (Util.validaCPF(Edtcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
-                Edtcpf.setError("CPF inválido! Verifique");
+            } else if (Edtcpf.getText().length() == 0) {
+                Edtcpf.setError("Digite a Identidade!");
                 Edtcpf.requestFocus();
-                return;
-            } else if (validacliente == true) {
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(act_CadClientes.this);
-                builder.setTitle(R.string.app_namesair);
-                builder.setIcon(R.drawable.logo_ico);
-                builder.setMessage("CPF já cadastrado para o cliente "+ nomeRazao +" código "+ codClieExt +". Verifique!")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Edtcpf.requestFocus();
-                                Edtcpf.selectAll();
-                            }
-                        });
-                android.app.AlertDialog alert = builder.create();
-                alert.show();
-                return;
-            } else if (EdtRG.getText().length() == 0) {
-                EdtRG.setError("Digite a Identidade!");
-                EdtRG.requestFocus();
                 return;
             }
             NomePessoa = nomecompleto.getText().toString().trim();
@@ -706,12 +668,12 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
             cep.setError("Digite o CEP!");
             cep.requestFocus();
             return;
-        }else if (Util.validaEmail(email.getText().toString()) == false) {
+        } /*else if (Util.validaEmail(email.getText().toString()) == false) {
             email.setError("E-mail inválido! Verifique.");
             email.requestFocus();
             return;
-        }
-        CEP = cep.getText().toString().replaceAll("[.-]","");
+        }*/
+        CEP = cep.getText().toString().replaceAll("[.-]", "");
 
         Cursor CursorClieCons = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                 " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
@@ -733,12 +695,12 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
                         "CEP, CODVENDEDOR, TIPOPESSOA, ATIVO, BLOQUEIO, REGIDENT, FLAGINTEGRADO) VALUES(" +
-                        "'"+ CpfCnpj +"', '"+ NomePessoa +
-                        "','"+ NomeFantasia +"', '"+ ie.getText().toString() +"', '"+ email.getText().toString() +
-                        "','"+ tel1.getText().toString() +"', '"+ tel2.getText().toString() +"', '"+ endereco.getText().toString() +
-                        "','"+ numero.getText().toString() +"', '"+ Complemento.getText().toString() +
-                        "',"+ CodBairro +", '"+ edtOBS.getText().toString() +"', "+ CodCidade +", '"+ sUF +
-                        "','"+ CEP +"', "+ sCodVend +", '"+ sTipoPessoa +"', '" + "S" + "', '" + "01"+ "', '"+ EdtRG.getText().toString() +"','"
+                        "'" + CpfCnpj + "', '" + NomePessoa +
+                        "','" + NomeFantasia + "', '" + ie.getText().toString() + "', '" + email.getText().toString() +
+                        "','" + tel1.getText().toString() + "', '" + tel2.getText().toString() + "', '" + endereco.getText().toString() +
+                        "','" + numero.getText().toString() + "', '" + Complemento.getText().toString() +
+                        "'," + CodBairro + ", '" + edtOBS.getText().toString() + "', " + CodCidade + ", '" + sUF +
+                        "','" + CEP + "', " + sCodVend + ", '" + sTipoPessoa + "', '" + "S" + "', '" + "01" + "', '" + EdtRG.getText().toString() + "','"
                         + "1" + "');");
             }
             CursorClieCons.close();
@@ -858,13 +820,13 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         }
     }
 
-    public void consultacnpj(View view)  {
+    public void consultacnpj(View view) {
 
         String CNPJ = cnpjcpf.getText().toString().replaceAll("[^0123456789]", "");
         cadastraDadosCNPJ(CNPJ);
     }
 
-    private void cadastraDadosCNPJ(String cnpj)  {
+    private void cadastraDadosCNPJ(String cnpj) {
         /*HttpURLConnection  urlConnection = null;
 
         try {
@@ -1011,14 +973,81 @@ public class act_CadClientes extends AppCompatActivity implements Runnable {
         return clientecadastrado;
     }
 
-    /*@Override
+    @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if(sTipoPessoa.equals("F") && hasFocus == false){
-            if(validarclientes()){
-                Edtcpf.requestFocus();
-                Edtcpf.selectAll();
+        if (sTipoPessoa.equals("F") && hasFocus == false && Edtcpf.getText().toString().length() > 0) {
+            if (Util.validaCPF(Edtcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
+                AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+                alerta.setTitle(R.string.app_namesair);
+                alerta.setIcon(R.drawable.logo_ico);
+                alerta.setMessage("CPF inválido. Verifique!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Edtcpf.requestFocus();
+                                Edtcpf.selectAll();
+                            }
+                        });
+
+                AlertDialog alert = alerta.create();
+                alert.show();
                 return;
             }
+            if (validarclientes()) {
+                AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+                alerta.setTitle(R.string.app_namesair);
+                alerta.setIcon(R.drawable.logo_ico);
+                alerta.setMessage("CPF já cadastrado para o cliente " + nomeRazao + " código " + codClieExt + ". Verifique!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Edtcpf.requestFocus();
+                                Edtcpf.selectAll();
+                            }
+                        });
+
+                AlertDialog alert = alerta.create();
+                alert.show();
+                return;
+
+            }
+
+        } else if (sTipoPessoa.equals("J") && hasFocus == false && cnpjcpf.getText().toString().length() > 0) {
+            if (Util.validaCNPJ(cnpjcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
+                AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+                alerta.setTitle(R.string.app_namesair);
+                alerta.setIcon(R.drawable.logo_ico);
+                alerta.setMessage("CNPJ inválido. Verifique!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cnpjcpf.requestFocus();
+                                cnpjcpf.selectAll();
+                            }
+                        });
+
+                AlertDialog alert = alerta.create();
+                alert.show();
+                return;
+            }
+            if (validarclientes()) {
+                AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+                alerta.setTitle(R.string.app_namesair);
+                alerta.setIcon(R.drawable.logo_ico);
+                alerta.setMessage("CNPJ já cadastrado para o cliente " + nomeRazao + " código " + codClieExt + ". Verifique!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cnpjcpf.requestFocus();
+                                cnpjcpf.selectAll();
+                            }
+                        });
+
+                AlertDialog alert = alerta.create();
+                alert.show();
+                return;
+
+            }
         }
-    }*/
+    }
 }

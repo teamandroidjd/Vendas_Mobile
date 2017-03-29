@@ -459,7 +459,6 @@ public class actListPedidos extends AppCompatActivity
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
