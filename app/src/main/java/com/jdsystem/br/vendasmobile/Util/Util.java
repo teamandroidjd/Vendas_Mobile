@@ -335,6 +335,12 @@ public class Util extends Activity {
         return sdf.format(data.getTime());
     }
 
+    public static String DataHojeComHorasMinSecBR() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date data = new Date();
+        return sdf.format(data.getTime());
+    }
+
     public static String DataHojeSemHorasBR() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date data = new Date();

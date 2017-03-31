@@ -234,11 +234,14 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                             }
                         }
                         else if (BloqClie.equals("S")) {
-                            /*Boolean ConexOk = Util.checarConexaoCelular(Lista_clientes.this);
+                            Boolean ConexOk = Util.checarConexaoCelular(Lista_clientes.this);
                             if (ConexOk == true) {
-                                actSincronismo.RetornaInfoCliexPedido(CodVendedor, Lista_clientes.this, usuario, senha, CodCliente);
-                            }*/
-                            if (bloqueio.equals("01")) {
+                                actSincronismo.SincronizarClientesStatic(CodVendedor, Lista_clientes.this, usuario, senha,cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT")));
+                                Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = "+cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT"))+"",null);
+                                cursorclie.moveToFirst();
+                                bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
+                            }
+                            if (bloqueio.equals("01") || bloqueio.equals("1") ) {
                                 if (NumPedido == null) {
                                     Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                     Bundle params = new Bundle();
@@ -366,7 +369,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                     }
                 });
             }
-            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, true, usuario, senha);
+            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha,0);
             if (sincclie == false) {
                 handler.post(new Runnable() {
                     @Override

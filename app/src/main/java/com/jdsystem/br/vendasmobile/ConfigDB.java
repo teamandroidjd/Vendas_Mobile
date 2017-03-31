@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 5;
+    public static int versao = 6;
 
     public ConfigDB(Context ctx) {
 
@@ -65,6 +65,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             ");");
 
     private static String SQL_PARAMAPP = ("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME," +
+            " DT_ULT_CLIE DATETIME,                           " +
+            " DT_ULT_ITENS DATETIME,                          " +
             " p_usu_codigo INTEGER,                           " +
             " p_importar_todos_clientes CHAR DEFAULT 1,       " +
             " p_qual_endereco_ip CHAR DEFAULT 1,              " +
@@ -435,12 +437,23 @@ public class ConfigDB extends SQLiteOpenHelper {
                 System.out.println("ConfigDB, falha no CREATE TABLE IF NOT EXISTS BLOQCLIE");
             }
 
-            //MODIFICAÇÕES NA VERSÃO 5 DO BANCO DE DADOS
+            //MODIFICAÇÕES NA VERSÃO 6 DO BANCO DE DADOS
             try {
                 db.execSQL("ALTER TABLE CONTATO ADD CODCLIENTE INTEGER");
             } catch (Exception E) {
                 System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODCLIENTE INTEGER");
             }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DT_ULT_CLIE DATETIME");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DT_ULT_CLIE DATETIME");
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD DT_ULT_ITENS DATETIME");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DT_ULT_CLIE DATETIME");
+            }
+
         }
     }
 }

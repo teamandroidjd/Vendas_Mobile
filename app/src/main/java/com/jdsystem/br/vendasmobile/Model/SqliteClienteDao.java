@@ -151,7 +151,7 @@ public class SqliteClienteDao {
         db = new ConfigDB(ctx).getReadableDatabase();
         SqliteClienteBean clientes = null;
         try {
-            cursor = db.rawQuery("SELECT CLIENTES.*, CLIENTES.CODCLIE_INT as _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE," +
+            cursor = db.rawQuery("SELECT CLIENTES.*, CLIENTES.CODCLIE_INT as _id, TEL1, ATIVO, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE," +
                     " BAIRROS.DESCRICAO AS BAIRRO, ESTADOS.UF AS UF FROM CLIENTES LEFT OUTER JOIN " +
                     " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
@@ -222,11 +222,11 @@ public class SqliteClienteDao {
         SqliteClienteBean clientes = new SqliteClienteBean();
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, FLAGINTEGRADO, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+            cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, ATIVO, CNPJ_CPF, FLAGINTEGRADO, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                     " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                     " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                    " WHERE CODVENDEDOR = " + CodVendedor +
+                    " WHERE CODVENDEDOR = " + CodVendedor + " AND  ATIVO = 'S' " +
                     " ORDER BY NOMEFAN", null);
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -243,48 +243,48 @@ public class SqliteClienteDao {
         Cursor cursor = null;
         try {
             if (valor_campo == null || valor_campo.length() == 0) {
-                cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, ATIVO, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                         " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                         " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                         " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                        " WHERE CODVENDEDOR = " + CodVendedor +
+                        " WHERE CODVENDEDOR = " + CodVendedor + " AND  ATIVO = 'S' " +
                         " ORDER BY NOMEFAN, NOMERAZAO ", null);
             } else {
                 switch (field) {
                     case NOME_DO_CLIENTE:
-                        cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                        cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, ATIVO, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                                 " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                                 " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                                 " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
                                 " WHERE NOMERAZAO LIKE '%" + valor_campo + "%'" +
-                                " AND CODVENDEDOR = " + CodVendedor +
+                                " AND CODVENDEDOR = " + CodVendedor + " AND  ATIVO = 'S' " +
                                 " ORDER BY NOMEFAN, NOMERAZAO ", null);
                         break;
                     case NOME_FANTASIA:
-                        cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                        cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, ATIVO, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                                 " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                                 " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                                 " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
                                 " WHERE NOMEFAN LIKE '%" + valor_campo + "%'" +
-                                " AND CODVENDEDOR = " + CodVendedor +
+                                " AND CODVENDEDOR = " + CodVendedor + " AND  ATIVO = 'S' " +
                                 " ORDER BY NOMEFAN, NOMERAZAO ", null);
                         break;
                     case NOME_CIDADE:
-                        cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                        cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, ATIVO, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                                 " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                                 " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                                 " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
                                 " WHERE CIDADE LIKE '%" + valor_campo + "%'" +
-                                " AND CODVENDEDOR = " + CodVendedor +
+                                " AND CODVENDEDOR = " + CodVendedor + " AND  ATIVO = 'S' " +
                                 " ORDER BY NOMEFAN, NOMERAZAO ", null);
                         break;
                     case NOME_BAIRRO:
-                        cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                        cursor = db.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, ATIVO, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                                 " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                                 " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                                 " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
                                 " WHERE BAIRRO LIKE '%" + valor_campo + "%'" +
-                                " AND CODVENDEDOR = " + CodVendedor +
+                                " AND CODVENDEDOR = " + CodVendedor + " AND  ATIVO = 'S' " +
                                 " ORDER BY NOMEFAN, NOMERAZAO ", null);
                         break;
                 }

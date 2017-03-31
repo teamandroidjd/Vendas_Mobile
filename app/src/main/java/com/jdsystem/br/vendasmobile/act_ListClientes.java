@@ -433,7 +433,7 @@ public class act_ListClientes extends AppCompatActivity
                     }
                 });
             }
-            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, true, usuario, senha);
+            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha,0);
             if (sincclie == false) {
                 handler.post(new Runnable() {
                     @Override

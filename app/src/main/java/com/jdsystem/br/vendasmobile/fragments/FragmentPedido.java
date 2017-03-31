@@ -22,14 +22,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.actListPedidos;
-import com.jdsystem.br.vendasmobile.actLogin;
 import com.jdsystem.br.vendasmobile.actSincronismo;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
@@ -38,7 +36,6 @@ import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -53,7 +50,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     private SQLiteDatabase DB;
     int codclie_ext;
     String limitecred;
-    String bloqueio, usuario, senha, Codvendedor,flagintegrado, codclie_inte;
+    String bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte;
 
 
     public View onCreateView(LayoutInflater inflater,
@@ -111,14 +108,19 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
 
-            final Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + "", null);
+
+            final Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT,VALORTOTAL, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + "", null);
             cursorped.moveToFirst();
             codclie_ext = cursorped.getInt(cursorped.getColumnIndex("CODCLIE_EXT"));
             codclie_inte = cursorped.getString(cursorped.getColumnIndex("CODCLIE"));
+            String vltotal = cursorped.getString(cursorped.getColumnIndex("VALORTOTAL")).replace(".", ",");
+            BigDecimal vendatotal = new BigDecimal(Double.parseDouble(vltotal.replace(',', '.')));
+            String vltotalvenda = vendatotal.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+            final String totalvenda = vltotalvenda;
             cursorped.close();
 
             try {
-                if(codclie_ext !=0) {
+                if (codclie_ext != 0) {
                     Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, FLAGINTEGRADO, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = " + codclie_ext + "", null);
                     cursorclie.moveToFirst();
                     limitecred = cursorclie.getString(cursorclie.getColumnIndex("LIMITECRED"));
@@ -144,152 +146,161 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                 if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
                                     boolean sitclieenvio;
                                     boolean pedidoendiado;
+                                    String sitcliexvend;
                                     try {
                                         Cursor cursorclie = DB.rawQuery("SELECT FLAGINTEGRADO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = '" + codclie_inte + "'", null);
                                         cursorclie.moveToFirst();
                                         flagintegrado = cursorclie.getString(cursorclie.getColumnIndex("FLAGINTEGRADO"));
+
                                         cursorclie.close();
                                     } catch (Exception e) {
                                         e.toString();
                                     }
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                         if (ConexOk == true) {
-                                            if(flagintegrado.equals("1")){
-                                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(codclie_inte,getActivity(),true,usuario,senha);
-                                                if(sitclieenvio == true){
+                                            if (flagintegrado.equals("1")) {
+                                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), true, usuario, senha);
+                                                if (sitclieenvio == true) {
                                                     pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
-                                                    if(pedidoendiado == true){
+                                                    if (pedidoendiado == true) {
                                                         Intent intent = ((actListPedidos) getActivity()).getIntent();
                                                         ((actListPedidos) getActivity()).finish();
                                                         startActivity(intent);
                                                         Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
-                                                    }else{
+                                                    } else {
                                                         Util.msg_toast_personal(getActivity(), "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
                                                         return;
                                                     }
-                                                }else{
+                                                } else {
                                                     Util.msg_toast_personal(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Util.PADRAO);
                                                     return;
                                                 }
-                                            }else {
+                                            } else {
+                                                sitcliexvend = actSincronismo.SituacaodoClientexPed(totalvenda,getActivity(),usuario,senha,codclie_ext);
+                                                if(sitcliexvend.equals("OK")) {
                                                 pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
-                                                if(pedidoendiado == true){
+                                                if (pedidoendiado == true) {
                                                     Intent intent = ((actListPedidos) getActivity()).getIntent();
                                                     ((actListPedidos) getActivity()).finish();
                                                     startActivity(intent);
                                                     Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
-                                                }else{
+                                                } else {
                                                     Util.msg_toast_personal(getActivity(), "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
                                                     return;
                                                 }
+                                                }else {
+                                                    Util.msg_toast_personal(getActivity(), sitcliexvend, Util.PADRAO);
+                                                    return;
+                                                }
+
                                             }
 
-                                        }else {
+                                        } else {
                                             Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
                                             return;
                                         }
-                                        } else {
-                                            Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
-                                        }
-                                    } else if ((selectedRadioButton.getText().toString().trim()).equals("Cancelar")) {
-                                        if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
-                                            boolean Cancelado = actSincronismo.CancelarPedidoAberto(NumPedido, getContext());
-
-                                            if (Cancelado == true) {
-                                                Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                                ((actListPedidos) getActivity()).finish();
-                                                startActivity(intent);
-                                                Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " cancelado com Sucesso!", Util.PADRAO);
-                                            } else {
-                                                Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser cancelado, verifique!", Util.PADRAO);
-                                            }
-                                        } else {
-                                            Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
-                                        }
-                                    } else if ((selectedRadioButton.getText().toString().trim()).equals("Compartilhar")) {
-                                        //String TxtPedido = actSincronismo.RetornaPedido(NumPedido, getContext());
-                                        int permissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                                        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                                            return;
-                                        }
-                                        String TxtPedido = actSincronismo.GerarPdf(NumPedido, getContext());
-                                        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf";
-
-                                        if (!TxtPedido.equals("0")) {
-                                            Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                                            File fileWithinMyDir = new File(path);
-
-                                            if (fileWithinMyDir.exists()) {
-                                                intentShareFile.setType("application/pdf");
-                                                intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path + "/" + TxtPedido));
-
-                                                intentShareFile.putExtra(Intent.EXTRA_SUBJECT, " Força de Vendas - Vendedor: " + NomeVendedor + " - Pedido nº " + NumPedido);
-                                                intentShareFile.putExtra(Intent.EXTRA_TEXT, "Segue em anexo o Pedido nº " + NumPedido);
-
-                                                startActivity(Intent.createChooser(intentShareFile, "Compartilhar Pedido nº " + NumPedido));
-                                            }
-                                        } else {
-                                            Util.msg_toast_personal(getActivity(), "Não foi possivel compartilhar o Pedido nº " + NumPedido + ".", Util.PADRAO);
-                                        }
-                                    } else if ((selectedRadioButton.getText().toString().trim()).equals("Verificar Status")) {
-                                        boolean statusatualizado;
-                                        if (Status.equals("#")) {
-                                            final String NumPedidoExt = adapter.PedidoExterno(position);
-                                            statusatualizado = actSincronismo.AtualizaStatusPedido(NumPedidoExt, getContext());
-                                            if (statusatualizado == true) {
-                                                Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                                ((actListPedidos) getActivity()).finish();
-                                                startActivity(intent);
-                                            } else {
-                                                Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                                ((actListPedidos) getActivity()).finish();
-                                                startActivity(intent);
-                                                Util.msg_toast_personal(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt + ".", Util.PADRAO);
-                                            }
-                                        } else {
-                                            Util.msg_toast_personal(getActivity(), "Somente Pedidos Sincronizados", Util.PADRAO);
-                                        }
-                                    } else if ((selectedRadioButton.getText().toString().trim()).equals("Gerar Venda")) {
-                                        if (Status.equals("Orçamento")) {
-                                            boolean Autorizado = actSincronismo.AutorizaPedidoAberto(NumPedido, getContext());
-                                            if (Autorizado == true) {
-                                                Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                                ((actListPedidos) getActivity()).finish();
-                                                startActivity(intent);
-                                                Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " autorizado a Gerar Venda", Util.PADRAO);
-                                            } else {
-                                                Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser autorizado a Gerar Venda, verifique!", Util.PADRAO);
-                                            }
-                                        } else {
-                                            Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
-                                        }
-                                    } else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
-                                        if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
-                                            final String NumPedido = adapter.ChamaDados(position);
-                                            Intent VendaProd = new Intent((actListPedidos) getActivity(), VenderProdutos.class);
-                                            Bundle params = new Bundle();
-                                            params.putString("numpedido", NumPedido);
-                                            params.putString("CodVendedor", Codvendedor);
-                                            VendaProd.putExtras(params);
-                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                            //((actListPedidos) getActivity()).finish();
-                                            startActivityForResult(VendaProd, 1);
-                                        }
+                                    } else {
+                                        Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
                                     }
-                                    dialog.cancel();
-                                } else {
-                                    Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);
-                                }
-                            }
-                        }).
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Cancelar")) {
+                                    if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
+                                        boolean Cancelado = actSincronismo.CancelarPedidoAberto(NumPedido, getContext());
 
-                        show();
+                                        if (Cancelado == true) {
+                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                            ((actListPedidos) getActivity()).finish();
+                                            startActivity(intent);
+                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " cancelado com Sucesso!", Util.PADRAO);
+                                        } else {
+                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser cancelado, verifique!", Util.PADRAO);
+                                        }
+                                    } else {
+                                        Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                                    }
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Compartilhar")) {
+                                    //String TxtPedido = actSincronismo.RetornaPedido(NumPedido, getContext());
+                                    int permissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                                    if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                                        return;
+                                    }
+                                    String TxtPedido = actSincronismo.GerarPdf(NumPedido, getContext());
+                                    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf";
+
+                                    if (!TxtPedido.equals("0")) {
+                                        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+                                        File fileWithinMyDir = new File(path);
+
+                                        if (fileWithinMyDir.exists()) {
+                                            intentShareFile.setType("application/pdf");
+                                            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + path + "/" + TxtPedido));
+
+                                            intentShareFile.putExtra(Intent.EXTRA_SUBJECT, " Força de Vendas - Vendedor: " + NomeVendedor + " - Pedido nº " + NumPedido);
+                                            intentShareFile.putExtra(Intent.EXTRA_TEXT, "Segue em anexo o Pedido nº " + NumPedido);
+
+                                            startActivity(Intent.createChooser(intentShareFile, "Compartilhar Pedido nº " + NumPedido));
+                                        }
+                                    } else {
+                                        Util.msg_toast_personal(getActivity(), "Não foi possivel compartilhar o Pedido nº " + NumPedido + ".", Util.PADRAO);
+                                    }
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Verificar Status")) {
+                                    boolean statusatualizado;
+                                    if (Status.equals("#")) {
+                                        final String NumPedidoExt = adapter.PedidoExterno(position);
+                                        statusatualizado = actSincronismo.AtualizaStatusPedido(NumPedidoExt, getContext());
+                                        if (statusatualizado == true) {
+                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                            ((actListPedidos) getActivity()).finish();
+                                            startActivity(intent);
+                                        } else {
+                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                            ((actListPedidos) getActivity()).finish();
+                                            startActivity(intent);
+                                            Util.msg_toast_personal(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt + ".", Util.PADRAO);
+                                        }
+                                    } else {
+                                        Util.msg_toast_personal(getActivity(), "Somente Pedidos Sincronizados", Util.PADRAO);
+                                    }
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Gerar Venda")) {
+                                    if (Status.equals("Orçamento")) {
+                                        boolean Autorizado = actSincronismo.AutorizaPedidoAberto(NumPedido, getContext());
+                                        if (Autorizado == true) {
+                                            Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                            ((actListPedidos) getActivity()).finish();
+                                            startActivity(intent);
+                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " autorizado a Gerar Venda", Util.PADRAO);
+                                        } else {
+                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser autorizado a Gerar Venda, verifique!", Util.PADRAO);
+                                        }
+                                    } else {
+                                        Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                                    }
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
+                                    if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
+                                        final String NumPedido = adapter.ChamaDados(position);
+                                        Intent VendaProd = new Intent((actListPedidos) getActivity(), VenderProdutos.class);
+                                        Bundle params = new Bundle();
+                                        params.putString("numpedido", NumPedido);
+                                        params.putString("CodVendedor", Codvendedor);
+                                        VendaProd.putExtras(params);
+                                        Intent intent = ((actListPedidos) getActivity()).getIntent();
+                                        //((actListPedidos) getActivity()).finish();
+                                        startActivityForResult(VendaProd, 1);
+                                    }
+                                }
+                                dialog.cancel();
+                            } else {
+                                Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);
+                            }
+                        }
+                    }).
+
+                    show();
            /* } else {
                 Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
             }*/
-                    } catch(Exception E){
-                E.toString();
-            }
+        } catch (Exception E) {
+            E.toString();
         }
     }
+}
