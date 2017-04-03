@@ -45,15 +45,16 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             edtChave.setText(ChaveAcesso);
         }
     }
+
     public void SalvarHost(View view){
         if (edtChave.getText().length() == 0) {
-            edtChave.setError("Digite o caminho do host!");
+            edtChave.setError(getString(R.string.enter_host));
             edtChave.requestFocus();
             return;
         }
         DialogECB = new ProgressDialog(ConfigWeb.this);
-        DialogECB.setTitle("Aguarde");
-        DialogECB.setMessage("Validando licença...");
+        DialogECB.setTitle(getString(R.string.wait));
+        DialogECB.setMessage(getString(R.string.valid_license));
         DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         DialogECB.setIcon(R.drawable.icon_sync);
         DialogECB.show();
@@ -65,7 +66,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
 
     private void carregarpreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        ChaveAcesso = prefs.getString("ChaveAcesso", null);
+        ChaveAcesso = prefs.getString(getString(R.string.password), null);
     }
 
     private void declaraobjetos() {
@@ -94,7 +95,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 hd.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ConfigWeb.this, "Falha de comunicação com o servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ConfigWeb.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
                         return;
                     }
                 });
@@ -110,7 +111,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 hd.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ConfigWeb.this, "Falha no retorno da informações do servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ConfigWeb.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
                         return;
                     }
                 });
@@ -124,7 +125,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                         AlertDialog.Builder validuser = new AlertDialog.Builder(ConfigWeb.this);
                         validuser.setTitle(R.string.app_namesair);
                         validuser.setIcon(R.drawable.logo_ico);
-                        validuser.setMessage("Não foi possivel validar a licença. Tente novamente!")
+                        validuser.setMessage(R.string.not_validate_license)
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
@@ -144,7 +145,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                         AlertDialog.Builder validuser = new AlertDialog.Builder(ConfigWeb.this);
                         validuser.setTitle(R.string.app_namesair);
                         validuser.setIcon(R.drawable.logo_ico);
-                        validuser.setMessage("Não foi possível validar a licença devido a uma falha de comunicação com o servidor. Tente novamente!")
+                        validuser.setMessage(R.string.not_valid_license_failure_communicate)
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
@@ -165,7 +166,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                     AlertDialog.Builder validuser = new AlertDialog.Builder(ConfigWeb.this);
                     validuser.setTitle(R.string.app_namesair);
                     validuser.setIcon(R.drawable.logo_ico);
-                    validuser.setMessage("Sem conexão com a internet. Verifique!")
+                    validuser.setMessage(R.string.no_connection)
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -192,7 +193,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         editorhost.apply();
         hd.post(new Runnable() {
             public void run() {
-                Toast.makeText(ConfigWeb.this, "Licença validada com sucesso", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigWeb.this, R.string.license_validated, Toast.LENGTH_SHORT).show();
             }
         });
         finish();

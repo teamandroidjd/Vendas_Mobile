@@ -2750,7 +2750,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
             String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
             if (FlagIntegrado.equals("1")) {
-                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodClie_Int, this, true, usuario, senha);
+                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodClie_Int, this, usuario, senha);
                 if (sitclieenvio == true) {
                     handler.post(new Runnable() {
                         @Override
@@ -2758,7 +2758,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                             Toast.makeText(VenderProdutos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                     });
-                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
+                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this);
                     if (pedidoendiado == true) {
                         dialog.dismiss();
                         Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
@@ -2778,7 +2778,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     }
                 }
             } else {
-                pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this, true);
+                pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this);
                 if (pedidoendiado == true) {
                     dialog.dismiss();
                     Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);

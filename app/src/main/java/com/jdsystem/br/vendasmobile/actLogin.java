@@ -102,9 +102,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
-                builder.setMessage("Sem conexão com a Internet! O Usuário será autenticado localmente. Não havendo possibilidade de" +
-                        " sincronização de " +
-                        "informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo.")
+                builder.setMessage(R.string.login_no_connection)
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -113,7 +111,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                                 params.putString("codvendedor", sCodVend);
                                 params.putString("usuario", user);
                                 params.putString("senha", pass);
-                                //params.putString("urlPrincipal", URLPrincipal);
+                                params.putString("urlPrincipal", URLPrincipal);
                                 intent.putExtras(params);
                                 startActivity(intent);
                                 finish();
@@ -147,12 +145,12 @@ public class actLogin extends AppCompatActivity implements Runnable {
             }
         } else {
             if (edtUsuario.getText().length() == 0) {
-                edtUsuario.setError("Digite o nome do Usuário!");
+                edtUsuario.setError(getString(R.string.enter_username));
                 edtUsuario.requestFocus();
                 return;
 
             } else if (edtSenha.getText().length() == 0) {
-                edtSenha.setError("Digite a Senha!");
+                edtSenha.setError(getString(R.string.enter_password));
                 edtSenha.requestFocus();
                 return;
             }
@@ -168,8 +166,8 @@ public class actLogin extends AppCompatActivity implements Runnable {
             Dialogo = new ProgressDialog(actLogin.this);
             Dialogo.setIndeterminate(true);
             Dialogo.setCancelable(false);
-            Dialogo.setMessage("Verificando e atualizando informações...");
-            Dialogo.setTitle("Aguarde");
+            Dialogo.setMessage(getString(R.string.checking_user_password));
+            Dialogo.setTitle(R.string.wait);
             Dialogo.show();
 
         }
@@ -271,7 +269,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(actLogin.this, "Falha de comunicação com o servidor, tente novamente!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(actLogin.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
                         return;
                     }
                 });
@@ -295,7 +293,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(actLogin.this, "Falha no retorno da informações do servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(actLogin.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
                         return;
                     }
                 });
@@ -309,7 +307,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                         AlertDialog.Builder validuser = new AlertDialog.Builder(actLogin.this);
                         validuser.setTitle(R.string.app_namesair);
                         validuser.setIcon(R.drawable.logo_ico);
-                        validuser.setMessage("Usuário ou senha inválido. Verifique!")
+                        validuser.setMessage(R.string.invalid_user_password)
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
@@ -355,7 +353,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(actLogin.this, "Falha de comunicação com o servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(actLogin.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
                             return;
                         }
                     });
@@ -371,7 +369,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(actLogin.this, "Falha no retorno da informações do servidor, tente novamente!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(actLogin.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
                             return;
                         }
                     });
@@ -382,40 +380,40 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 if (HabUsuarioApp.equals("True") && ConexOkWifi == true) {
                     handler.post(new Runnable() {
                         public void run() {
-                            Dialogo.setMessage("Sincronizando empresas");
+                            Dialogo.setMessage(getString(R.string.sync_companies));
                         }
                     });
-                    actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         public void run() {
-                            Dialogo.setMessage("Atualizando parâmetros");
+                            Dialogo.setMessage(getString(R.string.updating_parameters));
                         }
                     });
-                    actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         public void run() {
-                            Dialogo.setMessage("Atualizando tabelas");
+                            Dialogo.setMessage(getString(R.string.updating_tables));
                         }
                     });
-                    actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         public void run() {
-                            Dialogo.setMessage("Atualizando bloqueios");
+                            Dialogo.setMessage(getString(R.string.updating_locks));
 
                         }
                     });
-                    actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Dialogo.setMessage("Atualizando cadastro de clientes");
+                            Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true, edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this,edtUsuario.getText().toString(), edtSenha.getText().toString());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Dialogo.setMessage("Enviando pedidos...");
+                            Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
                     actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
@@ -423,7 +421,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                         @Override
                         public void run() {
                             if (!UFVendedor.equals("")) {
-                                Dialogo.setMessage("Atualizando cadastro de cidades/bairros...");
+                                Dialogo.setMessage(getString(R.string.updating_city));
                             }
                         }
                     });
@@ -445,40 +443,40 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 } else if (HabUsuarioApp.equals("True")) {
                     handler.post(new Runnable() {
                         public void run() {
-                            Dialogo.setMessage("Sincronizando empresas");
+                            Dialogo.setMessage(getString(R.string.sync_companies));
                         }
                     });
-                    actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         public void run() {
-                            Dialogo.setMessage("Atualizando parâmetros");
+                            Dialogo.setMessage(getString(R.string.updating_parameters));
                         }
                     });
-                    actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         public void run() {
-                            Dialogo.setMessage("Atualizando tabelas");
+                            Dialogo.setMessage(getString(R.string.updating_tables));
                         }
                     });
-                    actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         public void run() {
-                            Dialogo.setMessage("Atualizando bloqueios");
+                            Dialogo.setMessage(getString(R.string.updating_locks));
 
                         }
                     });
-                    actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Dialogo.setMessage("Atualizando cadastro de clientes");
+                            Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, true, edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, edtUsuario.getText().toString(), edtSenha.getText().toString());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Dialogo.setMessage("Enviando pedidos...");
+                            Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
                     actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
@@ -504,7 +502,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
                             builder.setTitle(R.string.app_namesair);
                             builder.setIcon(R.drawable.logo_ico);
-                            builder.setMessage("Limite de usuários atingido ou não habilitado. Entre em contato com a empresa.")
+                            builder.setMessage(R.string.limit_users)
                                     .setCancelable(false)
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -523,7 +521,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
             AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Sem conexão com a internet, Verifique!")
+            builder.setMessage(R.string.no_connection)
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -573,7 +571,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
             CursorLogin.close();
             return sCodVend;
         } else {
-            Toast.makeText(actLogin.this, "Usuário ou Senha inválidos!", Toast.LENGTH_LONG).show();
+            Toast.makeText(actLogin.this, R.string.invalid_user_password, Toast.LENGTH_LONG).show();
             return null;
         }
     }

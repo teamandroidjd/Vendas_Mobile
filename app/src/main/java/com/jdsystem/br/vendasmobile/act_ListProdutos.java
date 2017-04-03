@@ -189,7 +189,7 @@ public class act_ListProdutos extends AppCompatActivity
         if(Flag == 1) {
             try {
                 actSincronismo.run(act_ListProdutos.this);
-                sincprod= actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, true, usuario, senha);
+                sincprod= actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, usuario, senha);
                 if (sincprod == false) {
                     handler.post(new Runnable() {
                         @Override

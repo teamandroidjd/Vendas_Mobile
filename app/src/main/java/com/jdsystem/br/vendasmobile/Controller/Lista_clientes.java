@@ -353,7 +353,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
     public void run() {
         try {
             actSincronismo.run(this);
-            sincclieenvio = actSincronismo.SincronizarClientesEnvioStatic("0", this, true, usuario, senha);
+            sincclieenvio = actSincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
             if (sincclieenvio == false) {
                 handler.post(new Runnable() {
                     @Override

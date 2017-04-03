@@ -79,15 +79,45 @@
 
     <!-- Example settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
-
     <string name="pref_title_new_message_notifications">New message notifications</string>
-
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
-
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="login">Login</string>
     <string name="title_activity_act__list_produtos">act_ListProdutos</string>
     <string name="title_activity_act__contatos">act_Contatos</string>
     <string name="search_hint">Pesquisar</string>
+
+
+    <string name="enter_host">Digite o caminho do host!</string> <!-- Utilizado somente na classe ConfigWeb -->
+    <string name="wait">Aguarde</string>
+    <string name="valid_license">Validando licença...</string>
+    <string name="password">ChaveAcesso</string>
+    <string name="failure_communicate">Falha de comunicação com o servidor. Tente novamente!</string>
+    <string name="failed_return">Falha no retorno das informações do servidor. Tente novamente!</string>
+    <string name="not_validate_license">Não foi possivel validar a licença. Tente novamente!</string>
+    <string name="not_valid_license_failure_communicate">Não foi possível validar a licença devido a uma falha de comunicação com o servidor. Tente novamente!</string>
+    <string name="no_connection">Sem conexão com a internet. Verifique!</string>
+    <string name="license_validated">Licença validada com sucesso!</string>
+    <string name="login_no_connection">Sem conexão com a Internet! O Usuário será autenticado localmente. Não havendo possibilidade de sincronização de informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo.</string>
+    <string name="enter_username">Digite o nome do Usuário!</string>
+    <string name="checking_user_password">Verificando usuário e senha...</string>
+    <string name="enter_password">Digite a Senha!</string>
+    <string name="invalid_user_password">Usuário ou senha inválido. Verifique!</string>
+    <string name="sync_companies">Sincronizando empresas...</string>
+    <string name="updating_parameters">Atualizando parâmetros...</string>
+    <string name="updating_tables">Atualizando tabelas...</string>
+    <string name="updating_locks">Atualizando bloqueios...</string>
+    <string name="updating_customer_registration">Enviando novos cadastros de clientes...</string>
+    <string name="sending_orders">Enviando pedidos...</string>
+    <string name="limit_users">Limite de usuários atingido ou não habilitado. Entre em contato com a empresa.</string>
+    <string name="updating_city">Atualizando cadastro de cidades/bairros...</string>
+    <string name="msg_no_connection_sinc">Atenção! Sem conexão com a Internet. Não há possibilidade de sincronização de informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo. Clique em OK para retornar ou em Configurações para ativar a internet</string>
+    <string name="syn_clients_successfully">Clientes sincronizados com sucesso!</string>
+    <string name="sync_clients">Sincronizando clientes...</string>
+    <string name="sync_products">Sincronizando produtos...</string>
+    <string name="customer_not_sent">Cliente não enviado! Verifique.</string>
+    <string name="no_new_clients">Nenhum cliente novo para ser enviado.</string>
+    <string name="no_new_request">Nenhum pedido novo para ser enviado.</string>
+    <string name="json_file_mount_error">Erro na montagem do arquivo Json</string>
 </resources>

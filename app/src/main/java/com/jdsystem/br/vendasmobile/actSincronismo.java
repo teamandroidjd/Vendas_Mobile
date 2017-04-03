@@ -111,7 +111,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                                            hd = new Handler();
                                            Dialog = new ProgressDialog(actSincronismo.this);
-                                           Dialog.setTitle("Aguarde...");
+                                           Dialog.setTitle(R.string.wait);
                                            Dialog.setMessage("");
                                            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                                            Dialog.setProgress(0);
@@ -119,7 +119,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                            Dialog.setMax(0);
                                            Dialog.setCancelable(false);
                                            Dialog.show();
-                                           if (VerificaConexao()) {
+                                           Boolean ConexOk = Util.checarConexaoCelular(actSincronismo.this);
+                                           if (ConexOk == true) {
                                                Thread td = new Thread(actSincronismo.this);
                                                td.start();
                                            } else {
@@ -127,9 +128,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                                AlertDialog.Builder builder = new AlertDialog.Builder(actSincronismo.this);
                                                builder.setTitle(R.string.app_namesair);
                                                builder.setIcon(R.drawable.logo_ico);
-                                               builder.setMessage("Atenção! Sem conexão com a Internet. Não há possibilidade de sincronização de " +
-                                                       "informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo. Clique em OK para retornar ou em" +
-                                                       "Configurações para ativar a internet")
+                                               builder.setMessage(R.string.msg_no_connection_sinc)
                                                        .setCancelable(false)
                                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                            public void onClick(DialogInterface dialog, int id) {
@@ -172,39 +171,20 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     public void run() {
         DB = new ConfigDB(this).getReadableDatabase();
 
-        //String DataUlt = null;
-        //String HoraAtu = null;
-
         try {
             Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP ", null);
             CursosParam.moveToFirst();
             DataUltSt2 = Util.DataHojeComHorasBR();
             DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = '" + DataUltSt2 + "';");
             CursosParam.close();
-            /*if (CursosParam.getCount() > 0) {
-                String dataEmUmFormato = CursosParam.getString(CursosParam.getColumnIndex("DT_ULT_ATU"));
-                SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-                Date data = formato.parse(dataEmUmFormato);
-                formato.applyPattern("dd/MM/yyyy");
-                DataUlt = formato.format(data);
-
-                SimpleDateFormat SdfHora = new SimpleDateFormat("HH:mm");
-                HoraAtu = (SdfHora.format(data));
-            } else {
-                DataUlt = "01/01/2000 12:20:30";
-                DB.execSQL(" INSERT INTO PARAMAPP(DT_ULT_ATU) VALUES(datetime());");
-            }*/
         } catch (Exception e) {
             e.toString();
         }
 
-
         String DataUlt2 = DataUltSt2;
-
         SharedPreferences prefs = getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
-
 
         SincronizarClientes(sCodVend, usuario, senha);
         SincronizarProdutos(usuario, senha, DataUlt2);
@@ -213,7 +193,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         SincDescricaoTabelas();
         SincBloqueios();
         SincParametros();
-
 
         DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
 
@@ -228,8 +207,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         finish();
     }
 
-    public boolean SincronizarClientes(String sCodVend, String nUsuario, String nSenha) {
-        Boolean sinccliente = false;
+    // Métodos só podem ser invocados desta activity.
+
+    public void SincronizarClientes(String sCodVend, String nUsuario, String nSenha) {
+
+        DB = new ConfigDB(this).getReadableDatabase();
 
         String METHOD_NAME = "Carregar";
         String TAG_CLIENTESINFO = "clientes";
@@ -255,8 +237,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String TAG_BLOQUEIO = "bloqueio";
         String TAG_LIMITECRED = "limitecredito";
 
-        //String QtdClie = RetornaqtdClientes(sCodVend, this);
-
         String CodVendedor = sCodVend;
 
         Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE FROM PARAMAPP", null);
@@ -279,36 +259,61 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
         String RetClientes = null;
 
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(this);
-            if (ConexOk == true) {
+
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (ConexOk == true) {
+            try {
+
                 Envio.call("", envelope);
+
+            } catch (Exception e) {
+
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            try {
+
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetClientes = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
+
+            } catch (Exception e) {
+
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        } catch (Exception e) {
-            System.out.println("Sincronismo Clientes, sem conexão com o servidor. Tente novamente.  ");
+        } else {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         if (RetClientes.equals("0")) {
             hd.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(actSincronismo.this, "Clientes sincronizados com sucesso!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(actSincronismo.this, R.string.syn_clients_successfully, Toast.LENGTH_SHORT).show();
                 }
             });
-            sinccliente = true;
-            return sinccliente;
-
         } else if (RetClientes == null) {
             hd.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(actSincronismo.this, "Falha na comunicação com o servidor. Tente novamente!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
                 }
             });
-            return sinccliente;
-
         } else {
             try {
                 DtUlt = Util.DataHojeComHorasMinSecBR();
@@ -316,15 +321,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             } catch (Exception e) {
                 e.toString();
             }
-
         }
-
         try {
             JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
-            //JSONArray SeqPedidos = jsonObj.getJSONArray("sequencia");
 
-            int SeqClie = 0;
             int jumpTime = 0;
             Dialog.setProgress(jumpTime);
             final int totalProgressTime = pedidosblq.length();
@@ -333,7 +334,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             String CodCliente = null;
             String CodClienteExt = null;
 
-            DB = new ConfigDB(this).getReadableDatabase();
 
             for (int i = 0; i < pedidosblq.length(); i++) {
                 while (jumpTime < totalProgressTime) {
@@ -364,7 +364,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         Dialog.setProgress(jumpTime);
                         hd.post(new Runnable() {
                             public void run() {
-                                Dialog.setMessage("Sincronizando Tabelas - Clientes");
+                                Dialog.setMessage(getString(R.string.sync_clients));
                             }
                         });
 
@@ -416,16 +416,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
                             CodClienteExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
 
-                            SeqClie++;
-
-                            sinccliente = true;
                             cursor.close();
                             cursor1.close();
 
                         } catch (Exception E) {
                             System.out.println("Sincronismo Clientes, falha na atualização ou inclusão de clientes. Tente novamente");
                         }
-
                         if (CodClienteExt == null) {
                             Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
                             CursorContatosEnv.moveToFirst();
@@ -440,9 +436,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 DB.execSQL("DELETE FROM CONTATO WHERE CODCLIE_EXT = " + CodClienteExt);
                                 CursorContatosEnv.close();
                             }
-
                         }
-
 
                         String Contatos = c.getString(TAG_CONTATOSINFO);
                         Contatos = "{\"contatos\":" + Contatos + "\t}";
@@ -542,16 +536,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     }
                 }
             }
-            //if (Dialog.isShowing())
-            //Dialog.dismiss();
         } catch (JSONException e) {
             System.out.println("Sincronismo Clientes, falha no carregamento. Tente novamente");
         }
-        return sinccliente;
     }
 
-    private boolean SincronizarProdutos(String nUsuario, String nSenha, String DtUlt) {
-        boolean sincprodutos = false;
+    private void SincronizarProdutos(String nUsuario, String nSenha, String DtUlt) {
 
         DB = new ConfigDB(this).getReadableDatabase();
 
@@ -589,20 +579,43 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
         String RetProdutos = null;
 
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(this);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (ConexOk == true) {
+            try {
+
+                Envio.call("", envelope);
+
+            } catch (Exception e) {
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            try {
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetProdutos = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
-            } else {
-                Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
-                return sincprodutos;
+            } catch (Exception e) {
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
+        } else {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         try {
@@ -622,7 +635,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         Dialog.setProgress(jumpTime);
                         hd.post(new Runnable() {
                             public void run() {
-                                Dialog.setMessage("Sincronizando Tabelas - Produtos");
+                                Dialog.setMessage(getString(R.string.sync_products));
                             }
                         });
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
@@ -692,7 +705,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
                                         "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             }
-                            sincprodutos = true;
                             CursItens.close();
 
                         } catch (Exception E) {
@@ -705,18 +717,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 }
 
             }
-            //if (Dialog.isShowing())
-            //Dialog.dismiss();
         } catch (JSONException e) {
             e.toString();
         }
-
-        return sincprodutos;
-
     }
 
-    private boolean SincronizarClientesEnvio() {
-        boolean sincclienvio = false;
+    private void SincronizarClientesEnvio() {
 
         String Jcliente = null;
         String METHOD_NAMEENVIO = "Cadastrar";
@@ -743,7 +749,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 Dialog.setProgress(jumpTime);
                                 hd.post(new Runnable() {
                                     public void run() {
-                                        Dialog.setMessage("Enviando clientes");
+                                        Dialog.setMessage(getString(R.string.updating_customer_registration));
                                     }
                                 });
                                 Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")).trim() + "'," +
@@ -810,27 +816,57 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
                                 String RetClieEnvio = "0";
 
-                                try {
-                                    Boolean ConexOk = Util.checarConexaoCelular(this);
-                                    if (ConexOk == true) {
-                                        Envio.call("", envelope);
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
-                                        RetClieEnvio = (String) envelope.getResponse();
-                                        CodClie_ext = RetClieEnvio;
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    } else {
-                                        Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
-                                        return sincclienvio;
+                                Boolean ConexOk = Util.checarConexaoCelular(this);
+                                if (ConexOk == true) {
+                                    try {
+
+                                        Envio.call("", envelope);
+
+                                    } catch (Exception e) {
+                                        e.toString();
+                                        hd.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                                            }
+                                        });
                                     }
-                                } catch (Exception e) {
-                                    System.out.println("Error" + e);
+                                    try {
+
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                        RetClieEnvio = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                        CodClie_ext = RetClieEnvio;
+
+                                    } catch (Exception e) {
+                                        e.toString();
+                                        hd.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(actSincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                                    }
+
+                                } else {
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(actSincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
+
                             } catch (Exception E) {
-                                Dialog.dismiss();
-                                Toast.makeText(this, "Cliente não enviado! Verifique.", Toast.LENGTH_SHORT).show();
-                                return sincclienvio;
-                                //E.printStackTrace();
+                                E.toString();
+                                hd.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(actSincronismo.this, R.string.customer_not_sent, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         }
                         while (jumpTime < totalProgressTime);
@@ -842,7 +878,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 CursClieAtu.moveToFirst();
                                 DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + CodClie_ext + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'");
                             }
-                            sincclienvio = true;
                             CursClieAtu.close();
                         }
                     } catch (Exception E) {
@@ -852,18 +887,20 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 CursorClieEnv.close();
                 Dialog.dismiss();
             } else {
-                sincclienvio = true;
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.no_new_clients, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
-            //  if (Dialog.isShowing())
-            //    Dialog.dismiss();
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
-        return sincclienvio;
     }
 
-    public boolean SincronizarPedidosEnvio() {
-        boolean sincpedenvio = false;
+    private void SincronizarPedidosEnvio() {
 
         String JPedidos = null;
         String METHOD_NAMEENVIO = "CadastrarPedidos";
@@ -886,7 +923,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             Dialog.setProgress(jumpTime);
                             hd.post(new Runnable() {
                                 public void run() {
-                                    Dialog.setMessage("Enviando Pedidos");
+                                    Dialog.setMessage(getString(R.string.sending_orders));
                                 }
                             });
 
@@ -978,21 +1015,46 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             envelope.setOutputSoapObject(soap);
                             HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
 
-                            try {
-                                Boolean ConexOk = Util.checarConexaoCelular(this);
-                                if (ConexOk == true) {
-                                    Envio.call("", envelope);
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
+                            Boolean ConexOk = Util.checarConexaoCelular(this);
+                            if (ConexOk == true) {
+                                try {
+
+                                    Envio.call("", envelope);
+
+                                } catch (Exception e) {
+                                    e.toString();
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                }
+                                try {
+
+                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                                     RetClieEnvio = (String) envelope.getResponse();
                                     System.out.println("Response :" + resultsRequestSOAP.toString());
-                                } else {
-                                    Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_SHORT).show();
-                                    return sincpedenvio;
+
+                                } catch (Exception e) {
+                                    e.toString();
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(actSincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
-                            } catch (Exception e) {
-                                System.out.println("Error" + e);
+                            } else {
+                                hd.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(actSincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
+
                             try {
                                 DB = new ConfigDB(this).getReadableDatabase();
                                 Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
@@ -1000,13 +1062,18 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                     CursPedAtu.moveToFirst();
                                     DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
                                 }
-                                sincpedenvio = true;
                                 CursPedAtu.close();
                             } catch (Exception E) {
                                 Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception E) {
-                            E.printStackTrace();
+                            E.toString();
+                            hd.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(actSincronismo.this, R.string.json_file_mount_error, Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                         while (jumpTime < totalProgressTime);
                     }
@@ -1014,21 +1081,22 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     JPedidos = "";
                 }
                 while (CursorPedido.moveToNext());
-                sincpedenvio = true;
                 CursorPedido.close();
-                Dialog.dismiss();
             } else {
-                sincpedenvio = true;
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.no_new_request, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
-        return sincpedenvio;
     }
 
-    public boolean SincDescricaoTabelas() {
-        Boolean sinctabelas = false;
+    private void SincDescricaoTabelas() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -1044,19 +1112,44 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
         String RetDescTabelas = null;
 
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(this);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (ConexOk == true) {
+            try {
+
+                Envio.call("", envelope);
+
+            } catch (Exception e) {
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            try {
+
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetDescTabelas = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
+            } catch (Exception e) {
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
+        } else {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
-
         try {
             JSONObject jsonObj = new JSONObject(RetDescTabelas);
             JSONArray JParamApp = jsonObj.getJSONArray("tabelas");
@@ -1075,10 +1168,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         Dialog.setProgress(jumpTime);
                         hd.post(new Runnable() {
                             public void run() {
-                                Dialog.setMessage("Atualizando tabelas");
+                                Dialog.setMessage(getString(R.string.updating_tables));
                             }
                         });
-
                         String DescTab1 = c.getString("nometab1");
                         String DescTab2 = c.getString("nometab2");
                         String DescTab3 = c.getString("mometab3");
@@ -1086,7 +1178,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         String DescTab5 = c.getString("nometab5");
                         String DescTab6 = c.getString("nometabp1");
                         String DescTab7 = c.getString("nometabp2");
-
 
                         Cursor CursorTabela = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
                         CursorTabela.moveToFirst();
@@ -1104,7 +1195,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7)" +
                                     " VALUES(" + DescTab1.trim() + ",'" + DescTab2.trim() + "', '" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "' );");
                         }
-                        sinctabelas = true;
                         CursorTabela.close();
 
                     } catch (Exception E) {
@@ -1115,12 +1205,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         } catch (JSONException e) {
             e.toString();
         }
-
-        return sinctabelas;
     }
 
-    public boolean SincBloqueios() {
-        Boolean sincbloqueios = false;
+    private void SincBloqueios() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -1135,17 +1222,44 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         envelope.setOutputSoapObject(soap);
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
         String RetBloqueios = null;
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(this);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (ConexOk == true) {
+            try {
+
+                Envio.call("", envelope);
+
+            } catch (Exception e) {
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            try {
+
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetBloqueios = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
+
+            } catch (Exception e) {
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
+        } else {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         try {
             JSONObject jsonObj = new JSONObject(RetBloqueios);
@@ -1165,7 +1279,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         Dialog.setProgress(jumpTime);
                         hd.post(new Runnable() {
                             public void run() {
-                                Dialog.setMessage("Atualizando bloqueios");
+                                Dialog.setMessage(getString(R.string.updating_locks));
                             }
                         });
                         String codblq = c.getString("codblq");
@@ -1184,7 +1298,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
                                     " VALUES(" + codblq + ",'" + descricao + "', '" + bloquear + "','" + liberar + "','" + fpavista + "' );");
                         }
-                        sincbloqueios = true;
                         CursorBloqueio.close();
 
                     } catch (Exception E) {
@@ -1196,11 +1309,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         } catch (JSONException e) {
             e.toString();
         }
-        return sincbloqueios;
     }
 
-    public boolean SincParametros() {
-        Boolean sincparametros = false;
+    private void SincParametros() {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -1216,20 +1327,45 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 6000);
         String RetParamApp = null;
 
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(this);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (ConexOk == true) {
+            try {
+
+                Envio.call("", envelope);
+
+            } catch (Exception e) {
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            try {
+
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetParamApp = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
-            } else {
-                Toast.makeText(this, "Sem conexão com a internet. Verifique!", Toast.LENGTH_LONG).show();
-                return sincparametros;
+
+            }catch (Exception e){
+                e.toString();
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(actSincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
-        } catch (Exception e) {
-            e.toString();
+
+        } else {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         try {
@@ -1251,7 +1387,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
                         hd.post(new Runnable() {
                             public void run() {
-                                Dialog.setMessage("Atualizando parametros");
+                                Dialog.setMessage(getString(R.string.updating_parameters));
                             }
                         });
                         Double PercDescMax = c.getDouble("percdescmaxped");
@@ -1272,7 +1408,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM)" +
                                     " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "','" + habcritqtditens.trim() + "');");
                         }
-                        sincparametros = true;
                         CursorParam.close();
 
                     } catch (Exception E) {
@@ -1286,17 +1421,13 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         if (Dialog.isShowing())
             Dialog.dismiss();
 
-        return sincparametros;
     }
 
-     /*
-    * Métodos que podem ser invocados de outras activity
-    */
+
+    // Métodos que podem ser invocados de outras activity's.
 
     public static void run(Context ctxEnvClie) {
         DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
-        //String DataUlt = null;
-        //String HoraAtu = null;
 
         try {
             Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP", null);
@@ -1304,28 +1435,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             DataUltSt2 = Util.DataHojeComHorasBR();
             DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = '" + DataUltSt2 + "';");
             CursosParam.close();
-            /*if (CursosParam.getCount() > 0) {
-                String dataEmUmFormato = CursosParam.getString(CursosParam.getColumnIndex("DT_ULT_ATU"));
-                if (dataEmUmFormato != null) {
-                    SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-                    Date data = formato.parse(dataEmUmFormato);
-                    formato.applyPattern("dd/MM/yyyy");
-                    DataUlt = formato.format(data);
 
-                    SimpleDateFormat SdfHora = new SimpleDateFormat("HH:mm");
-                    HoraAtu = (SdfHora.format(data));
-
-                    DataUltSt2 = DataUlt + " " + HoraAtu;
-                    DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = '" + DataUltSt2 + "';");
-                } else if (dataEmUmFormato == null) {
-                    DataUlt = "01/01/2000 12:20:30";
-                    DB.execSQL(" INSERT INTO PARAMAPP(DT_ULT_ATU) VALUES('" + DataUlt + "');");
-                    DataUltSt2 = DataUlt;
-                } else {
-                    DataUlt = "01/01/2000 12:20:30";
-                    DataUltSt2 = DataUlt;
-                }
-            }*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1866,7 +1976,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return true;
     }
 
-    public static boolean SincronizarPedidosEnvio(String NumPedido, Context ctxEnv, Boolean bdialog) {
+    public static boolean SincronizarPedidosEnvio(String NumPedido, Context ctxEnv) {
         Boolean pedenviado = false;
 
         String JPedidos = null;
@@ -2163,7 +2273,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return RetQtdClie;
     }
 
-    public static boolean SincParametrosStatic(String sUsuario, String sSenha, Context ctxEnv, Boolean bdialog) {
+    public static boolean SincParametrosStatic(String sUsuario, String sSenha, Context ctxEnv) {
         boolean sincparaetrosstatic = false;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -2242,7 +2352,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return sincparaetrosstatic;
     }
 
-    public static boolean SincDescricaoTabelasStatic(String sUsuario, String sSenha, Context ctxEnv, boolean bdialog) {
+    public static boolean SincDescricaoTabelasStatic(String sUsuario, String sSenha, Context ctxEnv) {
         boolean sinctabelasstatic = false;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -2324,7 +2434,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return sinctabelasstatic;
     }
 
-    public static boolean SincBloqueiosStatic(String sUsuario, String sSenha, Context ctxEnv, boolean bdialog) {
+    public static boolean SincBloqueiosStatic(String sUsuario, String sSenha, Context ctxEnv) {
         boolean sincbloqstatic = false;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -2395,7 +2505,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return sincbloqstatic;
     }
 
-    public static boolean SincEmpresas(String sUsuario, String sSenha, Context ctxEnv, Boolean bdialog) {
+    public static boolean SincEmpresas(String sUsuario, String sSenha, Context ctxEnv) {
         boolean sincempresastatic = false;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -2492,7 +2602,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return sincempresastatic;
     }
 
-    public static boolean SincronizarClientesEnvioStatic(String CodClie_Int, Context ctxEnvClie, Boolean bDialogo, String user, String pass) {
+    public static boolean SincronizarClientesEnvioStatic(String CodClie_Int, Context ctxEnvClie, String user, String pass) {
         boolean sincclieenvstatic = false;
 
         String Jcliente = null;
@@ -2654,7 +2764,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return sincclieenvstatic;
     }
 
-    public static boolean SincronizarProdutosStatic(String DtUlt, Context ctxSincProd, Boolean bDialogo, String user, String pass) {
+    public static boolean SincronizarProdutosStatic(String DtUlt, Context ctxSincProd, String user, String pass) {
         boolean sincprodstatic = false;
 
         DB = new ConfigDB(ctxSincProd).getReadableDatabase();
@@ -2925,7 +3035,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
             return sinccliestatic;
 
-        } else if (Codclie == 0){
+        } else if (Codclie == 0) {
             try {
                 DtUlt = Util.DataHojeComHorasMinSecBR();
                 DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "'");
@@ -3227,7 +3337,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 situacao = "OK";
                 return situacao;
             } else {
-                situacao = descricaobloqueio;
+                situacao = situacaocliente + " " + descricaobloqueio;
                 return situacao;
             }
 
@@ -3240,6 +3350,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return situacao;
 
     }
+
+
+    //Começa daqui para baixo as funções que gerar arquivo de pedido em formato .PDF
 
     private static void generateLayout(Document doc, PdfContentByte cb) {
         try {
@@ -3504,6 +3617,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
             e.printStackTrace();
         }
     }
+
+
+    //Termine aqui para cima as funções que são utilizadas para a geração de arquivo do pedido em .PDF
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()

@@ -1864,7 +1864,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     public void run() {
         try {
             actSincronismo.run(Lista_produtos.this);
-            sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, true, usuario, senha);
+            sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, usuario, senha);
             if (sincprod == false) {
                 handler.post(new Runnable() {
                     @Override

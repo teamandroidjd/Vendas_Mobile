@@ -108,7 +108,6 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
 
-
             final Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT,VALORTOTAL, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + "", null);
             cursorped.moveToFirst();
             codclie_ext = cursorped.getInt(cursorped.getColumnIndex("CODCLIE_EXT"));
@@ -118,7 +117,6 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             String vltotalvenda = vendatotal.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
             final String totalvenda = vltotalvenda;
             cursorped.close();
-
             try {
                 if (codclie_ext != 0) {
                     Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, FLAGINTEGRADO, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = " + codclie_ext + "", null);
@@ -131,6 +129,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                 e.toString();
             }
 
+            // Neese momento é que a tela com as opções do pedido é criada.
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View formElementsView = inflater.inflate(R.layout.act_pergunta_list_pedido, null, false);
@@ -159,9 +158,9 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                         if (ConexOk == true) {
                                             if (flagintegrado.equals("1")) {
-                                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), true, usuario, senha);
+                                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), usuario, senha);
                                                 if (sitclieenvio == true) {
-                                                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
+                                                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext());
                                                     if (pedidoendiado == true) {
                                                         Intent intent = ((actListPedidos) getActivity()).getIntent();
                                                         ((actListPedidos) getActivity()).finish();
@@ -178,7 +177,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             } else {
                                                 sitcliexvend = actSincronismo.SituacaodoClientexPed(totalvenda,getActivity(),usuario,senha,codclie_ext);
                                                 if(sitcliexvend.equals("OK")) {
-                                                pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext(), false);
+                                                pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext());
                                                 if (pedidoendiado == true) {
                                                     Intent intent = ((actListPedidos) getActivity()).getIntent();
                                                     ((actListPedidos) getActivity()).finish();
@@ -284,7 +283,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         params.putString("CodVendedor", Codvendedor);
                                         VendaProd.putExtras(params);
                                         Intent intent = ((actListPedidos) getActivity()).getIntent();
-                                        //((actListPedidos) getActivity()).finish();
+                                        ((actListPedidos) getActivity()).finish();
                                         startActivityForResult(VendaProd, 1);
                                     }
                                 }

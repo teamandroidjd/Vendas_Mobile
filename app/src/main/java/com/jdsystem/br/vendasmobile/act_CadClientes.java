@@ -720,7 +720,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                         public void onClick(DialogInterface dialog, int id) {
                             boolean sitclieenvio;
                             if (telaInvocada == 0) {
-                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false, usuario, senha);
+                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, usuario, senha);
                                 if (sitclieenvio == true) {
                                     handler.post(new Runnable() {
                                         @Override
@@ -754,7 +754,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                     finish();
                                 }
                             } else {
-                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, false, usuario, senha);
+                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, usuario, senha);
                                 if (sitclieenvio == true) {
                                     handler.post(new Runnable() {
                                         @Override

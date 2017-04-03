@@ -15,8 +15,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f58d3410-3a1b-45ee-8164-7b562682296f" name="Default" comment="Corrigido o webservice de cliente. Criado algumas condições no sincronizar cliente e clientes estaticos. Habilitado no lista clientes a consulta da situação do cliente em tempo real caso haja internet. Habilitado na sincronização de pedido a função que consulta o status da conta corrente dele no erp a fim de saber se autoriza ou não o envio do pedido.">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/google_api_client_android_1_22_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/google_http_client_android_1_22_0.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/google_api_client_android_1_22_0.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/google_http_client_android_1_22_0.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/android_android_24.xml" afterPath="$PROJECT_DIR$/.idea/libraries/android_android_24.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/animated_vector_drawable_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/animated_vector_drawable_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_24_2_1.xml" />
@@ -50,10 +50,17 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/ConfPagamento.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigWeb.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConfigWeb.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/SqliteConfPagamentoDao.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Model/Sqlite_VENDADAO.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListClientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListClientes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
     </list>
     <ignored path="Vendas_Mobile.iws" />
@@ -93,7 +100,7 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="161">
-              <caret line="3206" column="81" selection-start-line="3206" selection-start-column="81" selection-end-line="3206" selection-end-column="81" />
+              <caret line="2941" column="128" selection-start-line="2941" selection-start-column="128" selection-end-line="2941" selection-end-column="128" />
               <folding>
                 <element signature="method#VerificaConexao#0;class#actSincronismo#0" expanded="false" />
                 <element signature="method#SincronizarPedidosEnvio#0;class#actSincronismo#0" expanded="false" />
@@ -310,7 +317,7 @@
   <component name="GradleLocalSettings">
     <option name="myGradleHomes">
       <map>
-        <entry key="$PROJECT_DIR$" value="C:\Users\wks\.gradle\wrapper\dists\gradle-3.3-all\55gk2rcmfc6p2dg9u9ohc3hw9\gradle-3.3" />
+        <entry key="$PROJECT_DIR$" value="C:\Users\Usuário\.gradle\wrapper\dists\gradle-3.3-all\55gk2rcmfc6p2dg9u9ohc3hw9\gradle-3.3" />
       </map>
     </option>
     <option name="myGradleVersions">
@@ -2328,10 +2335,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1358" />
+    <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1382" />
-    <option name="height" value="744" />
+    <option name="width" value="1616" />
+    <option name="height" value="886" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -2377,10 +2384,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="ProjectPane" />
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -2391,6 +2394,10 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -2961,7 +2968,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1358" y="-8" width="1382" height="744" extended-state="6" />
+    <frame x="-8" y="-8" width="1616" height="886" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32998326" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -2977,7 +2984,7 @@
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20121029" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20115681" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24871466" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
@@ -3764,9 +3771,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="663">
           <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -3788,7 +3792,6 @@
             <element signature="method#VerificaConexao#0;class#actLogin#0" expanded="false" />
             <element signature="method#VerificaConexaoWifi#0;class#actLogin#0" expanded="false" />
             <element signature="method#onBackPressed#0;class#actLogin#0" expanded="false" />
-            <element signature="e#21104#21105#0" expanded="true" />
             <element signature="method#CadastrarLogin#0;class#actLogin#0" expanded="false" />
             <element signature="method#ValidarLogin#0;class#actLogin#0" expanded="false" />
             <element signature="method#onCreateOptionsMenu#0;class#actLogin#0" expanded="false" />
@@ -3926,7 +3929,7 @@
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="161">
-          <caret line="3206" column="81" selection-start-line="3206" selection-start-column="81" selection-end-line="3206" selection-end-column="81" />
+          <caret line="2941" column="128" selection-start-line="2941" selection-start-column="128" selection-end-line="2941" selection-end-column="128" />
           <folding>
             <element signature="method#VerificaConexao#0;class#actSincronismo#0" expanded="false" />
             <element signature="method#SincronizarPedidosEnvio#0;class#actSincronismo#0" expanded="false" />
