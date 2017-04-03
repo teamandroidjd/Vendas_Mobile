@@ -62,10 +62,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 
 
-public class VenderProdutos extends Activity implements View.OnKeyListener, Runnable {
+public class VenderProdutos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
 
     private BigDecimal TOTAL_DA_VENDA;
     private Integer CLI_CODIGO, CLI_CODIGO_ANT, CLI_CODIGO_EXT;
@@ -139,6 +140,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         }
 
         venda_txt_desconto.setOnKeyListener(this);
+        venda_txt_desconto.setOnFocusChangeListener(this);
         venda_txt_desconto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,14 +156,25 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         venda_txv_codigo_cliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alterarcliente();
-
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
+                    alterarcliente();
             }
         });
         venda_txv_empresa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alterarempresa();
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
+                    alterarempresa();
             }
         });
 
@@ -178,16 +191,22 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         incluirProduto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
-                Bundle params = new Bundle();
-                params.putString("numpedido", NumPedido);
-                params.putString("chave", Chave_Venda);
-                params.putString("CodVendedor", sCodVend);
-                params.putString("usuario",usuario);
-                params.putString("senha",senha);
-                Lista_produtos.putExtras(params);
-                startActivity(Lista_produtos);
-            }
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
+                    Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
+                    Bundle params = new Bundle();
+                    params.putString("numpedido", NumPedido);
+                    params.putString("chave", Chave_Venda);
+                    params.putString("CodVendedor", sCodVend);
+                    params.putString("usuario", usuario);
+                    params.putString("senha", senha);
+                    Lista_produtos.putExtras(params);
+                    startActivity(Lista_produtos);
+                }
         });
 
         // atualiza_listview_e_calcula_total();
@@ -197,7 +216,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         toolbar.findViewById(R.id.finalizar_venda).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finalzarvenda(true);
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
+                    finalzarvenda(true);
             }
         });
 
@@ -211,6 +236,12 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         toolbar.findViewById(R.id.item_formapgto).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
                 incluirformadepagamento();
             }
         });
@@ -218,17 +249,31 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         toolbar.findViewById(R.id.item_dtentrega).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                datePicker.setTitle("Entrega Prevista");
-                datePicker.show();
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
+                    datePicker.setTitle("Entrega Prevista");
+                    datePicker.show();
             }
         });
 
         toolbar.findViewById(R.id.item_obspedido).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                incluirobs();
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
+                    incluirobs();
             }
         });
+
+        //obterConfiguracoesPagamento();
     }
 
     private void incluirobs() {
@@ -255,7 +300,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         if (venda_txt_desconto.getText().toString().isEmpty()) {
             venda_txt_desconto.setText("0");
         }
-        if (verifica_limite_desconto()) {
+       // if (verifica_limite_desconto()) {
             Boolean AtuPed = true;
             if (NumPedido.equals("0")) {
                 AtuPed = false;
@@ -284,7 +329,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     Util.msg_toast_personal(getBaseContext(), "Adicione itens na venda", Util.PADRAO);
                 }
             }
-        }
+       // }
     }
 
     private void carregadadosAlterarpedido() {
@@ -689,7 +734,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     public void onResume() {
         super.onResume();
         carregarempresa();
-        //carregadadosAlterarpedido();
         if (venda_txt_desconto.getText().toString().isEmpty()) {
             venda_txt_desconto.setText("0");
         }
@@ -703,32 +747,24 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     }
 
     private void obterConfiguracoesPagamento() {
+        confBean = new SqliteConfPagamentoBean();
+
         if (!NumPedido.equals("0")) {
             confBean = confDao.busca_CONFPAGAMENTO_Pedido(Chave_Venda);
-            if (confBean != null) {
+          /* if (confBean != null) {
                 if (confBean.isAvista()) {
                     venda_txv_desconto.setVisibility(View.VISIBLE);
                     venda_txt_desconto.setVisibility(View.VISIBLE);
                 }
-            }
+            }*/
         } else {
             confBean = confDao.busca_CONFPAGAMENTO_sem_chave();
-            if (confBean != null) {
-                if (confBean.isAvista()) {
+            /*if (confBean == null) {
+                 if (confBean.isAvista()) {
                     venda_txv_desconto.setVisibility(View.VISIBLE);
                     venda_txt_desconto.setVisibility(View.VISIBLE);
                 }
-            }
-        }
-    }
-
-    private void carregaFormaPgtoPedido(String Chave) {
-        confBean = confDao.busca_CONFPAGAMENTO_Pedido(Chave);
-        if (confBean != null) {
-            if (confBean.isAvista()) {
-                venda_txv_desconto.setVisibility(View.VISIBLE);
-                venda_txt_desconto.setVisibility(View.VISIBLE);
-            }
+            }*/
         }
     }
 
@@ -736,6 +772,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
         if (Double.parseDouble(venda_txt_desconto.getText().toString()) > DESCONTO_PADRAO_VENDEDOR) {
             Util.msg_toast_personal(getBaseContext(), "Limite de desconto incompatível", Util.PADRAO);
+            //venda_txt_desconto.setText("0");
+            venda_txt_desconto.requestFocus();
             return false;
         }
 
@@ -745,6 +783,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
     private void finalzarvenda(boolean sincpedido) {
         BigDecimal valor_recebido = null;
         BigDecimal total_venda = null;
+        if (venda_txt_desconto.getText().toString().isEmpty()) {
+            venda_txt_desconto.setText("0");
+        }
         if (!NumPedido.equals("0") && itens_venda.isEmpty()) {
             Toast.makeText(this, "Nenhum produto foi selecionado", Toast.LENGTH_SHORT).show();
             Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
@@ -766,10 +807,6 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             Toast.makeText(this, "A data prevista da entrega não foi selecionada!", Toast.LENGTH_SHORT).show();
             datePicker.show();
             return;
-        }
-        if (!NumPedido.equals("0")) {
-            confBean = new SqliteConfPagamentoBean();
-            confBean = new SqliteConfPagamentoDao(getApplicationContext()).busca_CONFPAGAMENTO_Pedido(Chave_Venda);
         }
         if (confBean == null) {
             Toast.makeText(this, "A forma de pagamento não foi escolhida!", Toast.LENGTH_SHORT).show();
@@ -818,7 +855,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                 }
 
             } else {
-                if (verifica_limite_desconto()) {
+               // if (verifica_limite_desconto()) {
                     Gps gps = new Gps(getApplicationContext());
                     vendaCBean = new SqliteVendaCBean();
                     if (NumPedido.equals("0")) {
@@ -884,7 +921,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                     }
 
                     //onBackPressed();
-                }
+               // }
             }
         }
     }
@@ -919,6 +956,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
     public void atualiza_listview_e_calcula_total() {
         declaraObjetos();
+        obterConfiguracoesPagamento();
         venda_txv_datavenda.setText("Data/Hora Venda : " + Util.DataHojeComHorasBR());
         if (verifica_limite_desconto()) {
             itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
@@ -939,13 +977,26 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         ListView_ItensVendidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> listview, View view, int posicao, long l) {
-                confirmar_exclusao_do_produto(listview, posicao);
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return false;
+                }
+                    confirmar_exclusao_do_produto(listview, posicao);
+
                 return false;
             }
         });
         ListView_ItensVendidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listview1, View v, int posicao, long m) {
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
                 alterarproduto(listview1, posicao);
 
 
@@ -955,6 +1006,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
     public void Alterar_Pedido_listview_e_calcula_total() {
         declaraObjetos();
+        obterConfiguracoesPagamento();
         //venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
         itens_venda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
         ListView_ItensVendidos.setAdapter(new ListaItensVendaAdapter(getApplicationContext(), itens_venda));
@@ -972,13 +1024,25 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
         ListView_ItensVendidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> listview, View view, int posicao, long l) {
-                confirmar_exclusao_do_produto(listview, posicao);
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return false;
+                }
+                    confirmar_exclusao_do_produto(listview, posicao);
                 return false;
             }
         });
         ListView_ItensVendidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listview1, View v, int posicao, long m) {
+                if (venda_txt_desconto.getText().toString().isEmpty()) {
+                    venda_txt_desconto.setText("0");
+                }
+                if (!verifica_limite_desconto()) {
+                    return;
+                }
                 alterarproduto(listview1, posicao);
 
             }
@@ -1561,7 +1625,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
 
                                 try {
                                     String codprod = (item.getVendad_prd_codigoTEMP());
-                                    codprod = codprod.trim();
+                                   // codprod = codprod.trim();
                                     List<String> DadosListTabPreco = new ArrayList<String>();
                                     DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
                                     Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
@@ -1576,10 +1640,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                                     CursorParametro.close();
 
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,VENDAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL =  '" + codprod + "'", null);
+                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,VENDAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='"+codprod+"'", null);
                                     produto_cursor.moveToFirst();
 
-                                    qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
+                                    qtdestoque= produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
 
                                     String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
                                     vlvendapadrao = vlvendapadrao.trim();
@@ -2290,14 +2355,10 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
                                     tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
                                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                                     CursorParametro.close();
-
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,VENDAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL =  '" + codprod + "'", null);
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,VENDAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='"+codprod+"'", null);
                                     produto_cursor.moveToFirst();
-                                    try {
-                                        qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
-                                    } catch (Exception e) {
-                                        e.toString();
-                                    }
+
+                                    qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
 
                                     String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
                                     vlvendapadrao = vlvendapadrao.trim();
@@ -2762,5 +2823,15 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, Runn
             dialog.dismiss();
         }
 
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        /*if(!hasFocus) {
+            if (venda_txt_desconto.getText().toString().isEmpty()) {
+                venda_txt_desconto.setText("0");
+              //  return;
+            }
+        }*/
     }
 }

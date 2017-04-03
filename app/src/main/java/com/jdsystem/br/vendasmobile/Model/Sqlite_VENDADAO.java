@@ -38,6 +38,8 @@ public class Sqlite_VENDADAO {
 
     public Long grava_venda(SqliteVendaCBean venda, List<SqliteVendaD_TempBean> itens_temp) {
 
+        excluir_todos_itens_da_venda ();
+
         int numero_item = 1;
         for (SqliteVendaD_TempBean item_transf : itens_temp) {
             SqliteVendaDBean vendaDBean = new SqliteVendaDBean();
@@ -490,6 +492,17 @@ public class Sqlite_VENDADAO {
             db.delete("PEDITENS", "CODITEMANUAL = ?", new String[]{item.getVendad_prd_codigo().toString()});
         } catch (SQLiteException e) {
             Util.log("SQLiteException excluir_um_item_da_venda" + e.getMessage());
+        } finally {
+            db.close();
+        }
+    }
+
+    public void excluir_todos_itens_da_venda () {
+        db = new ConfigDB(ctx).getWritableDatabase();
+        try {
+            db.delete("PEDITENS", null, null);
+        } catch (SQLiteException e) {
+            Util.log("SQLiteException excluir_todos_itens_da_venda" + e.getMessage());
         } finally {
             db.close();
         }

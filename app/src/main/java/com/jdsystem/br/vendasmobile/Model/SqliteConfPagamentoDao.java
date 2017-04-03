@@ -64,6 +64,7 @@ public class SqliteConfPagamentoDao {
 
 
             } else {
+
                 Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado)  VALUES (?,?,?,?,?,?,?)";
                 stmt = db.compileStatement(Sql);
                 stmt.bindString(1, pagamento.getConf_sementrada_comentrada());
@@ -73,6 +74,7 @@ public class SqliteConfPagamentoDao {
                 stmt.bindLong(5, pagamento.getConf_parcelas());
                 stmt.bindString(6, pagamento.getVendac_chave());
                 stmt.bindString(7, pagamento.getConf_enviado());
+
 
                 if (stmt.executeInsert() > 0) {
                     gravou = true;
