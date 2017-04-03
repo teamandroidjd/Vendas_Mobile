@@ -46,7 +46,7 @@ public class actDadosProdutos extends AppCompatActivity {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodProduto = (String) params.getString("codproduto");
+                sCodProduto = (String) params.getString(getString(R.string.intent_codproduto));
             }
         }
         carregarprodutos();

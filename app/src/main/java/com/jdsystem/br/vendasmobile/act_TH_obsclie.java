@@ -42,7 +42,7 @@ public class act_TH_obsclie extends Fragment {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodCliente = params.getInt("codCliente");
+                sCodCliente = params.getInt(getString(R.string.intent_codcliente));
             }
         }
 

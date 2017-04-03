@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,18 +22,22 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
 import com.jdsystem.br.vendasmobile.Util.PDF;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
@@ -42,6 +47,9 @@ import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -77,6 +85,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
         declaraobjetos();
         carregarpreferencias();
+        //carregarperfil(); // habilitar essa chamada de método somente na 2.0
 
         if (URLPrincipal == null) {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
@@ -91,6 +100,54 @@ public class actLogin extends AppCompatActivity implements Runnable {
         }
         copyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
     }
+
+    // A função abaixo será usada na versão 2.0
+    /*private void carregarperfil() {
+        try {
+            Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL",null);
+            cursorPerfil.moveToFirst();
+            if (cursorPerfil.getCount() > 1) {
+                List<String> DadosListPerfil = new ArrayList<String>();
+                do {
+                    DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("LICENCA")));
+                } while (cursorPerfil.moveToNext());
+
+                View viewEmp = (LayoutInflater.from(actLogin.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actLogin.this);
+                alertBuilder.setView(viewEmp);
+                final Spinner spPerfilInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+
+                ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(actLogin.this, android.R.layout.simple_spinner_dropdown_item, DadosListPerfil);
+                ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
+                spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                spPerfilInput.setAdapter(spArrayEmpresa);
+
+                alertBuilder.setCancelable(true)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String NomePerfil = spPerfilInput.getSelectedItem().toString();
+                                try {
+                                    Cursor cursorperfil = DB.rawQuery(" SELECT LICENCA, HOST, NOMEPERFIL  FROM PERFIL WHERE NOMEPERFIL = '" + NomePerfil + "'", null);
+                                    cursorperfil.moveToFirst();
+                                    if (cursorperfil.getCount() > 0) {
+                                        int CODPERFIL = cursorperfil.getInt(cursorperfil.getColumnIndex("CODPERFIL"));
+                                    }
+                                    cursorperfil.close();
+                                } catch (Exception E) {
+                                    System.out.println("Error" + E);
+                                }
+                            }
+                        });
+                Dialog dialog = alertBuilder.create();
+                dialog.show();
+
+            }
+        } catch (Exception E) {
+            E.toString();
+        }
+    }*/
 
     public void logar(View view) {
         final String user = edtUsuario.getText().toString();
@@ -108,10 +165,10 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent(actLogin.this, actListPedidos.class);
                                 Bundle params = new Bundle();
-                                params.putString("codvendedor", sCodVend);
-                                params.putString("usuario", user);
-                                params.putString("senha", pass);
-                                params.putString("urlPrincipal", URLPrincipal);
+                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                params.putString(getString(R.string.intent_usuario), user);
+                                params.putString(getString(R.string.intent_senha), pass);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                                 intent.putExtras(params);
                                 startActivity(intent);
                                 finish();
@@ -155,7 +212,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 return;
             }
             SharedPreferences.Editor editor = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE).edit();
-            editor.putString("usuario", edtUsuario.getText().toString());
+            editor.putString(getString(R.string.intent_usuario), edtUsuario.getText().toString());
             if (cbGravSenha.isChecked()) {
                 editor.putString("senha", edtSenha.getText().toString());
             } else {
@@ -416,7 +473,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -425,17 +482,17 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             }
                         }
                     });
-                    actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this, true);
+                    actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this);
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
                             Bundle params = new Bundle();
-                            params.putString("codvendedor", CodVendedor);
-                            params.putString("urlPrincipal", URLPrincipal);
-                            params.putString("usuario", usuario);
-                            params.putString("senha", pass);
+                            params.putString(getString(R.string.intent_codvendedor), CodVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), pass);
                             IntVend.putExtras(params);
                             startActivity(IntVend);
                         }
@@ -479,17 +536,17 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this, true);
+                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
                             Bundle params = new Bundle();
-                            params.putString("codvendedor", CodVendedor);
-                            params.putString("urlPrincipal", URLPrincipal);
-                            params.putString("usuario", usuario);
-                            params.putString("senha", pass);
+                            params.putString(getString(R.string.intent_codvendedor), CodVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), pass);
                             IntVend.putExtras(params);
                             startActivity(IntVend);
                         }

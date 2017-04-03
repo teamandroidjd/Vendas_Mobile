@@ -117,18 +117,18 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString("CodVendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                usuario = params.getString("usuario");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
                 CodEmpresa = params.getString("codempresa");
-                senha = params.getString("senha");
+                senha = params.getString(getString(R.string.intent_senha));
                 DATA_DE_ENTREGA = params.getString("dataentrega");
             }
         }
 
         Intent CLI_CODIGO_INTENT = getIntent();
         CLI_CODIGO = CLI_CODIGO_INTENT.getIntExtra("CLI_CODIGO", 0);
-        CodVendedor = CLI_CODIGO_INTENT.getStringExtra("CodVendedor");
+        CodVendedor = CLI_CODIGO_INTENT.getStringExtra(getString(R.string.intent_codvendedor));
         NumPedido = CLI_CODIGO_INTENT.getStringExtra("numpedido");
         CodEmpresa = CLI_CODIGO_INTENT.getStringExtra("codempresa");
         CLI_CODIGO_ANT = CLI_CODIGO;

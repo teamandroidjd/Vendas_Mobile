@@ -73,13 +73,13 @@ public class act_TH_contclie extends Fragment{
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodCliente = params.getInt("codCliente");
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
-                CodCliente = params.getInt("codCliente");
-                NomeCliente = params.getString("nomerazao");
+                sCodCliente = params.getInt(getString(R.string.intent_codcliente));
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
+                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
         }
 
@@ -89,11 +89,11 @@ public class act_TH_contclie extends Fragment{
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(), CadContatos.class);
                 Bundle params = new Bundle();
-                params.putString("codvendedor", sCodVend);
-                params.putString("usuario", usuario);
-                params.putString("senha", senha);
-                params.putInt("codCliente",CodCliente);
-                params.putString("nomerazao",NomeCliente);
+                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putInt(getString(R.string.intent_codcliente),CodCliente);
+                params.putString(getString(R.string.intent_nomerazao),NomeCliente);
                 i.putExtras(params);
                 startActivity(i);
                 getActivity().finish();

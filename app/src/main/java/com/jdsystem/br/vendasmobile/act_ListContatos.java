@@ -70,10 +70,10 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
             }
         }
         FloatingActionButton CadContatos = (FloatingActionButton) findViewById(R.id.cadcontato);
@@ -82,10 +82,10 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
             public void onClick(View view) {
                 Intent i = new Intent(act_ListContatos.this, CadContatos.class);
                 Bundle params = new Bundle();
-                params.putString("codvendedor", sCodVend);
-                params.putString("usuario", usuario);
-                params.putString("senha", senha);
-                params.putString("urlPrincipal", URLPrincipal);
+                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 i.putExtras(params);
                 startActivity(i);
 
@@ -132,8 +132,8 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         carregausuariologado();
 
         pDialog = new ProgressDialog(act_ListContatos.this);
-        pDialog.setTitle("Aguarde");
-        pDialog.setMessage("Carregando Contatos...");
+        pDialog.setTitle(getString(R.string.wait));
+        pDialog.setMessage(getString(R.string.loadingcontacts));
         pDialog.setCancelable(false);
         pDialog.show();
 
@@ -150,9 +150,9 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         View header = navigationView.getHeaderView(0);
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        UsuarioLogado = prefs.getString("usuario", null);
+        UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
         if (UsuarioLogado != null) {
-            UsuarioLogado = prefs.getString("usuario", null);
+            UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
             usuariologado.setText("Olá " + UsuarioLogado + "!");
         } else {
             usuariologado.setText("Olá " + usuario + "!");
@@ -169,10 +169,10 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         }*/
         Intent intent = new Intent(act_ListContatos.this, actListPedidos.class);
         Bundle params = new Bundle();
-        params.putString("codvendedor", sCodVend);
-        params.putString("urlPrincipal", URLPrincipal);
-        params.putString("usuario", usuario);
-        params.putString("senha", senha);
+        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
         intent.putExtras(params);
         startActivity(intent);
         finish();
@@ -190,9 +190,9 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
 
                 Dialogo = new ProgressDialog(act_ListContatos.this);
                 Dialogo.setIndeterminate(true);
-                Dialogo.setMessage("Buscando Contatos...");
-                Dialogo.setTitle("Aguarde");
-                Dialogo.setCancelable(true);
+                Dialogo.setTitle(getString(R.string.wait));
+                Dialogo.setMessage(getString(R.string.searchingcontacts));
+                Dialogo.setCancelable(false);
                 Dialogo.setProgress(0);
                 Dialogo.show();
 
@@ -239,18 +239,20 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         if (id == R.id.nav_clientes) {
             Intent intent = new Intent(act_ListContatos.this, act_ListClientes.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_produtos) {
             Intent iprod = new Intent(act_ListContatos.this, act_ListProdutos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             iprod.putExtras(params);
             startActivity(iprod);
             finish();
@@ -258,10 +260,10 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         } else if (id == R.id.nav_pedidos) {
             Intent iped = new Intent(act_ListContatos.this, actListPedidos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             iped.putExtras(params);
             startActivity(iped);
             finish();
@@ -271,10 +273,10 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         } else if (id == R.id.nav_sincronismo) {
             Intent isinc = new Intent(act_ListContatos.this, actSincronismo.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             isinc.putExtras(params);
             startActivity(isinc);
             finish();
@@ -326,7 +328,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
                 cursorContatos.close();
 
             } else {
-                Toast.makeText(this, "Nenhum contato encontrado!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.no_contacts_found, Toast.LENGTH_SHORT).show();
             }
         } catch (Exception E) {
             Toast.makeText(this, "Houve um problema ao acessar a base de dados. Favor entrar em contato com o suporte técnico JD System.", Toast.LENGTH_SHORT).show();
@@ -480,7 +482,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
                 DadosList.add(lstfiltrocontatos);
             } while (CursorContatos.moveToNext());
         } else {
-            Toast.makeText(this, "Nenhum cliente encontrado", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT).show();
         }
         CursorContatos.close();
         if (Dialogo.isShowing()) {
@@ -490,19 +492,6 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         flag = 0;
 
         return DadosList;
-    }
-
-    public boolean VerificaConexao() {
-        boolean conectado;
-        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (conectivtyManager.getActiveNetworkInfo() != null
-                && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-            conectado = true;
-        } else {
-            conectado = false;
-        }
-        return conectado;
     }
 }
 

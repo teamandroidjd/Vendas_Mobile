@@ -90,12 +90,12 @@ public class act_ListClientes extends AppCompatActivity
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal   = params.getString("urlPrincipal");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal   = params.getString(getString(R.string.intent_urlprincipal));
                 ConsultaPedido = params.getBoolean("consultapedido");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
-                CadastroContato = params.getInt("cadcont");
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
+                CadastroContato = params.getInt(getString(R.string.intent_cad_contato));
             }
         }
 
@@ -108,11 +108,11 @@ public class act_ListClientes extends AppCompatActivity
             public void onClick(View view) {
                 Intent intent = new Intent(act_ListClientes.this, act_CadClientes.class);
                 Bundle params = new Bundle();
-                params.putString("codvendedor", sCodVend);
-                params.putString("usuario", usuario);
-                params.putString("senha", senha);
-                params.putString("urlPrincipal", URLPrincipal);
-                params.putInt("listaclie",1);
+                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putInt(getString(R.string.intent_listaclie),1);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -128,10 +128,10 @@ public class act_ListClientes extends AppCompatActivity
 
         TELA_QUE_CHAMOU_INTENT = getIntent();
         TELA_QUE_CHAMOU = TELA_QUE_CHAMOU_INTENT.getStringExtra("TELA_QUE_CHAMOU");
-        CodVendedor = TELA_QUE_CHAMOU_INTENT.getStringExtra("codvendedor");
-        usuario = TELA_QUE_CHAMOU_INTENT.getStringExtra("usuario");
-        senha = TELA_QUE_CHAMOU_INTENT.getStringExtra("senha");
-        CadastroContato = TELA_QUE_CHAMOU_INTENT.getIntExtra("cadcont",0);
+        CodVendedor = TELA_QUE_CHAMOU_INTENT.getStringExtra(getString(R.string.intent_codvendedor));
+        usuario = TELA_QUE_CHAMOU_INTENT.getStringExtra(getString(R.string.intent_usuario));
+        senha = TELA_QUE_CHAMOU_INTENT.getStringExtra(getString(R.string.intent_senha));
+        CadastroContato = TELA_QUE_CHAMOU_INTENT.getIntExtra(getString(R.string.intent_cad_contato),0);
 
         array_spinner.add(PESQUISAR_CLIENTE_NOME);
         array_spinner.add(PESQUISAR_CLIENTE_FANTASIA);
@@ -162,8 +162,13 @@ public class act_ListClientes extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        UsuarioLogado = prefs.getString("usuario", null);
-        usuariologado.setText("Olá " +UsuarioLogado+"!");
+        UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
+        if (UsuarioLogado != null) {
+            UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
+            usuariologado.setText("Olá " + UsuarioLogado + "!");
+        } else {
+            usuariologado.setText("Olá " + usuario + "!");
+        }
 
     }
 
@@ -187,15 +192,15 @@ public class act_ListClientes extends AppCompatActivity
             if (ConexOk == true) {
                 dialog = new ProgressDialog(this);
                 dialog.setCancelable(false);
-                dialog.setMessage("Sincronizando Clientes");
-                dialog.setTitle("Aguarde");
+                dialog.setTitle(getString(R.string.wait));
+                dialog.setMessage(getString(R.string.sync_clients));
                 dialog.show();
 
 
                 Thread thread = new Thread(this);
                 thread.start();
             }else{
-                Toast.makeText(this, "Sem Conexão com a Internet, Verifique!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
             }
         }
         return super.onOptionsItemSelected(item);
@@ -230,7 +235,7 @@ public class act_ListClientes extends AppCompatActivity
             AlertDialog.Builder builder = new AlertDialog.Builder(act_ListClientes.this);
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Não existe nenhum cliente sincronizado. Favor clicar no botão SINCRONIZAR ou ir no menu Sincronização de dados e clicar no botão Sincronizar.")
+            builder.setMessage(R.string.alertsyncclients)
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -251,12 +256,12 @@ public class act_ListClientes extends AppCompatActivity
                     int CodCliente = cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT"));
                     Intent intent = new Intent(getBaseContext(), CadContatos.class);
                     Bundle params = new Bundle();
-                    params.putString("codvendedor", sCodVend);
-                    params.putString("usuario", usuario);
-                    params.putString("senha", senha);
-                    params.putString("urlPrincipal", URLPrincipal);
-                    params.putInt("codCliente", CodCliente);
-                    params.putString("nomerazao", cliente_cursor.getString(cursor.getColumnIndex("NOMERAZAO")));
+                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                    params.putString(getString(R.string.intent_nomerazao), cliente_cursor.getString(cursor.getColumnIndex("NOMERAZAO")));
                     //params.putString("C",TipoContato);
                     intent.putExtras(params);
                     startActivity(intent);
@@ -265,12 +270,12 @@ public class act_ListClientes extends AppCompatActivity
                     Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
                     Intent intent = new Intent(getBaseContext(), actDadosCliente.class);
                     Bundle params = new Bundle();
-                    params.putInt("codCliente", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                    params.putString("nomerazao", cliente_cursor.getString(cursor.getColumnIndex("NOMERAZAO")));
-                    params.putString("codvendedor", sCodVend);
-                    params.putString("usuario", usuario);
-                    params.putString("senha", senha);
-                    params.putString("urlPrincipal", URLPrincipal);
+                    params.putInt(getString(R.string.intent_codcliente), cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
+                    params.putString(getString(R.string.intent_nomerazao), cliente_cursor.getString(cursor.getColumnIndex("NOMERAZAO")));
+                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                     intent.putExtras(params);
                     startActivity(intent);
                     //finish();
@@ -278,7 +283,7 @@ public class act_ListClientes extends AppCompatActivity
                 }else{
                     Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
                     Intent returnIntent = new Intent();
-                    returnIntent.putExtra("CodCliente",cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
+                    returnIntent.putExtra(getString(R.string.intent_codcliente),cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
                     setResult(2,returnIntent);
                     finish();
                 }

@@ -73,10 +73,10 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
 
         TELA_QUE_CHAMOU_INTENT = getIntent();
         TELA_QUE_CHAMOU = TELA_QUE_CHAMOU_INTENT.getStringExtra("TELA_QUE_CHAMOU");
-        CodVendedor = TELA_QUE_CHAMOU_INTENT.getStringExtra("CodVendedor");
+        CodVendedor = TELA_QUE_CHAMOU_INTENT.getStringExtra(getString(R.string.intent_codvendedor));
         CodEmpresa = TELA_QUE_CHAMOU_INTENT.getStringExtra("codempresa");
-        usuario = TELA_QUE_CHAMOU_INTENT.getStringExtra("usuario");
-        senha = TELA_QUE_CHAMOU_INTENT.getStringExtra("senha");
+        usuario = TELA_QUE_CHAMOU_INTENT.getStringExtra(getString(R.string.intent_usuario));
+        senha = TELA_QUE_CHAMOU_INTENT.getStringExtra((getString(R.string.intent_senha)));
         NumPedido = TELA_QUE_CHAMOU_INTENT.getStringExtra("numpedido");
         DATAENTREGA = TELA_QUE_CHAMOU_INTENT.getStringExtra("dataentrega");
 
@@ -108,9 +108,9 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
             public void onClick(View view) {
                 Intent intent = new Intent(Lista_clientes.this, act_CadClientes.class);
                 Bundle params = new Bundle();
-                params.putString("codvendedor", CodVendedor);
-                params.putString("usuario", usuario);
-                params.putString("senha", senha);
+                params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
+                params.putString((getString(R.string.intent_usuario)), usuario);
+                params.putString((getString(R.string.intent_senha)), senha);
                 params.putInt("listaclie",0);
                 intent.putExtras(params);
                 startActivity(intent);
@@ -136,15 +136,15 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
             if (ConexOk == true) {
                 dialog = new ProgressDialog(this);
                 dialog.setCancelable(false);
-                dialog.setMessage("Sincronizando Clientes");
-                dialog.setTitle("Aguarde");
+                dialog.setMessage((getString(R.string.sync_clients)));
+                dialog.setTitle((getString(R.string.wait)));
                 dialog.show();
 
                 Thread thread = new Thread(this);
                 thread.start();
 
             } else {
-                Toast.makeText(this, "Sem Conexão com a Internet, Verifique!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, (getString(R.string.no_connection)), Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -177,7 +177,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
             AlertDialog.Builder builder = new AlertDialog.Builder(Lista_clientes.this);
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Não existe nenhum cliente sincronizado para ser associado ao pedido. Favor clicar no botão SINCRONIZAR.")
+            builder.setMessage(getString(R.string.alertsyncclients))
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -215,7 +215,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                 Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                 Bundle params = new Bundle();
                                 params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                                params.putString("CodVendedor", CodVendedor);
+                                params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                                 params.putString("numpedido", "0");
                                 params.putString("codempresa", CodEmpresa);
                                 intent.putExtras(params);
@@ -225,7 +225,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                 Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                 Bundle params = new Bundle();
                                 params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                                params.putString("CodVendedor", CodVendedor);
+                                params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                                 params.putString("numpedido", NumPedido);
                                 params.putString("codempresa", CodEmpresa);
                                 intent.putExtras(params);
@@ -246,7 +246,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                     Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                     Bundle params = new Bundle();
                                     params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                                    params.putString("CodVendedor", CodVendedor);
+                                    params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                                     params.putString("numpedido", "0");
                                     params.putString("codempresa", CodEmpresa);
                                     params.putString("dataentrega",DATAENTREGA);
@@ -257,7 +257,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                     Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                     Bundle params = new Bundle();
                                     params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                                    params.putString("CodVendedor", CodVendedor);
+                                    params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                                     params.putString("numpedido", NumPedido);
                                     params.putString("codempresa", CodEmpresa);
                                     intent.putExtras(params);
@@ -265,7 +265,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                     finish();
                                 }
                             } else {
-                                Util.msg_toast_personal(getBaseContext(), "Cliente sem permissão de compra.Verifique!", Util.ALERTA);
+                                Util.msg_toast_personal(getBaseContext(), getString(R.string.customer_without_purchase_permission), Util.ALERTA);
                                 return;
                             }
                         }
@@ -274,7 +274,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                 Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                 Bundle params = new Bundle();
                                 params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                                params.putString("CodVendedor", CodVendedor);
+                                params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                                 params.putString("numpedido", "0");
                                 params.putString("codempresa", CodEmpresa);
                                 intent.putExtras(params);
@@ -284,7 +284,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                 Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                 Bundle params = new Bundle();
                                 params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                                params.putString("CodVendedor", CodVendedor);
+                                params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                                 params.putString("numpedido", NumPedido);
                                 params.putString("codempresa", CodEmpresa);
                                 intent.putExtras(params);
@@ -358,14 +358,14 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplication(), "Nenhum cliente a ser enviado.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplication(), getString(R.string.no_new_clients), Toast.LENGTH_SHORT).show();
                     }
                 });
             }else {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplication(), "Novos clientes enviados com sucesso!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplication(), R.string.newcustomers_successfully, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -374,14 +374,14 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplication(), "Nenhum cliente sincronizado. Verifique!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplication(), R.string.no_sync_clients, Toast.LENGTH_SHORT).show();
                     }
                 });
             }else {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplication(), "Clientes sincronizados com sucesso!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplication(), (getString(R.string.syn_clients_successfully)), Toast.LENGTH_SHORT).show();
                     }
                 });
             }

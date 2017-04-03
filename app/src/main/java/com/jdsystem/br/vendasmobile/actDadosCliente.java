@@ -60,13 +60,13 @@ public class actDadosCliente extends ActionBarActivity {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                DocClie = params.getString("documento");
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
-                CodCliente = params.getInt("codCliente");
-                NomeCliente = params.getString("nomerazao");
+                //DocClie = params.getString("documento");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
+                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
         }
 

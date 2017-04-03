@@ -67,12 +67,12 @@ public class CadContatos extends AppCompatActivity implements Runnable {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
-                CodCliente = params.getInt("codCliente");
-                NomeCliente = params.getString("nomerazao");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
+                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
                 //sTipoContato = params.getString("C");
                 //            }
             }
@@ -107,10 +107,10 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                     lineartxtsemana.setVisibility(EditText.GONE);
                     Intent i = new Intent(CadContatos.this, act_ListClientes.class);
                     Bundle params = new Bundle();
-                    params.putString("codvendedor", sCodVend);
-                    params.putString("usuario", usuario);
-                    params.putString("senha", senha);
-                    params.putInt("cadcont", 1);
+                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putInt(getString(R.string.intent_cad_contato), 1);
                     i.putExtras(params);
                     startActivity(i);
                 } else if (CodCliente != 0) {

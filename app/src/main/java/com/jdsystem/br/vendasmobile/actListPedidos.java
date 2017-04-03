@@ -78,14 +78,14 @@ public class actListPedidos extends AppCompatActivity
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                SitPed = params.getInt("SitPedido");
-                CodClie = params.getString("CodCliente");
-                DtInicio = params.getString("datainicial");
-                DtFinal = params.getString("datafinal");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                SitPed = params.getInt(getString(R.string.intent_situacaopedido));
+                CodClie = params.getString(getString(R.string.intent_codcliente));
+                DtInicio = params.getString(getString(R.string.intent_datainicial));
+                DtFinal = params.getString(getString(R.string.intent_datafinal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
             }
             if (DtInicio == null) {
                 DtInicio = "0";
@@ -108,8 +108,8 @@ public class actListPedidos extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         pDialog = new ProgressDialog(actListPedidos.this);
-        pDialog.setTitle("Aguarde...");
-        pDialog.setMessage("Carregando Pedidos");
+        pDialog.setTitle(getString(R.string.wait));
+        pDialog.setMessage(getString(R.string.loading_orders));
         pDialog.setCancelable(false);
         pDialog.show();
 
@@ -124,7 +124,7 @@ public class actListPedidos extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        UsuarioLogado = prefs.getString("usuario", null);
+        UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
         usuariologado.setText("Olá " +UsuarioLogado+"!");
     }
 
@@ -178,10 +178,10 @@ public class actListPedidos extends AppCompatActivity
                                     Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
                                     Bundle params = new Bundle();
                                     params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                                    params.putString("CodVendedor", sCodVend);
-                                    params.putString("codempresa", sCodEmpresa);
-                                    params.putString("usuario", usuario);
-                                    params.putString("senha", senha);
+                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
                                     intent.putExtras(params);
                                     startActivityForResult(intent, 1);
                                 } catch (Exception E) {
@@ -197,10 +197,10 @@ public class actListPedidos extends AppCompatActivity
                 Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
                 Bundle params = new Bundle();
                 params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                params.putString("CodVendedor", sCodVend);
-                params.putString("codempresa", sCodEmpresa);
-                params.putString("usuario", usuario);
-                params.putString("senha", senha);
+                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
                 intent.putExtras(params);
                 startActivityForResult(intent, 1);
             }
@@ -240,14 +240,14 @@ public class actListPedidos extends AppCompatActivity
                         try {
                             Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
                             Bundle params = new Bundle();
-                            params.putString("codvendedor", sCodVend);
-                            params.putString("urlPrincipal", URLPrincipal);
-                            params.putString("usuario", usuario);
-                            params.putString("senha", senha);
-                            params.putInt("SitPedido", SitPed);
-                            params.putInt("codclie", 0);
-                            params.putString("datainicial", "0");
-                            params.putString("datafinal", "0");
+                            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
+                            params.putInt(getString(R.string.intent_situacaopedido), SitPed);
+                            params.putInt(getString(R.string.intent_codcliente), 0);
+                            params.putString(getString(R.string.intent_datainicial), "0");
+                            params.putString(getString(R.string.intent_datafinal), "0");
 
                             intent.putExtras(params);
                             finish();
@@ -273,11 +273,11 @@ public class actListPedidos extends AppCompatActivity
     public void filtrocliped (View view){
         Intent intent = new Intent(actListPedidos.this, act_ListClientes.class);
         Bundle params = new Bundle();
-        params.putString("codvendedor", sCodVend);
-        params.putString("urlPrincipal", URLPrincipal);
-        params.putString("usuario", usuario);
-        params.putString("senha", senha);
-        params.putBoolean("consultapedido", true);
+        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
+        //params.putBoolean("consultapedido", true);
         intent.putExtras(params);
         //finish();
         startActivityForResult(intent, 2);
@@ -289,30 +289,30 @@ public class actListPedidos extends AppCompatActivity
         if(SitPed > 0){
             Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_usuario), senha);
             intent.putExtras(params);
             startActivity(intent);
             finish();
         } else if (!CodClie.equals("0")) {
             Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivity(intent);
             finish();
         } else if (!DtInicio.equals("0")) {
             Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivity(intent);
             finish();
@@ -357,14 +357,14 @@ public class actListPedidos extends AppCompatActivity
                     DtFinal = "0";
                     Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
                     Bundle params = new Bundle();
-                    params.putString("codvendedor", sCodVend);
-                    params.putString("urlPrincipal", URLPrincipal);
-                    params.putString("usuario", usuario);
-                    params.putString("senha", senha);
-                    params.putString("datainicial", DtInicio);
-                    params.putString("datafinal", DtFinal);
-                    params.putInt("SitPedido", SitPed);
-                    params.putString("CodCliente", CodClie);
+                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_datainicial), DtInicio);
+                    params.putString(getString(R.string.intent_datafinal), DtFinal);
+                    params.putInt(getString(R.string.intent_situacaopedido), SitPed);
+                    params.putString(getString(R.string.intent_codcliente), CodClie);
 
                     intent.putExtras(params);
                     finish();
@@ -379,18 +379,18 @@ public class actListPedidos extends AppCompatActivity
                 try {
                     CodClie = "0";
                     SitPed = 0;
-                    DtInicio = data.getExtras().getString("datainicial");
-                    DtFinal = data.getExtras().getString("datafinal");
+                    DtInicio = data.getExtras().getString(getString(R.string.intent_datainicial));
+                    DtFinal = data.getExtras().getString(getString(R.string.intent_datafinal));
                     Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
                     Bundle params = new Bundle();
-                    params.putString("codvendedor", sCodVend);
-                    params.putString("urlPrincipal", URLPrincipal);
-                    params.putString("usuario", usuario);
-                    params.putString("senha", senha);
-                    params.putString("datainicial", DtInicio);
-                    params.putString("datafinal", DtFinal);
-                    params.putInt("SitPedido", SitPed);
-                    params.putString("CodCliente", CodClie);
+                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_datainicial), DtInicio);
+                    params.putString(getString(R.string.intent_datafinal), DtFinal);
+                    params.putInt(getString(R.string.intent_situacaopedido), SitPed);
+                    params.putString(getString(R.string.intent_codcliente), CodClie);
 
                     intent.putExtras(params);
                     finish();
@@ -414,11 +414,11 @@ public class actListPedidos extends AppCompatActivity
         if (id == R.id.nav_clientes) {
             Intent intent = new Intent(actListPedidos.this, act_ListClientes.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
-            params.putBoolean("fazpedido", false);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            //params.putBoolean("fazpedido", false);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
@@ -429,10 +429,10 @@ public class actListPedidos extends AppCompatActivity
         } else if (id == R.id.nav_produtos) {
             Intent intent = new Intent(actListPedidos.this, act_ListProdutos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
@@ -441,10 +441,10 @@ public class actListPedidos extends AppCompatActivity
         } else if(id == R.id.nav_contatos){
             Intent i = new Intent(actListPedidos.this, act_ListContatos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -452,10 +452,10 @@ public class actListPedidos extends AppCompatActivity
         } else if (id == R.id.nav_sincronismo) {
             Intent intent = new Intent(actListPedidos.this, actSincronismo.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
@@ -478,9 +478,9 @@ public class actListPedidos extends AppCompatActivity
                         frag = new FragmentPedido();
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                         Bundle bundle = new Bundle();
-                        bundle.putString("usuario", usuario);
-                        bundle.putString("senha", senha);
-                        bundle.putString("CodVendedor", sCodVend);
+                        bundle.putString(getString(R.string.intent_usuario), usuario);
+                        bundle.putString(getString(R.string.intent_senha), senha);
+                        bundle.putString(getString(R.string.intent_codvendedor), sCodVend);
                         frag.setArguments(bundle);
                         ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
                         ft.commit();

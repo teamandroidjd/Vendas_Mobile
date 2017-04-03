@@ -79,11 +79,11 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString("codvendedor");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
-                URLPrincipal = params.getString("urlPrincipal");
-                telaInvocada = params.getInt("listaclie");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                telaInvocada = params.getInt(getString(R.string.intent_listaclie));
             }
         }
 
@@ -397,13 +397,13 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
     public void buscacepclie(View view) {
         String sCEP = cep.getText().toString().replaceAll("[^0123456789]", "");
         if (sCEP.length() < 8) {
-            cep.setError("CEP incompleto. Verifique!");
+            cep.setError(getString(R.string.CEP_incomplete));
             cep.requestFocus();
             return;
         }
         DialogECB = new ProgressDialog(act_CadClientes.this);
-        DialogECB.setTitle("Aguarde.");
-        DialogECB.setMessage("Pesquisando o CEP informado...");
+        DialogECB.setTitle(getString(R.string.wait));
+        DialogECB.setMessage(getString(R.string.searching_the_CEP_informed));
         DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         DialogECB.setIcon(R.drawable.icon_sync);
         DialogECB.show();
@@ -439,15 +439,15 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                 System.out.println("Response :" + resultsRequestSOAP.toString());
             } else {
                 DialogECB.dismiss();
-                Toast.makeText(act_CadClientes.this, "Sem conexão com a internet! Verifique e tente novamente.", Toast.LENGTH_LONG).show();
+                Toast.makeText(act_CadClientes.this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
                 return;
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
         }
-        if(RetDadosEndereco.equals("CEP não Encontrado")){
+        if(RetDadosEndereco.equals(getString(R.string.zip_code_not_found))){
             DialogECB.dismiss();
-            Toast.makeText(act_CadClientes.this, "CEP não encontrado na base de dados. Verifique se está correto e tente novamente.", Toast.LENGTH_LONG).show();
+            Toast.makeText(act_CadClientes.this, R.string.CEP_not_found_database, Toast.LENGTH_LONG).show();
             endereco.setText("");
             return;
         }
@@ -580,13 +580,13 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
             AlertDialog.Builder builder = new AlertDialog.Builder(act_CadClientes.this);
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Deseja realmente cancelar o cadasto do cliente?")
+            builder.setMessage(R.string.cancel_customer_registration)
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             Intent intent = new Intent(act_CadClientes.this, actListPedidos.class);
                             Bundle params = new Bundle();
-                            params.putString("codvendedor", sCodVend);
+                            params.putString(getString(R.string.intent_codvendedor), sCodVend);
                             intent.putExtras(params);
                             startActivity(intent);
                             finish();
@@ -605,10 +605,10 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
         } else {
             Intent i = new Intent(act_CadClientes.this, act_ListClientes.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
-            params.putString("urlPrincipal", URLPrincipal);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -627,15 +627,15 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
 
         if (sTipoPessoa == "J") {
             if (nomerazao.getText().length() == 0) {
-                nomerazao.setError("Digite a Razão Social!");
+                nomerazao.setError(getString(R.string.enter_corporate_name));
                 nomerazao.requestFocus();
                 return;
             } else if (nomefan.getText().length() == 0) {
-                nomefan.setError("Digite o nome Fantasia!");
+                nomefan.setError(getString(R.string.enter_name_fantasia));
                 nomefan.requestFocus();
                 return;
             } else if (cnpjcpf.getText().length() == 0) {
-                cnpjcpf.setError("Digite o CNPJ!");
+                cnpjcpf.setError(getString(R.string.enter_CNPJ));
                 cnpjcpf.requestFocus();
                 return;
             }
@@ -644,11 +644,11 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
             CpfCnpj = cnpjcpf.getText().toString().replaceAll("[^0123456789]", "");
         } else if (sTipoPessoa == "F") {
             if (nomecompleto.getText().length() == 0) {
-                nomecompleto.setError("Digite o Nome Completo!");
+                nomecompleto.setError(getString(R.string.enter_full_name));
                 nomecompleto.requestFocus();
                 return;
             } else if (Edtcpf.getText().length() == 0) {
-                Edtcpf.setError("Digite a Identidade!");
+                Edtcpf.setError(getString(R.string.enter_identity));
                 Edtcpf.requestFocus();
                 return;
             }
@@ -657,15 +657,15 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
             CpfCnpj = Edtcpf.getText().toString().replaceAll("[^0123456789]", "");
         }
         if (endereco.getText().length() == 0) {
-            endereco.setError("Digite o Logradouro!");
+            endereco.setError(getString(R.string.enter_backstreet));
             endereco.requestFocus();
             return;
         } else if (numero.getText().length() == 0) {
-            numero.setError("Digite o número da rua!");
+            numero.setError(getString(R.string.enter_street_number));
             numero.requestFocus();
             return;
         } else if (cep.getText().length() == 0) {
-            cep.setError("Digite o CEP!");
+            cep.setError(getString(R.string.enter_CEP));
             cep.requestFocus();
             return;
         } /*else if (Util.validaEmail(email.getText().toString()) == false) {
@@ -712,9 +712,9 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
             Toast.makeText(this, "Cliente salvo com sucesso!", Toast.LENGTH_SHORT).show();
 
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(act_CadClientes.this);
-            builder.setTitle("Sincronização");
+            builder.setTitle(R.string.synchronization);
             builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Deseja sincronizar o cliente cadastrado?")
+            builder.setMessage(R.string.synchronize_registered_customer)
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -725,14 +725,14 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(act_CadClientes.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(act_CadClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
                                         }
                                     });
                                     Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString("CodVendedor", sCodVend);
-                                    params.putString("usuario", usuario);
-                                    params.putString("senha", senha);
+                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
@@ -741,14 +741,14 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(act_CadClientes.this, "Não foi possivel sincronizar o cliente. Tente novamente!", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(act_CadClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
                                         }
                                     });
                                     Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString("CodVendedor", sCodVend);
-                                    params.putString("usuario", usuario);
-                                    params.putString("senha", senha);
+                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
@@ -759,14 +759,14 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(act_CadClientes.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(act_CadClientes.this, getString(R.string.newcustomers_successfully), Toast.LENGTH_LONG).show();
                                         }
                                     });
                                     Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString("codvendedor", sCodVend);
-                                    params.putString("usuario", usuario);
-                                    params.putString("senha", senha);
+                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
@@ -774,14 +774,14 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(act_CadClientes.this, "Não foi possivel sincronizar o cliente. Tente novamente!", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(act_CadClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
                                         }
                                     });
                                     Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString("codvendedor", sCodVend);
-                                    params.putString("usuario", usuario);
-                                    params.putString("senha", senha);
+                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
@@ -795,7 +795,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                             if (telaInvocada == 0) {
                                 Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
                                 Bundle params = new Bundle();
-                                params.putString("CodVendedor", sCodVend);
+                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                 intent.putExtras(params);
                                 startActivity(intent);
                                 finish();
@@ -803,7 +803,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                             } else {
                                 Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
                                 Bundle params = new Bundle();
-                                params.putString("codvendedor", sCodVend);
+                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                 intent.putExtras(params);
                                 startActivity(intent);
                                 finish();
@@ -980,7 +980,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                 AlertDialog.Builder alerta = new AlertDialog.Builder(this);
                 alerta.setTitle(R.string.app_namesair);
                 alerta.setIcon(R.drawable.logo_ico);
-                alerta.setMessage("CPF inválido. Verifique!")
+                alerta.setMessage(R.string.invalid_CPF)
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -1017,7 +1017,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                 AlertDialog.Builder alerta = new AlertDialog.Builder(this);
                 alerta.setTitle(R.string.app_namesair);
                 alerta.setIcon(R.drawable.logo_ico);
-                alerta.setMessage("CNPJ inválido. Verifique!")
+                alerta.setMessage(R.string.invalid_CNPJ)
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {

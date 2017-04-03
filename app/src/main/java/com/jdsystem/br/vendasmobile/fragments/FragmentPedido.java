@@ -60,9 +60,9 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
         Bundle params = getArguments();
         if (params != null) {
-            usuario = params.getString("usuario");
-            senha = params.getString("senha");
-            Codvendedor = params.getString("CodVendedor");
+            usuario = params.getString(getString(R.string.intent_usuario));
+            senha = params.getString(getString(R.string.intent_senha));
+            Codvendedor = params.getString(getString(R.string.intent_codvendedor));
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list);
@@ -280,7 +280,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         Intent VendaProd = new Intent((actListPedidos) getActivity(), VenderProdutos.class);
                                         Bundle params = new Bundle();
                                         params.putString("numpedido", NumPedido);
-                                        params.putString("CodVendedor", Codvendedor);
+                                        params.putString(getString(R.string.intent_codvendedor), Codvendedor);
                                         VendaProd.putExtras(params);
                                         Intent intent = ((actListPedidos) getActivity()).getIntent();
                                         ((actListPedidos) getActivity()).finish();

@@ -18,38 +18,39 @@ public class ConfigDB extends SQLiteOpenHelper {
 
 
     private static String SQL_CLIENTE = (" CREATE TABLE IF NOT EXISTS CLIENTES ( CNPJ_CPF VARCHAR (14)  NOT NULL, " +
-            "NOMERAZAO VARCHAR (60) NOT NULL, " +
-            "NOMEFAN VARCHAR (50) NOT NULL, " +
-            "INSCREST VARCHAR (18), " +
-            "EMAIL VARCHAR (100) NOT NULL, " +
-            "TEL1 VARCHAR (15) NOT NULL, " +
-            "TEL2 VARCHAR (15), " +
-            "TELFAX VARCHAR (15), " +
-            "ENDERECO VARCHAR (50) NOT NULL, " +
-            "NUMERO VARCHAR (10) NOT NULL, " +
-            "COMPLEMENT VARCHAR (15), " +
-            "CODBAIRRO INTEGER NOT NULL, " +
-            "OBS TEXT, " +
-            "CODCIDADE INTEGER NOT NULL, " +
-            "UF CHAR (2) NOT NULL, " +
-            "CEP CHAR (8)," +
+            "NOMERAZAO VARCHAR (60) NOT NULL,               " +
+            "NOMEFAN VARCHAR (50) NOT NULL,                 " +
+            "INSCREST VARCHAR (18),                         " +
+            "EMAIL VARCHAR (100) NOT NULL,                  " +
+            "TEL1 VARCHAR (15) NOT NULL,                    " +
+            "TEL2 VARCHAR (15),                             " +
+            "TELFAX VARCHAR (15),                           " +
+            "ENDERECO VARCHAR (50) NOT NULL,                " +
+            "NUMERO VARCHAR (10) NOT NULL,                  " +
+            "COMPLEMENT VARCHAR (15),                       " +
+            "CODBAIRRO INTEGER NOT NULL,                    " +
+            "OBS TEXT,                                      " +
+            "CODCIDADE INTEGER NOT NULL,                    " +
+            "UF CHAR (2) NOT NULL,                          " +
+            "CEP CHAR (8),                                  " +
             "CODCLIE_INT INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "CODCLIE_EXT INTEGER, " +
-            "CODVENDEDOR INTEGER, " +
-            "TIPOPESSOA VARCHAR(1), " +
-            "ATIVO VARCHAR(1), " +
-            "FLAGINTEGRADO VARCHAR(1)," +
-            "REGIDENT VARCHAR(18)," +
-            "LIMITECRED DOUBLE, " +
-            "BLOQUEIO VARCHAR(2), " +
-            "CHAVE VARCHAR(100) " +
+            "CODCLIE_EXT INTEGER,                           " +
+            "CODVENDEDOR INTEGER,                           " +
+            "TIPOPESSOA VARCHAR(1),                         " +
+            "ATIVO VARCHAR(1),                              " +
+            "FLAGINTEGRADO VARCHAR(1),                      " +
+            "REGIDENT VARCHAR(18),                          " +
+            "LIMITECRED DOUBLE,                             " +
+            "BLOQUEIO VARCHAR(2),                           " +
+            "CODPERFIL INTEGER,                             " +
+            "CHAVE VARCHAR(100)                             " +
             ");");
 
     private static String SQL_BAIRROS = ("CREATE TABLE IF NOT EXISTS BAIRROS (" +
             "    CODBAIRRO INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "    CODBAIRRO_EXT INTEGER  ," +
-            "    CODCIDADE INTEGER      NOT NULL," +
-            "    DESCRICAO VARCHAR (30) NOT NULL " +
+            "    CODBAIRRO_EXT INTEGER,                      " +
+            "    CODCIDADE INTEGER      NOT NULL,            " +
+            "    DESCRICAO VARCHAR (30) NOT NULL             " +
             ");");
 
     private static String SQL_CIDADES = ("CREATE TABLE IF NOT EXISTS CIDADES (" +
@@ -105,6 +106,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    CODBAIRRO                    INTEGER,                  " +
             "    CODCIDADE                    INTEGER,                  " +
             "    EMAIL                        VARCHAR (100),            " +
+            "    CODPERFIL                    INTEGER,                  " +
             "    TEL1                         VARCHAR (15),             " +
             "    TEL2                         VARCHAR (15))             " +
             ";");
@@ -132,7 +134,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    OBS          TEXT,                     " +
             "    MARCA        VARCHAR(15),              " +
             "    VLICMSST     FLOAT,                    " +
-            "    VLIPI        FLOAT                     " +
+            "    VLIPI        FLOAT,                    " +
+            "    CODPERFIL    INTEGER                   " +
             ");");
 
     private static String SQL_PEDOPER = ("CREATE TABLE IF NOT EXISTS PEDOPER ( " +
@@ -162,6 +165,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " FLAGINTEGRADO       CHAR(1),                           " +
             " LATITUDEPEDIDO      DOUBLE,                            " +
             " NUMFISCAL           INTEGER,                           " +
+            " CODPERFIL           INTEGER,                           " +
             " LONGITUDEPEDIDO DOUBLE);");
 
 
@@ -183,7 +187,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             " VALORDESCONTO DECIMAL(10,2),                            " +
             " VLTOTAL       DECIMAL(10,2)   NOT NULL,                 " +
             " VLICMSST      FLOAT,                                    " +
-            " VLIPI         FLOAT                                     " +
+            " VLIPI         FLOAT,                                    " +
+            " CODPERFIL     INTEGER                                   " +
             ");");
 
     private static String SQL_CONFPAGAMENTO = "CREATE TABLE IF NOT EXISTS [CONFPAGAMENTO] (" +
@@ -235,6 +240,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " CODVEND INTEGER,      " +
             " USUARIO VARCHAR (30), " +
             " SENHA VARCHAR  (100), " +
+            " CODPERFIL INTEGER,    " +
             " CODEMPRESA INTEGER ); ");
 
     private static String SQL_BLOQUEIOS = (" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
@@ -243,6 +249,12 @@ public class ConfigDB extends SQLiteOpenHelper {
             " BLOQUEAR  CHAR    (1),  " +
             " LIBERAR   CHAR    (1),  " +
             " FPAVISTA  VARCHAR (3) ); ");
+
+    private static String SQL_PERFIL = (" CREATE TABLE IF NOT EXISTS PERFIL (" +
+            " CODPERFIL  INTEGER PRIMARY KEY AUTOINCREMENT,   " +
+            " LICENCA    VARCHAR (20),                        " +
+            " HOST       VARCHAR (50),                        " +
+            " NOMEPERFIL VARCHAR (20) ); ");
 
 
     @Override
@@ -262,6 +274,7 @@ public class ConfigDB extends SQLiteOpenHelper {
         db.execSQL(SQL_EMPRESA);
         db.execSQL(SQL_USUARIOS);
         db.execSQL(SQL_BLOQUEIOS);
+        db.execSQL(SQL_PERFIL);
 
     }
 
@@ -452,6 +465,40 @@ public class ConfigDB extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE PARAMAPP ADD DT_ULT_ITENS DATETIME");
             } catch (Exception E) {
                 System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DT_ULT_CLIE DATETIME");
+            }
+            try{
+                db.execSQL("CREATE TABLE IF NOT EXISTS PERFIL (" +
+                        " CODPERFIL  INTEGER PRIMARY KEY AUTOINCREMENT,   " +
+                        " LICENCA    VARCHAR (20),                        " +
+                        " HOST       VARCHAR (50),                        " +
+                        " NOMEPERFIL VARCHAR (20) ); ");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE USUARIOS ADD CODPERFIL INTEGER");
+            }catch(Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE CLIENTES ADD CODPERFIL INTEGER");
+            }catch(Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE CONTATO ADD CODPERFIL INTEGER");
+            }catch(Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE ITENS ADD CODPERFIL INTEGER");
+            }catch(Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE PEDITENS ADD CODPERFIL INTEGER");
+            }catch(Exception e){
+                e.toString();
             }
 
         }

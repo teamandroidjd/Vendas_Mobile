@@ -55,7 +55,7 @@ public class act_ListProdutos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
 
-    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu,UsuarioLogado;
+    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu, UsuarioLogado;
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private EditText prod_txt_pesquisaproduto;
     private ProgressDialog pDialog;
@@ -78,10 +78,10 @@ public class act_ListProdutos extends AppCompatActivity
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
                 //Pedido = params.getBoolean("pedido");
             }
         }
@@ -128,8 +128,8 @@ public class act_ListProdutos extends AppCompatActivity
         });
 
         pDialog = new ProgressDialog(act_ListProdutos.this);
-        pDialog.setTitle("Aguarde");
-        pDialog.setMessage("Carregando Produtos...");
+        pDialog.setTitle(getString(R.string.wait));
+        pDialog.setMessage(getString(R.string.loading_products));
         pDialog.setCancelable(false);
         pDialog.show();
 
@@ -143,9 +143,9 @@ public class act_ListProdutos extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        UsuarioLogado = prefs.getString("usuario", null);
+        UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
         if (UsuarioLogado != null) {
-            UsuarioLogado = prefs.getString("usuario", null);
+            UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
             usuariologado.setText("Olá " + UsuarioLogado + "!");
         } else {
             usuariologado.setText("Olá " + usuario + "!");
@@ -168,15 +168,15 @@ public class act_ListProdutos extends AppCompatActivity
                     Flag = 1;
                     pDialog = new ProgressDialog(this);
                     pDialog.setCancelable(false);
-                    pDialog.setMessage("Sincronizando Produtos");
-                    pDialog.setTitle("Aguarde");
+                    pDialog.setMessage(getString(R.string.sync_products));
+                    pDialog.setTitle(getString(R.string.wait));
                     pDialog.show();
 
                     Thread thread = new Thread(this);
                     thread.start();
 
                 } else {
-                    Toast.makeText(act_ListProdutos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(act_ListProdutos.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -186,22 +186,22 @@ public class act_ListProdutos extends AppCompatActivity
     }
 
     public void run() {
-        if(Flag == 1) {
+        if (Flag == 1) {
             try {
                 actSincronismo.run(act_ListProdutos.this);
-                sincprod= actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, usuario, senha);
+                sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, usuario, senha);
                 if (sincprod == false) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getApplication(), "Não foi possivel sincronizar os produtos. Tente novamente.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplication(), R.string.no_sync_products, Toast.LENGTH_LONG).show();
                         }
                     });
-                }else{
+                } else {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(getApplication(), "Produtos sincronizados com sucesso!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplication(), getString(R.string.sync_products_successfully), Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -211,7 +211,7 @@ public class act_ListProdutos extends AppCompatActivity
             } catch (Exception e) {
                 e.toString();
             }
-        }else {
+        } else {
             try {
                 ProdutosFragment frag = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFragC");
                 if (frag == null) {
@@ -220,8 +220,7 @@ public class act_ListProdutos extends AppCompatActivity
                     ft.replace(R.id.rl_fragment_container, frag, "mainFragC");
                     ft.commit();
                 }
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
             }
         }
@@ -240,10 +239,10 @@ public class act_ListProdutos extends AppCompatActivity
         }*/
         Intent intent = new Intent(act_ListProdutos.this, actListPedidos.class);
         Bundle params = new Bundle();
-        params.putString("codvendedor", sCodVend);
-        params.putString("urlPrincipal", URLPrincipal);
-        params.putString("usuario", usuario);
-        params.putString("senha", senha);
+        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
         intent.putExtras(params);
         startActivity(intent);
         finish();
@@ -255,10 +254,10 @@ public class act_ListProdutos extends AppCompatActivity
         if (id == R.id.nav_clientes) {
             Intent intent = new Intent(act_ListProdutos.this, act_ListClientes.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivity(intent);
             finish();
@@ -266,10 +265,10 @@ public class act_ListProdutos extends AppCompatActivity
         } else if (id == R.id.nav_produtos) {
             Intent i = new Intent(act_ListProdutos.this, act_ListProdutos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             i.putExtras(params);
             startActivity(i);
 
@@ -277,10 +276,10 @@ public class act_ListProdutos extends AppCompatActivity
         } else if (id == R.id.nav_pedidos) {
             Intent i = new Intent(act_ListProdutos.this, actListPedidos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -288,10 +287,10 @@ public class act_ListProdutos extends AppCompatActivity
         } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(act_ListProdutos.this, act_ListContatos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -299,10 +298,10 @@ public class act_ListProdutos extends AppCompatActivity
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(act_ListProdutos.this, actSincronismo.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -386,7 +385,7 @@ public class act_ListProdutos extends AppCompatActivity
             AlertDialog.Builder builder = new AlertDialog.Builder(act_ListProdutos.this);
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Não existe nenhum produto sincronizado. Favor clicar no botão SINCRONIZAR ou ir no menu Sincronização de dados e clicar no botão Sincronizar.")
+            builder.setMessage(R.string.alertsyncproducts)
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -407,8 +406,8 @@ public class act_ListProdutos extends AppCompatActivity
     public List<FiltroProdutos> pesquisarprodutos(CharSequence valor_campo) {
 
         pDialog = new ProgressDialog(act_ListProdutos.this);
-        pDialog.setTitle("Aguarde");
-        pDialog.setMessage("Realizando filtro...");
+        pDialog.setTitle(getString(R.string.wait));
+        pDialog.setMessage(getString(R.string.performing_filter));
         pDialog.setCancelable(false);
         pDialog.show();
 
@@ -484,7 +483,7 @@ public class act_ListProdutos extends AppCompatActivity
             CursorParametro.close();
 
         } else {
-            Toast.makeText(this, "Nenhum produto encontrado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.no_products_found, Toast.LENGTH_SHORT).show();
         }
         if (pDialog.isShowing()) {
             pDialog.dismiss();

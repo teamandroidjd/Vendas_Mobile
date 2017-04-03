@@ -97,12 +97,12 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
     public void confirmafiltro(View view){
         if (DataIni.before(DataFim) || (DataIni.equals(DataFim))) {
             Intent returnIntent = new Intent();
-            returnIntent.putExtra("datainicial", DataInicial);
-            returnIntent.putExtra("datafinal", DataFinal);
+            returnIntent.putExtra(getString(R.string.intent_datainicial), DataInicial);
+            returnIntent.putExtra(getString(R.string.intent_datafinal), DataFinal);
             setResult(3, returnIntent);
             finish();
         }else {
-            Util.msg_toast_personal(actFiltroPeriodoPedidos.this,"Data Inicial Maior que a Data Final", Toast.LENGTH_SHORT);
+            Util.msg_toast_personal(actFiltroPeriodoPedidos.this,getString(R.string.data_inicialfinal_invalida), Toast.LENGTH_SHORT);
         }
 
     }

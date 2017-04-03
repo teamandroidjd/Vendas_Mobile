@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -29,8 +31,9 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     private EditText edtChave;
     private Button btsalvhost;
     public SharedPreferences prefs;
-    public String ChaveAcesso;
+    public String ChaveAcesso, RetHost;
     ProgressDialog DialogECB;
+    private SQLiteDatabase DB;
     private Handler hd = new Handler();
 
     @Override
@@ -46,7 +49,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         }
     }
 
-    public void SalvarHost(View view){
+    public void SalvarHost(View view) {
         if (edtChave.getText().length() == 0) {
             edtChave.setError(getString(R.string.enter_host));
             edtChave.requestFocus();
@@ -70,6 +73,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     }
 
     private void declaraobjetos() {
+        DB = new ConfigDB(this).getReadableDatabase();
         btsalvhost = (Button) findViewById(R.id.btsalvhost);
         edtChave = (EditText) findViewById(R.id.edthost);
     }
@@ -84,7 +88,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
         HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSHOST);
-        String RetHost = null;
+        RetHost = null;
         Boolean ConexOk = Util.checarConexaoCelular(ConfigWeb.this);
         if (ConexOk == true) {
             try {
@@ -186,6 +190,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             });
             return;
         }
+        //gravarperfil(); // habilitar essa chamada de método somente na 2.0
         DialogECB.dismiss();
         SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
         editorhost.putString("ChaveAcesso", edtChave.getText().toString());
@@ -198,4 +203,26 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         });
         finish();
     }
+
+    // A função abaixo será usada na versão 2.0
+
+    /*private void gravarperfil() {
+        try{
+            Cursor cursorlicenca = DB.rawQuery("SELECT LICENCA,NOMEPERFIL FROM PERFIL WHERE LICENCA = '"+edtChave.getText().toString()+"'",null);
+            cursorlicenca.moveToFirst();
+            if(cursorlicenca.getCount() > 0){
+                String nomePerfil = cursorlicenca.getString(cursorlicenca.getColumnIndex("NOMEPERFIL")).trim();
+                DialogECB.dismiss();
+                Toast.makeText(ConfigWeb.this, "Licença já registrada para "+nomePerfil+". Verifique!", Toast.LENGTH_SHORT).show();
+                return;
+
+            }else {
+                DB.execSQL("INSERT INTO PERFIL (LICENCA, HOST) VALUES('"+edtChave.getText().toString()+"','"+RetHost+"');");
+            }
+
+        }catch(Exception e){
+            e.toString();
+        }
+    }*/
+
 }
