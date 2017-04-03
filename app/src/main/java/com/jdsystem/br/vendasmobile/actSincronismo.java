@@ -95,10 +95,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
             }
         }
         //DB = new ConfigDB(ctx).getReadableDatabase();
@@ -153,23 +153,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
-
-    public boolean VerificaConexao() {
-        boolean conectado;
-        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (conectivtyManager.getActiveNetworkInfo() != null
-                && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-            conectado = true;
-        } else {
-            conectado = false;
-        }
-        return conectado;
-    }
-
     @Override
     public void run() {
         DB = new ConfigDB(this).getReadableDatabase();
+
+        SincronizarClientes(sCodVend, usuario, senha);
 
         try {
             Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP ", null);
@@ -180,13 +168,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         } catch (Exception e) {
             e.toString();
         }
-
         String DataUlt2 = DataUltSt2;
         SharedPreferences prefs = getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
 
-        SincronizarClientes(sCodVend, usuario, senha);
+
         SincronizarProdutos(usuario, senha, DataUlt2);
         SincronizarClientesEnvio();
         SincronizarPedidosEnvio();
@@ -194,14 +181,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         SincBloqueios();
         SincParametros();
 
-        DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
+       // DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
 
         Intent i = new Intent(actSincronismo.this, actListPedidos.class);
         Bundle params = new Bundle();
-        params.putString("codvendedor", sCodVend);
-        params.putString("urlPrincipal", URLPrincipal);
-        params.putString("usuario", usuario);
-        params.putString("senha", senha);
+        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
         i.putExtras(params);
         startActivity(i);
         finish();
@@ -333,7 +320,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
             String CodCliente = null;
             String CodClienteExt = null;
-
 
             for (int i = 0; i < pedidosblq.length(); i++) {
                 while (jumpTime < totalProgressTime) {
@@ -715,7 +701,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                         E.toString();
                     }
                 }
-
             }
         } catch (JSONException e) {
             e.toString();
@@ -1507,7 +1492,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    public static boolean SincronizarPedidosEnvioStatic(String sUsuario, String sSenha, Context ctxPedEnv, boolean bdialog) {
+    public static boolean SincronizarPedidosEnvioStatic(String sUsuario, String sSenha, Context ctxPedEnv) {
         boolean sincpedenviostatic = false;
 
         String JPedidos = null;
@@ -1639,7 +1624,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
 
                                 try {
-                                    Boolean ConexOk = true;
+                                    Boolean ConexOk = Util.checarConexaoCelular(ctxPedEnv);
                                     if (ConexOk == true) {
                                         Envio.call("", envelope);
                                         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
@@ -1680,15 +1665,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     }
 
     public static Boolean SincAtuEstado(final Context ctxEnv) {
-        DialogECB = new ProgressDialog(ctxEnv);
-        DialogECB.setTitle("Aguarde...");
-        DialogECB.setMessage("Sincronizando");
-        DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        DialogECB.setProgress(0);
-        DialogECB.setIcon(R.drawable.icon_sync);
-        DialogECB.setMax(0);
-        DialogECB.show();
-
         String Estado = null;
         String Cidade = null;
         String Bairro = null;
@@ -1707,8 +1683,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String RetEstados = null;
 
         try {
-            Boolean ConexOk = true;
-            //Boolean ConexOk = actLogin.VerificaConexao();
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
             if (ConexOk == true) {
                 Envio.call("", envelope);
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
@@ -1765,9 +1740,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 cursor1.close();
                             }
                             CursosEstado.close();
-                            SincAtualizaCidade(Estado, ctxEnv, true);
+                            SincAtualizaCidade(Estado, ctxEnv);
                         } catch (Exception E) {
-                            // TODO Auto-generated catch block
                             E.printStackTrace();
                         }
                     }
@@ -1781,7 +1755,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return AtualizaEst;
     }
 
-    public static boolean SincAtualizaCidade(String UF, final Context ctxEnv, boolean bdialog) {
+    public static boolean SincAtualizaCidade(String UF, final Context ctxEnv) {
         boolean sincatucidade = false;
         int CodCidadeExt = 0;
         int CodCidade = 0;
@@ -1837,7 +1811,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                             cursor1.close();
                             CursorCidade.close();
                             sincatucidade = true;
-                            //SincAtualizaBairro(CodCidadeExt, ctxEnv);
+
                             final int finalCodCidadeExt = CodCidadeExt;
                             Handler handler = new Handler(Looper.getMainLooper());
                             handler.post(new Runnable() {
@@ -1847,15 +1821,11 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                 }
                             });
                         }
-
-
                     } catch (Exception E) {
                         E.toString();
                         sincatucidade = false;
                     }
                 }
-
-
             }
         } catch (JSONException e) {
             e.toString();
@@ -3272,12 +3242,10 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
         String situacao = null;
 
-
         String METHOD_NAME = "RetornaSituacaoCliexVend";
         String TAG_SITUACAOCLIENTE = "sitclie";
         String TAG_SITCLIENTE = "situacaoclie";
         String TAG_DESCBLOQUEIO = "descricaobloqueio";
-
 
         SharedPreferences prefs = ctxEnvClie.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
