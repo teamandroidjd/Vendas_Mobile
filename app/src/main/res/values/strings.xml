@@ -103,45 +103,52 @@
     <string name="synchronize_registered_customer">Deseja sincronizar o cliente cadastrado?</string>
     <string name="cancel_customer_registration">Deseja realmente cancelar o cadasto do cliente?</string>
     <string name="no_contacts_found">Nenhum contato encontrado. Verifique!</string>
-    <string name="performing_filter">Realizando filtro...</string>
+    <string name="confpagamento_avista">À VISTA</string>
+    <string name="confpagamento_parcelado">PARCELADO</string>
+    <string name="confpagamento_dinheiro">DINHEIRO</string>
+    <string name="confpagamento_boleto">BOLETO</string>
 
     <!-- Mensagens de validação-->
 
-    <string name="enter_corporate_name">Digite a Razão Social!</string>
-    <string name="enter_name_fantasia">Digite o nome Fantasia!</string>
+    <string name="enter_corporate_name">Digite a razão social!</string>
+    <string name="enter_name_fantasia">Digite o nome fantasia!</string>
     <string name="enter_CNPJ">Digite o CNPJ!</string>
-    <string name="enter_full_name">Digite o Nome Completo!</string>
-    <string name="enter_identity">Digite a Identidade!</string>
-    <string name="enter_backstreet">Digite o Logradouro!</string>
+    <string name="enter_full_name">Digite o nome completo!</string>
+    <string name="enter_identity">Digite a identidade!</string>
+    <string name="enter_backstreet">Digite o logradouro!</string>
     <string name="enter_street_number">Digite o número da rua!</string>
     <string name="enter_host">Digite o caminho do host!</string> <!-- Utilizado somente na classe ConfigWeb -->
-    <string name="enter_username">Digite o nome do Usuário!</string>
-    <string name="enter_password">Digite a Senha!</string>
+    <string name="enter_username">Digite o nome do usuário!</string>
+    <string name="enter_password">Digite a senha!</string>
     <string name="invalid_user_password">Usuário ou senha inválido. Verifique!</string>
     <string name="limit_users">Limite de usuários atingido ou não habilitado. Entre em contato com a empresa.</string>
     <string name="not_validate_license">Não foi possivel validar a licença. Tente novamente!</string>
     <string name="not_valid_license_failure_communicate">Não foi possível validar a licença devido a uma falha de comunicação com o servidor. Tente novamente!</string>
-    <string name="zip_code_not_found">CEP não Encontrado</string>
+    <string name="zip_code_not_found">CEP não Encontrado. Verifique!</string>
     <string name="CEP_not_found_database">CEP não encontrado na base de dados. Verifique se está correto e tente novamente.</string>
     <string name="CEP_incomplete">CEP incompleto. Verifique!</string>
     <string name="invalid_CPF">CPF inválido. Verifique!</string>
     <string name="invalid_CNPJ">CNPJ inválido. Verifique!</string>
     <string name="enter_CEP">Digite o CEP!</string>
     <string name="data_inicialfinal_invalida">Data inicial maior que a data final. Verifique!</string>
+    <string name="enter_quntity">Informe a quantidade de parcelas.</string>
+    <string name="item_sem_estoque">Item sem quantidade disponível. Verifique!</string>
 
     <!-- Mensagens de clientes-->
 
-    <string name="customer_not_sent">Cliente não enviado! Verifique.</string>
+    <string name="customer_not_sent">Cliente não enviado. Verifique!</string>
     <string name="no_new_clients">Nenhum cliente novo para ser enviado.</string>
-    <string name="alertsyncclients">Não existe nenhum cliente sincronizado. Favor clicar no botão SINCRONIZAR ou ir no menu Sincronização de dados e clicar no botão Sincronizar.</string>
+    <string name="alertsyncclients">Não existe nenhum cliente sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de dados e clique no botão Sincronizar.</string>
     <string name="no_sync_clients">Nenhum cliente sincronizado. Verifique!</string>
     <string name="customer_without_purchase_permission">Cliente sem permissão de compra.Verifique!</string>
+    <string name="primeira_sync_clientes">Esta é sua primeira sincronização de clientes. Esse processo pode demorar alguns minutos.</string>
 
     <!-- Mensagens de itens-->
 
-    <string name="no_sync_products">Nenhum produtos sincronizado. Verifique!</string>
-    <string name="alertsyncproducts">Não existe nenhum produto sincronizado. Favor clicar no botão SINCRONIZAR ou ir no menu Sincronização de dados e clicar no botão Sincronizar.</string>
+    <string name="no_sync_products">Nenhum iten sincronizado. Verifique!</string>
+    <string name="alertsyncproducts">Não existe nenhum iten sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de dados e clique no botão Sincronizar.</string>
     <string name="no_products_found">Nenhum iten encontrado. Verifique!</string>
+    <string name="primeira_sync_itens">Esta é sua primeira sincronização de itens. Esse processo pode demorar alguns minutos.</string>
 
 
     <!-- Mensagens de sucesso no processo-->
@@ -149,13 +156,13 @@
     <string name="syn_clients_successfully">Clientes sincronizados com sucesso!</string>
     <string name="license_validated">Licença validada com sucesso!</string>
     <string name="newcustomers_successfully">Novos clientes enviados com sucesso!</string>
-    <string name="sync_products_successfully">Produtos sincronizados com sucesso!</string>
+    <string name="sync_products_successfully">Itens sincronizados com sucesso!</string>
 
     <!-- Mensagens de sincronização e leitura de dados-->
 
     <string name="sync_clients">Sincronizando clientes...</string>
-    <string name="sync_products">Sincronizando produtos...</string>
-    <string name="loading_products">Carregando produtos...</string>
+    <string name="sync_products">Sincronizando itens...</string>
+    <string name="loading_products">Carregando itens...</string>
     <string name="updating_city">Atualizando cadastro de cidades/bairros...</string>
     <string name="sending_orders">Enviando pedidos...</string>
     <string name="sync_companies">Sincronizando empresas...</string>
@@ -164,11 +171,12 @@
     <string name="updating_locks">Atualizando bloqueios...</string>
     <string name="checking_user_password">Verificando usuário e senha...</string>
     <string name="valid_license">Validando licença...</string>
-    <string name="loading_orders">Carregando Pedidos...</string>
-    <string name="loadingcontacts">Carregando Contatos...</string>
-    <string name="searchingcontacts">Buscando Contatos...</string>
+    <string name="loading_orders">Carregando pedidos...</string>
+    <string name="loadingcontacts">Carregando contatos...</string>
+    <string name="searchingcontacts">Buscando contatos...</string>
     <string name="updating_customer_registration">Enviando novos cadastros de clientes...</string>
     <string name="searching_the_CEP_informed">Pesquisando o CEP informado...</string>
+    <string name="performing_filter">Realizando filtro...</string>
 
     <!-- Utilizado somente nas Intent-->
 
@@ -185,6 +193,9 @@
     <string name="intent_datafinal">datafinal</string>
     <string name="intent_situacaopedido">SitPedido</string>
     <string name="intent_codigoempresa">codempresa</string>
+
+
+
 
 
 </resources>

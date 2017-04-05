@@ -2758,7 +2758,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                             Toast.makeText(VenderProdutos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                     });
-                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this);
+                    pedidoendiado = actSincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this,NumPedido);
                     if (pedidoendiado == true) {
                         dialog.dismiss();
                         Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
@@ -2778,7 +2778,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     }
                 }
             } else {
-                pedidoendiado = actSincronismo.SincronizarPedidosEnvio(numpedido, this);
+                pedidoendiado = actSincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this,NumPedido);
                 if (pedidoendiado == true) {
                     dialog.dismiss();
                     Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);

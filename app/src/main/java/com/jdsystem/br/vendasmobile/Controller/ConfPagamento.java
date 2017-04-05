@@ -87,8 +87,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
         VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
-        array_forma_pagamento.add("À VISTA");
-        array_forma_pagamento.add("PARCELADO");
+        array_forma_pagamento.add(getString(R.string.confpagamento_avista));
+        array_forma_pagamento.add(getString(R.string.confpagamento_parcelado));
         arrayAdapter = new ArrayAdapter<String>(this, simple_spinner_dropdown_item, array_forma_pagamento);
         conf_spfpgto.setAdapter(arrayAdapter);
 
@@ -104,22 +104,22 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 qtdparcelas = confBean.getConf_parcelas().toString();
 
                 avista_parcelado = confBean.getConf_tipo_pagamento().toString();
-                if (avista_parcelado.equals("À VISTA")) {
-                    sppg = arrayAdapter.getPosition("À VISTA");
+                if (avista_parcelado.equals(getString(R.string.confpagamento_avista))) {
+                    sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_avista));
                     conf_spfpgto.setSelection(sppg);
 
                 }
-                if (avista_parcelado.equals("PARCELADO")) {
-                    sppg = arrayAdapter.getPosition("PARCELADO");
+                if (avista_parcelado.equals(getString(R.string.confpagamento_parcelado))) {
+                    sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_parcelado));
                     conf_spfpgto.setSelection(sppg);
 
                 }
 
                 din_boleto = confBean.getConf_recebeucom_din_chq_car().toString();
-                if (din_boleto.equals("DINHEIRO")) {
+                if (din_boleto.equals(getString(R.string.confpagamento_dinheiro))) {
                     conf_rbdinheiro.setChecked(true);
                 }
-                if (din_boleto.equals("BOLETO")) {
+                if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
                     conf_rbboleto.setChecked(true);
                 }
             }
@@ -138,22 +138,22 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             avista_parcelado = prefs.getString("avista_parcelado", null);
             din_boleto = prefs.getString("din_boleto", null);
             if (avista_parcelado != null && avista_parcelado != "") {
-                if (avista_parcelado.equals("À VISTA")) {
-                    sppg = arrayAdapter.getPosition("À VISTA");
+                if (avista_parcelado.equals(getString(R.string.confpagamento_avista))) {
+                    sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_avista));
                     conf_spfpgto.setSelection(sppg);
 
                 }
-                if (avista_parcelado.equals("PARCELADO")) {
-                    sppg = arrayAdapter.getPosition("PARCELADO");
+                if (avista_parcelado.equals(getString(R.string.confpagamento_parcelado))) {
+                    sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_parcelado));
                     conf_spfpgto.setSelection(sppg);
 
                 }
             }
             if (din_boleto != null && din_boleto != "") {
-                if (din_boleto.equals("DINHEIRO")) {
+                if (din_boleto.equals(getString(R.string.confpagamento_dinheiro))) {
                     conf_rbdinheiro.setChecked(true);
                 }
-                if (din_boleto.equals("BOLETO")) {
+                if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
                     conf_rbboleto.setChecked(true);
                 }
             }
@@ -162,22 +162,22 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             qtdparcelas = confBean.getConf_parcelas().toString();
 
             avista_parcelado = confBean.getConf_tipo_pagamento().toString();
-            if (avista_parcelado.equals("À VISTA")) {
-                sppg = arrayAdapter.getPosition("À VISTA");
+            if (avista_parcelado.equals(getString(R.string.confpagamento_avista))) {
+                sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_avista));
                 conf_spfpgto.setSelection(sppg);
 
             }
-            if (avista_parcelado.equals("PARCELADO")) {
-                sppg = arrayAdapter.getPosition("PARCELADO");
+            if (avista_parcelado.equals(getString(R.string.confpagamento_parcelado))) {
+                sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_parcelado));
                 conf_spfpgto.setSelection(sppg);
 
             }
 
         din_boleto = confBean.getConf_recebeucom_din_chq_car().toString();
-        if (din_boleto.equals("DINHEIRO")) {
+        if (din_boleto.equals(getString(R.string.confpagamento_dinheiro))) {
             conf_rbdinheiro.setChecked(true);
         }
-        if (din_boleto.equals("BOLETO")) {
+        if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
             conf_rbboleto.setChecked(true);
         }
         }
@@ -253,11 +253,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
     private boolean validar_forma_de_pagamento() {
         boolean fechar = true;
-        if (TIPO_PAGAMENTO.equals("PARCELADO")) {
+        if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))) {
             // condicao sem entrada
             if (conf_txtqtdparcelas.getText().toString().trim().equals("") || conf_txtqtdparcelas.getText().toString().trim().equals("0")) {
                 fechar = false;
-                Util.msg_toast_personal(getBaseContext(), "Informe a quantidade de parcelas", Util.ALERTA);
+                Util.msg_toast_personal(getBaseContext(), getString(R.string.enter_quntity), Util.ALERTA);
             }
         }
         return fechar;
@@ -270,7 +270,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         TIPO_PAGAMENTO = spinner.getItemAtPosition(position).toString();
 
 
-            if (TIPO_PAGAMENTO.equals("À VISTA")) {
+            if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_avista))) {
 
                 conf_txvlabelparcelas.setVisibility(View.GONE);
                 conf_txtqtdparcelas.setVisibility(View.GONE);
@@ -295,7 +295,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
             }
 
-            if (TIPO_PAGAMENTO.equals("PARCELADO")) {
+            if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))) {
 
                 conf_txvlabelparcelas.setVisibility(View.VISIBLE);
                 conf_rbboleto.setChecked(true);
@@ -329,13 +329,13 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         switch (checkedId) {
 
             case R.id.conf_rbdinheiro:
-                RECEBIMENTO_DIN_CAR_CHQ = "DINHEIRO";
+                RECEBIMENTO_DIN_CAR_CHQ = getString(R.string.confpagamento_dinheiro);
                 conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
                 //Util.msg_toast_personal(getBaseContext(), "dinheiro", Util.ALERTA);
                 break;
 
             case R.id.conf_rbboleto:
-                RECEBIMENTO_DIN_CAR_CHQ = "BOLETO";
+                RECEBIMENTO_DIN_CAR_CHQ = getString(R.string.confpagamento_boleto);
                 conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
                 //Util.msg_toast_personal(getBaseContext(), "cartao", Util.ALERTA);
                 break;

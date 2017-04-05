@@ -26,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +56,7 @@ public class act_ListProdutos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
 
-    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu, UsuarioLogado;
+    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu, UsuarioLogado, sincprod;
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private EditText prod_txt_pesquisaproduto;
     private ProgressDialog pDialog;
@@ -64,7 +65,6 @@ public class act_ListProdutos extends AppCompatActivity
     Produtos lstprodutos;
     FiltroProdutos lstfiltprodutos;
     Handler handler = new Handler();
-    boolean sincprod;
 
 
     @Override
@@ -165,15 +165,29 @@ public class act_ListProdutos extends AppCompatActivity
             if (item.getItemId() == R.id.menu_sinc_cliente) {
                 Boolean ConexOk = Util.checarConexaoCelular(act_ListProdutos.this);
                 if (ConexOk == true) {
-                    Flag = 1;
-                    pDialog = new ProgressDialog(this);
-                    pDialog.setCancelable(false);
-                    pDialog.setMessage(getString(R.string.sync_products));
-                    pDialog.setTitle(getString(R.string.wait));
-                    pDialog.show();
+                    Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS", null);
+                    if (cursorVerificaProd.getCount() == 0) {
+                        Flag = 1;
+                        pDialog = new ProgressDialog(this);
+                        pDialog.setCancelable(false);
+                        pDialog.setMessage(getString(R.string.primeira_sync_itens));
+                        pDialog.setTitle(getString(R.string.wait));
+                        pDialog.show();
 
-                    Thread thread = new Thread(this);
-                    thread.start();
+                        Thread thread = new Thread(this);
+                        thread.start();
+
+                    }else {
+                        Flag = 1;
+                        pDialog = new ProgressDialog(this);
+                        pDialog.setCancelable(false);
+                        pDialog.setMessage(getString(R.string.sync_products));
+                        pDialog.setTitle(getString(R.string.wait));
+                        pDialog.show();
+
+                        Thread thread = new Thread(this);
+                        thread.start();
+                    }
 
                 } else {
                     Toast.makeText(act_ListProdutos.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
@@ -188,26 +202,28 @@ public class act_ListProdutos extends AppCompatActivity
     public void run() {
         if (Flag == 1) {
             try {
-                actSincronismo.run(act_ListProdutos.this);
-                sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, usuario, senha);
-                if (sincprod == false) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplication(), R.string.no_sync_products, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else {
+                //actSincronismo.run(act_ListProdutos.this);
+                sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, usuario, senha,0);
+                if (sincprod.equals("0")) {
+                    pDialog.dismiss();
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(getApplication(), getString(R.string.sync_products_successfully), Toast.LENGTH_LONG).show();
                         }
                     });
+                    Intent intent = (act_ListProdutos.this).getIntent();
+                    (act_ListProdutos.this).finish();
+                    startActivity(intent);
+                } else {
+                    pDialog.dismiss();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplication(), sincprod, Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
-                Intent intent = (act_ListProdutos.this).getIntent();
-                (act_ListProdutos.this).finish();
-                startActivity(intent);
             } catch (Exception e) {
                 e.toString();
             }
@@ -224,8 +240,8 @@ public class act_ListProdutos extends AppCompatActivity
                 e.toString();
             }
         }
-        if (pDialog.isShowing())
-            pDialog.dismiss();
+        /*if (pDialog.isShowing())
+            pDialog.dismiss();*/
 
     }
 

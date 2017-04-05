@@ -18,51 +18,51 @@ public class ConfigDB extends SQLiteOpenHelper {
 
 
     private static String SQL_CLIENTE = (" CREATE TABLE IF NOT EXISTS CLIENTES ( CNPJ_CPF VARCHAR (14)  NOT NULL, " +
-            "NOMERAZAO VARCHAR (60) NOT NULL,               " +
-            "NOMEFAN VARCHAR (50) NOT NULL,                 " +
-            "INSCREST VARCHAR (18),                         " +
-            "EMAIL VARCHAR (100) NOT NULL,                  " +
-            "TEL1 VARCHAR (15) NOT NULL,                    " +
-            "TEL2 VARCHAR (15),                             " +
-            "TELFAX VARCHAR (15),                           " +
-            "ENDERECO VARCHAR (50) NOT NULL,                " +
-            "NUMERO VARCHAR (10) NOT NULL,                  " +
-            "COMPLEMENT VARCHAR (15),                       " +
-            "CODBAIRRO INTEGER NOT NULL,                    " +
-            "OBS TEXT,                                      " +
-            "CODCIDADE INTEGER NOT NULL,                    " +
-            "UF CHAR (2) NOT NULL,                          " +
-            "CEP CHAR (8),                                  " +
-            "CODCLIE_INT INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "CODCLIE_EXT INTEGER,                           " +
-            "CODVENDEDOR INTEGER,                           " +
-            "TIPOPESSOA VARCHAR(1),                         " +
-            "ATIVO VARCHAR(1),                              " +
-            "FLAGINTEGRADO VARCHAR(1),                      " +
-            "REGIDENT VARCHAR(18),                          " +
-            "LIMITECRED DOUBLE,                             " +
-            "BLOQUEIO VARCHAR(2),                           " +
-            "CODPERFIL INTEGER,                             " +
-            "CHAVE VARCHAR(100)                             " +
+            " NOMERAZAO VARCHAR (60) NOT NULL,               " +
+            " NOMEFAN VARCHAR (50) NOT NULL,                 " +
+            " INSCREST VARCHAR (18),                         " +
+            " EMAIL VARCHAR (100) NOT NULL,                  " +
+            " TEL1 VARCHAR (15) NOT NULL,                    " +
+            " TEL2 VARCHAR (15),                             " +
+            " TELFAX VARCHAR (15),                           " +
+            " ENDERECO VARCHAR (50) NOT NULL,                " +
+            " NUMERO VARCHAR (10) NOT NULL,                  " +
+            " COMPLEMENT VARCHAR (15),                       " +
+            " CODBAIRRO INTEGER NOT NULL,                    " +
+            " OBS TEXT,                                      " +
+            " CODCIDADE INTEGER NOT NULL,                    " +
+            " UF CHAR (2) NOT NULL,                          " +
+            " CEP CHAR (8),                                  " +
+            " CODCLIE_INT INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " CODCLIE_EXT INTEGER,                           " +
+            " CODVENDEDOR INTEGER,                           " +
+            " TIPOPESSOA VARCHAR(1),                         " +
+            " ATIVO VARCHAR(1),                              " +
+            " FLAGINTEGRADO VARCHAR(1),                      " +
+            " REGIDENT VARCHAR(18),                          " +
+            " LIMITECRED DOUBLE,                             " +
+            " BLOQUEIO VARCHAR(2),                           " +
+            " CODPERFIL INTEGER,                             " +
+            " CHAVE VARCHAR(100)                             " +
             ");");
 
     private static String SQL_BAIRROS = ("CREATE TABLE IF NOT EXISTS BAIRROS (" +
-            "    CODBAIRRO INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "    CODBAIRRO_EXT INTEGER,                      " +
-            "    CODCIDADE INTEGER      NOT NULL,            " +
-            "    DESCRICAO VARCHAR (30) NOT NULL             " +
+            " CODBAIRRO INTEGER PRIMARY KEY AUTOINCREMENT," +
+            " CODBAIRRO_EXT INTEGER,                      " +
+            " CODCIDADE INTEGER      NOT NULL,            " +
+            " DESCRICAO VARCHAR (30) NOT NULL             " +
             ");");
 
     private static String SQL_CIDADES = ("CREATE TABLE IF NOT EXISTS CIDADES (" +
-            "    CODCIDADE INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "    CODCIDADE_EXT INTEGER,                      " +
-            "    DESCRICAO VARCHAR (50) NOT NULL,            " +
-            "    UF        CHAR (2)     NOT NULL             " +
+            " CODCIDADE INTEGER PRIMARY KEY AUTOINCREMENT," +
+            " CODCIDADE_EXT INTEGER,                      " +
+            " DESCRICAO VARCHAR (50) NOT NULL,            " +
+            " UF        CHAR (2)     NOT NULL             " +
             ");");
 
     private static String SQL_ESTADOS = ("CREATE TABLE IF NOT EXISTS ESTADOS (" +
-            "    UF CHAR(2) PRIMARY KEY,         " +
-            "    DESCRICAO VARCHAR (20) NOT NULL " +
+            " UF CHAR(2) PRIMARY KEY,         " +
+            " DESCRICAO VARCHAR (20) NOT NULL " +
             ");");
 
     private static String SQL_PARAMAPP = ("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME," +
@@ -90,52 +90,53 @@ public class ConfigDB extends SQLiteOpenHelper {
             " p_desconto_do_vendedor INTEGER);");
 
     private static String SQL_CONTATOS = (" CREATE TABLE IF NOT EXISTS CONTATO (" +
-            "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
-            "    CODCLIENTE                   INTEGER,                  " +
-            "    CODCLIE_EXT                  INTEGER,                  " +
-            "    NOME                         VARCHAR (60)  NOT NULL,   " +
-            "    CARGO                        VARCHAR (30),             " +
-            "    DOCUMENTO                    VARCHAR(15),              " +
-            "    DATA                         VARCHAR(10),              " +
-            "    CEP                          VARCHAR(10),              " +
-            "    ENDERECO                     VARCHAR(15),              " +
-            "    NUMERO                       VARCHAR(10),              " +
-            "    COMPLEMENTO                  VARCHAR(15),              " +
-            "    UF                           CHAR(2),                  " +
-            "    CODVENDEDOR                  INTEGER,                  " +
-            "    CODBAIRRO                    INTEGER,                  " +
-            "    CODCIDADE                    INTEGER,                  " +
-            "    EMAIL                        VARCHAR (100),            " +
-            "    CODPERFIL                    INTEGER,                  " +
-            "    TEL1                         VARCHAR (15),             " +
-            "    TEL2                         VARCHAR (15))             " +
+            " CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
+            " CODCLIENTE                   INTEGER,                  " +
+            " CODCLIE_EXT                  INTEGER,                  " +
+            " NOME                         VARCHAR (60)  NOT NULL,   " +
+            " CARGO                        VARCHAR (30),             " +
+            " DOCUMENTO                    VARCHAR(15),              " +
+            " DATA                         VARCHAR(10),              " +
+            " CEP                          VARCHAR(10),              " +
+            " ENDERECO                     VARCHAR(15),              " +
+            " NUMERO                       VARCHAR(10),              " +
+            " COMPLEMENTO                  VARCHAR(15),              " +
+            " UF                           CHAR(2),                  " +
+            " CODVENDEDOR                  INTEGER,                  " +
+            " CODBAIRRO                    INTEGER,                  " +
+            " CODCIDADE                    INTEGER,                  " +
+            " EMAIL                        VARCHAR (100),            " +
+            " CODPERFIL                    INTEGER,                  " +
+            " TEL1                         VARCHAR (15),             " +
+            " TEL2                         VARCHAR (15))             " +
             ";");
 
     private static String SQL_ITENS = ("CREATE TABLE IF NOT EXISTS ITENS (" +
-            "    CODIGOITEM   INTEGER        PRIMARY KEY" +
-            "                                 NOT NULL, " +
-            "    CODITEMANUAL VARCHAR (15)    NOT NULL, " +
-            "    DESCRICAO    VARCHAR (60)    NOT NULL, " +
-            "    UNIVENDA     VARCHAR (5)     NOT NULL, " +
-            "    APRESENTACAO VARCHAR (20)    NOT NULL, " +
-            "    VLVENDA1     DECIMAL (12, 4) NOT NULL, " +
-            "    VLVENDA2     DECIMAL (12, 4),          " +
-            "    VLVENDA3     DECIMAL (12, 4),          " +
-            "    VLVENDA4     DECIMAL (12, 4),          " +
-            "    VLVENDA5     DECIMAL (12, 4),          " +
-            "    VLVENDAP1    DECIMAL (12, 4),          " +
-            "    VLVENDAP2    DECIMAL (12, 4),          " +
-            "    VENDAPADRAO  DECIMAL (12, 4),          " +
-            "    QTDESTPROD   VARCHAR(10),              " +
-            "    CLASSE       VARCHAR(15),              " +
-            "    FABRICANTE   VARCHAR(30),              " +
-            "    FORNECEDOR   VARCHAR(30),              " +
-            "    ATIVO        VARCHAR(1),               " +
-            "    OBS          TEXT,                     " +
-            "    MARCA        VARCHAR(15),              " +
-            "    VLICMSST     FLOAT,                    " +
-            "    VLIPI        FLOAT,                    " +
-            "    CODPERFIL    INTEGER                   " +
+            " CODIGOITEM   INTEGER        PRIMARY KEY" +
+            "                              NOT NULL, " +
+            " CODITEMANUAL VARCHAR (15)    NOT NULL, " +
+            " DESCRICAO    VARCHAR (60)    NOT NULL, " +
+            " UNIVENDA     VARCHAR (5)     NOT NULL, " +
+            " APRESENTACAO VARCHAR (20)    NOT NULL, " +
+            " VLVENDA1     DECIMAL (12, 4) NOT NULL, " +
+            " VLVENDA2     DECIMAL (12, 4),          " +
+            " VLVENDA3     DECIMAL (12, 4),          " +
+            " VLVENDA4     DECIMAL (12, 4),          " +
+            " VLVENDA5     DECIMAL (12, 4),          " +
+            " VLVENDAP1    DECIMAL (12, 4),          " +
+            " VLVENDAP2    DECIMAL (12, 4),          " +
+         // " VENDAPADRAO  DECIMAL (12, 4),          " +
+            " TABELAPADRAO VARCHAR(20),              " +
+            " QTDESTPROD   VARCHAR(10),              " +
+            " CLASSE       VARCHAR(15),              " +
+            " FABRICANTE   VARCHAR(30),              " +
+            " FORNECEDOR   VARCHAR(30),              " +
+            " ATIVO        VARCHAR(1),               " +
+            " OBS          TEXT,                     " +
+            " MARCA        VARCHAR(15),              " +
+            " VLICMSST     FLOAT,                    " +
+            " VLIPI        FLOAT,                    " +
+            " CODPERFIL    INTEGER                   " +
             ");");
 
     private static String SQL_PEDOPER = ("CREATE TABLE IF NOT EXISTS PEDOPER ( " +
@@ -178,9 +179,9 @@ public class ConfigDB extends SQLiteOpenHelper {
             " DESCRICAO     VARCHAR (60)    NOT NULL,                 " +
             " CODIGOITEM    INTEGER,                                  " +
             " NUMEROITEM    NUMERIC (5, 0),                           " +
-            //" QTDEMBAPED    NUMERIC (11, 3) NOT NULL,                 " +
+          //" QTDEMBAPED    NUMERIC (11, 3) NOT NULL,                 " +
             " QTDMENORPED   FLOAT           NOT NULL,                 " +
-            //" QTDMAIORPED   FLOAT           NOT NULL,                 " +
+          //" QTDMAIORPED   FLOAT           NOT NULL,                 " +
             " UNIDADE       VARCHAR (5),                              " +
             " VLUNIT        DECIMAL(10,2)   NOT NULL,                 " +
             " PERCACREDESC  DOUBLE,                                   " +
@@ -498,6 +499,11 @@ public class ConfigDB extends SQLiteOpenHelper {
             try{
                 db.execSQL("ALTER TABLE PEDITENS ADD CODPERFIL INTEGER");
             }catch(Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE ITENS ADD TABELAPADRAO VARCHAR(20)");
+            }catch (Exception e){
                 e.toString();
             }
 

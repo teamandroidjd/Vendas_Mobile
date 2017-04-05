@@ -71,6 +71,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
     public String usuario, senha, URLPrincipal, sCodVend, UFVendedor;
     private String CodVendedor = "0";
     public TextView copyright;
+    Boolean ConexOk;
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -152,7 +153,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
     public void logar(View view) {
         final String user = edtUsuario.getText().toString();
         final String pass = edtSenha.getText().toString();
-        Boolean ConexOk = VerificaConexao();
+        ConexOk = Util.checarConexaoCelular(actLogin.this);
         if (ConexOk == false) {
             sCodVend = ValidarLogin(user, pass); // verifica se o usuário e senha  existe na base local do dispositivo
             if (sCodVend != null) {
@@ -192,7 +193,6 @@ public class actLogin extends AppCompatActivity implements Runnable {
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                finish();
                             }
                         });
 
@@ -473,7 +473,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,"0");
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -536,7 +536,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,"0");
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
@@ -628,7 +628,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
             CursorLogin.close();
             return sCodVend;
         } else {
-            Toast.makeText(actLogin.this, R.string.invalid_user_password, Toast.LENGTH_LONG).show();
+            //Toast.makeText(actLogin.this, R.string.invalid_user_password, Toast.LENGTH_LONG).show();
             return null;
         }
     }

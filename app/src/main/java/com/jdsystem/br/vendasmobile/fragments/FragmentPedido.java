@@ -160,7 +160,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             if (flagintegrado.equals("1")) {
                                                 sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), usuario, senha);
                                                 if (sitclieenvio == true) {
-                                                    pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext());
+                                                    pedidoendiado = actSincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(),NumPedido);
                                                     if (pedidoendiado == true) {
                                                         Intent intent = ((actListPedidos) getActivity()).getIntent();
                                                         ((actListPedidos) getActivity()).finish();
@@ -177,7 +177,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             } else {
                                                 sitcliexvend = actSincronismo.SituacaodoClientexPed(totalvenda,getActivity(),usuario,senha,codclie_ext);
                                                 if(sitcliexvend.equals("OK")) {
-                                                pedidoendiado = actSincronismo.SincronizarPedidosEnvio(NumPedido, getContext());
+                                                pedidoendiado = actSincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(),NumPedido);
                                                 if (pedidoendiado == true) {
                                                     Intent intent = ((actListPedidos) getActivity()).getIntent();
                                                     ((actListPedidos) getActivity()).finish();
@@ -191,9 +191,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                     Util.msg_toast_personal(getActivity(), sitcliexvend, Util.PADRAO);
                                                     return;
                                                 }
-
                                             }
-
                                         } else {
                                             Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
                                             return;
@@ -203,7 +201,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Cancelar")) {
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
-                                        boolean Cancelado = actSincronismo.CancelarPedidoAberto(NumPedido, getContext());
+                                        boolean Cancelado = actSincronismo.AtualizaPedido(NumPedido, getContext(),"C");
 
                                         if (Cancelado == true) {
                                             Intent intent = ((actListPedidos) getActivity()).getIntent();
@@ -246,7 +244,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     boolean statusatualizado;
                                     if (Status.equals("#")) {
                                         final String NumPedidoExt = adapter.PedidoExterno(position);
-                                        statusatualizado = actSincronismo.AtualizaStatusPedido(NumPedidoExt, getContext());
+                                        statusatualizado = actSincronismo.AtualizaPedido(NumPedidoExt, getContext(),"S");
                                         if (statusatualizado == true) {
                                             Intent intent = ((actListPedidos) getActivity()).getIntent();
                                             ((actListPedidos) getActivity()).finish();
@@ -262,7 +260,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Gerar Venda")) {
                                     if (Status.equals("Orçamento")) {
-                                        boolean Autorizado = actSincronismo.AutorizaPedidoAberto(NumPedido, getContext());
+                                        boolean Autorizado = actSincronismo.AtualizaPedido(NumPedido, getContext(), "A");
                                         if (Autorizado == true) {
                                             Intent intent = ((actListPedidos) getActivity()).getIntent();
                                             ((actListPedidos) getActivity()).finish();

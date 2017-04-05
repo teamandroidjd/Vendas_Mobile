@@ -35,6 +35,7 @@ import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.actSincronismo;
 import com.jdsystem.br.vendasmobile.act_CadClientes;
+import com.jdsystem.br.vendasmobile.act_ListClientes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                 params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                 params.putString((getString(R.string.intent_usuario)), usuario);
                 params.putString((getString(R.string.intent_senha)), senha);
-                params.putInt("listaclie",0);
+                params.putInt("listaclie", 0);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -131,18 +132,31 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.menu_sinc_cliente) {
-
+            SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
             Boolean ConexOk = Util.checarConexaoCelular(this);
             if (ConexOk == true) {
-                dialog = new ProgressDialog(this);
-                dialog.setCancelable(false);
-                dialog.setMessage((getString(R.string.sync_clients)));
-                dialog.setTitle((getString(R.string.wait)));
-                dialog.show();
+                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES", null);
+                if (cursorVerificaClie.getCount() == 0) {
+                    dialog = new ProgressDialog(Lista_clientes.this);
+                    dialog.setTitle(R.string.wait);
+                    dialog.setMessage(getString(R.string.primeira_sync_clientes));
+                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    dialog.setIcon(R.drawable.icon_sync);
+                    dialog.setCancelable(false);
+                    dialog.show();
 
-                Thread thread = new Thread(this);
-                thread.start();
+                    Thread thread = new Thread(this);
+                    thread.start();
+                } else {
+                    dialog = new ProgressDialog(Lista_clientes.this);
+                    dialog.setCancelable(false);
+                    dialog.setMessage((getString(R.string.sync_clients)));
+                    dialog.setTitle((getString(R.string.wait)));
+                    dialog.show();
 
+                    Thread thread = new Thread(this);
+                    thread.start();
+                }
             } else {
                 Toast.makeText(this, (getString(R.string.no_connection)), Toast.LENGTH_SHORT).show();
             }
@@ -206,11 +220,11 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                             cursorbloqclie.close();
                             bloqueio = cliente_cursor.getString(cursor.getColumnIndex("BLOQUEIO"));
                             FlagIntegrado = cliente_cursor.getString(cursor.getColumnIndex("FLAGINTEGRADO"));
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.toString();
                         }
 
-                        if(FlagIntegrado.equals("1")){
+                        if (FlagIntegrado.equals("1")) {
                             if (NumPedido == null) {
                                 Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                 Bundle params = new Bundle();
@@ -232,16 +246,15 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                 startActivity(intent);
                                 finish();
                             }
-                        }
-                        else if (BloqClie.equals("S")) {
+                        } else if (BloqClie.equals("S")) {
                             Boolean ConexOk = Util.checarConexaoCelular(Lista_clientes.this);
                             if (ConexOk == true) {
-                                actSincronismo.SincronizarClientesStatic(CodVendedor, Lista_clientes.this, usuario, senha,cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT")));
-                                Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = "+cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT"))+"",null);
+                                actSincronismo.SincronizarClientesStatic(CodVendedor, Lista_clientes.this, usuario, senha, cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT")));
+                                Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")) + "", null);
                                 cursorclie.moveToFirst();
                                 bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
                             }
-                            if (bloqueio.equals("01") || bloqueio.equals("1") ) {
+                            if (bloqueio.equals("01") || bloqueio.equals("1")) {
                                 if (NumPedido == null) {
                                     Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
                                     Bundle params = new Bundle();
@@ -249,7 +262,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                     params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                                     params.putString("numpedido", "0");
                                     params.putString("codempresa", CodEmpresa);
-                                    params.putString("dataentrega",DATAENTREGA);
+                                    params.putString("dataentrega", DATAENTREGA);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
@@ -352,7 +365,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
     @Override
     public void run() {
         try {
-            actSincronismo.run(this);
+            //actSincronismo.run(this);
             sincclieenvio = actSincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
             if (sincclieenvio == false) {
                 handler.post(new Runnable() {
@@ -361,7 +374,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                         Toast.makeText(getApplication(), getString(R.string.no_new_clients), Toast.LENGTH_SHORT).show();
                     }
                 });
-            }else {
+            } else {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -369,7 +382,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                     }
                 });
             }
-            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha,0);
+            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha, 0);
             if (sincclie == false) {
                 handler.post(new Runnable() {
                     @Override
@@ -377,7 +390,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                         Toast.makeText(getApplication(), R.string.no_sync_clients, Toast.LENGTH_SHORT).show();
                     }
                 });
-            }else {
+            } else {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

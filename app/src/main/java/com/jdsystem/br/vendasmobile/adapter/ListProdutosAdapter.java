@@ -53,19 +53,15 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
         String TipoEst = mList.get(position).getTipoEstoque();
         if (TipoEst.equals("Q")) {
             myViewHolder.lblquantidade.setText(mList.get(position).getQuantidade());
-        }
-        if (TipoEst.equals("D")) {
-            if ((mList.get(position).getQuantidade()).equals("0,0000") || QtdEstoqueNegativo.equals("-") ) {
+        } else if (TipoEst.equals("D")) {
+            if ((mList.get(position).getQuantidade()).equals("0,0000") || QtdEstoqueNegativo.equals("-")) {
                 myViewHolder.lblquantidade.setText("Indisponível");
-            }else{
+            } else {
                 myViewHolder.lblquantidade.setText("Disponível");
             }
-        }
-        if (TipoEst.equals("N")) {
+        } else if (TipoEst.equals("N")) {
             myViewHolder.layquantidade.setVisibility(View.GONE);
         }
-
-
         String Status = mList.get(position).getStatus();
         if (Status.equals("1")) {
             myViewHolder.lblStatus.setText("Ativo");
@@ -73,7 +69,7 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
             myViewHolder.lblStatus.setText("Inativo");
         }
 
-      if ((mList.get(position).getPreco1()) != ("0,0000")) {
+        if ((mList.get(position).getPreco1()) != ("0,0000")) {
             myViewHolder.lblPreco.setText(mList.get(position).getPreco1());
             myViewHolder.tab1.setText(mList.get(position).getTabela1());
         } else {
@@ -83,9 +79,9 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
         if ((mList.get(position).getPreco2()) != ("0,0000")) {
             myViewHolder.lblpreco2.setText(mList.get(position).getPreco2());
             myViewHolder.tab2.setText(mList.get(position).getTabela2());
-       } else {
-           myViewHolder.laytab2.setVisibility(View.GONE);
-       }
+        } else {
+            myViewHolder.laytab2.setVisibility(View.GONE);
+        }
 
         if ((mList.get(position).getPreco3()) != ("0,0000")) {
             myViewHolder.lblpreco3.setText(mList.get(position).getPreco3());
@@ -191,9 +187,9 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
             lblprecop2 = (TextView) itemView.findViewById(R.id.txtprecopromocaob);
             lblquantidade = (TextView) itemView.findViewById(R.id.txt_qtdestoque);
 
-            tabpadrao = (TextView) itemView.findViewById(R.id.tabpadrao) ;
-            tab1 = (TextView) itemView.findViewById(R.id.tab1) ;
-            tab2 = (TextView) itemView.findViewById(R.id.tab2) ;
+            tabpadrao = (TextView) itemView.findViewById(R.id.tabpadrao);
+            tab1 = (TextView) itemView.findViewById(R.id.tab1);
+            tab2 = (TextView) itemView.findViewById(R.id.tab2);
             tab3 = (TextView) itemView.findViewById(R.id.tab3);
             tab4 = (TextView) itemView.findViewById(R.id.tab4);
             tab5 = (TextView) itemView.findViewById(R.id.tab5);
@@ -208,7 +204,6 @@ public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapte
             laytab5 = (RelativeLayout) itemView.findViewById(R.id.laytab5);
             laytabp1 = (RelativeLayout) itemView.findViewById(R.id.laytabp1);
             laytabp2 = (RelativeLayout) itemView.findViewById(R.id.laytabp2);
-
 
 
             itemView.setOnClickListener(this);

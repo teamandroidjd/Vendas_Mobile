@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -69,7 +70,7 @@ public class act_ListClientes extends AppCompatActivity
     private SimpleCursorAdapter AdapterClientes;
     private List<String> array_spinner = new ArrayList<String>();
     private ArrayAdapter<String> arrayAdapter;
-    private String selecao_spinner,CodVendedor,usuario, senha, TELA_QUE_CHAMOU;
+    private String selecao_spinner, CodVendedor, usuario, senha, TELA_QUE_CHAMOU;
     //private Cursor cursor;
     private EditText adm_txt_pesquisacliente;
     private ListView adm_listview_cliente;
@@ -77,7 +78,7 @@ public class act_ListClientes extends AppCompatActivity
     private ImageView imgStatus;
     public ProgressDialog dialog;
     public Boolean ConsultaPedido;
-    public  int CadastroContato;
+    public int CadastroContato;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class act_ListClientes extends AppCompatActivity
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodVend = params.getString(getString(R.string.intent_codvendedor));
-                URLPrincipal   = params.getString(getString(R.string.intent_urlprincipal));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 ConsultaPedido = params.getBoolean("consultapedido");
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
@@ -112,7 +113,7 @@ public class act_ListClientes extends AppCompatActivity
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params.putInt(getString(R.string.intent_listaclie),1);
+                params.putInt(getString(R.string.intent_listaclie), 1);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -131,7 +132,7 @@ public class act_ListClientes extends AppCompatActivity
         CodVendedor = TELA_QUE_CHAMOU_INTENT.getStringExtra(getString(R.string.intent_codvendedor));
         usuario = TELA_QUE_CHAMOU_INTENT.getStringExtra(getString(R.string.intent_usuario));
         senha = TELA_QUE_CHAMOU_INTENT.getStringExtra(getString(R.string.intent_senha));
-        CadastroContato = TELA_QUE_CHAMOU_INTENT.getIntExtra(getString(R.string.intent_cad_contato),0);
+        CadastroContato = TELA_QUE_CHAMOU_INTENT.getIntExtra(getString(R.string.intent_cad_contato), 0);
 
         array_spinner.add(PESQUISAR_CLIENTE_NOME);
         array_spinner.add(PESQUISAR_CLIENTE_FANTASIA);
@@ -189,22 +190,38 @@ public class act_ListClientes extends AppCompatActivity
 
         if (item.getItemId() == R.id.menu_sinc_cliente) {
             Boolean ConexOk = Util.checarConexaoCelular(this);
+            SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
             if (ConexOk == true) {
-                dialog = new ProgressDialog(this);
-                dialog.setCancelable(false);
-                dialog.setTitle(getString(R.string.wait));
-                dialog.setMessage(getString(R.string.sync_clients));
-                dialog.show();
+                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES", null);
+                if (cursorVerificaClie.getCount() == 0) {
+                    dialog = new ProgressDialog(act_ListClientes.this);
+                    dialog.setTitle(R.string.wait);
+                    dialog.setMessage(getString(R.string.primeira_sync_clientes));
+                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    dialog.setIcon(R.drawable.icon_sync);
+                    dialog.setCancelable(false);
+                    dialog.show();
 
+                    Thread thread = new Thread(this);
+                    thread.start();
 
-                Thread thread = new Thread(this);
-                thread.start();
-            }else{
+                } else {
+                    dialog = new ProgressDialog(act_ListClientes.this);
+                    dialog.setCancelable(false);
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.setMessage(getString(R.string.sync_clients));
+                    dialog.show();
+
+                    Thread thread = new Thread(this);
+                    thread.start();
+                }
+            } else {
                 Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
             }
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     private void mostrar_clientes_listview() {
 
@@ -214,7 +231,7 @@ public class act_ListClientes extends AppCompatActivity
         final Cursor cursor = cliDao.buscar_todos_cliente(sCodVend);
 
         String[] colunas = new String[]{cliBean.C_CODIGO_CLIENTE_CURSOR, cliBean.C_NOME_DO_CLIENTE, cliBean.C_NOME_FANTASIA, cliBean.C_CIDADE_CLIENTE,
-                cliBean.C_BAIRRO_CLIENTE, cliBean.C_UF_CLIENTE, cliBean.C_TELEFONE_CLIENTE, cliBean.C_CNPJCPF, cliBean.C_ENVIADO };
+                cliBean.C_BAIRRO_CLIENTE, cliBean.C_UF_CLIENTE, cliBean.C_TELEFONE_CLIENTE, cliBean.C_CNPJCPF, cliBean.C_ENVIADO};
         final int[] para;
 
         if (cliBean.C_ENVIADO == "1") {
@@ -250,7 +267,7 @@ public class act_ListClientes extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> listview, View view, int posicao, long id) {
 
-                if(CadastroContato == 1){
+                if (CadastroContato == 1) {
                     //String TipoContato = "C";
                     Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
                     int CodCliente = cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT"));
@@ -266,7 +283,7 @@ public class act_ListClientes extends AppCompatActivity
                     intent.putExtras(params);
                     startActivity(intent);
 
-                }else if (ConsultaPedido.equals(false)) {
+                } else if (ConsultaPedido.equals(false)) {
                     Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
                     Intent intent = new Intent(getBaseContext(), actDadosCliente.class);
                     Bundle params = new Bundle();
@@ -280,11 +297,11 @@ public class act_ListClientes extends AppCompatActivity
                     startActivity(intent);
                     //finish();
 
-                }else{
+                } else {
                     Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
                     Intent returnIntent = new Intent();
-                    returnIntent.putExtra(getString(R.string.intent_codcliente),cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
-                    setResult(2,returnIntent);
+                    returnIntent.putExtra(getString(R.string.intent_codcliente), cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
+                    setResult(2, returnIntent);
                     finish();
                 }
             }
@@ -389,7 +406,7 @@ public class act_ListClientes extends AppCompatActivity
             startActivity(intent);
             finish();
 
-        } else if(id == R.id.nav_contatos){
+        } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(act_ListClientes.this, act_ListContatos.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
@@ -421,8 +438,8 @@ public class act_ListClientes extends AppCompatActivity
     @Override
     public void run() {
         try {
-            actSincronismo.run(this);
-            sincclieenvio = actSincronismo.SincronizarClientesEnvioStatic("0", this,usuario,senha);
+            //actSincronismo.run(this);
+            sincclieenvio = actSincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
             if (sincclieenvio == false) {
                 handler.post(new Runnable() {
                     @Override
@@ -438,7 +455,7 @@ public class act_ListClientes extends AppCompatActivity
                     }
                 });
             }
-            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha,0);
+            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha, 0);
             if (sincclie == false) {
                 handler.post(new Runnable() {
                     @Override
@@ -458,7 +475,7 @@ public class act_ListClientes extends AppCompatActivity
             Intent intent = (act_ListClientes.this).getIntent();
             (act_ListClientes.this).finish();
             startActivity(intent);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.toString();
 
         }

@@ -88,28 +88,18 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
     private Handler handler = new Handler();
     private Intent Codigo;
-    private String NumPedido, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7, sCodvend, chavepedido, usuario, senha;
+    private String NumPedido, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7, sCodvend, chavepedido, usuario, senha, dtUltAtu, sincprod;
     private int CodigoItem, sprecoprincipal, tabanterior;
     SQLiteDatabase DB;
     private Double qtdestoque;
-    private boolean sincprod;
-
     private SharedPreferences prefs;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
     private Spinner spntabpreco;
-
-
-    public String dtUltAtu;
-
     private Builder alerta;
     private AlertDialog dlg;
     private ProgressDialog dialog;
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
+    Boolean ConexOk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,21 +108,13 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         setContentView(R.layout.lista_produtos);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
-
-        array_spinner.add(DESCRICAO_PRODUTO);
-        array_spinner.add(CODIGO_PRODUTO);
-        array_spinner.add(CATEGORIA_PRODUTO);
-        Codigo = getIntent();
+        declaraobjetos();
 
         NumPedido = Codigo.getStringExtra("numpedido");
         chavepedido = Codigo.getStringExtra("chave");
         sCodvend = Codigo.getStringExtra("CodVendedor");
         usuario = Codigo.getStringExtra("usuario");
         senha = Codigo.getStringExtra("senha");
-
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_spinner);
-        prod_sp_produtos = (Spinner) findViewById(R.id.prod_sp_produtos);
-        prod_sp_produtos.setAdapter(arrayAdapter);
 
         prod_sp_produtos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -145,7 +127,19 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             }
         });
         carrega_produto_para_venda();
+    }
 
+    private void declaraobjetos() {
+
+        array_spinner.add(DESCRICAO_PRODUTO);
+        array_spinner.add(CODIGO_PRODUTO);
+        array_spinner.add(CATEGORIA_PRODUTO);
+
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_spinner);
+        prod_sp_produtos = (Spinner) findViewById(R.id.prod_sp_produtos);
+        prod_sp_produtos.setAdapter(arrayAdapter);
+
+        Codigo = getIntent();
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
@@ -162,17 +156,30 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         if (item.getItemId() == R.id.menu_sinc_cliente) {
             Boolean ConexOk = Util.checarConexaoCelular(Lista_produtos.this);
             if (ConexOk == true) {
-                dialog = new ProgressDialog(this);
-                dialog.setCancelable(false);
-                dialog.setMessage("Sincronizando Produtos");
-                dialog.setTitle("Aguarde");
-                dialog.show();
+                Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS", null);
+                if (cursorVerificaProd.getCount() == 0) {
+                    dialog = new ProgressDialog(this);
+                    dialog.setCancelable(false);
+                    dialog.setMessage(getString(R.string.primeira_sync_itens));
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.show();
 
-                Thread thread = new Thread(this);
-                thread.start();
+                    Thread thread = new Thread(this);
+                    thread.start();
 
+                    cursorVerificaProd.close();
+                }else{
+                    dialog = new ProgressDialog(this);
+                    dialog.setCancelable(false);
+                    dialog.setMessage(getString(R.string.sync_products));
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.show();
+
+                    Thread thread = new Thread(this);
+                    thread.start();
+                }
             } else {
-                Toast.makeText(Lista_produtos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Lista_produtos.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -243,7 +250,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 AlertDialog.Builder builder = new AlertDialog.Builder(Lista_produtos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
-                builder.setMessage("Não existe nenhum produto sincronizado para ser associado ao pedido. Favor clicar no botão SINCRONIZAR.")
+                builder.setMessage(getString(R.string.alertsyncproducts))
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -301,7 +308,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 }
 
                 if (cursor.getCount() <= 0) {
-                    Toast.makeText(Lista_produtos.this, "Nenhum produto encontrado!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Lista_produtos.this, getString(R.string.no_products_found), Toast.LENGTH_SHORT).show();
                 }
 
                 return cursor;
@@ -312,12 +319,6 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     private void informa_produto_na_venda(final Cursor produto_cursor) {
         if (NumPedido.equals("0")) {
 
-            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.info_produto_venda, null);
-            alerta = new Builder(this);
-            alerta.setCancelable(false);
-            alerta.setView(view);
-
             DB = new ConfigDB(this).getReadableDatabase();
 
             Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
@@ -325,28 +326,46 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
             Bloqueios.close();
             CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
-            Boolean ConexOk = Util.checarConexaoCelular(this);
+            ConexOk = Util.checarConexaoCelular(this);
             if (vendenegativo.equals("N") && ConexOk == true) {
-                atualizaEstoqueItem(CodigoItem);
+                sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, usuario, senha, CodigoItem);
+                if (sincprod.equals("0")) {
+                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+                    CursItens.moveToFirst();
+                    qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                    CursItens.close();
+                    if (vendenegativo.equals("N") && qtdestoque <= 0) {
+                        Util.msg_toast_personal(getBaseContext(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                        return;
+                    }
+                }else {
+                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+                    CursItens.moveToFirst();
+                    qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                    CursItens.close();
+                }
+            }else {
+                Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+                CursItens.moveToFirst();
+                qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                CursItens.close();
+                if (vendenegativo.equals("N") && qtdestoque <= 0) {
+                    Util.msg_toast_personal(getBaseContext(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                    return;
+                }
             }
-
-            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
-            CursItens.moveToFirst();
-            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-            CursItens.close();
-
-            if (qtdestoque <= 0) {
-                Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
-                return;
-            }
-
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.info_produto_venda, null);
+            alerta = new Builder(this);
+            alerta.setCancelable(false);
+            alerta.setView(view);
 
             final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
             final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
             final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
             final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
             final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
-        /*final Spinner*/
+
             spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
             DB = new ConfigDB(this).getReadableDatabase();
 
@@ -858,7 +877,6 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                 tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
                 tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
                 tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-
                 CursorParametro.close();
 
                 String vlvendapadrao = produto_cursor.getString(produto_cursor.getColumnIndex("VENDAPADRAO"));
@@ -1031,12 +1049,6 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             alerta.show();
         } else {
 
-            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.info_produto_venda, null);
-            alerta = new Builder(this);
-            alerta.setCancelable(false);
-            alerta.setView(view);
-
             DB = new ConfigDB(this).getReadableDatabase();
 
             Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
@@ -1044,22 +1056,39 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
             Bloqueios.close();
             CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
-            Boolean ConexOk = Util.checarConexaoCelular(this);
+            ConexOk = Util.checarConexaoCelular(this);
             if (vendenegativo.equals("N") && ConexOk == true) {
-
-                atualizaEstoqueItem(CodigoItem);
+                sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, usuario, senha, CodigoItem);
+                if (sincprod.equals("0")) {
+                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+                    CursItens.moveToFirst();
+                    qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                    CursItens.close();
+                    if (vendenegativo.equals("N") && qtdestoque <= 0) {
+                        Util.msg_toast_personal(getBaseContext(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                        return;
+                    }
+                }else {
+                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+                    CursItens.moveToFirst();
+                    qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                    CursItens.close();
+                }
+            }else {
+                Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
+                CursItens.moveToFirst();
+                qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                CursItens.close();
+                if (vendenegativo.equals("N") && qtdestoque <= 0) {
+                    Util.msg_toast_personal(getBaseContext(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                    return;
+                }
             }
-
-            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
-            CursItens.moveToFirst();
-            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-            CursItens.close();
-
-            if (qtdestoque <= 0) {
-                Util.msg_toast_personal(getBaseContext(), "Produto sem quantidade disponível.", Util.ALERTA);
-                return;
-            }
-
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.info_produto_venda, null);
+            alerta = new Builder(this);
+            alerta.setCancelable(false);
+            alerta.setView(view);
 
             final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
             final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
@@ -1704,28 +1733,28 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                             itemBean3 = itemDao.altera_item_na_venda(itemBean2);
 
                             if (itemBean3 == null) {
-                            itemBean1.setVendad_prd_codigo(COD_PRODUTO);
-                            itemBean1.setVendad_prd_descricao(DESCRICAO);
-                            itemBean1.setVendad_prd_unidade(UNIDADE);
-                            itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
-                            itemBean1.setVendac_chave(chavepedido);
+                                itemBean1.setVendad_prd_codigo(COD_PRODUTO);
+                                itemBean1.setVendad_prd_descricao(DESCRICAO);
+                                itemBean1.setVendad_prd_unidade(UNIDADE);
+                                itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
+                                itemBean1.setVendac_chave(chavepedido);
 
-                            //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                            String ValorItem = info_txv_precoproduto.getText().toString();
-                            ValorItem = ValorItem.trim();
-                            if (!ValorItem.equals("0,0000")) {
-                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                itemBean1.setVendad_preco_venda(venda);
+                                //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
+                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                ValorItem = ValorItem.trim();
+                                if (!ValorItem.equals("0,0000")) {
+                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                    venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                    itemBean1.setVendad_preco_venda(venda);
 
-                                //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
-                                itemBean1.setVendad_total(itemBean1.getSubTotal());
-                                itemDao.insere_item_na_venda(itemBean1);
-                                //atualiza_listview_com_os_itens_pedido();
-                                finish();
-                            } else {
-                                Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
-                            }
+                                    //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                    itemBean1.setVendad_total(itemBean1.getSubTotal());
+                                    itemDao.insere_item_na_venda(itemBean1);
+                                    //atualiza_listview_com_os_itens_pedido();
+                                    finish();
+                                } else {
+                                    Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                }
                             } else {
                                 Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
                             }
@@ -1863,106 +1892,28 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     @Override
     public void run() {
         try {
-            actSincronismo.run(Lista_produtos.this);
-            sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, usuario, senha);
-            if (sincprod == false) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplication(), "Não foi possivel sincronizar os produtos. Tente novamente.", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }else {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplication(), "Produtos sincronizados com sucesso!", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            Intent intent = (Lista_produtos.this).getIntent();
-            (Lista_produtos.this).finish();
-            startActivity(intent);
-        } finally {
-            if (dialog.isShowing())
+            //actSincronismo.run(Lista_produtos.this);
+            sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, usuario, senha, 0);
+            if (sincprod.equals("0")) {
                 dialog.dismiss();
-        }
-    }
-
-    public void atualizaEstoqueItem(int item) {
-
-        ProgressDialog Dialog = null;
-
-        Dialog = new ProgressDialog(this);
-        Dialog.setTitle("Aguarde...");
-        Dialog.setMessage("Verificando estoque do produtos");
-        Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        Dialog.setProgress(0);
-        Dialog.setIcon(R.drawable.icon_sync);
-        Dialog.setMax(0);
-        Dialog.show();
-
-        String METHOD_NAME = "RetornaQtdItem";
-        //String TAG_PRODUTOSINFO = "produtos";
-        String TAG_QTDESTOQUE = "qtd_disponivel";
-
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        String URLPrincipal = prefsHost.getString("host", null);
-
-        SharedPreferences prefs = this.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
-        String usuario = prefs.getString("usuario", null);
-        String senha = prefs.getString("senha", null);
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        soap.addProperty("aCodigoItem", item);
-        soap.addProperty("aUsuario", usuario);
-        soap.addProperty("aSenha", senha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 60000);
-        String RetQTDProdutos = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(this);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                RetQTDProdutos = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), getString(R.string.sync_products_successfully), Toast.LENGTH_LONG).show();
+                    }
+                });
             } else {
-                Util.msg_toast_personal(getApplicationContext(), "Sem conexão com a internet.Verifique!", Util.ALERTA);
-                return;
+                dialog.dismiss();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), sincprod, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
+
         } catch (Exception e) {
-            System.out.println("Error" + e);
+            e.toString();
         }
-        try {
-            Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + item, null);
-            try {
-                if (CursItens.getCount() > 0) {
-                    CursItens.moveToFirst();
-                    DB.execSQL(" UPDATE ITENS SET QTDESTPROD = '" + RetQTDProdutos.trim() +
-                            "' WHERE CODIGOITEM = " + item);
-                } else {
-                    Toast.makeText(this, "Produto não encontrado. Verifique!", Toast.LENGTH_SHORT).show();
-                }
-                CursItens.close();
-            } catch (Exception E) {
-                System.out.println("Error" + E);
-            }
-
-
-        } catch (Exception E) {
-            E.toString();
-        }
-        if (Dialog.isShowing()) {
-            Dialog.dismiss();
-        }
-        carrega_produto_para_venda();
     }
 }

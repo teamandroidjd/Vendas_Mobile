@@ -70,8 +70,8 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
     Handler hd;
     ProgressBar PrgGeral;
     int it;
-    private ProgressDialog Dialog;
-    private static ProgressDialog DialogECB;
+    private ProgressDialog Dialog, DialogECB;
+
     Handler progressHandler;
     //SQLiteDatabase DB;
     Button btnSinc;
@@ -153,36 +153,29 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
+
     @Override
     public void run() {
         DB = new ConfigDB(this).getReadableDatabase();
 
-        SincronizarClientes(sCodVend, usuario, senha);
-
         try {
-            Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP ", null);
-            CursosParam.moveToFirst();
-            DataUltSt2 = Util.DataHojeComHorasBR();
-            DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = '" + DataUltSt2 + "';");
-            CursosParam.close();
-        } catch (Exception e) {
+            SincronizarClientes(sCodVend, usuario, senha);
+            SincronizarProdutos(usuario, senha);
+            SincronizarClientesEnvio();
+            SincronizarPedidosEnvio();
+            SincDescricaoTabelas();
+            SincBloqueios();
+            SincParametros();
+        }catch (Exception e){
             e.toString();
+            Dialog.dismiss();
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, "Falha no processo de sincronização. Tente novamente!", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
-        String DataUlt2 = DataUltSt2;
-        SharedPreferences prefs = getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString("usuario", null);
-        senha = prefs.getString("senha", null);
-
-
-        SincronizarProdutos(usuario, senha, DataUlt2);
-        SincronizarClientesEnvio();
-        SincronizarPedidosEnvio();
-        SincDescricaoTabelas();
-        SincBloqueios();
-        SincParametros();
-
-       // DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = DATETIME();");
-
         Intent i = new Intent(actSincronismo.this, actListPedidos.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), sCodVend);
@@ -246,15 +239,53 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
         String RetClientes = null;
 
-
         Boolean ConexOk = Util.checarConexaoCelular(this);
         if (ConexOk == true) {
             try {
+                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES", null);
+                if (cursorVerificaClie.getCount() == 0) {
+                    hd.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            DialogECB = new ProgressDialog(actSincronismo.this);
+                            DialogECB.setTitle(R.string.wait);
+                            DialogECB.setMessage(getString(R.string.primeira_sync_clientes));
+                            DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            DialogECB.setIcon(R.drawable.icon_sync);
+                            DialogECB.setCancelable(false);
+                            DialogECB.show();
+                        }
+                    });
 
-                Envio.call("", envelope);
-
+                    try {
+                        Envio.call("", envelope);
+                    } catch (Exception e) {
+                        e.toString();
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    if (DialogECB.isShowing()) {
+                        DialogECB.dismiss();
+                    }
+                    cursorVerificaClie.close();
+                } else {
+                    try {
+                        Envio.call("", envelope);
+                    } catch (Exception e) {
+                        e.toString();
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
             } catch (Exception e) {
-
                 e.toString();
                 hd.post(new Runnable() {
                     @Override
@@ -264,7 +295,6 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 });
             }
             try {
-
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetClientes = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
@@ -527,7 +557,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    private void SincronizarProdutos(String nUsuario, String nSenha, String DtUlt) {
+    private void SincronizarProdutos(String nUsuario, String nSenha) {
 
         DB = new ConfigDB(this).getReadableDatabase();
 
@@ -544,7 +574,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String TAG_VLVENDA5 = "vlvenda5";
         String TAG_VLVENDAP1 = "vlvendap1";
         String TAG_VLVENDAP2 = "vlvendap2";
-        String TAG_VENDAPADRAO = "vendapadrao";
+        String TAG_TABELAPADRAO = "tabelapadrao";
         String TAG_MARCA = "marca";
         String TAG_CLASSE = "classe";
         String TAG_FABRICANTE = "fabricante";
@@ -556,8 +586,16 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ITENS FROM PARAMAPP", null);
+        cursorparamapp.moveToFirst();
+        String DtUltItem = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ITENS"));
+        if (DtUltItem == null) {
+            DtUltItem = "01/01/2000 10:00:00";
+        }
+        cursorparamapp.close();
+
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        soap.addProperty("aParam", "D" + DtUlt);
+        soap.addProperty("aParam", "D" + DtUltItem);
         soap.addProperty("aUsuario", nUsuario);
         soap.addProperty("aSenha", nSenha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -569,9 +607,50 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         Boolean ConexOk = Util.checarConexaoCelular(this);
         if (ConexOk == true) {
             try {
+                Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS", null);
+                if (cursorVerificaProd.getCount() == 0) {
+                    hd.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            DialogECB = new ProgressDialog(actSincronismo.this);
+                            DialogECB.setTitle(R.string.wait);
+                            DialogECB.setMessage(getString(R.string.primeira_sync_itens));
+                            DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            DialogECB.setIcon(R.drawable.icon_sync);
+                            DialogECB.setCancelable(false);
+                            DialogECB.show();
+                        }
+                    });
+                    try {
+                        Envio.call("", envelope);
 
-                Envio.call("", envelope);
+                    } catch (Exception e) {
+                        e.toString();
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    if (DialogECB.isShowing()) {
+                        DialogECB.dismiss();
+                    }
+                    cursorVerificaProd.close();
+                } else {
+                    try {
+                        Envio.call("", envelope);
 
+                    } catch (Exception e) {
+                        e.toString();
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
             } catch (Exception e) {
                 e.toString();
                 hd.post(new Runnable() {
@@ -581,6 +660,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     }
                 });
             }
+
             try {
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetProdutos = (String) envelope.getResponse();
@@ -603,6 +683,37 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 }
             });
         }
+        if (RetProdutos.equals("0")) {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, R.string.syn_clients_successfully, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else if (RetProdutos == null) {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else if (RetProdutos.equals("Parâmetro inválido.")) {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(actSincronismo.this, "Falha na autenticação. Verifique!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            try {
+                DtUltItem = Util.DataHojeComHorasMinSecBR();
+                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "'");
+            } catch (Exception e) {
+                e.toString();
+            }
+        }
+
 
         try {
             JSONObject jsonObj = new JSONObject(RetProdutos);
@@ -641,7 +752,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
                                         "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
                                         "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
                                         "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
@@ -649,7 +760,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             } else {
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
-                                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
+                                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, TABELAPADRAO, " +
                                         "ATIVO, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
                                         "',' " + CItens.getString(TAG_CODMANUAL).trim() +
                                         "',' " + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
@@ -665,7 +776,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_VLVENDA5).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "',' " + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "',' " + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "',' " + CItens.getString(TAG_ATIVO) +
                                         "',' " + CItens.getString(TAG_QTDESTOQUE) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
@@ -685,7 +796,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
                                         "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
                                         "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
@@ -1334,7 +1445,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                 RetParamApp = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
                 hd.post(new Runnable() {
                     @Override
@@ -1492,133 +1603,302 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
     }
 
-    public static boolean SincronizarPedidosEnvioStatic(String sUsuario, String sSenha, Context ctxPedEnv) {
+    public static boolean SincronizarPedidosEnvioStatic(String sUsuario, String sSenha, Context ctxPedEnv,String NumPedido) {
         boolean sincpedenviostatic = false;
+        if(NumPedido.equals("0")) {
 
-        String JPedidos = null;
-        String METHOD_NAMEENVIO = "CadastrarPedidos";
-        DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
-        Cursor CursorPedido;
-        String RetClieEnvio = null;
+            String JPedidos = null;
+            String METHOD_NAMEENVIO = "CadastrarPedidos";
+            DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
+            Cursor CursorPedido;
+            String RetClieEnvio = null;
 
-        try {
-            CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE FLAGINTEGRADO = '5' ", null);
+            try {
+                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE FLAGINTEGRADO = '5' ", null);
 
-            int jumpTime = 0;
-            final int totalProgressTime = CursorPedido.getCount();
-            CursorPedido.moveToFirst();
-
-            if (CursorPedido.getCount() > 0) {
+                int jumpTime = 0;
+                final int totalProgressTime = CursorPedido.getCount();
                 CursorPedido.moveToFirst();
-                do {
-                    for (int i = 0; i < CursorPedido.getCount(); i++) {
 
-                        try {
-                            jumpTime += 1;
+                if (CursorPedido.getCount() > 0) {
+                    CursorPedido.moveToFirst();
+                    do {
+                        for (int i = 0; i < CursorPedido.getCount(); i++) {
 
-                            int CodClie_Int = CursorPedido.getInt(CursorPedido.getColumnIndex("CODCLIE"));
+                            try {
+                                jumpTime += 1;
 
-                            Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "'", null);
-                            CursorClie.moveToFirst();
-                            int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
-                            String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
+                                int CodClie_Int = CursorPedido.getInt(CursorPedido.getColumnIndex("CODCLIE"));
 
-                            String vltotal = CursorPedido.getString(CursorPedido.getColumnIndex("VALORTOTAL")).replace(".", ",");
-                            BigDecimal vendatotal = new BigDecimal(Double.parseDouble(vltotal.replace(',', '.')));
-                            String vltotalvenda = vendatotal.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-                            vltotalvenda = vltotalvenda.replace('.', ',');
+                                Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "'", null);
+                                CursorClie.moveToFirst();
+                                int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
+                                String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
 
-
-                            String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
-                            if (Util.isNullOrEmpty(ValorFrete)) {
-                                ValorFrete = "0";
-                            }
-                            String ValorSeguro = CursorPedido.getString(CursorPedido.getColumnIndex("VALORSEGURO"));
-                            if (Util.isNullOrEmpty(ValorSeguro)) {
-                                ValorSeguro = "0";
-                            }
-
-                            String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS"));
-                            String line_separator = System.getProperty("line.separator");
-                            String OBS = Observacao.replaceAll("\n|" + line_separator, "");
-                            String vldesconto = CursorPedido.getString(CursorPedido.getColumnIndex("VLDESCONTO"));
-                            if (vldesconto == null) {
-                                vldesconto = "0";
-                            } else {
-                                vldesconto = vldesconto.replace(".", ",");
-                            }
+                                String vltotal = CursorPedido.getString(CursorPedido.getColumnIndex("VALORTOTAL")).replace(".", ",");
+                                BigDecimal vendatotal = new BigDecimal(Double.parseDouble(vltotal.replace(',', '.')));
+                                String vltotalvenda = vendatotal.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                                vltotalvenda = vltotalvenda.replace('.', ',');
 
 
-                            JPedidos = "{codclie_ext: '" + CodClie_Ext + "'," +
-                                    "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
-                                    "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
-                                    "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
-                                    "valor_frete: '" + ValorFrete + "'," +
-                                    "valor_seguro: '" + ValorSeguro + "'," +
-                                    "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
-                                    "valor_desconto: '" + vldesconto + "'," +
-                                    "obs_pedido: '" + OBS + "'," +
-                                    "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
-                                    "chavepedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
-                                    "codempresa: '" + 1 + "'," +
-                                    "cod_vendedor: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODVENDEDOR")) + "',";
-
-                            String PedItems = "";
-                            Cursor CursorItensEnv = DB.rawQuery(" SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" +
-                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-
-                            CursorItensEnv.moveToFirst();
-                            do {
-                                PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
-                                        "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
-                                        "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
-                                        "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
-                                        "vlunit: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ",") + "'," +
-                                        "valortotal: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ",") + "'}";
-
-                                if (!CursorItensEnv.isLast()) {
-                                    PedItems = PedItems + ",";
+                                String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
+                                if (Util.isNullOrEmpty(ValorFrete)) {
+                                    ValorFrete = "0";
+                                }
+                                String ValorSeguro = CursorPedido.getString(CursorPedido.getColumnIndex("VALORSEGURO"));
+                                if (Util.isNullOrEmpty(ValorSeguro)) {
+                                    ValorSeguro = "0";
                                 }
 
-                            } while (CursorItensEnv.moveToNext());
-
-                            if (PedItems != "") {
-                                JPedidos = JPedidos + "produtos: " + "[" + PedItems + "]";
-                            }
-                            String PedParcelas = "";
-                            Cursor CursorParcelasEnv = DB.rawQuery(" SELECT * FROM CONREC WHERE vendac_chave = '" +
-                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                            CursorParcelasEnv.moveToFirst();
-                            do {
-                                PedParcelas = PedParcelas + "{chavepedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
-                                        "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
-                                        "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")) + "'," +
-                                        "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
-
-                                if (!CursorParcelasEnv.isLast()) {
-                                    PedParcelas = PedParcelas + ",";
+                                String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS"));
+                                String line_separator = System.getProperty("line.separator");
+                                String OBS = Observacao.replaceAll("\n|" + line_separator, "");
+                                String vldesconto = CursorPedido.getString(CursorPedido.getColumnIndex("VLDESCONTO"));
+                                if (vldesconto == null) {
+                                    vldesconto = "0";
+                                } else {
+                                    vldesconto = vldesconto.replace(".", ",");
                                 }
-                            } while (CursorParcelasEnv.moveToNext());
 
-                            if (PedParcelas != "") {
-                                JPedidos = JPedidos + ",formapgto: " + "[" + PedParcelas + "]";
+
+                                JPedidos = "{codclie_ext: '" + CodClie_Ext + "'," +
+                                        "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
+                                        "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
+                                        "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
+                                        "valor_frete: '" + ValorFrete + "'," +
+                                        "valor_seguro: '" + ValorSeguro + "'," +
+                                        "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
+                                        "valor_desconto: '" + vldesconto + "'," +
+                                        "obs_pedido: '" + OBS + "'," +
+                                        "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
+                                        "chavepedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
+                                        "codempresa: '" + 1 + "'," +
+                                        "cod_vendedor: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODVENDEDOR")) + "',";
+
+                                String PedItems = "";
+                                Cursor CursorItensEnv = DB.rawQuery(" SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" +
+                                        CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+
+                                CursorItensEnv.moveToFirst();
+                                do {
+                                    PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
+                                            "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
+                                            "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
+                                            "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
+                                            "vlunit: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ",") + "'," +
+                                            "valortotal: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ",") + "'}";
+
+                                    if (!CursorItensEnv.isLast()) {
+                                        PedItems = PedItems + ",";
+                                    }
+
+                                } while (CursorItensEnv.moveToNext());
+
+                                if (PedItems != "") {
+                                    JPedidos = JPedidos + "produtos: " + "[" + PedItems + "]";
+                                }
+                                String PedParcelas = "";
+                                Cursor CursorParcelasEnv = DB.rawQuery(" SELECT * FROM CONREC WHERE vendac_chave = '" +
+                                        CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+                                CursorParcelasEnv.moveToFirst();
+                                do {
+                                    PedParcelas = PedParcelas + "{chavepedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
+                                            "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
+                                            "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")) + "'," +
+                                            "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
+
+                                    if (!CursorParcelasEnv.isLast()) {
+                                        PedParcelas = PedParcelas + ",";
+                                    }
+                                } while (CursorParcelasEnv.moveToNext());
+
+                                if (PedParcelas != "") {
+                                    JPedidos = JPedidos + ",formapgto: " + "[" + PedParcelas + "]";
+                                }
+
+                                JPedidos = JPedidos + '}';
+
+                                String sitcliexvend = actSincronismo.SituacaodoClientexPed(vltotalvenda, ctxPedEnv, usuario, senha, CodClie_Ext);
+                                if (sitcliexvend.equals("OK")) {
+
+                                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                                    StrictMode.setThreadPolicy(policy);
+
+                                    SharedPreferences prefsHost = ctxPedEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+                                    URLPrincipal = prefsHost.getString("host", null);
+
+                                    SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                                    soap.addProperty("aJson", JPedidos);
+                                    soap.addProperty("aUsuario", sUsuario);
+                                    soap.addProperty("aSenha", sSenha);
+                                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                    envelope.setOutputSoapObject(soap);
+                                    HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
+
+                                    try {
+                                        Boolean ConexOk = Util.checarConexaoCelular(ctxPedEnv);
+                                        if (ConexOk == true) {
+                                            Envio.call("", envelope);
+                                        }
+                                    } catch (Exception e) {
+                                        e.toString();
+                                        return sincpedenviostatic;
+
+                                    }
+                                    try {
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                        RetClieEnvio = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } catch (Exception e) {
+                                        e.toString();
+                                        return sincpedenviostatic;
+                                    }
+                                    try {
+                                        DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
+                                        Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+                                        CursPedAtu.moveToFirst();
+                                        if (CursPedAtu.getCount() > 0) {
+                                            DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
+                                        }
+                                        sincpedenviostatic = true;
+                                        CursPedAtu.close();
+                                    } catch (Exception E) {
+                                        E.toString();
+                                    }
+                                }
+                            } catch (Exception E) {
+                                E.printStackTrace();
                             }
+                        }
+                        JPedidos = "";
+                    }
+                    while (CursorPedido.moveToNext());
+                    CursorPedido.close();
+                }
 
-                            JPedidos = JPedidos + '}';
+            } catch (Exception E) {
+                System.out.println("Error" + E);
+            }
+        }else{
 
-                            String sitcliexvend = actSincronismo.SituacaodoClientexPed(vltotalvenda, ctxPedEnv, usuario, senha, CodClie_Ext);
-                            if (sitcliexvend.equals("OK")) {
+            String JPedidos = null;
+            String METHOD_NAMEENVIO = "CadastrarPedidos";
+            DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
+            Cursor CursorPedido;
+            Cursor CursorCliente;
+            int CodClie_Ext = 0;
+            int CodClie_Int;
+
+            try {
+                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "' ", null);
+                CursorPedido.moveToFirst();
+                CodClie_Int = CursorPedido.getInt(CursorPedido.getColumnIndex("CODCLIE"));
+
+                CursorCliente = DB.rawQuery("SELECT CODCLIE_EXT FROM CLIENTES WHERE CODCLIE_INT = " + CodClie_Int + "", null);
+                CursorCliente.moveToFirst();
+                CodClie_Ext = CursorCliente.getInt(CursorCliente.getColumnIndex("CODCLIE_EXT"));
+                CursorCliente.close();
+
+                SharedPreferences prefs = ctxPedEnv.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
+                usuario = prefs.getString("usuario", null);
+                senha = prefs.getString("senha", null);
+
+                SharedPreferences prefsHost = ctxPedEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+                URLPrincipal = prefsHost.getString("host", null);
+                String RetClieEnvio = null;
+
+                int jumpTime = 0;
+                final int totalProgressTime = CursorPedido.getCount();
+
+                if (CursorPedido.getCount() > 0) {
+                    CursorPedido.moveToFirst();
+                    do {
+                        for (int i = 0; i < CursorPedido.getCount(); i++) {
+                            do try {
+                                jumpTime += 1;
+
+                                String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
+                                if (Util.isNullOrEmpty(ValorFrete)) {
+                                    ValorFrete = "0";
+                                }
+                                String ValorSeguro = CursorPedido.getString(CursorPedido.getColumnIndex("VALORSEGURO"));
+                                if (Util.isNullOrEmpty(ValorSeguro)) {
+                                    ValorSeguro = "0";
+                                }
+                                String OBS = CursorPedido.getString(CursorPedido.getColumnIndex("OBS"));
+                                String line_separator = System.getProperty("line.separator");
+                                String Observacao = OBS.replaceAll("\n|" + line_separator, " ");
+                                String vldesconto = CursorPedido.getString(CursorPedido.getColumnIndex("VLDESCONTO"));
+                                if (vldesconto == null) {
+                                    vldesconto = "0";
+                                } else {
+                                    vldesconto = vldesconto.replace(".", ",");
+                                }
+                                JPedidos = "{codclie_ext: '" + CodClie_Ext + "'," +
+                                        "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
+                                        "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
+                                        "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
+                                        "valor_frete: '" + ValorFrete + "'," +
+                                        "valor_seguro: '" + ValorSeguro + "'," +
+                                        "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
+                                        "valor_desconto: '" + vldesconto + "'," +
+                                        "obs_pedido: '" + OBS + "'," +
+                                        "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
+                                        "chavepedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
+                                        "codempresa: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODEMPRESA")) + "'," +
+                                        "cod_vendedor: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODVENDEDOR")) + "',";
+
+
+                                String PedItems = "";
+                                Cursor CursorItensEnv = DB.rawQuery(" SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" +
+                                        CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+
+                                CursorItensEnv.moveToFirst();
+                                do {
+                                    PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
+                                            "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
+                                            "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
+                                            "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
+                                            "vlunit: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ",") + "'," +
+                                            "valortotal: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ",") + "'}";
+
+                                    if (!CursorItensEnv.isLast()) {
+                                        PedItems = PedItems + ",";
+                                    }
+
+                                } while (CursorItensEnv.moveToNext());
+
+                                if (PedItems != "") {
+                                    JPedidos = JPedidos + "produtos: " + "[" + PedItems + "]";
+                                }
+                                String PedParcelas = "";
+                                Cursor CursorParcelasEnv = DB.rawQuery(" SELECT * FROM CONREC WHERE vendac_chave = '" +
+                                        CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+                                CursorParcelasEnv.moveToFirst();
+                                do {
+                                    PedParcelas = PedParcelas + "{chavepedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
+                                            "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
+                                            "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")).replace(".", ",") + "'," +
+                                            "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
+
+                                    if (!CursorParcelasEnv.isLast()) {
+                                        PedParcelas = PedParcelas + ",";
+                                    }
+                                } while (CursorParcelasEnv.moveToNext());
+
+                                if (PedParcelas != "") {
+                                    JPedidos = JPedidos + ",formapgto: " + "[" + PedParcelas + "]";
+                                }
+
+                                JPedidos = JPedidos + '}';
 
                                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                                 StrictMode.setThreadPolicy(policy);
 
-                                SharedPreferences prefsHost = ctxPedEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-                                URLPrincipal = prefsHost.getString("host", null);
-
                                 SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
                                 soap.addProperty("aJson", JPedidos);
-                                soap.addProperty("aUsuario", sUsuario);
-                                soap.addProperty("aSenha", sSenha);
+                                soap.addProperty("aUsuario", usuario);
+                                soap.addProperty("aSenha", senha);
                                 SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
                                 envelope.setOutputSoapObject(soap);
                                 HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
@@ -1633,317 +1913,40 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         System.out.println("Response :" + resultsRequestSOAP.toString());
                                     }
                                 } catch (Exception e) {
-                                    System.out.println("Error" + e);
+                                    System.out.println("Error envio do pedido" + e);
                                 }
-                                try {
-                                    DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
-                                    Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                                    CursPedAtu.moveToFirst();
-                                    if (CursPedAtu.getCount() > 0) {
-                                        DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
-                                    }
-                                    sincpedenviostatic = true;
-                                    CursPedAtu.close();
-                                } catch (Exception E) {
-                                    E.toString();
+                            } catch (Exception E) {
+                                System.out.println("Error montar envio pedido" + E);
+
+
+                            }
+                            while (jumpTime < totalProgressTime);
+                        }
+                        try {
+                            DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
+                            if (!RetClieEnvio.equals("0")) {
+                                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+                                CursPedAtu.moveToFirst();
+                                if (CursPedAtu.getCount() > 0) {
+                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
                                 }
+                                sincpedenviostatic = true;
+                                CursPedAtu.close();
                             }
                         } catch (Exception E) {
-                            E.printStackTrace();
+                            Toast.makeText(ctxPedEnv, E.toString(), Toast.LENGTH_SHORT).show();
                         }
+                        JPedidos = "";
                     }
-                    JPedidos = "";
+                    while (CursorPedido.moveToNext());
+                    CursorPedido.close();
                 }
-                while (CursorPedido.moveToNext());
-                CursorPedido.close();
+            } catch (Exception E) {
+                System.out.println("Error" + E);
             }
 
-        } catch (Exception E) {
-            System.out.println("Error" + E);
         }
         return sincpedenviostatic;
-    }
-
-    public static Boolean SincAtuEstado(final Context ctxEnv) {
-        String Estado = null;
-        String Cidade = null;
-        String Bairro = null;
-        Boolean AtualizaEst = true;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Estados");
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLDADOSCEP);
-        String RetEstados = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                RetEstados = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetEstados);
-            JSONArray JEstados = jsonObj.getJSONArray("estados");
-
-            int jumpTime = 0;
-            DialogECB.setProgress(jumpTime);
-            final int totalProgressTime = JEstados.length();
-            DialogECB.setMax(totalProgressTime);
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-
-            Cursor CursorAtu = DB.rawQuery(" SELECT * FROM ESTADOS ", null);
-            if (CursorAtu.getCount() > 0) {
-                AtualizaEst = true;
-            }
-
-            if (AtualizaEst.equals(true)) {
-
-                for (int i = 0; i < JEstados.length(); i++) {
-                    while (jumpTime < totalProgressTime) {
-                        try {
-                            JSONObject c = JEstados.getJSONObject(jumpTime);
-                            jumpTime += 1;
-                            DialogECB.setProgress(jumpTime);
-                            DialogECB.setMessage("Sincronizando Tabelas - Estados");
-                            String SiglaEstado = c.getString("uf");
-                            String NomeEstado = c.getString("estado");
-
-                            Cursor CursosEstado = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-
-                            if (CursosEstado.getCount() > 0) {
-                                DB.execSQL(" UPDATE ESTADOS SET UF = '" + SiglaEstado + "', DESCRICAO = '" + NomeEstado + "'" +
-                                        " WHERE UF = '" + SiglaEstado + "'");
-                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-                                cursor1.moveToFirst();
-                                Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
-                                cursor1.close();
-                            } else {
-                                DB.execSQL("INSERT INTO ESTADOS VALUES('" + SiglaEstado + "','" + NomeEstado + "');");
-                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-                                cursor1.moveToFirst();
-                                Estado = cursor1.getString(cursor1.getColumnIndex("UF"));
-                                cursor1.close();
-                            }
-                            CursosEstado.close();
-                            SincAtualizaCidade(Estado, ctxEnv);
-                        } catch (Exception E) {
-                            E.printStackTrace();
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (DialogECB.isShowing())
-            DialogECB.dismiss();
-        return AtualizaEst;
-    }
-
-    public static boolean SincAtualizaCidade(String UF, final Context ctxEnv) {
-        boolean sincatucidade = false;
-        int CodCidadeExt = 0;
-        int CodCidade = 0;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Cidades");
-        soap.addProperty("aUF", UF);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
-        String RetCidades = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetCidades = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetCidades);
-            JSONArray JCidades = jsonObj.getJSONArray("cidades");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JCidades.length();
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-            for (int i = 0; i < JCidades.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JCidades.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        String NomeCidade = c.getString("cidade");
-                        CodCidadeExt = c.getInt("id_cidade");
-                        NomeCidade = NomeCidade.replaceAll("'", "");
-
-                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
-                        if (!(CursorCidade.getCount() > 0)) {
-                            DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODCIDADE_EXT)" +
-                                    " VALUES('" + NomeCidade + "','" + UF + "', '" + CodCidadeExt + "');");
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
-                            cursor1.moveToFirst();
-                            CodCidadeExt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT"));
-                            cursor1.close();
-                            CursorCidade.close();
-                            sincatucidade = true;
-
-                            final int finalCodCidadeExt = CodCidadeExt;
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    actSincronismo.SincAtualizaBairro(finalCodCidadeExt, ctxEnv);
-                                }
-                            });
-                        }
-                    } catch (Exception E) {
-                        E.toString();
-                        sincatucidade = false;
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-            sincatucidade = false;
-        }
-        return sincatucidade;
-    }
-
-    private static void SincAtualizaBairro(int codCidade, Context ctxEnv) {
-        int CodBairro = 0;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Bairros");
-        soap.addProperty("aIdCidade", codCidade);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
-        String RetBairros = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetBairros = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetBairros);
-            JSONArray JBairros = jsonObj.getJSONArray("bairros");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JBairros.length();
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-            for (int i = 0; i < JBairros.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JBairros.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        String NomeBairro = c.getString("bairro");
-                        int CodBairroExt = c.getInt("id_bairro");
-
-                        NomeBairro = NomeBairro.replaceAll("'", " ");
-
-                        Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODBAIRRO_EXT, CODCIDADE FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
-                        if (CursorBairro.getCount() > 0) {
-                            DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = '" + codCidade + "', DESCRICAO = '" + NomeBairro + "', CODBAIRRO_EXT = '" + CodBairroExt + "'" +
-                                    " WHERE DESCRICAO = '" + NomeBairro + "' AND CODCIDADE = '" + codCidade + "'");
-                            Cursor cursor1 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
-                            cursor1.moveToFirst();
-                            CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
-                            cursor1.close();
-                        } else {
-                            DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODBAIRRO_EXT, CODCIDADE)" +
-                                    " VALUES('" + NomeBairro + "','" + CodBairroExt + "', '" + codCidade + "');");
-                            Cursor cursor1 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO =  '" + NomeBairro + "'", null);
-                            cursor1.moveToFirst();
-                            CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
-                            cursor1.close();
-                        }
-                        CursorBairro.close();
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-        }
-    }
-
-    public static boolean CancelarPedidoAberto(String NumPedido, Context ctxCanc) {
-
-        DB = new ConfigDB(ctxCanc).getReadableDatabase();
-
-        try {
-            DB = new ConfigDB(ctxCanc).getReadableDatabase();
-            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "'", null);
-            CursPedAtu.moveToFirst();
-            if (CursPedAtu.getCount() > 0) {
-                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '4' WHERE NUMPED = '" + NumPedido + "'");
-            }
-            CursPedAtu.close();
-        } catch (Exception E) {
-            E.toString();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean AutorizaPedidoAberto(String NumPedido, Context ctxCanc) {
-
-        DB = new ConfigDB(ctxCanc).getReadableDatabase();
-
-        try {
-            DB = new ConfigDB(ctxCanc).getReadableDatabase();
-            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "'", null);
-            CursPedAtu.moveToFirst();
-            if (CursPedAtu.getCount() > 0) {
-                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE NUMPED = '" + NumPedido + "'");
-            }
-            CursPedAtu.close();
-        } catch (Exception E) {
-            E.toString();
-            return false;
-        }
-        return true;
     }
 
     public static boolean SincronizarPedidosEnvio(String NumPedido, Context ctxEnv) {
@@ -2114,6 +2117,408 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         }
         return pedenviado;
 
+    }
+
+    public static Boolean SincAtuEstado(final Context ctxEnv) {
+        String Estado = null;
+        String Cidade = null;
+        String Bairro = null;
+        Boolean AtualizaEst = true;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Estados");
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLDADOSCEP);
+        String RetEstados = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetEstados = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+
+        try {
+            JSONObject jsonObj = new JSONObject(RetEstados);
+            JSONArray JEstados = jsonObj.getJSONArray("estados");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JEstados.length();
+            DB = new ConfigDB(ctxEnv).getReadableDatabase();
+
+
+            Cursor CursorAtu = DB.rawQuery(" SELECT * FROM ESTADOS ", null);
+            if (CursorAtu.getCount() > 0) {
+                AtualizaEst = true;
+            }
+
+            if (AtualizaEst.equals(true)) {
+
+                for (int i = 0; i < JEstados.length(); i++) {
+                    while (jumpTime < totalProgressTime) {
+                        try {
+                            JSONObject c = JEstados.getJSONObject(jumpTime);
+                            jumpTime += 1;
+                            String SiglaEstado = c.getString("uf");
+                            String NomeEstado = c.getString("estado");
+
+                            Cursor CursosEstado = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
+
+                            if (CursosEstado.getCount() > 0) {
+                                DB.execSQL(" UPDATE ESTADOS SET UF = '" + SiglaEstado + "', DESCRICAO = '" + NomeEstado + "'" +
+                                        " WHERE UF = '" + SiglaEstado + "'");
+                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
+                                cursor1.moveToFirst();
+                                Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
+                                cursor1.close();
+                            } else {
+                                DB.execSQL("INSERT INTO ESTADOS VALUES('" + SiglaEstado + "','" + NomeEstado + "');");
+                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
+                                cursor1.moveToFirst();
+                                Estado = cursor1.getString(cursor1.getColumnIndex("UF"));
+                                cursor1.close();
+                            }
+                            CursosEstado.close();
+                            SincAtualizaCidade(Estado, ctxEnv);
+                        } catch (Exception E) {
+                            E.printStackTrace();
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return AtualizaEst;
+    }
+
+    public static boolean SincAtualizaCidade(String UF, final Context ctxEnv) {
+        boolean sincatucidade = false;
+        int CodCidadeExt = 0;
+        int CodCidade = 0;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Cidades");
+        soap.addProperty("aUF", UF);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
+        String RetCidades = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                RetCidades = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetCidades);
+            JSONArray JCidades = jsonObj.getJSONArray("cidades");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JCidades.length();
+            DB = new ConfigDB(ctxEnv).getReadableDatabase();
+
+            for (int i = 0; i < JCidades.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JCidades.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        String NomeCidade = c.getString("cidade");
+                        CodCidadeExt = c.getInt("id_cidade");
+                        NomeCidade = NomeCidade.replaceAll("'", "");
+
+                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                        if (!(CursorCidade.getCount() > 0)) {
+                            DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODCIDADE_EXT)" +
+                                    " VALUES('" + NomeCidade + "','" + UF + "', '" + CodCidadeExt + "');");
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                            cursor1.moveToFirst();
+                            CodCidadeExt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT"));
+                            cursor1.close();
+                            CursorCidade.close();
+                            sincatucidade = true;
+
+                            final int finalCodCidadeExt = CodCidadeExt;
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    actSincronismo.SincAtualizaBairro(finalCodCidadeExt, ctxEnv);
+                                }
+                            });
+                        }
+                    } catch (Exception E) {
+                        E.toString();
+                        sincatucidade = false;
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.toString();
+            sincatucidade = false;
+        }
+        return sincatucidade;
+    }
+
+    private static void SincAtualizaBairro(int codCidade, Context ctxEnv) {
+        int CodBairro = 0;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Bairros");
+        soap.addProperty("aIdCidade", codCidade);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
+        String RetBairros = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+            if (ConexOk == true) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                RetBairros = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
+        }
+
+        try {
+            JSONObject jsonObj = new JSONObject(RetBairros);
+            JSONArray JBairros = jsonObj.getJSONArray("bairros");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JBairros.length();
+            DB = new ConfigDB(ctxEnv).getReadableDatabase();
+
+            for (int i = 0; i < JBairros.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JBairros.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        String NomeBairro = c.getString("bairro");
+                        int CodBairroExt = c.getInt("id_bairro");
+
+                        NomeBairro = NomeBairro.replaceAll("'", " ");
+
+                        Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODBAIRRO_EXT, CODCIDADE FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
+                        if (CursorBairro.getCount() > 0) {
+                            DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = '" + codCidade + "', DESCRICAO = '" + NomeBairro + "', CODBAIRRO_EXT = '" + CodBairroExt + "'" +
+                                    " WHERE DESCRICAO = '" + NomeBairro + "' AND CODCIDADE = '" + codCidade + "'");
+                            Cursor cursor1 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
+                            cursor1.moveToFirst();
+                            CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
+                            cursor1.close();
+                        } else {
+                            DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODBAIRRO_EXT, CODCIDADE)" +
+                                    " VALUES('" + NomeBairro + "','" + CodBairroExt + "', '" + codCidade + "');");
+                            Cursor cursor1 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO =  '" + NomeBairro + "'", null);
+                            cursor1.moveToFirst();
+                            CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
+                            cursor1.close();
+                        }
+                        CursorBairro.close();
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.toString();
+        }
+    }
+
+    public static boolean AtualizaPedido(String numPedido, Context ctxAtu, String tipoAtu){
+        boolean sincAtuPedido = false;
+        DB = new ConfigDB(ctxAtu).getReadableDatabase();
+        if(tipoAtu.equals("C")){
+            try {
+                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + numPedido + "'", null);
+                CursPedAtu.moveToFirst();
+                if (CursPedAtu.getCount() > 0) {
+                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '4' WHERE NUMPED = '" + numPedido + "'");
+                }
+                CursPedAtu.close();
+            } catch (Exception E) {
+                E.toString();
+                return false;
+            }
+            return true;
+
+        }else if(tipoAtu.equals("A")){
+            try {
+                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + numPedido + "'", null);
+                CursPedAtu.moveToFirst();
+                if (CursPedAtu.getCount() > 0) {
+                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE NUMPED = '" + numPedido + "'");
+                }
+                CursPedAtu.close();
+            } catch (Exception E) {
+                E.toString();
+                return false;
+            }
+            return true;
+
+        }else if(tipoAtu.equals("S")){
+            String JPedidos = null;
+            ProgressDialog Dialog = null;
+            String METHOD_NAMEENVIO = "RetornaStatusPedidos";
+            DB = new ConfigDB(ctxAtu).getReadableDatabase();
+            Cursor CursorPedido;
+            String NumFiscal = "";
+
+            try {
+                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPEDIDOERP = " + numPedido, null);
+
+                Dialog = new ProgressDialog(ctxAtu);
+                Dialog.setTitle("Aguarde...");
+                Dialog.setMessage("Atualizando Pedido Nº: " + numPedido);
+                Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                Dialog.setProgress(0);
+                Dialog.setIcon(R.drawable.icon_sync);
+                Dialog.setMax(0);
+                Dialog.show();
+
+                SharedPreferences prefs = ctxAtu.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
+                usuario = prefs.getString("usuario", null);
+                senha = prefs.getString("senha", null);
+
+                SharedPreferences prefsHost = ctxAtu.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+                URLPrincipal = prefsHost.getString("host", null);
+                String RetStatusPedido = null;
+
+                int jumpTime = 0;
+                final int totalProgressTime = CursorPedido.getCount();
+                Dialog.setMax(totalProgressTime);
+                Dialog.setProgress(jumpTime);
+                CursorPedido.moveToFirst();
+                if (CursorPedido.getCount() > 0) {
+                    CursorPedido.moveToFirst();
+                    do {
+                        for (int i = 0; i < CursorPedido.getCount(); i++) {
+                            do try {
+                                jumpTime += 1;
+                                Dialog.setProgress(jumpTime);
+                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                                StrictMode.setThreadPolicy(policy);
+
+                                SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                                soap.addProperty("aNumPedido", numPedido);
+                                soap.addProperty("aUsuario", usuario);
+                                soap.addProperty("aSenha", senha);
+                                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                envelope.setOutputSoapObject(soap);
+                                HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
+
+                                try {
+                                    Boolean ConexOk = Util.checarConexaoCelular(ctxAtu);
+                                    if (ConexOk == true) {
+                                        Envio.call("", envelope);
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                                        RetStatusPedido = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    }
+                                } catch (Exception e) {
+                                    System.out.println("Error" + e);
+                                }
+                            } catch (Exception E) {
+                                E.printStackTrace();
+                            }
+                            while (jumpTime < totalProgressTime);
+                        }
+                        try {
+                            DB = new ConfigDB(ctxAtu).getReadableDatabase();
+                            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPEDIDOERP = " + numPedido, null);
+                            CursPedAtu.moveToFirst();
+                            if (CursPedAtu.getCount() > 0) {
+                                if (!RetStatusPedido.equals("Orçamento")) {
+                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '3', NUMFISCAL = " + RetStatusPedido + " WHERE NUMPEDIDOERP = '" + numPedido + "'");
+                                }
+                            }
+                            sincAtuPedido = true;
+                            CursPedAtu.close();
+                        } catch (Exception E) {
+                            Toast.makeText(ctxAtu, E.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    while (CursorPedido.moveToNext());
+                    CursorPedido.close();
+                }
+                if (Dialog.isShowing())
+                    Dialog.dismiss();
+            } catch (Exception E) {
+                System.out.println("Error" + E);
+            }
+        }
+        return sincAtuPedido;
+    }
+
+    public static boolean CancelarPedidoAberto(String NumPedido, Context ctxCanc) {
+
+        DB = new ConfigDB(ctxCanc).getReadableDatabase();
+
+        try {
+            DB = new ConfigDB(ctxCanc).getReadableDatabase();
+            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "'", null);
+            CursPedAtu.moveToFirst();
+            if (CursPedAtu.getCount() > 0) {
+                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '4' WHERE NUMPED = '" + NumPedido + "'");
+            }
+            CursPedAtu.close();
+        } catch (Exception E) {
+            E.toString();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean AutorizaPedidoAberto(String NumPedido, Context ctxCanc) {
+
+        DB = new ConfigDB(ctxCanc).getReadableDatabase();
+
+        try {
+            DB = new ConfigDB(ctxCanc).getReadableDatabase();
+            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "'", null);
+            CursPedAtu.moveToFirst();
+            if (CursPedAtu.getCount() > 0) {
+                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE NUMPED = '" + NumPedido + "'");
+            }
+            CursPedAtu.close();
+        } catch (Exception E) {
+            E.toString();
+            return false;
+        }
+        return true;
     }
 
     public static boolean AtualizaStatusPedido(String NumPedido, Context ctxEnv) {
@@ -2734,8 +3139,9 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         return sincclieenvstatic;
     }
 
-    public static boolean SincronizarProdutosStatic(String DtUlt, Context ctxSincProd, String user, String pass) {
-        boolean sincprodstatic = false;
+    public static String SincronizarProdutosStatic(String DtUlt, Context ctxSincProd, String user, String pass, int codItem) {
+        String sincprodstatic = null;
+        String DtUltItem = null;
 
         DB = new ConfigDB(ctxSincProd).getReadableDatabase();
 
@@ -2752,7 +3158,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String TAG_VLVENDA5 = "vlvenda5";
         String TAG_VLVENDAP1 = "vlvendap1";
         String TAG_VLVENDAP2 = "vlvendap2";
-        String TAG_VENDAPADRAO = "vendapadrao";
+        String TAG_TABELAPADRAO = "tabelapadrao";
         String TAG_MARCA = "marca";
         String TAG_CLASSE = "classe";
         String TAG_FABRICANTE = "fabricante";
@@ -2761,22 +3167,21 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         String TAG_ATIVO = "ativo";
         String TAG_QTDESTOQUE = "qtd_disponivel";
 
-        try {
-            Cursor CursosParam = DB.rawQuery(" SELECT DT_ULT_ATU FROM PARAMAPP", null);
-            CursosParam.moveToFirst();
-            DataUltSt2 = Util.DataHojeComHorasBR();
-            DB.execSQL(" UPDATE PARAMAPP SET DT_ULT_ATU = '" + DataUltSt2 + "';");
-            CursosParam.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (codItem == 0) {
+            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ITENS FROM PARAMAPP", null);
+            cursorparamapp.moveToFirst();
+            DtUltItem = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ITENS"));
+            if (DtUltItem == null) {
+                DtUltItem = "01/01/2000 10:00:00";
+            }
+            cursorparamapp.close();
         }
-
 
         SharedPreferences prefs = ctxSincProd.getSharedPreferences(actLogin.NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
 
-        DtUlt = DataUltSt2;
+        //DtUlt = DataUltSt2;
 
         SharedPreferences prefsHost = ctxSincProd.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -2786,13 +3191,25 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
 
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
         if (senha != null) {
-            soap.addProperty("aParam", "D" + DtUlt);
-            soap.addProperty("aUsuario", usuario);
-            soap.addProperty("aSenha", senha);
+            if (codItem == 0) {
+                soap.addProperty("aParam", "D" + DtUltItem);
+                soap.addProperty("aUsuario", usuario);
+                soap.addProperty("aSenha", senha);
+            } else {
+                soap.addProperty("aParam", "I" + codItem);
+                soap.addProperty("aUsuario", usuario);
+                soap.addProperty("aSenha", senha);
+            }
         } else {
-            soap.addProperty("aParam", "D" + DtUlt);
-            soap.addProperty("aUsuario", user);
-            soap.addProperty("aSenha", pass);
+            if (codItem == 0) {
+                soap.addProperty("aParam", "D" + DtUltItem);
+                soap.addProperty("aUsuario", user);
+                soap.addProperty("aSenha", pass);
+            } else {
+                soap.addProperty("aParam", "I" + codItem);
+                soap.addProperty("aUsuario", user);
+                soap.addProperty("aSenha", pass);
+            }
         }
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
@@ -2802,14 +3219,47 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         try {
             Boolean ConexOk = Util.checarConexaoCelular(ctxSincProd);
             if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                try {
+                    Envio.call("", envelope);
+                } catch (Exception e) {
+                    e.toString();
+                    sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
+                    return sincprodstatic;
+                }
+                try {
+                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                    RetProdutos = (String) envelope.getResponse();
+                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                } catch (Exception e) {
+                    e.toString();
+                    sincprodstatic = ctxSincProd.getString(R.string.failed_return);
+                    return sincprodstatic;
 
-                RetProdutos = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
+                }
+            } else {
+                sincprodstatic = ctxSincProd.getString(R.string.no_connection);
+                return sincprodstatic;
+            }
+            if (RetProdutos.equals("0")) {
+                sincprodstatic = ctxSincProd.getString(R.string.sync_products_successfully);
+                return sincprodstatic;
+            } else if (RetProdutos == null) {
+                sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
+                return sincprodstatic;
+            } else if (RetProdutos.equals("Parâmetro inválido.")) {
+                sincprodstatic = "Falha na autenticação. Verifique!";
+                return sincprodstatic;
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
+        }
+        if(codItem == 0){
+            try {
+                DtUltItem = Util.DataHojeComHorasMinSecBR();
+                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "'");
+            } catch (Exception e) {
+                e.toString();
+            }
         }
 
         try {
@@ -2843,14 +3293,14 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
                                         "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
                                         "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
                                         "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             } else {
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
-                                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, VENDAPADRAO, " +
+                                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, TABELAPADRAO, " +
                                         "ATIVO, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
                                         "',' " + CItens.getString(TAG_CODMANUAL).trim() +
                                         "','" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
@@ -2866,7 +3316,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "','" + CItens.getString(TAG_VLVENDA5).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', '" + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "', '" + CItens.getString(TAG_ATIVO) +
                                         "', '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") + "');");
@@ -2885,26 +3335,33 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
                                         "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', VENDAPADRAO = '" + CItens.getString(TAG_VENDAPADRAO).trim() +
+                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
                                         "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
                                         "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
                             }
-                            sincprodstatic = true;
                             CursItens.close();
+
                         } catch (Exception E) {
-                            System.out.println("Error" + E);
+                            E.toString();
+                            sincprodstatic = "Falha no insert ou update do SQL (CursItens)";
+                            return sincprodstatic;
                         }
 
                     } catch (Exception E) {
                         E.toString();
+                        sincprodstatic = "Falha no SQL (CursItens)";
+                        return sincprodstatic;
                     }
                 }
 
             }
+            sincprodstatic = "0";
         } catch (Exception E) {
             E.toString();
+            sincprodstatic = "Falha no jsonObj";
+            return sincprodstatic;
         }
         return sincprodstatic;
     }
@@ -2987,17 +3444,23 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
         String RetClientes = null;
 
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
-            if (ConexOk == true) {
+
+        Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
+        if (ConexOk == true) {
+            try {
                 Envio.call("", envelope);
+            } catch (Exception e) {
+                System.out.println("Error" + e);
+            }
+            try {
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 RetClientes = (String) envelope.getResponse();
                 System.out.println("Response :" + resultsRequestSOAP.toString());
+            } catch (Exception e) {
+                e.toString();
             }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
         }
+
         if (RetClientes.equals("0")) {
             sinccliestatic = true;
             return sinccliestatic;
