@@ -331,13 +331,26 @@ public class act_ListProdutos extends AppCompatActivity
     public List<Produtos> carregarprodutos() {
 
         DB = new ConfigDB(this).getReadableDatabase();
-        BigDecimal preco1 = null; BigDecimal preco2 = null; BigDecimal preco3 = null; BigDecimal preco4 = null; BigDecimal preco5 = null;
-        BigDecimal precoP1 = null; BigDecimal precoP2 = null;
+        BigDecimal preco1 = null;
+        BigDecimal preco2 = null;
+        BigDecimal preco3 = null;
+        BigDecimal preco4 = null;
+        BigDecimal preco5 = null;
+        BigDecimal precoP1 = null;
+        BigDecimal precoP2 = null;
 
         ArrayList<Produtos> DadosLisProdutos = new ArrayList<Produtos>();
         try {
             Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
             CursorParametro.moveToFirst();
+            String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+            String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+            String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+            String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+            String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+            String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+            String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+            String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
 
             Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ATIVO = 'S' ORDER BY DESCRICAO", null);
             cursorProdutos.moveToFirst();
@@ -350,57 +363,60 @@ public class act_ListProdutos extends AppCompatActivity
                     String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
                     String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
 
-                    String ppadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
-                /*ppadrao = ppadrao.trim();
-                BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
+                    String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
+                  /*ppadrao = ppadrao.trim();
+                    BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
 
-                    String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
-                    p1 = p1.trim();
-                    if (!p1.equals("")) {
-                        preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
+                    if (!tabela1.equals("")) {
+                        String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
+                        p1 = p1.trim();
+                        if (!p1.equals("")) {
+                            preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
+                        }
                     }
-                    String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
-                    p2 = p2.trim();
-                    if (!p2.equals("")) {
-                        preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
+                    if (!tabela2.equals("")) {
+                        String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
+                        p2 = p2.trim();
+                        if (!p2.equals("")) {
+                            preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
+                        }
                     }
-                    String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
-                    p3 = p3.trim();
-                    if (!p3.equals("")) {
-                        preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
+                    if (!tabela3.equals("")) {
+                        String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
+                        p3 = p3.trim();
+                        if (!p3.equals("")) {
+                            preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
+                        }
                     }
-                    String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
-                    p4 = p4.trim();
-                    if (!p4.equals("")) {
-                        preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
+                    if (!tabela4.equals("")) {
+                        String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
+                        p4 = p4.trim();
+                        if (!p4.equals("")) {
+                            preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
+                        }
                     }
-                    String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
-                    p5 = p5.trim();
-                    if (!p5.equals("")) {
-                        preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
+                    if (!tabela5.equals("")) {
+                        String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
+                        p5 = p5.trim();
+                        if (!p5.equals("")) {
+                            preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
+                        }
                     }
-                    String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
-                    pp1 = pp1.trim();
-                    if (!pp1.equals("")) {
-                        precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
+                    if (!tabpromo1.equals("")) {
+                        String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
+                        pp1 = pp1.trim();
+                        if (!pp1.equals("")) {
+                            precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
+                        }
                     }
-                    String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
-                    pp2 = pp2.trim();
-                    if (!pp2.equals("")) {
-                        precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
+                    if (!tabpromo2.equals("")) {
+                        String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
+                        pp2 = pp2.trim();
+                        if (!pp2.equals("")) {
+                            precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
+                        }
                     }
-
-                    String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-                    String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-                    String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-                    String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-                    String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-                    String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-                    String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-
-                    String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
-
-                    lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, ppadrao);
+                    lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao);
                     DadosLisProdutos.add(lstprodutos);
                 } while (cursorProdutos.moveToNext());
                 cursorProdutos.close();
@@ -447,76 +463,108 @@ public class act_ListProdutos extends AppCompatActivity
         if (frag1 != null) {
             frag1.getActivity().getSupportFragmentManager().popBackStack();
         }
+        BigDecimal preco1 = null;
+        BigDecimal preco2 = null;
+        BigDecimal preco3 = null;
+        BigDecimal preco4 = null;
+        BigDecimal preco5 = null;
+        BigDecimal precoP1 = null;
+        BigDecimal precoP2 = null;
 
         ArrayList<FiltroProdutos> DadosLisProdutos = new ArrayList<FiltroProdutos>();
 
-        Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
-        CursorParametro.moveToFirst();
+        try {
 
-        Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE DESCRICAO LIKE '%" + valor_campo + "%' OR CODITEMANUAL LIKE '%" + valor_campo + "%' OR CLASSE LIKE '%" + valor_campo + "%'" +
-                " OR FABRICANTE LIKE '%" + valor_campo + "%' OR FORNECEDOR LIKE '%" + valor_campo + "%' OR MARCA LIKE '%" + valor_campo + "%' ORDER BY DESCRICAO", null);
-        cursorProdutos.moveToFirst();
-        if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
+            Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+            CursorParametro.moveToFirst();
+            String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+            String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+            String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+            String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+            String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+            String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+            String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
 
-            do {
-                String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
-                String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
-                String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
-                String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
-                String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
-                String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
+            String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
 
-                String ppadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("VENDAPADRAO"));
-                ppadrao = ppadrao.trim();
-                BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));
+            Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE DESCRICAO LIKE '%" + valor_campo + "%' OR CODITEMANUAL LIKE '%" + valor_campo + "%' OR CLASSE LIKE '%" + valor_campo + "%'" +
+                    " OR FABRICANTE LIKE '%" + valor_campo + "%' OR FORNECEDOR LIKE '%" + valor_campo + "%' OR MARCA LIKE '%" + valor_campo + "%' ORDER BY DESCRICAO", null);
+            cursorProdutos.moveToFirst();
+            if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
+                do {
+                    String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                    String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                    String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
+                    String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
+                    String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
+                    String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
 
-                String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
-                p1 = p1.trim();
-                BigDecimal preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
+                    String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
+                  /*ppadrao = ppadrao.trim();
+                    BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
 
-                String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
-                p2 = p2.trim();
-                BigDecimal preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
+                    if (!tabela1.equals("")) {
+                        String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
+                        p1 = p1.trim();
+                        if (!p1.equals("")) {
+                            preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
+                        }
+                    }
+                    if (!tabela2.equals("")) {
+                        String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
+                        p2 = p2.trim();
+                        if (!p2.equals("")) {
+                            preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
+                        }
+                    }
+                    if (!tabela3.equals("")) {
+                        String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
+                        p3 = p3.trim();
+                        if (!p3.equals("")) {
+                            preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
+                        }
+                    }
+                    if (!tabela4.equals("")) {
+                        String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
+                        p4 = p4.trim();
+                        if (!p4.equals("")) {
+                            preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
+                        }
+                    }
+                    if (!tabela5.equals("")) {
+                        String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
+                        p5 = p5.trim();
+                        if (!p5.equals("")) {
+                            preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
+                        }
+                    }
+                    if (!tabpromo1.equals("")) {
+                        String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
+                        pp1 = pp1.trim();
+                        if (!pp1.equals("")) {
+                            precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
+                        }
+                    }
+                    if (!tabpromo2.equals("")) {
+                        String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
+                        pp2 = pp2.trim();
+                        if (!pp2.equals("")) {
+                            precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
+                        }
+                    }
 
-                String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
-                p3 = p3.trim();
-                BigDecimal preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
+                    lstfiltprodutos = new FiltroProdutos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao);
+                    DadosLisProdutos.add(lstfiltprodutos);
+                } while (cursorProdutos.moveToNext());
+                cursorProdutos.close();
+                CursorParametro.close();
 
-                String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
-                p4 = p4.trim();
-                BigDecimal preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
+            } else {
+                Toast.makeText(this, R.string.no_products_found, Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.toString();
 
-                String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
-                p5 = p5.trim();
-                BigDecimal preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
-
-                String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
-                pp1 = pp1.trim();
-                BigDecimal precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
-
-                String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
-                pp2 = pp2.trim();
-                BigDecimal precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
-
-                String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-                String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-                String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-                String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-                String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-                String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-                String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-
-                String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
-
-
-                lstfiltprodutos = new FiltroProdutos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, precopadrao);
-                DadosLisProdutos.add(lstfiltprodutos);
-            } while (cursorProdutos.moveToNext());
-            cursorProdutos.close();
-            CursorParametro.close();
-
-        } else {
-            Toast.makeText(this, R.string.no_products_found, Toast.LENGTH_SHORT).show();
         }
         if (pDialog.isShowing()) {
             pDialog.dismiss();

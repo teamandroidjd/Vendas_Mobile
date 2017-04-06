@@ -46,8 +46,8 @@ public class ListAdapterFiltroProdutos extends RecyclerView.Adapter<ListAdapterF
         myViewHolder.lblCodItem.setText(mList.get(position).getCodigoManual());
         myViewHolder.lblNomeItem.setText(mList.get(position).getDescricao());
         myViewHolder.lblUnidItem.setText(mList.get(position).getUnidVenda());
-        myViewHolder.tabpadrao.setText("Tabela Padrão");
-        myViewHolder.txtprecopadrao.setText(mList.get(position).getPrecoPadrao());
+        /*myViewHolder.tabpadrao.setText("Tabela Padrão");
+        myViewHolder.txtprecopadrao.setText(mList.get(position).getPrecoPadrao());*/
         myViewHolder.lblApres.setText(mList.get(position).getApresentacao());
 
         String QtdEstoqueNegativo = (mList.get(position).getQuantidade()).replaceAll("[1234567890,]", "").trim();
@@ -65,51 +65,48 @@ public class ListAdapterFiltroProdutos extends RecyclerView.Adapter<ListAdapterF
         if (TipoEst.equals("N")) {
             myViewHolder.layquantidade.setVisibility(View.GONE);
         }
-
-
         String Status = mList.get(position).getStatus();
-        if (Status.equals("1")) {
+        if (Status.equals("S")) {
             myViewHolder.lblStatus.setText("Ativo");
         } else {
             myViewHolder.lblStatus.setText("Inativo");
         }
-
-        if ((mList.get(position).getPreco1()) != ("0,0000")) {
+        if (!mList.get(position).getTabela1().equals("")) {
             myViewHolder.lblPreco.setText(mList.get(position).getPreco1());
             myViewHolder.tab1.setText(mList.get(position).getTabela1());
         } else {
             myViewHolder.laytab1.setVisibility(View.GONE);
         }
 
-        if ((mList.get(position).getPreco2()) != ("0,0000")) {
+        if (!mList.get(position).getTabela2().equals("")) {
             myViewHolder.lblpreco2.setText(mList.get(position).getPreco2());
             myViewHolder.tab2.setText(mList.get(position).getTabela2());
         } else {
             myViewHolder.laytab2.setVisibility(View.GONE);
         }
 
-        if ((mList.get(position).getPreco3()) != ("0,0000")) {
+        if (!mList.get(position).getTabela3().equals("")) {
             myViewHolder.lblpreco3.setText(mList.get(position).getPreco3());
             myViewHolder.tab3.setText(mList.get(position).getTabela3());
         } else {
             myViewHolder.laytab3.setVisibility(View.GONE);
         }
 
-        if ((mList.get(position).getPreco4()) != ("0,0000")) {
+        if (!mList.get(position).getTabela4().equals("")) {
             myViewHolder.lblpreco4.setText(mList.get(position).getPreco4());
             myViewHolder.tab4.setText(mList.get(position).getTabela4());
         } else {
             myViewHolder.laytab4.setVisibility(View.GONE);
         }
 
-        if ((mList.get(position).getPreco5()) != ("0,0000")) {
+        if (!mList.get(position).getTabela5().equals("")) {
             myViewHolder.lblpreco5.setText(mList.get(position).getPreco5());
             myViewHolder.tab5.setText(mList.get(position).getTabela5());
         } else {
             myViewHolder.laytab5.setVisibility(View.GONE);
         }
 
-        if ((mList.get(position).getPrecoP1()) != ("0,0000")) {
+        if (!mList.get(position).getTabpromo1().equals("")) {
             myViewHolder.lblprecop1.setText(mList.get(position).getPrecoP1());
             myViewHolder.tabp1.setText(mList.get(position).getTabpromo1());
         } else {
@@ -117,7 +114,7 @@ public class ListAdapterFiltroProdutos extends RecyclerView.Adapter<ListAdapterF
         }
 
 
-        if ((mList.get(position).getPrecoP2()) != ("0,0000")) {
+        if (!mList.get(position).getTabpromo2().equals("")) {
             myViewHolder.lblprecop2.setText(mList.get(position).getPrecoP2());
             myViewHolder.tabp2.setText(mList.get(position).getTabpromo2());
         } else {
