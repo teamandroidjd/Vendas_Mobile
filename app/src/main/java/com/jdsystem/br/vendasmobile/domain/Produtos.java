@@ -15,7 +15,7 @@ public class Produtos extends ItensPedido {
     private String Status;
     private String UnidVenda;
     private String Apresentacao;
-    private String PrecoPadrao;
+    private String TabelaPadrao;
     private String Preco1;
     private String Preco2;
     private String Preco3;
@@ -203,30 +203,44 @@ public class Produtos extends ItensPedido {
         TipoEstoque = tipoEstoque;
     }
 
-    public String getPrecoPadrao() {
-        return PrecoPadrao;
+    public String getTabPadrao() {
+        return TabelaPadrao;
     }
 
-    public void setPrecoPadrao(String precoPadrao) {
-        PrecoPadrao = precoPadrao;
+    public void setTabPadrao(String tabPadrao) {
+        TabelaPadrao = tabPadrao;
     }
 
 
 
 
-    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1,  BigDecimal Preco2,BigDecimal Preco3,BigDecimal Preco4,BigDecimal Preco5,BigDecimal PrecoP1,BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, BigDecimal PrecoPadrao) {
+    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1,  BigDecimal Preco2,BigDecimal Preco3,BigDecimal Preco4,BigDecimal Preco5,BigDecimal PrecoP1,BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao/*BigDecimal PrecoPadrao*/) {
         this.Descricao = Descricao;
         this.CodigoManual = CodigoManual;
         this.Status = Status;
         this.UnidVenda = UnidVenda;
         this.Apresentacao = Apresentacao;
-        this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        if(Preco1 != null){
+            this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        }
+        if(Preco2 != null){
+            this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        }
+        if(Preco3 != null){
+            this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        }
+        if(Preco4 != null){
+            this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        }
+        if(Preco5 != null){
+            this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        }
+        if(PrecoP1 != null){
+            this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        }
+        if(PrecoP1 != null){
+            this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        }
         this.Quantidade = Quantidade;
         this.Tabela1 = Tabela1;
         this.Tabela2 = Tabela2;
@@ -236,7 +250,7 @@ public class Produtos extends ItensPedido {
         this.Tabpromo1 = Tabpromo1;
         this.Tabpromo2 = Tabpromo2;
         this.TipoEstoque = TipoEstoque;
-        this.PrecoPadrao = PrecoPadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.TabelaPadrao = TabelaPdrao;//PrecoPadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
 
     }
 

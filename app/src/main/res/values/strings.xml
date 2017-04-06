@@ -146,7 +146,7 @@
     <!-- Mensagens de itens-->
 
     <string name="no_sync_products">Nenhum iten sincronizado. Verifique!</string>
-    <string name="alertsyncproducts">Não existe nenhum iten sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de dados e clique no botão Sincronizar.</string>
+    <string name="alertsyncproducts">Não existe nenhum item sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de dados e clique no botão Sincronizar.</string>
     <string name="no_products_found">Nenhum iten encontrado. Verifique!</string>
     <string name="primeira_sync_itens">Esta é sua primeira sincronização de itens. Esse processo pode demorar alguns minutos.</string>
 

@@ -3274,6 +3274,12 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                     try {
                         JSONObject CItens = ProdItens.getJSONObject(jumpTime);
                         jumpTime += 1;
+                        String Ativo = CItens.getString(TAG_ATIVO);
+                        if(Ativo.equals("true")){
+                            Ativo = "S";
+                        }else{
+                            Ativo = "N";
+                        }
 
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
                         try {
@@ -3294,7 +3300,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
+                                        "', ATIVO = '" + Ativo +
                                         "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
                                         "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
@@ -3317,7 +3323,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', '" + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "', '" + CItens.getString(TAG_ATIVO) +
+                                        "', '" + Ativo +
                                         "', '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") + "');");
 
@@ -3336,7 +3342,7 @@ public class actSincronismo extends AppCompatActivity implements Runnable {
                                         "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "', ATIVO = '" + CItens.getString(TAG_ATIVO) +
+                                        "', ATIVO = '" + Ativo +
                                         "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
                                         "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
