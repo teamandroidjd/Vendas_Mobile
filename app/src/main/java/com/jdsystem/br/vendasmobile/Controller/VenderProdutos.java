@@ -372,7 +372,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             DataHoraVenda = vendaCBean.getVendac_datahoravenda();
             venda_txt_desconto.setText(vendaCBean.getVendac_percdesconto().toString());
             venda_txv_datavenda.setText("Data/Hora Venda : " + Util.FormataDataDDMMAAAA_ComHoras(vendaCBean.getVendac_datahoravenda()));
-
+            Alterar_Pedido_listview_e_calcula_total();
         } else {
             if (CLI_CODIGO.equals(0)) {
                 CLI_CODIGO = vendaCBean.getVendac_cli_codigo();

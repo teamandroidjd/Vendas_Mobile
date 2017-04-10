@@ -38,8 +38,6 @@ public class Sqlite_VENDADAO {
 
     public Long grava_venda(SqliteVendaCBean venda, List<SqliteVendaD_TempBean> itens_temp) {
 
-        excluir_todos_itens_da_venda ();
-
         int numero_item = 1;
         for (SqliteVendaD_TempBean item_transf : itens_temp) {
             SqliteVendaDBean vendaDBean = new SqliteVendaDBean();
@@ -367,14 +365,11 @@ public class Sqlite_VENDADAO {
                     }
                     CursorItem.close();
                 }
-
-
             } catch (SQLiteException e) {
                 Util.log("SQLiteException grava_venda" + e.getMessage());
             }
         }
         return id_venda;
-
     }
 
     public List<SqliteVendaCBean> lista_pedidos_do_cliente(Integer cli_codigo) {
@@ -418,7 +413,6 @@ public class Sqlite_VENDADAO {
         try {
             cursor = db.rawQuery("select * from PEDOPER where STATUS = '1'", null);
             while (cursor.moveToNext()) {
-
                 SqliteVendaCBean vendac = new SqliteVendaCBean();
                 vendac.setVendac_chave(cursor.getString(cursor.getColumnIndex(vendac.CHAVE_DA_VENDA)));
                 vendac.setVendac_datahoravenda(cursor.getString(cursor.getColumnIndex(vendac.DATA_HORA_DA_VENDA)));
@@ -641,13 +635,10 @@ public class Sqlite_VENDADAO {
                 pedcancelado = false;
             }
             pedcancel.close();
-
-
         } catch (SQLiteException e) {
             Util.log("SQLiteException insere_item" + e.getMessage());
             pedcancelado = false;
         }
-
         return pedcancelado;
     } // função executa caso cliente exclua todos os itens de um pedido já salvo e depois tenta cancelar
 
@@ -713,5 +704,4 @@ public class Sqlite_VENDADAO {
             stmt.close();
         }
     }
-
 }
