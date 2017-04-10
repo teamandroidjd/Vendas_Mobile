@@ -208,12 +208,16 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                         sUF = "TO";//Tocantins
                         break;
                 }
-                Boolean ConexOk = VerificaConexao();
-                if (ConexOk == false) {
                     int CodCidade = 0;
+                Cursor cursor = null;
                     try {
-                        Cursor cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
+                        if (PesqCEP.equals(false)) {
+                            cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
+                        } else {
+                            cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
+                        }
                         List<String> DadosList = new ArrayList<String>();
+                        DadosList.clear();
                         if (cursor.getCount() > 0) {
                             cursor.moveToFirst();
                             do {
@@ -222,16 +226,15 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                 DadosList.add(Cidade);
                             } while (cursor.moveToNext());
                             cursor.close();
-
+                        }
                             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
                             ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                             spCidade.setAdapter(spinnerArrayAdapter);
-                        }
+
                     } catch (Exception E) {
                         System.out.println("Error" + E);
                     }
-                }
                 Thread thread = new Thread(act_CadClientes.this);
                 thread.start();
             }
@@ -263,6 +266,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                         e.toString();
                     }
                     List<String> DadosListBairro = new ArrayList<String>();
+                    DadosListBairro.clear();
                     if (CurBairro.getCount() > 0) {
                         CurBairro.moveToFirst();
                         do {
