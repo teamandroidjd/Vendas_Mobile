@@ -193,9 +193,7 @@
     <string name="intent_datafinal">datafinal</string>
     <string name="intent_situacaopedido">SitPedido</string>
     <string name="intent_codigoempresa">codempresa</string>
-
-
-
+    <string name="intent_flag">flag</string>
 
 
 </resources>

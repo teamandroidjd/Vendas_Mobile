@@ -15,14 +15,14 @@ import com.jdsystem.br.vendasmobile.act_TH_obsclie;
 /**
  * Created by hp1 on 21-01-2015.
  */
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+public class ListAdapterViewPager extends FragmentStatePagerAdapter {
 
-    CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
-    int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+    CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ListAdapterViewPager is created
+    int NumbOfTabs; // Store the number of tabs, this will also be passed when the ListAdapterViewPager is created
 
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
+    public ListAdapterViewPager(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
         super(fm);
 
         this.Titles = mTitles;

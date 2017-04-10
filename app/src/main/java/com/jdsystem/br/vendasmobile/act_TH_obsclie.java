@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 public class act_TH_obsclie extends Fragment {
 
-    int sCodCliente;
+    String CodCliente;
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -38,17 +38,17 @@ public class act_TH_obsclie extends Fragment {
 
 
         //Intent intent = act.getIntent();
-        Intent intent = ((actDadosCliente) getActivity()).getIntent();
+        Intent intent = ((DadosCliente) getActivity()).getIntent();
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodCliente = params.getInt(getString(R.string.intent_codcliente));
+                CodCliente = params.getString(getString(R.string.intent_codcliente));
             }
         }
 
         try {
             Cursor CursorClie = DB.rawQuery(" SELECT OBS FROM CLIENTES " +
-                    " WHERE CODCLIE_INT = " + sCodCliente, null);
+                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente), null);
 
             if (CursorClie.getCount() > 0) {
                 CursorClie.moveToFirst();

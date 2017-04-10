@@ -1,6 +1,5 @@
 package com.jdsystem.br.vendasmobile.Controller;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
@@ -13,7 +12,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -23,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -38,10 +35,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.server.converter.StringToIntConverter;
-import com.jdsystem.br.vendasmobile.ConfigConex;
 import com.jdsystem.br.vendasmobile.ConfigDB;
-import com.jdsystem.br.vendasmobile.ConfigWeb;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
@@ -49,19 +43,11 @@ import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
 import com.jdsystem.br.vendasmobile.Model.Sqlite_VENDADAO;
 import com.jdsystem.br.vendasmobile.R;
+import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Util;
-import com.jdsystem.br.vendasmobile.actLogin;
-import com.jdsystem.br.vendasmobile.actSincronismo;
-import com.jdsystem.br.vendasmobile.act_ListProdutos;
-import com.jdsystem.br.vendasmobile.adapter.ListaItensTemporariosAdapter;
-import com.jdsystem.br.vendasmobile.adapter.ListaItensVendaAdapter;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterItensTemporarios;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterItensVenda;
+import com.jdsystem.br.vendasmobile.domain.Produtos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -85,6 +71,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     private ListView prod_listview_produtotemp;
     private ListView prod_listview_itenstemp;
     private ListView ListView_ItensVendidos;
+    Produtos lstprodutos;
 
     private Handler handler = new Handler();
     private Intent Codigo;
@@ -127,6 +114,14 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             }
         });
         carrega_produto_para_venda();
+        dialog = new ProgressDialog(Lista_produtos.this);
+        dialog.setTitle(getString(R.string.wait));
+        dialog.setMessage(getString(R.string.loading_products));
+        dialog.setCancelable(false);
+        dialog.show();
+
+        Thread thread = new Thread(Lista_produtos.this);
+        thread.start();
     }
 
     private void declaraobjetos() {
@@ -168,7 +163,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                     thread.start();
 
                     cursorVerificaProd.close();
-                }else{
+                } else {
                     dialog = new ProgressDialog(this);
                     dialog.setCancelable(false);
                     dialog.setMessage(getString(R.string.sync_products));
@@ -185,7 +180,6 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     private void carrega_produto_para_venda() {
 
@@ -328,7 +322,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
             ConexOk = Util.checarConexaoCelular(this);
             if (vendenegativo.equals("N") && ConexOk == true) {
-                sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, usuario, senha, CodigoItem);
+                sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, CodigoItem);
                 if (sincprod.equals("0")) {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
                     CursItens.moveToFirst();
@@ -338,13 +332,13 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                         Util.msg_toast_personal(getBaseContext(), getString(R.string.item_sem_estoque), Util.ALERTA);
                         return;
                     }
-                }else {
+                } else {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
                     CursItens.moveToFirst();
                     qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                     CursItens.close();
                 }
-            }else {
+            } else {
                 Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
                 CursItens.moveToFirst();
                 qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
@@ -1058,7 +1052,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
             ConexOk = Util.checarConexaoCelular(this);
             if (vendenegativo.equals("N") && ConexOk == true) {
-                sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, usuario, senha, CodigoItem);
+                sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, CodigoItem);
                 if (sincprod.equals("0")) {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
                     CursItens.moveToFirst();
@@ -1068,13 +1062,13 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                         Util.msg_toast_personal(getBaseContext(), getString(R.string.item_sem_estoque), Util.ALERTA);
                         return;
                     }
-                }else {
+                } else {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
                     CursItens.moveToFirst();
                     qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                     CursItens.close();
                 }
-            }else {
+            } else {
                 Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
                 CursItens.moveToFirst();
                 qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
@@ -1796,7 +1790,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
 
         prod_listview_itenstemp = (ListView) findViewById(R.id.prod_listview_produtotemp);
         List<SqliteVendaD_TempBean> itens_da_venda_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
-        prod_listview_itenstemp.setAdapter(new ListaItensTemporariosAdapter(getApplicationContext(), itens_da_venda_temp));
+        prod_listview_itenstemp.setAdapter(new ListAdapterItensTemporarios(getApplicationContext(), itens_da_venda_temp));
 
 
         prod_listview_itenstemp.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -1814,7 +1808,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
         ListView_ItensVendidos = (ListView) findViewById(R.id.ListView_ItensVendidos);
         //prod_listview_itenstemp = (ListView) findViewById(R.id.prod_listview_produtotemp);
         List<SqliteVendaDBean> itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodvend, true).buscar_itens_vendas_por_numeropedido(chavepedido);
-        ListView_ItensVendidos.setAdapter(new ListaItensVendaAdapter(getApplicationContext(), itens_venda));
+        ListView_ItensVendidos.setAdapter(new ListAdapterItensVenda(getApplicationContext(), itens_venda));
 
 
         ListView_ItensVendidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -1892,28 +1886,19 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     @Override
     public void run() {
         try {
-            //actSincronismo.run(Lista_produtos.this);
-            sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, Lista_produtos.this, usuario, senha, 0);
-            if (sincprod.equals("0")) {
-                dialog.dismiss();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplication(), getString(R.string.sync_products_successfully), Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                dialog.dismiss();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplication(), sincprod, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
+            //Sincronismo.run(Lista_produtos.this);
+            sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, 0);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplication(), sincprod, Toast.LENGTH_LONG).show();
+                }
+            });
         } catch (Exception e) {
             e.toString();
         }
+        /*if(dialog.isShowing()){
+            dialog.dismiss();
+        }*/
     }
 }

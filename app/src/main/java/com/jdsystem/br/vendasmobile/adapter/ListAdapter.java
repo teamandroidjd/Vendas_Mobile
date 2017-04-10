@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
 
 import java.util.List;
 import java.util.Map;

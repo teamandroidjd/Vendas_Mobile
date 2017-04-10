@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jdsystem.br.vendasmobile.Mask;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.domain.Clientes;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
@@ -20,7 +22,7 @@ import java.util.Map;
 
 public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterClientes.MyViewHolder> {
     private List<Clientes> mList;
-    private List<Clientes> itens_exibicao;
+    //private List<Clientes> itens_exibicao;
     private LayoutInflater mLayoutInflater;
     private RecyclerViewOnClickListenerHack mRecyclerViewOnClickListenerHack;
 
@@ -42,13 +44,42 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
     @Override
     public void onBindViewHolder(MyViewHolder myViewHolder, int position) {
         Log.i("LOG", "onBindViewHolder()");
-        myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
-        myViewHolder.razaoSocial.setText(mList.get(position).getNomeRazao());
-        myViewHolder.documento.setText(mList.get(position).getDocumento());
+        String codclieint = mList.get(position).getCodClienteInt();
+        String codclieext = mList.get(position).getCodClienteExt();
+        //myViewHolder.razaoSocial.setText(mList.get(position).getNomeRazao());
+        //myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
+        //myViewHolder.documento.setText(mList.get(position).getDocumento());
         myViewHolder.cidade.setText(mList.get(position).getCidade());
         myViewHolder.estado.setText(mList.get(position).getEstado());
         myViewHolder.bairro.setText(mList.get(position).getBairro());
-        myViewHolder.telefone.setText(mList.get(position).getTelefone());
+        myViewHolder.telefone1.setText(mList.get(position).getTelefone1());
+
+        if(codclieext != null){
+            myViewHolder.codClieExt.setText(mList.get(position).getCodClienteExt());
+            myViewHolder.bolavermelha.setVisibility(View.GONE);
+
+        }else {
+            myViewHolder.codClieInt.setText("");
+            myViewHolder.bolavermelha.setVisibility(View.VISIBLE);
+
+        }
+
+        if (mList.get(position).getDocumento().replaceAll("[^0123456789]", "").trim().length() == 14) {
+            myViewHolder.documento.setText( Mask.addMask(mList.get(position).getDocumento(), "##.###.###/####-##"));
+            myViewHolder.razaoSocial.setText(mList.get(position).getNomeRazao());
+            myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
+        } else {
+            myViewHolder.documento.setText("CPF: " + Mask.addMask(mList.get(position).getDocumento(), "###.###.###-##"));
+            myViewHolder.razaoSocial.setText("Nome Completo: " + mList.get(position).getNomeRazao());
+        }
+        String telefone = mList.get(position).getTelefone1().replaceAll("[^0123456789]", "").trim();
+        if (telefone.length() == 11) {
+            myViewHolder.telefone1.setText(Mask.addMask(telefone, "(##)#####-####"));
+        } else if (telefone.length() == 10) {
+            myViewHolder.telefone1.setText(Mask.addMask(telefone, "(##)####-####"));
+        }else{
+            myViewHolder.telefone1.setText(mList.get(position).getTelefone1());
+        }
     }
 
     @Override
@@ -73,35 +104,57 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
         notifyItemRemoved(position);
     }
 
-    public String ChamaDados(int position) {
+    public String ChamaCodigoClienteInterno(int position) {
 
-        return mList.get(position).getDocumento();
+        return mList.get(position).getCodClienteInt();
     }
 
-    public String ChamaCodigoCliente(int position) {
+    public String ChamaCodigoClienteExterno(int position) {
 
-        return mList.get(position).getCodCliente();
+        return mList.get(position).getCodClienteExt();
+    }
+
+    public String ChamaBloqueioCliente(int position) {
+
+        return mList.get(position).getbloqueio();
+    }
+    public String ChamaFlagIntegradoCliente(int position) {
+
+        return mList.get(position).getflagintegrado();
+    }
+    public String ChamaNomeRazaoCliente(int position) {
+
+        return mList.get(position).getNomeRazao();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView nomeFantasia;
+        public ImageView bolavermelha;
+        public TextView codClieExt;
+        public TextView codClieInt;
         public TextView razaoSocial;
+        public TextView nomeFantasia;
+        public TextView rg;
+        public TextView ie;
         public TextView documento;
-        public TextView cidade;
         public TextView estado;
+        public TextView cidade;
         public TextView bairro;
-        public TextView telefone;
+        public TextView telefone1;
+        public TextView telefone2;
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            nomeFantasia = (TextView) itemView.findViewById(R.id.lblNomeFanClie);
+            bolavermelha = (ImageView) itemView.findViewById(R.id.bola_vermelha);
+            codClieExt = (TextView) itemView.findViewById(R.id.lblCodClie);
+            codClieInt = (TextView) itemView.findViewById(R.id.lblCodClie);
             razaoSocial = (TextView) itemView.findViewById(R.id.lblNomerazao);
+            nomeFantasia = (TextView) itemView.findViewById(R.id.lblNomeFanClie);
             documento = (TextView) itemView.findViewById(R.id.lblCNPJ);
             cidade = (TextView) itemView.findViewById(R.id.lblCidade);
             estado = (TextView) itemView.findViewById(R.id.lblEstado);
             bairro = (TextView) itemView.findViewById(R.id.lblBairro);
-            telefone = (TextView) itemView.findViewById(R.id.lblTel);
+            telefone1 = (TextView) itemView.findViewById(R.id.lblTel);
 
             itemView.setOnClickListener(this);
         }

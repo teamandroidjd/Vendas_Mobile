@@ -3,7 +3,6 @@ package com.jdsystem.br.vendasmobile;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +10,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -26,37 +24,25 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.jdsystem.br.vendasmobile.Controller.Lista_produtos;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.domain.FiltroProdutos;
 import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentFiltroProdutos;
-import com.jdsystem.br.vendasmobile.fragments.ProdutosFragment;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
+import com.jdsystem.br.vendasmobile.fragments.FragmentProdutos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class act_ListProdutos extends AppCompatActivity
+public class ConsultaProdutos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
 
-    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu, UsuarioLogado, sincprod;
+    String sCodVend, URLPrincipal, usuario, senha, dtUltAtu, UsuarioLogado, sincprod,NumPedido,chavepedido;
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private EditText prod_txt_pesquisaproduto;
     private ProgressDialog pDialog;
@@ -82,6 +68,9 @@ public class act_ListProdutos extends AppCompatActivity
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
+                NumPedido = params.getString("numpedido");
+                chavepedido = params.getString("chave");
+                Flag = params.getInt("flag");
                 //Pedido = params.getBoolean("pedido");
             }
         }
@@ -127,13 +116,13 @@ public class act_ListProdutos extends AppCompatActivity
             }
         });
 
-        pDialog = new ProgressDialog(act_ListProdutos.this);
+        pDialog = new ProgressDialog(ConsultaProdutos.this);
         pDialog.setTitle(getString(R.string.wait));
         pDialog.setMessage(getString(R.string.loading_products));
         pDialog.setCancelable(false);
         pDialog.show();
 
-        Thread thread = new Thread(act_ListProdutos.this);
+        Thread thread = new Thread(ConsultaProdutos.this);
         thread.start();
     }
 
@@ -163,7 +152,7 @@ public class act_ListProdutos extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_sinc_cliente) {
             if (item.getItemId() == R.id.menu_sinc_cliente) {
-                Boolean ConexOk = Util.checarConexaoCelular(act_ListProdutos.this);
+                Boolean ConexOk = Util.checarConexaoCelular(ConsultaProdutos.this);
                 if (ConexOk == true) {
                     Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS", null);
                     if (cursorVerificaProd.getCount() == 0) {
@@ -190,7 +179,7 @@ public class act_ListProdutos extends AppCompatActivity
                     }
 
                 } else {
-                    Toast.makeText(act_ListProdutos.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ConsultaProdutos.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -202,36 +191,46 @@ public class act_ListProdutos extends AppCompatActivity
     public void run() {
         if (Flag == 1) {
             try {
-                //actSincronismo.run(act_ListProdutos.this);
-                sincprod = actSincronismo.SincronizarProdutosStatic(dtUltAtu, act_ListProdutos.this, usuario, senha, 0);
-                if (sincprod.equals("0")) {
-                    pDialog.dismiss();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplication(), getString(R.string.sync_products_successfully), Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    Intent intent = (act_ListProdutos.this).getIntent();
-                    (act_ListProdutos.this).finish();
-                    startActivity(intent);
-                } else {
-                    pDialog.dismiss();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplication(), sincprod, Toast.LENGTH_LONG).show();
-                        }
-                    });
+                //Sincronismo.run(ConsultaProdutos.this);
+                sincprod = Sincronismo.SincronizarProdutosStatic(ConsultaProdutos.this, usuario, senha, 0);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), sincprod, Toast.LENGTH_LONG).show();
+                    }
+                });
+                Intent intent = (ConsultaProdutos.this).getIntent();
+                (ConsultaProdutos.this).finish();
+                startActivity(intent);
+            } catch (Exception e) {
+                e.toString();
+            }
+        } else if(Flag == 2){
+            try {
+                FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragC");
+                Bundle params = new Bundle();
+                if (frag == null) {
+                    frag = new FragmentProdutos();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragC");
+                    params.putInt("flag",Flag);
+                    params.putString("numpedido",NumPedido);
+                    params.putString("chave",chavepedido);
+                    params.putString(getString(R.string.intent_usuario),usuario);
+                    params.putString(getString(R.string.intent_senha),senha);
+                    params.putString(getString(R.string.intent_codvendedor),sCodVend);
+                    frag.setArguments(params);
+                    ft.commit();
                 }
             } catch (Exception e) {
                 e.toString();
             }
-        } else {
+
+        }else{
             try {
-                ProdutosFragment frag = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFragC");
+                FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragC");
                 if (frag == null) {
-                    frag = new ProdutosFragment();
+                    frag = new FragmentProdutos();
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.rl_fragment_container, frag, "mainFragC");
                     ft.commit();
@@ -240,8 +239,8 @@ public class act_ListProdutos extends AppCompatActivity
                 e.toString();
             }
         }
-        /*if (pDialog.isShowing())
-            pDialog.dismiss();*/
+        if (pDialog.isShowing())
+            pDialog.dismiss();
 
     }
 
@@ -253,7 +252,7 @@ public class act_ListProdutos extends AppCompatActivity
         } else {
             super.onBackPressed();
         }*/
-        Intent intent = new Intent(act_ListProdutos.this, actListPedidos.class);
+        Intent intent = new Intent(ConsultaProdutos.this, ConsultaPedidos.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), sCodVend);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -268,7 +267,7 @@ public class act_ListProdutos extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_clientes) {
-            Intent intent = new Intent(act_ListProdutos.this, act_ListClientes.class);
+            Intent intent = new Intent(ConsultaProdutos.this, ConsultaClientes.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -279,7 +278,7 @@ public class act_ListProdutos extends AppCompatActivity
             finish();
 
         } else if (id == R.id.nav_produtos) {
-            Intent i = new Intent(act_ListProdutos.this, act_ListProdutos.class);
+            Intent i = new Intent(ConsultaProdutos.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -290,7 +289,7 @@ public class act_ListProdutos extends AppCompatActivity
 
 
         } else if (id == R.id.nav_pedidos) {
-            Intent i = new Intent(act_ListProdutos.this, actListPedidos.class);
+            Intent i = new Intent(ConsultaProdutos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -301,7 +300,7 @@ public class act_ListProdutos extends AppCompatActivity
             finish();
 
         } else if (id == R.id.nav_contatos) {
-            Intent i = new Intent(act_ListProdutos.this, act_ListContatos.class);
+            Intent i = new Intent(ConsultaProdutos.this, ConsultaContatos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -312,7 +311,7 @@ public class act_ListProdutos extends AppCompatActivity
             finish();
 
         } else if (id == R.id.nav_sincronismo) {
-            Intent i = new Intent(act_ListProdutos.this, actSincronismo.class);
+            Intent i = new Intent(ConsultaProdutos.this, Sincronismo.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -424,7 +423,7 @@ public class act_ListProdutos extends AppCompatActivity
 
 
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(act_ListProdutos.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaProdutos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage(R.string.alertsyncproducts)
@@ -453,13 +452,13 @@ public class act_ListProdutos extends AppCompatActivity
 
     public List<FiltroProdutos> pesquisarprodutos(CharSequence valor_campo) {
 
-        pDialog = new ProgressDialog(act_ListProdutos.this);
+        pDialog = new ProgressDialog(ConsultaProdutos.this);
         pDialog.setTitle(getString(R.string.wait));
         pDialog.setMessage(getString(R.string.performing_filter));
         pDialog.setCancelable(false);
         pDialog.show();
 
-        ProdutosFragment frag1 = (ProdutosFragment) getSupportFragmentManager().findFragmentByTag("mainFrag");
+        FragmentProdutos frag1 = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFrag");
         if (frag1 != null) {
             frag1.getActivity().getSupportFragmentManager().popBackStack();
         }

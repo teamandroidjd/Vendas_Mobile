@@ -1,17 +1,14 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -19,8 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class act_ListContatos extends ActionBarActivity implements NavigationView.OnNavigationItemSelectedListener, Runnable {
+public class ConsultaContatos extends ActionBarActivity implements NavigationView.OnNavigationItemSelectedListener, Runnable {
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     String sCodVend, URLPrincipal, usuario, senha, UsuarioLogado, editQuery;
     SQLiteDatabase DB;
@@ -80,7 +75,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         CadContatos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(act_ListContatos.this, CadContatos.class);
+                Intent i = new Intent(ConsultaContatos.this, CadastroContatos.class);
                 Bundle params = new Bundle();
                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                 params.putString(getString(R.string.intent_usuario), usuario);
@@ -127,11 +122,11 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(act_ListContatos.this);
+        navigationView.setNavigationItemSelectedListener(ConsultaContatos.this);
 
         carregausuariologado();
 
-        pDialog = new ProgressDialog(act_ListContatos.this);
+        pDialog = new ProgressDialog(ConsultaContatos.this);
         pDialog.setTitle(getString(R.string.wait));
         pDialog.setMessage(getString(R.string.loadingcontacts));
         pDialog.setCancelable(false);
@@ -139,14 +134,14 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
 
         flag = 1;
 
-        Thread thread = new Thread(act_ListContatos.this);
+        Thread thread = new Thread(ConsultaContatos.this);
         thread.start();
 
     }
 
     private void carregausuariologado() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(act_ListContatos.this);
+        navigationView.setNavigationItemSelectedListener(ConsultaContatos.this);
         View header = navigationView.getHeaderView(0);
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
@@ -167,7 +162,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         } else {
             super.onBackPressed();
         }*/
-        Intent intent = new Intent(act_ListContatos.this, actListPedidos.class);
+        Intent intent = new Intent(ConsultaContatos.this, ConsultaPedidos.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), sCodVend);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -188,7 +183,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
             @Override
             public boolean onQueryTextSubmit(String query) {
 
-                Dialogo = new ProgressDialog(act_ListContatos.this);
+                Dialogo = new ProgressDialog(ConsultaContatos.this);
                 Dialogo.setIndeterminate(true);
                 Dialogo.setTitle(getString(R.string.wait));
                 Dialogo.setMessage(getString(R.string.searchingcontacts));
@@ -202,7 +197,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
 
                 flag = 2;
 
-                Thread thread = new Thread(act_ListContatos.this);
+                Thread thread = new Thread(ConsultaContatos.this);
                 thread.start();
                 return false;
             }
@@ -237,7 +232,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         int id = item.getItemId();
 
         if (id == R.id.nav_clientes) {
-            Intent intent = new Intent(act_ListContatos.this, act_ListClientes.class);
+            Intent intent = new Intent(ConsultaContatos.this, ConsultaClientes.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -247,7 +242,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_produtos) {
-            Intent iprod = new Intent(act_ListContatos.this, act_ListProdutos.class);
+            Intent iprod = new Intent(ConsultaContatos.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -258,7 +253,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
             finish();
 
         } else if (id == R.id.nav_pedidos) {
-            Intent iped = new Intent(act_ListContatos.this, actListPedidos.class);
+            Intent iped = new Intent(ConsultaContatos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -271,7 +266,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
         } else if (id == R.id.nav_contatos) {
 
         } else if (id == R.id.nav_sincronismo) {
-            Intent isinc = new Intent(act_ListContatos.this, actSincronismo.class);
+            Intent isinc = new Intent(ConsultaContatos.this, Sincronismo.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -344,7 +339,7 @@ public class act_ListContatos extends ActionBarActivity implements NavigationVie
 
     /*public List<FiltroContatos> pesquisarcontatos(CharSequence valor_campo) {
 
-        pDialog = new ProgressDialog(act_ListContatos.this);
+        pDialog = new ProgressDialog(ConsultaContatos.this);
         pDialog.setTitle("Aguarde");
         pDialog.setMessage("Realizando filtro...");
         pDialog.setCancelable(false);

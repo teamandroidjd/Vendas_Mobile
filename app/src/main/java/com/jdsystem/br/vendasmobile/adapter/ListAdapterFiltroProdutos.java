@@ -8,11 +8,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.jdsystem.br.vendasmobile.act_ListProdutos;
+
 import com.jdsystem.br.vendasmobile.domain.FiltroProdutos;
 
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
 import java.util.List;

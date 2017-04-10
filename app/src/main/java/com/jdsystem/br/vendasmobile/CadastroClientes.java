@@ -13,14 +13,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -30,7 +27,6 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
 import org.json.JSONArray;
@@ -41,23 +37,13 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jdsystem.br.vendasmobile.R.id.url;
 
+public class CadastroClientes extends AppCompatActivity implements Runnable, View.OnFocusChangeListener {
 
-public class act_CadClientes extends AppCompatActivity implements Runnable, View.OnFocusChangeListener {
-
-    String sTipoPessoa, sUF, sCodVend, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao;
+    String sTipoPessoa, sUF, sCodVend, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada;
     private Handler handler = new Handler();
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
     int CodCidade, CodBairro, telaInvocada, codClieExt;
@@ -79,6 +65,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
+                TelaChamada = params.getString("TELA_QUE_CHAMOU");
                 sCodVend = params.getString(getString(R.string.intent_codvendedor));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
@@ -226,16 +213,18 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                 DadosList.add(Cidade);
                             } while (cursor.moveToNext());
                             cursor.close();
-                        }
-                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+
+                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
                             ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                             spCidade.setAdapter(spinnerArrayAdapter);
 
-                    } catch (Exception E) {
+                        }
+                    }catch (Exception E) {
                         System.out.println("Error" + E);
                     }
-                Thread thread = new Thread(act_CadClientes.this);
+
+                Thread thread = new Thread(CadastroClientes.this);
                 thread.start();
             }
 
@@ -276,7 +265,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                     }
                     CurBairro.close();
 
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
                     ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spBairro.setAdapter(spinnerArrayAdapter);
@@ -309,7 +298,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                     }
                     CurBairro.close();
 
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
                     ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spBairro.setAdapter(spinnerArrayAdapter);
@@ -405,7 +394,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
             cep.requestFocus();
             return;
         }
-        DialogECB = new ProgressDialog(act_CadClientes.this);
+        DialogECB = new ProgressDialog(CadastroClientes.this);
         DialogECB.setTitle(getString(R.string.wait));
         DialogECB.setMessage(getString(R.string.searching_the_CEP_informed));
         DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -443,7 +432,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                 System.out.println("Response :" + resultsRequestSOAP.toString());
             } else {
                 DialogECB.dismiss();
-                Toast.makeText(act_CadClientes.this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                Toast.makeText(CadastroClientes.this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
                 return;
             }
         } catch (Exception e) {
@@ -451,7 +440,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
         }
         if(RetDadosEndereco.equals(getString(R.string.zip_code_not_found))){
             DialogECB.dismiss();
-            Toast.makeText(act_CadClientes.this, R.string.CEP_not_found_database, Toast.LENGTH_LONG).show();
+            Toast.makeText(CadastroClientes.this, R.string.CEP_not_found_database, Toast.LENGTH_LONG).show();
             endereco.setText("");
             return;
         }
@@ -545,7 +534,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                     List<String> DadosListEstado = new ArrayList<String>();
                     DadosListEstado.add(Estado);
                     sUF = Estado;
-                    ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListEstado);
+                    ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListEstado);
                     arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
 
                     spUF.setAdapter(arrayAdapterUF);
@@ -553,7 +542,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                     //Cidade
                     List<String> DadosListCidade = new ArrayList<String>();
                     DadosListCidade.add(NomeCidade);
-                    ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListCidade);
+                    ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListCidade);
                     ArrayAdapter<String> spinnerArrayAdapterCidade = arrayAdapterCidade;
                     spinnerArrayAdapterCidade.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spCidade.setAdapter(spinnerArrayAdapterCidade);
@@ -561,7 +550,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                     //Bairro
                     List<String> DadosListBairroUnic = new ArrayList<String>();
                     DadosListBairroUnic.add(NomeBairro);
-                    ArrayAdapter<String> arrayAdapterBairroUnic = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairroUnic);
+                    ArrayAdapter<String> arrayAdapterBairroUnic = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairroUnic);
                     ArrayAdapter<String> spinnerArrayAdapterBairroUnic = arrayAdapterBairroUnic;
                     spinnerArrayAdapterBairroUnic.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spBairro.setAdapter(spinnerArrayAdapterBairroUnic);
@@ -581,14 +570,14 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
     public void onBackPressed() {
         if (nomecompleto.getText().length() != 0 || Edtcpf.getText().length() != 0 || EdtRG.getText().length() != 0 || nomerazao.getText().length() != 0 ||
                 nomefan.getText().length() != 0 || cnpjcpf.getText().length() != 0) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(act_CadClientes.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(CadastroClientes.this);
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
             builder.setMessage(R.string.cancel_customer_registration)
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            Intent intent = new Intent(act_CadClientes.this, actListPedidos.class);
+                            Intent intent = new Intent(CadastroClientes.this, ConsultaPedidos.class);
                             Bundle params = new Bundle();
                             params.putString(getString(R.string.intent_codvendedor), sCodVend);
                             intent.putExtras(params);
@@ -607,7 +596,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
             return;
 
         } else {
-            Intent i = new Intent(act_CadClientes.this, act_ListClientes.class);
+            Intent i = new Intent(CadastroClientes.this, ConsultaClientes.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_usuario), usuario);
@@ -715,28 +704,29 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
 
             Toast.makeText(this, "Cliente salvo com sucesso!", Toast.LENGTH_SHORT).show();
 
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(act_CadClientes.this);
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroClientes.this);
             builder.setTitle(R.string.synchronization);
             builder.setIcon(R.drawable.logo_ico);
             builder.setMessage(R.string.synchronize_registered_customer)
                     .setCancelable(false)
                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            boolean sitclieenvio;
-                            if (telaInvocada == 0) {
-                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, usuario, senha);
-                                if (sitclieenvio == true) {
+                            String sitclieenvio;
+                            //if (telaInvocada == 0) {
+                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha);
+                                if (sitclieenvio.equals("OK")) {
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(act_CadClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(CadastroClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
                                         }
                                     });
-                                    Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
                                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
+                                    params.getString("TELA_QUE_CHAMOU",TelaChamada);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
@@ -745,28 +735,29 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(act_CadClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(CadastroClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
                                         }
                                     });
-                                    Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
                                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
+                                    params.getString("TELA_QUE_CHAMOU",TelaChamada);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
                                 }
-                            } else {
-                                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodCliente, act_CadClientes.this, usuario, senha);
-                                if (sitclieenvio == true) {
+                            /*} else {
+                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha);
+                                if (sitclieenvio.equals("OK")) {
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(act_CadClientes.this, getString(R.string.newcustomers_successfully), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(CadastroClientes.this, getString(R.string.newcustomers_successfully), Toast.LENGTH_LONG).show();
                                         }
                                     });
-                                    Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
+                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
                                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                     params.putString(getString(R.string.intent_usuario), usuario);
@@ -778,10 +769,10 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(act_CadClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(CadastroClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
                                         }
                                     });
-                                    Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
+                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
                                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                     params.putString(getString(R.string.intent_usuario), usuario);
@@ -791,28 +782,31 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                                     finish();
                                 }
 
-                            }
+                            }*/
                         }
                     })
                     .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            if (telaInvocada == 0) {
-                                Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+                            //if (telaInvocada == 0) {
+                                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                                Bundle params = new Bundle();
+                                params.putString(getString(R.string.intent_usuario),usuario);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                params.putString("TELA_QUE_CHAMOU",TelaChamada);
+                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+
+                           /* } else {
+                                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                 Bundle params = new Bundle();
                                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                 intent.putExtras(params);
                                 startActivity(intent);
                                 finish();
 
-                            } else {
-                                Intent intent = new Intent(getBaseContext(), act_ListClientes.class);
-                                Bundle params = new Bundle();
-                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                                intent.putExtras(params);
-                                startActivity(intent);
-                                finish();
-
-                            }
+                            }*/
                         }
                     });
             android.app.AlertDialog alert = builder.create();
@@ -895,7 +889,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
                         } while (cursor.moveToNext());
                         cursor.close();
 
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
                         ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                         spCidade.setAdapter(spinnerArrayAdapter);
@@ -912,7 +906,7 @@ public class act_CadClientes extends AppCompatActivity implements Runnable, View
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("act_CadClientes Page")
+                .setName("CadastroClientes Page")
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)

@@ -1,6 +1,5 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.act_ListContatos;
+import com.jdsystem.br.vendasmobile.ConsultaContatos;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterContatos;
 import com.jdsystem.br.vendasmobile.domain.Contatos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
@@ -40,7 +39,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
         mRecyclerView.setLayoutManager(llm);
 
 
-        mList = ((act_ListContatos) getActivity()).carregarcontatos();
+        mList = ((ConsultaContatos) getActivity()).carregarcontatos();
         ListAdapterContatos adapter = new ListAdapterContatos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);

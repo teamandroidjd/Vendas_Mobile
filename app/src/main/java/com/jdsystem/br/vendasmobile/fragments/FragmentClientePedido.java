@@ -1,6 +1,5 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,12 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.actDadosCliente;
-import com.jdsystem.br.vendasmobile.act_ListClientes;
 import com.jdsystem.br.vendasmobile.act_ListClientesPedidos;
-import com.jdsystem.br.vendasmobile.adapter.ListAdapterClientes;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterClientesPedido;
-import com.jdsystem.br.vendasmobile.domain.Clientes;
 import com.jdsystem.br.vendasmobile.domain.ClientesPedido;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 

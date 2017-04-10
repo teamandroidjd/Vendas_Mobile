@@ -14,13 +14,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-public class ListaItensVendaAdapter extends BaseAdapter {
+public class ListAdapterItensVenda extends BaseAdapter {
 
 
     private Context ctx;
     private List<SqliteVendaDBean> listaItens;
 
-    public ListaItensVendaAdapter(Context ctx, List<SqliteVendaDBean> listaItensPedidos) {
+    public ListAdapterItensVenda(Context ctx, List<SqliteVendaDBean> listaItensPedidos) {
         this.ctx = ctx;
         this.listaItens = listaItensPedidos;
     }

@@ -15,13 +15,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-public class ListaItensTemporariosAdapter extends BaseAdapter {
+public class ListAdapterItensTemporarios extends BaseAdapter {
 
 
     private Context ctx;
     private List<SqliteVendaD_TempBean> listaItensTemporarios;
 
-    public ListaItensTemporariosAdapter(Context ctx, List<SqliteVendaD_TempBean> listaItensTemporarios) {
+    public ListAdapterItensTemporarios(Context ctx, List<SqliteVendaD_TempBean> listaItensTemporarios) {
         this.ctx = ctx;
         this.listaItensTemporarios = listaItensTemporarios;
     }

@@ -1,6 +1,5 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,10 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.act_ListContatos;
-import com.jdsystem.br.vendasmobile.adapter.ListAdapterContatos;
+import com.jdsystem.br.vendasmobile.ConsultaContatos;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterFiltroContatos;
-import com.jdsystem.br.vendasmobile.domain.Contatos;
 import com.jdsystem.br.vendasmobile.domain.FiltroContatos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
@@ -46,7 +43,7 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
         mRecyclerView.setLayoutManager(llm);
 
 
-        mList = ((act_ListContatos) getActivity()).listarContatos();
+        mList = ((ConsultaContatos) getActivity()).listarContatos();
         ListAdapterFiltroContatos adapter = new ListAdapterFiltroContatos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);

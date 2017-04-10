@@ -35,10 +35,20 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_list_Prod"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fastScrollEnabled="true"
+            android:fastScrollAlwaysVisible="true"
+            android:cacheColorHint="@color/colorAccent"/>
+
         <ListView
             android:id="@+id/prod_listview_produtotemp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:fastScrollEnabled="true"
             android:fastScrollAlwaysVisible="true"
             android:cacheColorHint="@color/colorAccent">

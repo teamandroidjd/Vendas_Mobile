@@ -2,7 +2,6 @@ package com.jdsystem.br.vendasmobile;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,23 +21,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
-import com.jdsystem.br.vendasmobile.Util.PDF;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
 import org.json.JSONArray;
@@ -48,12 +42,7 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
-
-public class actLogin extends AppCompatActivity implements Runnable {
+public class Login extends AppCompatActivity implements Runnable {
     public static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public static final String COD_EMPRESA = "CODIGO_EMPRESA";
     public static final String CONFIG_HOST = "CONFIG_HOST";
@@ -113,13 +102,13 @@ public class actLogin extends AppCompatActivity implements Runnable {
                     DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("LICENCA")));
                 } while (cursorPerfil.moveToNext());
 
-                View viewEmp = (LayoutInflater.from(actLogin.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+                View viewEmp = (LayoutInflater.from(Login.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
 
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actLogin.this);
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Login.this);
                 alertBuilder.setView(viewEmp);
                 final Spinner spPerfilInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
 
-                ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(actLogin.this, android.R.layout.simple_spinner_dropdown_item, DadosListPerfil);
+                ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(Login.this, android.R.layout.simple_spinner_dropdown_item, DadosListPerfil);
                 ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
                 spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
                 spPerfilInput.setAdapter(spArrayEmpresa);
@@ -153,18 +142,18 @@ public class actLogin extends AppCompatActivity implements Runnable {
     public void logar(View view) {
         final String user = edtUsuario.getText().toString();
         final String pass = edtSenha.getText().toString();
-        ConexOk = Util.checarConexaoCelular(actLogin.this);
+        ConexOk = Util.checarConexaoCelular(Login.this);
         if (ConexOk == false) {
             sCodVend = ValidarLogin(user, pass); // verifica se o usuário e senha  existe na base local do dispositivo
             if (sCodVend != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage(R.string.login_no_connection)
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(actLogin.this, actListPedidos.class);
+                                Intent intent = new Intent(Login.this, ConsultaPedidos.class);
                                 Bundle params = new Bundle();
                                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                 params.putString(getString(R.string.intent_usuario), user);
@@ -185,7 +174,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 alert.show();
                 return;
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Atenção! O Usuário ou a senha informada são inválidos; ou não existe esse usuário " + edtUsuario.getText().toString() + " cadastrado neste aparelho. Caso seja a primeira utilização, é necessário se conectar online" +
@@ -220,7 +209,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
             }
             editor.commit();
 
-            Dialogo = new ProgressDialog(actLogin.this);
+            Dialogo = new ProgressDialog(Login.this);
             Dialogo.setIndeterminate(true);
             Dialogo.setCancelable(false);
             Dialogo.setMessage(getString(R.string.checking_user_password));
@@ -228,7 +217,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
             Dialogo.show();
 
         }
-        Thread thread = new Thread(actLogin.this);
+        Thread thread = new Thread(Login.this);
         thread.start();
 
     }
@@ -252,19 +241,6 @@ public class actLogin extends AppCompatActivity implements Runnable {
         copyright = (TextView) findViewById(R.id.textView2);
     }
 
-    public boolean VerificaConexao() {
-        boolean conectado;
-        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (conectivtyManager.getActiveNetworkInfo() != null
-                && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-            conectado = true;
-        } else {
-            conectado = false;
-        }
-        return conectado;
-    }
-
     public boolean VerificaConexaoWifi() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -273,7 +249,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
         builder.setTitle(R.string.app_namesair);
         builder.setIcon(R.drawable.logo_ico);
         builder.setMessage("Deseja realmente sair?")
@@ -296,9 +272,9 @@ public class actLogin extends AppCompatActivity implements Runnable {
     public void run() {
 
 
-        int permissionCheck = ContextCompat.checkSelfPermission(actLogin.this, Manifest.permission.READ_PHONE_STATE);
+        int permissionCheck = ContextCompat.checkSelfPermission(Login.this, Manifest.permission.READ_PHONE_STATE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(actLogin.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
+            ActivityCompat.requestPermissions(Login.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
             Dialogo.dismiss();
             return;
         }
@@ -316,7 +292,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
         String CodEmpresa = null;
         final String usuario = edtUsuario.getText().toString();
         final String pass = edtSenha.getText().toString();
-        Boolean ConexOk = Util.checarConexaoCelular(actLogin.this);
+        Boolean ConexOk = Util.checarConexaoCelular(Login.this);
         if (ConexOk == true) {
             try {
                 Envio.call("", envelope);
@@ -326,7 +302,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(actLogin.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                        Toast.makeText(Login.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
                         return;
                     }
                 });
@@ -350,7 +326,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(actLogin.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Login.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
                         return;
                     }
                 });
@@ -361,7 +337,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        AlertDialog.Builder validuser = new AlertDialog.Builder(actLogin.this);
+                        AlertDialog.Builder validuser = new AlertDialog.Builder(Login.this);
                         validuser.setTitle(R.string.app_namesair);
                         validuser.setIcon(R.drawable.logo_ico);
                         validuser.setMessage(R.string.invalid_user_password)
@@ -381,7 +357,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                 edtEmp.putString("codempresa", CodEmpresa);
                 edtEmp.commit();
 
-                DB = new ConfigDB(actLogin.this).getReadableDatabase();
+                DB = new ConfigDB(Login.this).getReadableDatabase();
                 Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
                 if (!(CursorUser.getCount() > 0)) {
                     DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + CodVendedor + ", CODEMPRESA = " + CodEmpresa +
@@ -410,7 +386,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(actLogin.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
                             return;
                         }
                     });
@@ -426,7 +402,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(actLogin.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Login.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
                             return;
                         }
                     });
@@ -440,40 +416,40 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sync_companies));
                         }
                     });
-                    actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    Sincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_parameters));
                         }
                     });
-                    actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    Sincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_tables));
                         }
                     });
-                    actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    Sincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_locks));
 
                         }
                     });
-                    actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    Sincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this,edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this,edtUsuario.getText().toString(), edtSenha.getText().toString());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,"0");
+                    Sincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this,"0");
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -482,12 +458,12 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             }
                         }
                     });
-                    actSincronismo.SincAtualizaCidade(UFVendedor, actLogin.this);
+                    Sincronismo.SincAtualizaCidade(UFVendedor, Login.this);
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
+                            Intent IntVend = new Intent(getApplicationContext(), ConsultaPedidos.class);
                             Bundle params = new Bundle();
                             params.putString(getString(R.string.intent_codvendedor), CodVendedor);
                             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -503,45 +479,45 @@ public class actLogin extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sync_companies));
                         }
                     });
-                    actSincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    Sincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_parameters));
                         }
                     });
-                    actSincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    Sincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_tables));
                         }
                     });
-                    actSincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    Sincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_locks));
 
                         }
                     });
-                    actSincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this);
+                    Sincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    actSincronismo.SincronizarClientesEnvioStatic("0", actLogin.this, edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    actSincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), actLogin.this,"0");
+                    Sincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this,"0");
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Intent IntVend = new Intent(getApplicationContext(), actListPedidos.class);
+                            Intent IntVend = new Intent(getApplicationContext(), ConsultaPedidos.class);
                             Bundle params = new Bundle();
                             params.putString(getString(R.string.intent_codvendedor), CodVendedor);
                             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -556,7 +532,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                             builder.setTitle(R.string.app_namesair);
                             builder.setIcon(R.drawable.logo_ico);
                             builder.setMessage(R.string.limit_users)
@@ -575,7 +551,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
             }
         } else {
             Dialogo.dismiss();
-            AlertDialog.Builder builder = new AlertDialog.Builder(actLogin.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
             builder.setMessage(R.string.no_connection)
@@ -628,7 +604,7 @@ public class actLogin extends AppCompatActivity implements Runnable {
             CursorLogin.close();
             return sCodVend;
         } else {
-            //Toast.makeText(actLogin.this, R.string.invalid_user_password, Toast.LENGTH_LONG).show();
+            //Toast.makeText(Login.this, R.string.invalid_user_password, Toast.LENGTH_LONG).show();
             return null;
         }
     }

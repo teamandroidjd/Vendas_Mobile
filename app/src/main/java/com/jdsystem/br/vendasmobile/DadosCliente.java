@@ -2,29 +2,26 @@ package com.jdsystem.br.vendasmobile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.jdsystem.br.vendasmobile.Util.SlidingTabLayout;
-import com.jdsystem.br.vendasmobile.adapter.ViewPagerAdapter;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterViewPager;
 
 
-public class actDadosCliente extends ActionBarActivity {
+public class DadosCliente extends ActionBarActivity {
 
     private String DocClie,sCodVend,URLPrincipal,usuario,senha,NomeCliente;
-    int CodCliente;
+    String CodCliente;
     Toolbar toolbar;
     ViewPager pager;
-    ViewPagerAdapter adapter;
+    ListAdapterViewPager adapter;
     SlidingTabLayout tabs;
     CharSequence Titles[]={"Dados","Contatos","obs"};
     int Numboftabs =3;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,20 +29,14 @@ public class actDadosCliente extends ActionBarActivity {
         setContentView(R.layout.activity_act_dados_cliente);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        adapter =  new ListAdapterViewPager(getSupportFragmentManager(),Titles,Numboftabs);
 
-
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs);
-
-        // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
 
-        // Assiging the Sliding Tab Layout View
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
@@ -53,7 +44,6 @@ public class actDadosCliente extends ActionBarActivity {
             }
         });
 
-        // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
         Intent intent = getIntent();
@@ -65,7 +55,7 @@ public class actDadosCliente extends ActionBarActivity {
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
-                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                CodCliente = params.getString(getString(R.string.intent_codcliente));
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
         }

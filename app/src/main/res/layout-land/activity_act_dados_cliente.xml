@@ -5,7 +5,7 @@
     android:id="@+id/act_historico_ped"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jdsystem.br.vendasmobile.actDadosCliente"
+    tools:context="com.jdsystem.br.vendasmobile.DadosCliente"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout

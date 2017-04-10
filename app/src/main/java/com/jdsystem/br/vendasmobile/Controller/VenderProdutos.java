@@ -33,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.ConfigDB;
+import com.jdsystem.br.vendasmobile.ConsultaClientes;
+import com.jdsystem.br.vendasmobile.ConsultaProdutos;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoBean;
@@ -47,12 +49,12 @@ import com.jdsystem.br.vendasmobile.Model.Sqlite_VENDADAO;
 import com.jdsystem.br.vendasmobile.Pagamento.Avista;
 import com.jdsystem.br.vendasmobile.Pagamento.Mensal;
 import com.jdsystem.br.vendasmobile.R;
+import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Gps;
 import com.jdsystem.br.vendasmobile.Util.Util;
-import com.jdsystem.br.vendasmobile.actListPedidos;
-import com.jdsystem.br.vendasmobile.actSincronismo;
-import com.jdsystem.br.vendasmobile.adapter.ListaItensTemporariosAdapter;
-import com.jdsystem.br.vendasmobile.adapter.ListaItensVendaAdapter;
+import com.jdsystem.br.vendasmobile.ConsultaPedidos;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterItensTemporarios;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterItensVenda;
 import com.jdsystem.br.vendasmobile.interfaces.iPagamento;
 
 import java.math.BigDecimal;
@@ -62,7 +64,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Random;
 
 
@@ -197,13 +198,14 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                 if (!verifica_limite_desconto()) {
                     return;
                 }
-                    Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
+                    Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
                     Bundle params = new Bundle();
                     params.putString("numpedido", NumPedido);
                     params.putString("chave", Chave_Venda);
-                    params.putString("CodVendedor", sCodVend);
-                    params.putString("usuario", usuario);
-                    params.putString("senha", senha);
+                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putInt("flag",2);
                     Lista_produtos.putExtras(params);
                     startActivity(Lista_produtos);
                 }
@@ -478,7 +480,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
                                 finish();
                                 Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                                Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                                 Bundle params = new Bundle();
                                 params.putString("codvendedor", sCodVend);
                                 params.putString("usuario", usuario);
@@ -514,7 +516,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                 Boolean pedcancelado = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).atualizar_pedido_para_cancelado(Chave_Venda);
                                 if (pedcancelado == true) {
                                     Toast.makeText(VenderProdutos.this, "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                                    Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                                     Bundle params = new Bundle();
                                     params.putString("codvendedor", sCodVend);
                                     params.putString("usuario", usuario);
@@ -525,7 +527,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     finish();
                                 } else {
                                     Toast.makeText(VenderProdutos.this, " Houve um problema ao cancelar o pedido. Verifique!", Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                                    Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                                     Bundle params = new Bundle();
                                     params.putString("codvendedor", sCodVend);
                                     params.putString("usuario", usuario);
@@ -581,28 +583,30 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
     private void alterarcliente() {
         if (!NumPedido.equals("0")) {
-            Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+            Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
             Bundle params = new Bundle();
             params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-            params.putString("CodVendedor", sCodVend);
-            params.putString("codempresa", CodEmpresa);
-            params.putString("usuario", usuario);
-            params.putInt("CLI_CODIGO", CLI_CODIGO);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putInt(getString(R.string.intent_codcliente), CLI_CODIGO);
+            params.putInt(getString(R.string.intent_flag),2);
+            params.putString(getString(R.string.intent_senha), senha);
             params.putString("numpedido", NumPedido);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
 
         } else {
-            Intent intent = new Intent(getBaseContext(), Lista_clientes.class);
+            Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
             Bundle params = new Bundle();
             params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-            params.putString("CodVendedor", sCodVend);
-            params.putString("codempresa", CodEmpresa);
-            params.putInt("CLI_CODIGO", CLI_CODIGO);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+            params.putInt(getString(R.string.intent_codcliente), CLI_CODIGO);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putInt(getString(R.string.intent_flag),2);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
@@ -788,7 +792,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         }
         if (!NumPedido.equals("0") && itens_venda.isEmpty()) {
             Toast.makeText(this, "Nenhum produto foi selecionado", Toast.LENGTH_SHORT).show();
-            Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
+            Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString("numpedido", NumPedido);
             Lista_produtos.putExtras(params);
@@ -796,7 +800,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             return;
         } else if (NumPedido.equals("0") && itens_temp.isEmpty()) {
             Toast.makeText(this, "Nenhum produto foi selecionado", Toast.LENGTH_SHORT).show();
-            Intent Lista_produtos = new Intent(getBaseContext(), Lista_produtos.class);
+            Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString("numpedido", NumPedido);
             Lista_produtos.putExtras(params);
@@ -908,7 +912,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                         if (sincpedido == true) {
                             sincronizaPedidosAposSalvar();
                         } else {
-                            Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                            Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                             Bundle params = new Bundle();
                             params.putString("codvendedor", sCodVend);
                             params.putString("usuario", usuario);
@@ -960,7 +964,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         venda_txv_datavenda.setText("Data/Hora Venda : " + Util.DataHojeComHorasBR());
         if (verifica_limite_desconto()) {
             itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
-            ListView_ItensVendidos.setAdapter(new ListaItensTemporariosAdapter(getApplicationContext(), itens_temp));
+            ListView_ItensVendidos.setAdapter(new ListAdapterItensTemporarios(getApplicationContext(), itens_temp));
             if (!itens_temp.isEmpty()) {
                 TOTAL_DA_VENDA = BigDecimal.ZERO;
                 for (SqliteVendaD_TempBean item : itens_temp) {
@@ -1009,7 +1013,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         obterConfiguracoesPagamento();
         //venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
         itens_venda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
-        ListView_ItensVendidos.setAdapter(new ListaItensVendaAdapter(getApplicationContext(), itens_venda));
+        ListView_ItensVendidos.setAdapter(new ListAdapterItensVenda(getApplicationContext(), itens_venda));
         if (!itens_venda.isEmpty()) {
             TOTAL_DA_VENDA = BigDecimal.ZERO;
             for (SqliteVendaDBean item : itens_venda) {
@@ -2689,7 +2693,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                            Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                             Bundle params = new Bundle();
                             params.putString("codvendedor", sCodVend);
                             params.putString("usuario", usuario);
@@ -2706,7 +2710,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     alerta.show();
                 } else {
                     Toast.makeText(VenderProdutos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                    Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
                     params.putString("codvendedor", sCodVend);
                     params.putString("usuario", usuario);
@@ -2723,7 +2727,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         builderAut.setNegativeButton("Não", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(VenderProdutos.this, actListPedidos.class);
+                Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                 Bundle params = new Bundle();
                 params.putString("codvendedor", sCodVend);
                 params.putString("usuario", usuario);
@@ -2743,25 +2747,25 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
     public void run() {
         try {
-            boolean sitclieenvio;
-            boolean pedidoendiado;
+            String sitclieenvio;
+            String pedidoendiado;
             Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "'", null);
             CursorClie.moveToFirst();
             int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
             String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
             if (FlagIntegrado.equals("1")) {
-                sitclieenvio = actSincronismo.SincronizarClientesEnvioStatic(CodClie_Int, this, usuario, senha);
-                if (sitclieenvio == true) {
+                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodClie_Int, this, usuario, senha);
+                if (sitclieenvio.equals("OK")) {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(VenderProdutos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                     });
-                    pedidoendiado = actSincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this,NumPedido);
-                    if (pedidoendiado == true) {
+                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this,NumPedido);
+                    if (pedidoendiado.equals("OK")) {
                         dialog.dismiss();
-                        Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
+                        Intent intent = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                         Bundle params = new Bundle();
                         params.putString("codvendedor", sCodVend);
                         params.putString("urlPrincipal", URLPrincipal);
@@ -2778,10 +2782,10 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     }
                 }
             } else {
-                pedidoendiado = actSincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this,NumPedido);
-                if (pedidoendiado == true) {
+                pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this,NumPedido);
+                if (pedidoendiado.equals("OK")) {
                     dialog.dismiss();
-                    Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
+                    Intent intent = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
                     params.putString("codvendedor", sCodVend);
                     params.putString("urlPrincipal", URLPrincipal);
@@ -2798,7 +2802,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
                 }else {
                     dialog.dismiss();
-                    Intent intent = new Intent(VenderProdutos.this, actListPedidos.class);
+                    Intent intent = new Intent(VenderProdutos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
                     params.putString("codvendedor", sCodVend);
                     params.putString("urlPrincipal", URLPrincipal);

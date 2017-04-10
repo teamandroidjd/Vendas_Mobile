@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class actDadosProdutos extends AppCompatActivity {
+public class DadosProduto extends AppCompatActivity {
 
     String sCodProduto;
     SQLiteDatabase DB;

@@ -8,7 +8,7 @@
     android:background="#328098"
     android:orientation="vertical"
     android:scrollbarAlwaysDrawVerticalTrack="true"
-    tools:context=".actLogin">
+    tools:context=".Login">
 
 
     <RelativeLayout

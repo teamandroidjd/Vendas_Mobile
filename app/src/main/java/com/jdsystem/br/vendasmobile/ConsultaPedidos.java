@@ -32,7 +32,6 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.jdsystem.br.vendasmobile.Controller.Lista_clientes;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentPedido;
@@ -45,7 +44,7 @@ import java.util.List;
 
 //import android.support.design.widget.FloatingActionButton;
 
-public class actListPedidos extends AppCompatActivity
+public class ConsultaPedidos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
@@ -107,13 +106,13 @@ public class actListPedidos extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        pDialog = new ProgressDialog(actListPedidos.this);
+        pDialog = new ProgressDialog(ConsultaPedidos.this);
         pDialog.setTitle(getString(R.string.wait));
         pDialog.setMessage(getString(R.string.loading_orders));
         pDialog.setCancelable(false);
         pDialog.show();
 
-        Thread thread = new Thread(actListPedidos.this);
+        Thread thread = new Thread(ConsultaPedidos.this);
         thread.start();
 
     }
@@ -152,13 +151,13 @@ public class actListPedidos extends AppCompatActivity
                     DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
                 } while (CursEmpr.moveToNext());
 
-                View viewEmp = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+                View viewEmp = (LayoutInflater.from(ConsultaPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
 
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ConsultaPedidos.this);
                 alertBuilder.setView(viewEmp);
                 final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
 
-                ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(actListPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(ConsultaPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
                 ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
                 spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
                 spEmpresaInput.setAdapter(spArrayEmpresa);
@@ -175,13 +174,15 @@ public class actListPedidos extends AppCompatActivity
                                         sCodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
                                     }
                                     CursEmpr2.close();
-                                    Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
+                                    Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
                                     Bundle params = new Bundle();
                                     params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                     params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
+                                    params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
+                                    params.putInt(getString(R.string.intent_flag),2);
                                     intent.putExtras(params);
                                     startActivityForResult(intent, 1);
                                 } catch (Exception E) {
@@ -194,11 +195,12 @@ public class actListPedidos extends AppCompatActivity
 
             } else {
                 sCodEmpresa = CursEmpr.getString(CursEmpr.getColumnIndex("CODEMPRESA"));
-                Intent intent = new Intent(actListPedidos.this, Lista_clientes.class);
+                Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
                 Bundle params = new Bundle();
                 params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                 params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
+                params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
                 intent.putExtras(params);
@@ -212,9 +214,9 @@ public class actListPedidos extends AppCompatActivity
 
     public void filtrositped (View view){
 
-        View viewSitPed = (LayoutInflater.from(actListPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
+        View viewSitPed = (LayoutInflater.from(ConsultaPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
 
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(actListPedidos.this);
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ConsultaPedidos.this);
         alertBuilder.setView(viewSitPed);
         final Spinner spSituacaoPedido = (Spinner) viewSitPed.findViewById(R.id.spnSitPedido);
 
@@ -238,7 +240,7 @@ public class actListPedidos extends AppCompatActivity
                             SitPed = 0;
                         }
                         try {
-                            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+                            Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
                             Bundle params = new Bundle();
                             params.putString(getString(R.string.intent_codvendedor), sCodVend);
                             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -265,13 +267,13 @@ public class actListPedidos extends AppCompatActivity
     }
 
     public void filtroemissaoped (View view){
-        Intent intent = new Intent(actListPedidos.this, actFiltroPeriodoPedidos.class);
+        Intent intent = new Intent(ConsultaPedidos.this, actFiltroPeriodoPedidos.class);
         //finish();
         startActivityForResult(intent, 3);
     }
 
     public void filtrocliped (View view){
-        Intent intent = new Intent(actListPedidos.this, act_ListClientes.class);
+        Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), sCodVend);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -287,7 +289,7 @@ public class actListPedidos extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if(SitPed > 0){
-            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+            Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -297,7 +299,7 @@ public class actListPedidos extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (!CodClie.equals("0")) {
-            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+            Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -307,7 +309,7 @@ public class actListPedidos extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (!DtInicio.equals("0")) {
-            Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+            Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -355,7 +357,7 @@ public class actListPedidos extends AppCompatActivity
                     SitPed = 0;
                     DtInicio = "0";
                     DtFinal = "0";
-                    Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+                    Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -381,7 +383,7 @@ public class actListPedidos extends AppCompatActivity
                     SitPed = 0;
                     DtInicio = data.getExtras().getString(getString(R.string.intent_datainicial));
                     DtFinal = data.getExtras().getString(getString(R.string.intent_datafinal));
-                    Intent intent = new Intent(actListPedidos.this, actListPedidos.class);
+                    Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -412,7 +414,7 @@ public class actListPedidos extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_clientes) {
-            Intent intent = new Intent(actListPedidos.this, act_ListClientes.class);
+            Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -427,7 +429,7 @@ public class actListPedidos extends AppCompatActivity
         } else if (id == R.id.nav_pedidos) {
 
         } else if (id == R.id.nav_produtos) {
-            Intent intent = new Intent(actListPedidos.this, act_ListProdutos.class);
+            Intent intent = new Intent(ConsultaPedidos.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -439,7 +441,7 @@ public class actListPedidos extends AppCompatActivity
 
 
         } else if(id == R.id.nav_contatos){
-            Intent i = new Intent(actListPedidos.this, act_ListContatos.class);
+            Intent i = new Intent(ConsultaPedidos.this, ConsultaContatos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -450,7 +452,7 @@ public class actListPedidos extends AppCompatActivity
             finish();
 
         } else if (id == R.id.nav_sincronismo) {
-            Intent intent = new Intent(actListPedidos.this, actSincronismo.class);
+            Intent intent = new Intent(ConsultaPedidos.this, Sincronismo.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);

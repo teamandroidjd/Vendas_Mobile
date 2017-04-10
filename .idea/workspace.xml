@@ -14,9 +14,189 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Firebase" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f58d3410-3a1b-45ee-8164-7b562682296f" name="Default" comment="Acertado busca offline do endereço">
+    <list default="true" id="f58d3410-3a1b-45ee-8164-7b562682296f" name="Default" comment="Finalizado a alteração da visualização de cliente. Foi necessário mexer em todas as telas que chamavam a consulta de clientes(cadastro de contato, cadastro de clientes, dados do cliente e vender produtos). Modificado o nome de algumas classes e criado mais alguns resource de String.">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentProdutos.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/google_api_client_android_1_22_0.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/google_http_client_android_1_22_0.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/ProdutosFragment.java" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadContatos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadastroContatos.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosCliente.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/DadosCliente.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/DadosProduto.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConsultaPedidos.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Login.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Sincronismo.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/CadastroClientes.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListClientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConsultaClientes.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListContatos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConsultaContatos.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ConsultaProdutos.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/DocsListAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterDocs.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListProdutosAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterProdutos.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensTemporariosAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterItensTemporarios.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListaItensVendaAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterItensVenda.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ViewPagerAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterViewPager.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/ctSplash.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Splash.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/android_android_24.xml" afterPath="$PROJECT_DIR$/.idea/libraries/android_android_24.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/animated_vector_drawable_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/animated_vector_drawable_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/appcompat_v7_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/cardview_v7_24_0_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/cardview_v7_24_0_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/com_amulyakhare_textdrawable_1_0_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/com_amulyakhare_textdrawable_1_0_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/design_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/design_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/espresso_core_2_2_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/espresso_core_2_2_2.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/espresso_idling_resource_2_2_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/espresso_idling_resource_2_2_2.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/exposed_instrumentation_api_publish_0_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/exposed_instrumentation_api_publish_0_5.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/fab_1_6_2.xml" afterPath="$PROJECT_DIR$/.idea/libraries/fab_1_6_2.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/firebase_common_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/firebase_common_9_8_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/floatingactionbutton_1_3_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/floatingactionbutton_1_3_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/library_1_4.xml" afterPath="$PROJECT_DIR$/.idea/libraries/library_1_4.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/multidex_1_0_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/multidex_1_0_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/multidex_instrumentation_1_0_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/multidex_instrumentation_1_0_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_appindexing_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_appindexing_9_8_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_base_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_base_9_8_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_basement_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_basement_9_8_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/play_services_tasks_9_8_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/play_services_tasks_9_8_0.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/recyclerview_v7_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/rules_0_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/rules_0_5.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/runner_0_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/runner_0_5.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_annotations_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_annotations_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_compat_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_compat_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_core_ui_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_core_ui_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_core_utils_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_core_utils_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_fragment_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_fragment_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_media_compat_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_media_compat_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_v4_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_v4_24_2_1.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/support_vector_drawable_24_2_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/support_vector_drawable_24_2_1.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/VenderProdutos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_contclie.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_contclie.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_dadosclie.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_dadosclie.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_obsclie.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_TH_obsclie.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterClientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterClientes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterFiltroProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterFiltroProdutos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/domain/Clientes.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/domain/Clientes.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentCliente.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentCliente.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentClientePedido.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentClientePedido.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentContatos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentContatos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentFiltroContatos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentFiltroContatos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentFiltroProdutos.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentFiltroProdutos.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_act_login.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_act_login.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_act_sincronismo.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_act_sincronismo.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_cad_contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/activity_cad_contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/app_bar_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/cad_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/cad_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_clientes_pedido.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_clientes_pedido.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-land/content_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-land/content_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/activity_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/activity_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/activity_act_login.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/activity_act_login.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/activity_act_sincronismo.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/activity_act_sincronismo.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/activity_cad_contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/activity_cad_contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/app_bar_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/app_bar_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/app_bar_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/app_bar_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/app_bar_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/app_bar_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/app_bar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/app_bar_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/cad_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/cad_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_clientes_pedido.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_clientes_pedido.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/content_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_act_login.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_act_login.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_act_sincronismo.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_act_sincronismo.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_cad_contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/activity_cad_contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/app_bar_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/cad_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/cad_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_clientes_pedido.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_clientes_pedido.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw600dp/content_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_act_login.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_act_login.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_act_sincronismo.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_act_sincronismo.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_cad_contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/activity_cad_contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/app_bar_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/cad_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/cad_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_clientes_pedido.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_clientes_pedido.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/content_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/activity_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/activity_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/activity_act_login.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/activity_act_login.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/activity_act_sincronismo.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/activity_act_sincronismo.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/activity_cad_contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/activity_cad_contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/app_bar_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/app_bar_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/app_bar_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/app_bar_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/app_bar_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/app_bar_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/app_bar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/app_bar_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/cad_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/cad_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_clientes_pedido.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_clientes_pedido.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout-sw720dp/content_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_act_login.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_act_login.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_act_sincronismo.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_act_sincronismo.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_cad_contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_cad_contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/app_bar_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/cad_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/cad_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_act__list_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_act__list_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_act_dados_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_act_dados_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_clientes.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_clientes.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_clientes_pedido.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_clientes_pedido.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/content_main.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/lista_produtos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/lista_produtos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/lstclientes_card.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/lstclientes_card.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu-land/act__contatos.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu-land/act__contatos.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu-land/menu_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu-land/menu_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu-sw600dp-land/menu_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu-sw600dp-land/menu_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu-sw600dp/menu_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu-sw600dp/menu_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu-sw720dp-land/menu_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu-sw720dp-land/menu_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu-sw720dp/menu_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu-sw720dp/menu_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/menu/menu_act_dados_cliente.xml" afterPath="$PROJECT_DIR$/app/src/main/res/menu/menu_act_dados_cliente.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/local.properties" afterPath="$PROJECT_DIR$/local.properties" />
     </list>
     <ignored path="Vendas_Mobile.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -51,52 +231,67 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="actSincronismo.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
+      <file leaf-file-name="ListAdapter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5083">
-              <caret line="3194" column="49" selection-start-line="3194" selection-start-column="49" selection-end-line="3194" selection-end-column="49" />
+            <state relative-caret-position="153">
+              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ListAdapterClientes.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterClientes.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="131">
+              <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
               <folding>
-                <element signature="method#onCreate#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#run#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarClientes#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarProdutos#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarClientesEnvio#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarPedidosEnvio#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincDescricaoTabelas#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincBloqueios#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincParametros#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#run#1;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaBairro#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaCidade#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaEstado#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarPedidosEnvioStatic#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarPedidosEnvio#1;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincAtuEstado#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincAtualizaCidade#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincAtualizaBairro#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#AtualizaPedido#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#CancelarPedidoAberto#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#AutorizaPedidoAberto#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#AtualizaStatusPedido#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#RetornaqtdClientes#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincBloqueiosStatic#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincEmpresas#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#SincronizarClientesEnvioStatic#0;class#actSincronismo#0" expanded="false" />
-                <element signature="method#generateLayout#0;class#actSincronismo#0" expanded="false" />
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="actDadosProdutos.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java">
+      <file leaf-file-name="ListAdapterClientesPedido.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterClientesPedido.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="29" column="22" selection-start-line="29" selection-start-column="22" selection-end-line="29" selection-end-column="22" />
-              <folding>
-                <element signature="method#declaraobjetos#0;class#actDadosProdutos#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="-136">
+              <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="strings.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="139">
+              <caret line="177" column="46" selection-start-line="177" selection-start-column="46" selection-end-line="177" selection-end-column="46" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AndroidManifest.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+          <provider editor-type-id="android-manifest">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="283">
+              <caret line="59" column="17" selection-start-line="59" selection-start-column="17" selection-end-line="59" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ListAdapterDocs.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterDocs.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -133,7 +328,7 @@
   <component name="GradleLocalSettings">
     <option name="myGradleHomes">
       <map>
-        <entry key="$PROJECT_DIR$" value="C:\Users\wks\.gradle\wrapper\dists\gradle-3.3-all\55gk2rcmfc6p2dg9u9ohc3hw9\gradle-3.3" />
+        <entry key="$PROJECT_DIR$" value="C:\Users\Usuário\.gradle\wrapper\dists\gradle-3.3-all\55gk2rcmfc6p2dg9u9ohc3hw9\gradle-3.3" />
       </map>
     </option>
     <option name="myGradleVersions">
@@ -1790,7 +1985,7 @@
       <map>
         <entry key="C:\Users\wks\AndroidStudioProjects\Vendas_Mobile" value="4473099308515" />
         <entry key="C:\Users\wks\AndroidStudioProjects\Vendas_Mobile - Copia" value="4463356366511" />
-        <entry key="C:\WSGE PROJETOS\Vendas_Mobile" value="4465604889124" />
+        <entry key="C:\WSGE PROJETOS\Vendas_Mobile" value="4468372667710" />
         <entry key="C:\Wsge(2005)\Vendas_Mobile" value="4445629819452" />
         <entry key="D:\Clone projeto\Vendas_Mobile" value="4465301361589" />
       </map>
@@ -2151,10 +2346,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1358" />
+    <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1382" />
-    <option name="height" value="744" />
+    <option name="width" value="1616" />
+    <option name="height" value="886" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -2200,8 +2395,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane" />
+      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <PATH>
@@ -2210,10 +2405,140 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Vendas_Mobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Vendas_Mobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Vendas_Mobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendasmobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Vendas_Mobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendasmobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fragments" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Vendas_Mobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendasmobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="domain" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Vendas_Mobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendasmobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Controller" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Vendas_Mobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="vendasmobile" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="adapter" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -2819,11 +3144,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1358" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31569967" sideWeight="0.48714653" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31550068" sideWeight="0.48714653" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20115681" sideWeight="0.5081967" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -2835,7 +3160,8 @@
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24962178" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20045386" sideWeight="0.4918033" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19987147" sideWeight="0.4918033" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24871466" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32969153" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
@@ -2854,7 +3180,6 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32583547" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -2904,7 +3229,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Correção de layouts modo paisagem e inclusão da apresntação do produto no lista produtos." />
     <MESSAGE value="Critica de cliente bloqueado no ListaCliente, critica de inclusao de produtos sem estoque de acordo com a parametrização no erp, bloquear a inclusão e visualização de tabelas de preço zerada no VenderProdutos, visualização da descrição da tabela de preço no dadosprodutos, criado funcões de sincronismo para carregar os tipos de bloqueios e descrição da tabela, criado campos na tabela itens, clientes e nova tabela bloqueios" />
     <MESSAGE value="Correções e melhorias." />
     <MESSAGE value="Desenvolvido menu de cadastro de contatos e colocado também a opção de cadastrar novo contato pela consulta de cliente." />
@@ -2929,7 +3253,8 @@
     <MESSAGE value="Tratamento de sincronismo de cliente e produtos. Mudando textos para resource String. Reduzindo funções no sincronismo." />
     <MESSAGE value="Tratamento de sincronismo de cliente e produtos. Mudando textos para resource String. Reduzindo funções no sincronismo. Mudando estrutura di listprodutos devido a alteração no webservice em relação a descrição de tabelas e preços." />
     <MESSAGE value="Acertado busca offline do endereço" />
-    <option name="LAST_COMMIT_MESSAGE" value="Acertado busca offline do endereço" />
+    <MESSAGE value="Finalizado a alteração da visualização de cliente. Foi necessário mexer em todas as telas que chamavam a consulta de clientes(cadastro de contato, cadastro de clientes, dados do cliente e vender produtos). Modificado o nome de algumas classes e criado mais alguns resource de String." />
+    <option name="LAST_COMMIT_MESSAGE" value="Finalizado a alteração da visualização de cliente. Foi necessário mexer em todas as telas que chamavam a consulta de clientes(cadastro de contato, cadastro de clientes, dados do cliente e vender produtos). Modificado o nome de algumas classes e criado mais alguns resource de String." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -3260,7 +3585,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java</url>
-          <line>981</line>
+          <line>978</line>
           <properties />
           <option name="timeStamp" value="1193" />
         </line-breakpoint>
@@ -3348,70 +3673,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actListPedidos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-586">
-          <caret line="420" column="14" selection-start-line="420" selection-start-column="14" selection-end-line="420" selection-end-column="14" />
-          <folding>
-            <element signature="e#3161#3202#0" expanded="false" />
-            <element signature="e#3248#3285#0" expanded="false" />
-            <element signature="e#3332#3370#0" expanded="false" />
-            <element signature="e#3416#3452#0" expanded="false" />
-            <element signature="method#carregausuariologado#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#declaraobjetos#0;class#actListPedidos#0" expanded="false" />
-            <element signature="e#6345#6353#0" expanded="false" />
-            <element signature="e#8602#8642#0" expanded="false" />
-            <element signature="e#9721#9761#0" expanded="false" />
-            <element signature="e#10590#12724#0" expanded="false" />
-            <element signature="e#12106#12147#0" expanded="false" />
-            <element signature="e#12200#12237#0" expanded="false" />
-            <element signature="e#12288#12326#0" expanded="false" />
-            <element signature="e#12379#12415#0" expanded="false" />
-            <element signature="e#12723#12724#0" expanded="false" />
-            <element signature="e#17212#17250#0" expanded="false" />
-            <element signature="e#17300#17336#0" expanded="false" />
-            <element signature="e#17382#17423#0" expanded="false" />
-            <element signature="e#17471#17508#0" expanded="false" />
-            <element signature="e#17924#17962#0" expanded="false" />
-            <element signature="e#18022#18058#0" expanded="false" />
-            <element signature="e#18582#18620#0" expanded="false" />
-            <element signature="e#18670#18706#0" expanded="false" />
-            <element signature="e#18752#18793#0" expanded="false" />
-            <element signature="e#18841#18878#0" expanded="false" />
-            <element signature="method#run#0;class#actListPedidos#0" expanded="false" />
-            <element signature="method#CarregarPedidos#0;class#actListPedidos#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/domain/Clientes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-561">
-          <caret line="3" column="13" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/DocsListAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="77">
-          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-42">
-          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterClientes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1062">
-          <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentCliente.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-323">
@@ -3467,23 +3728,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListClientes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="230" column="44" selection-start-line="230" selection-start-column="44" selection-end-line="230" selection-end-column="44" />
-          <folding>
-            <element signature="method#carregausuariologado#0;class#act_ListClientes#0" expanded="false" />
-            <element signature="method#declaraobjetos#0;class#act_ListClientes#0" expanded="false" />
-            <element signature="method#onCreateOptionsMenu#0;class#act_ListClientes#0" expanded="false" />
-            <element signature="method#onOptionsItemSelected#0;class#act_ListClientes#0" expanded="false" />
-            <element signature="method#runQuery#0;class#15138:16430" expanded="false" />
-            <element signature="method#onBackPressed#0;class#act_ListClientes#0" expanded="false" />
-            <element signature="e#17150#17193#0" expanded="false" />
-            <element signature="method#onNavigationItemSelected#0;class#act_ListClientes#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListClientes.java" />
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/FragmentPedido.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="199">
@@ -3491,43 +3736,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="148" column="59" selection-start-line="148" selection-start-column="59" selection-end-line="148" selection-end-column="59" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.android/build-cache/e042a14b194287085c307b1869c889fe91cd3afd/output/jars/classes.jar!/android/support/v4/app/Fragment.class" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="93" column="0" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
-          <folding>
-            <element signature="method#onNothingSelected#0;class#3385:4801" expanded="false" />
-            <element signature="method#declaraobjetos#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#VerificaConexao#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#buscacepclie#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#cadastraDadosCep#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#consultacnpj#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#cadastraDadosCNPJ#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#run#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#getIndexApiAction#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#onStart#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#onStop#0;class#act_CadClientes#0" expanded="false" />
-            <element signature="method#validarclientes#0;class#act_CadClientes#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_CadClientes.java" />
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_clientes.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3502">
           <caret line="208" column="0" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="false" />
-            <element signature="class#16550:17852" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -3555,7 +3771,7 @@
       </provider>
     </entry>
     <entry file="jar://$USER_HOME$/.android/build-cache/15e362f96e29ef92377f414dca0cf1cda6589b14/output/jars/classes.jar!/android/support/v7/widget/RecyclerView.class" />
-    <entry file="file://$PROJECT_DIR$/../../../rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/os/Trace.java" />
+    <entry file="file://C:/../rafael.costa/AppData/Local/Android/sdk/sources/android-22/android/os/Trace.java" />
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/domain/ItensPedido.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -3601,51 +3817,25 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_produtos.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="8" column="38" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/ProdutosFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="31" column="52" selection-start-line="31" selection-start-column="52" selection-end-line="31" selection-end-column="52" />
-          <folding>
-            <element signature="e#2205#2242#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="517" column="45" selection-start-line="517" selection-start-column="45" selection-end-line="517" selection-end-column="45" />
-          <folding>
-            <element signature="method#carregarpreferencias#0;class#actLogin#0" expanded="false" />
-            <element signature="method#declaraobjetos#0;class#actLogin#0" expanded="false" />
-            <element signature="method#VerificaConexao#0;class#actLogin#0" expanded="false" />
-            <element signature="method#VerificaConexaoWifi#0;class#actLogin#0" expanded="false" />
-            <element signature="method#onBackPressed#0;class#actLogin#0" expanded="false" />
-            <element signature="method#CadastrarLogin#0;class#actLogin#0" expanded="false" />
-            <element signature="method#onCreateOptionsMenu#0;class#actLogin#0" expanded="false" />
-            <element signature="method#onOptionsItemSelected#0;class#actLogin#0" expanded="false" />
-            <element signature="method#onResume#0;class#actLogin#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/act_contato_clie.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/fragments/ProdutosFragment.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actLogin.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/act_contato_clie.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/Controller/Lista_produtos.java">
@@ -3657,11 +3847,6 @@
             <element signature="method#onCreateOptionsMenu#0;class#Lista_produtos#0" expanded="false" />
             <element signature="method#onOptionsItemSelected#0;class#Lista_produtos#0" expanded="false" />
             <element signature="method#carrega_produto_para_venda#0;class#Lista_produtos#0" expanded="false" />
-            <element signature="class#11604:12678" expanded="false" />
-            <element signature="class#15951:41900" expanded="false" />
-            <element signature="class#56175:82124" expanded="false" />
-            <element signature="method#onItemSelected#0;class#56175:82124" expanded="false" />
-            <element signature="method#onNothingSelected#0;class#56175:82124" expanded="false" />
             <element signature="method#GravaPreferencias#0;class#Lista_produtos#0" expanded="false" />
             <element signature="method#atualiza_listview_com_os_itens_da_venda#0;class#Lista_produtos#0" expanded="false" />
             <element signature="method#atualiza_listview_com_os_itens_pedido#0;class#Lista_produtos#0" expanded="false" />
@@ -3669,29 +3854,13 @@
             <element signature="method#onBackPressed#0;class#Lista_produtos#0" expanded="false" />
             <element signature="docComment;method#getIndexApiAction#0;class#Lista_produtos#0" expanded="false" />
             <element signature="method#getIndexApiAction#0;class#Lista_produtos#0" expanded="false" />
-            <element signature="e#96593#96639#0" expanded="false" />
             <element signature="method#onStart#0;class#Lista_produtos#0" expanded="false" />
             <element signature="method#onStop#0;class#Lista_produtos#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="658">
-          <caret line="503" column="20" selection-start-line="503" selection-start-column="20" selection-end-line="503" selection-end-column="20" />
-          <folding>
-            <element signature="method#afterTextChanged#0;class#3860:5257" expanded="false" />
-            <element signature="method#carregausuariologado#0;class#act_ListProdutos#0" expanded="false" />
-            <element signature="method#onCreateOptionsMenu#0;class#act_ListProdutos#0" expanded="false" />
-            <element signature="method#onOptionsItemSelected#0;class#act_ListProdutos#0" expanded="false" />
-            <element signature="method#run#0;class#act_ListProdutos#0" expanded="false" />
-            <element signature="method#onBackPressed#0;class#act_ListProdutos#0" expanded="false" />
-            <element signature="method#onNavigationItemSelected#0;class#act_ListProdutos#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/act_ListProdutos.java" />
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/domain/Produtos.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="233">
@@ -3732,7 +3901,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListProdutosAdapter.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterProdutos.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="246">
           <caret line="96" column="56" selection-start-line="96" selection-start-column="12" selection-end-line="96" selection-end-column="56" />
@@ -3762,180 +3931,189 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/act_dados_produtos.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="186" column="16" selection-start-line="186" selection-start-column="16" selection-end-line="186" selection-end-column="41" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/act_dados_produtos.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/act_dados_produtos.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="187" column="45" selection-start-line="187" selection-start-column="45" selection-end-line="187" selection-end-column="45" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/lstprodutos_card.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/lstprodutos_card.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="968">
           <caret line="182" column="45" selection-start-line="182" selection-start-column="45" selection-end-line="182" selection-end-column="45" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw720dp/lstprodutos_card.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw720dp/lstprodutos_card.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="182" column="45" selection-start-line="182" selection-start-column="45" selection-end-line="182" selection-end-column="45" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/lstprodutos_card.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/lstprodutos_card.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="169">
           <caret line="180" column="45" selection-start-line="180" selection-start-column="45" selection-end-line="180" selection-end-column="45" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp/lstprodutos_card.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp/lstprodutos_card.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="182" column="45" selection-start-line="182" selection-start-column="45" selection-end-line="182" selection-end-column="45" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-land/lstprodutos_card.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="182" column="45" selection-start-line="182" selection-start-column="45" selection-end-line="182" selection-end-column="45" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/lstprodutos_card.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/lstprodutos_card.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="147">
           <caret line="172" column="44" selection-start-line="172" selection-start-column="44" selection-end-line="172" selection-end-column="44" />
           <folding />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/act_dados_produtos.xml">
       <provider editor-type-id="android-designer2">
         <state />
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw720dp-land/act_dados_produtos.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="187" column="45" selection-start-line="187" selection-start-column="45" selection-end-line="187" selection-end-column="45" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw720dp/act_dados_produtos.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="187" column="45" selection-start-line="187" selection-start-column="45" selection-end-line="187" selection-end-column="45" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp-land/act_dados_produtos.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="187" column="45" selection-start-line="187" selection-start-column="45" selection-end-line="187" selection-end-column="45" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout-sw600dp/act_dados_produtos.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="101">
           <caret line="187" column="45" selection-start-line="187" selection-start-column="45" selection-end-line="187" selection-end-column="45" />
           <folding />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actSincronismo.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterDocs.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5083">
-          <caret line="3194" column="49" selection-start-line="3194" selection-start-column="49" selection-end-line="3194" selection-end-column="49" />
+        <state relative-caret-position="136">
+          <caret line="14" column="13" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterClientes.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="131">
+          <caret line="22" column="13" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
           <folding>
-            <element signature="method#onCreate#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#run#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarClientes#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarProdutos#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarClientesEnvio#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarPedidosEnvio#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincDescricaoTabelas#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincBloqueios#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincParametros#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#run#1;class#actSincronismo#0" expanded="false" />
-            <element signature="method#RetornaBairro#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#RetornaCidade#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#RetornaEstado#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarPedidosEnvioStatic#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarPedidosEnvio#1;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincAtuEstado#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincAtualizaCidade#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincAtualizaBairro#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#AtualizaPedido#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#CancelarPedidoAberto#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#AutorizaPedidoAberto#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#AtualizaStatusPedido#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#RetornaqtdClientes#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincBloqueiosStatic#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincEmpresas#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#SincronizarClientesEnvioStatic#0;class#actSincronismo#0" expanded="false" />
-            <element signature="method#generateLayout#0;class#actSincronismo#0" expanded="false" />
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/actDadosProdutos.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/jdsystem/br/vendasmobile/adapter/ListAdapterClientesPedido.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="29" column="22" selection-start-line="29" selection-start-column="22" selection-end-line="29" selection-end-column="22" />
-          <folding>
-            <element signature="method#declaraobjetos#0;class#actDadosProdutos#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="-136">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="177" column="46" selection-start-line="177" selection-start-column="46" selection-end-line="177" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider editor-type-id="android-manifest">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="59" column="17" selection-start-line="59" selection-start-column="17" selection-end-line="59" selection-end-column="17" />
+          <folding />
         </state>
       </provider>
     </entry>

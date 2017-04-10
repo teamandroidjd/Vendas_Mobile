@@ -1,8 +1,6 @@
 package com.jdsystem.br.vendasmobile.adapter;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.domain.ItensPedido;
 import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
@@ -23,13 +19,13 @@ import java.util.List;
  * Created by eduardo.costa on 25/11/2016.
  */
 
-public class ListProdutosAdapter extends RecyclerView.Adapter<ListProdutosAdapter.MyViewHolder> {
+public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProdutos.MyViewHolder> {
 
     private List<Produtos> mList;
     private LayoutInflater mLayoutInflater;
     private RecyclerViewOnClickListenerHack mRecyclerViewOnClickListenerHack;
 
-    public ListProdutosAdapter(Context context, List<Produtos> Lista) {
+    public ListAdapterProdutos(Context context, List<Produtos> Lista) {
         mList = Lista;
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

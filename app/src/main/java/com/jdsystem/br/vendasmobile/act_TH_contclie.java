@@ -1,7 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,36 +9,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.FilterQueryProvider;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
-import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
-import com.jdsystem.br.vendasmobile.adapter.DocsListAdapter;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by eduardo.costa on 10/11/2016.
@@ -51,7 +30,8 @@ import java.util.List;
 public class act_TH_contclie extends Fragment{
 
     String sCodVend,usuario,senha,URLPrincipal,NomeCliente;
-    int CodCliente, sCodCliente;
+    //int CodCliente;
+    String CodCliente;
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -69,16 +49,16 @@ public class act_TH_contclie extends Fragment{
         TextView TAG_TELEFONE_1 = (TextView) v.findViewById(R.id.lblTel1Contato);
         TextView TAG_TELEFONE_2 = (TextView) v.findViewById(R.id.lblTel2Contato);
 
-        Intent intent = ((actDadosCliente) getActivity()).getIntent();
+        Intent intent = ((DadosCliente) getActivity()).getIntent();
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodCliente = params.getInt(getString(R.string.intent_codcliente));
+                CodCliente = params.getString(getString(R.string.intent_codcliente));
                 sCodVend = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
-                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                //CodCliente = params.getInt(getString(R.string.intent_codcliente));
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
         }
@@ -87,12 +67,12 @@ public class act_TH_contclie extends Fragment{
         CadContatos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(), CadContatos.class);
+                Intent i = new Intent(getActivity(), CadastroContatos.class);
                 Bundle params = new Bundle();
                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
-                params.putInt(getString(R.string.intent_codcliente),CodCliente);
+                params.putInt(getString(R.string.intent_codcliente),Integer.parseInt(CodCliente));
                 params.putString(getString(R.string.intent_nomerazao),NomeCliente);
                 i.putExtras(params);
                 startActivity(i);
@@ -104,7 +84,7 @@ public class act_TH_contclie extends Fragment{
 
 
         try {
-            Cursor CursorClie = DB.rawQuery(" SELECT CODCONTATO_INT AS _id, NOME, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO WHERE CODCLIENTE = " + sCodCliente, null);
+            Cursor CursorClie = DB.rawQuery(" SELECT CODCONTATO_INT AS _id, NOME, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO WHERE CODCLIENTE = " + Integer.parseInt(CodCliente), null);
             if (CursorClie.getCount() > 0) {
                 /*CursorClie.moveToFirst();
                 String Tel1 =  CursorClie.getString(CursorClie.getColumnIndex("TEL1"));

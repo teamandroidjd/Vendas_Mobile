@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -40,7 +39,7 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CadContatos extends AppCompatActivity implements Runnable {
+public class CadastroContatos extends AppCompatActivity implements Runnable {
     String sCodVend, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente;
     Boolean PesqCEP;
     ImageButton BtnPesqCep;
@@ -105,7 +104,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                     linearcheck1.setVisibility(EditText.GONE);
                     linearcheck2.setVisibility(EditText.GONE);
                     lineartxtsemana.setVisibility(EditText.GONE);
-                    Intent i = new Intent(CadContatos.this, act_ListClientes.class);
+                    Intent i = new Intent(CadastroContatos.this, ConsultaClientes.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                     params.putString(getString(R.string.intent_usuario), usuario);
@@ -216,7 +215,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                         sUF = "TO";//Tocantins
                         break;
                 }
-                Boolean ConexOk = Util.checarConexaoCelular(CadContatos.this);
+                Boolean ConexOk = Util.checarConexaoCelular(CadastroContatos.this);
                 if (ConexOk == false) {
                     int CodCidade = 0;
                     try {
@@ -231,7 +230,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                             } while (cursor.moveToNext());
                             cursor.close();
 
-                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
                             ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                             spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                             spCidade.setAdapter(spinnerArrayAdapter);
@@ -240,7 +239,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                         System.out.println("Error" + E);
                     }
                 }
-                Thread thread = new Thread(CadContatos.this);
+                Thread thread = new Thread(CadastroContatos.this);
                 thread.start();
 
 
@@ -253,7 +252,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
         spCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                Boolean ConexOk = Util.checarConexaoCelular(CadContatos.this);
+                Boolean ConexOk = Util.checarConexaoCelular(CadastroContatos.this);
                 if (ConexOk == false) {
                     NomeCidade = spCidade.getSelectedItem().toString();
                     Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
@@ -282,7 +281,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                     }
                     CurBairro.close();
 
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
                     ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spBairro.setAdapter(spinnerArrayAdapter);
@@ -315,7 +314,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                     }
                     CurBairro.close();
 
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
                     ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                     spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spBairro.setAdapter(spinnerArrayAdapter);
@@ -348,7 +347,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
     }
 
     private void declaraobjetos() {
-        DB = new ConfigDB(CadContatos.this).getReadableDatabase();
+        DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         BtnPesqCep = (ImageButton) findViewById(R.id.btnBuscaCep);
         TipoContato = (Spinner) findViewById(R.id.spnTipoContato);
@@ -443,14 +442,14 @@ public class CadContatos extends AppCompatActivity implements Runnable {
             E.toString();
         }
 
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadContatos.this);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroContatos.this);
         builder.setTitle("Novo Contato");
         builder.setIcon(R.drawable.logo_ico);
         builder.setMessage("Deseja cadastrar outro contato para este cliente?")
                 .setCancelable(false)
                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(getBaseContext(), CadContatos.class);
+                        Intent intent = new Intent(getBaseContext(), CadastroContatos.class);
                         Bundle params = new Bundle();
                         params.putString("codvendedor", sCodVend);
                         params.putString("usuario", usuario);
@@ -465,7 +464,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                 })
                 .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(getBaseContext(), actListPedidos.class);
+                        Intent intent = new Intent(getBaseContext(), ConsultaPedidos.class);
                         Bundle params = new Bundle();
                         params.putString("codvendedor", sCodVend);
                         params.putString("usuario", usuario);
@@ -522,7 +521,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
 
         if (RetDadosEndereco.equals("CEP não Encontrado")) {
             DialogECB.dismiss();
-            Toast.makeText(CadContatos.this, "CEP não encontrado na base de dados. Verifique se está correto e tente novamente.", Toast.LENGTH_LONG).show();
+            Toast.makeText(CadastroContatos.this, "CEP não encontrado na base de dados. Verifique se está correto e tente novamente.", Toast.LENGTH_LONG).show();
             endereco.setText("");
             return PesqCEP;
         }
@@ -625,14 +624,14 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                     List<String> DadosListEstado = new ArrayList<String>();
                     DadosListEstado.add(Estado);
                     sUF = Estado;
-                    ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEstado);
+                    ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEstado);
                     arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spUF.setAdapter(arrayAdapterUF);
 
                     //Cidade
                     List<String> DadosListCidade = new ArrayList<String>();
                     DadosListCidade.add(NomeCidade);
-                    ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListCidade);
+                    ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListCidade);
                     ArrayAdapter<String> spinnerArrayAdapterCidade = arrayAdapterCidade;
                     spinnerArrayAdapterCidade.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spCidade.setAdapter(spinnerArrayAdapterCidade);
@@ -640,7 +639,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                     //Bairro
                     List<String> DadosListBairroUnic = new ArrayList<String>();
                     DadosListBairroUnic.add(NomeBairro);
-                    ArrayAdapter<String> arrayAdapterBairroUnic = new ArrayAdapter<String>(CadContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairroUnic);
+                    ArrayAdapter<String> arrayAdapterBairroUnic = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairroUnic);
                     ArrayAdapter<String> spinnerArrayAdapterBairroUnic = arrayAdapterBairroUnic;
                     spinnerArrayAdapterBairroUnic.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                     spBairro.setAdapter(spinnerArrayAdapterBairroUnic);
@@ -666,7 +665,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
             cep.requestFocus();
             return;
         }
-        DialogECB = new ProgressDialog(CadContatos.this);
+        DialogECB = new ProgressDialog(CadastroContatos.this);
         DialogECB.setTitle("Aguarde.");
         DialogECB.setMessage("Pesquisando o CEP informado...");
         DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -678,7 +677,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
 
     @Override
     public void onBackPressed() {
-        Intent cadcont = new Intent(CadContatos.this, act_ListContatos.class);
+        Intent cadcont = new Intent(CadastroContatos.this, ConsultaContatos.class);
         Bundle params = new Bundle();
         params.putString("codvendedor", sCodVend);
         params.putString("urlPrincipal", URLPrincipal);
@@ -708,7 +707,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
                         } while (cursor.moveToNext());
                         cursor.close();
 
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(act_CadClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
                         ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                         spCidade.setAdapter(spinnerArrayAdapter);
@@ -724,7 +723,7 @@ public class CadContatos extends AppCompatActivity implements Runnable {
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("act_CadClientes Page")
+                .setName("CadastroClientes Page")
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)

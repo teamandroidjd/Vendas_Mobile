@@ -22,7 +22,7 @@ import android.widget.Toast;
  */
 public class act_TH_dadosclie extends Fragment {
 
-    int sCodCliente;
+    String CodCliente;
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -54,11 +54,11 @@ public class act_TH_dadosclie extends Fragment {
         TextView TAG_TELEFONE_2 = (TextView) v.findViewById(R.id.txt_telefone_2);
         TextView TAG_EMAIL = (TextView) v.findViewById(R.id.txt_email);
 
-        Intent intent = ((actDadosCliente) getActivity()).getIntent();
+        Intent intent = ((DadosCliente) getActivity()).getIntent();
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodCliente = params.getInt(getString(R.string.intent_codcliente));
+                CodCliente = params.getString(getString(R.string.intent_codcliente));
             }
         }
 
@@ -67,7 +67,7 @@ public class act_TH_dadosclie extends Fragment {
                     " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                     " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                    " WHERE CODCLIE_INT = " + sCodCliente +
+                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente) +
                     " ORDER BY NOMEFAN, NOMERAZAO ", null);
 
             if (CursorClie.getCount() > 0) {

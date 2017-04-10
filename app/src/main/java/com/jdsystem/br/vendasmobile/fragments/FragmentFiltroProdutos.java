@@ -10,10 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.actDadosProdutos;
-import com.jdsystem.br.vendasmobile.act_ListProdutos;
+import com.jdsystem.br.vendasmobile.DadosProduto;
+import com.jdsystem.br.vendasmobile.ConsultaProdutos;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterFiltroProdutos;
-import com.jdsystem.br.vendasmobile.adapter.ListProdutosAdapter;
 import com.jdsystem.br.vendasmobile.domain.FiltroProdutos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
@@ -46,7 +45,7 @@ public class FragmentFiltroProdutos extends Fragment implements RecyclerViewOnCl
         mRecyclerView.setLayoutManager(llm);
 
 
-        mList = ((act_ListProdutos) getActivity()).pesquisarprodutos(pesqprodutos);
+        mList = ((ConsultaProdutos) getActivity()).pesquisarprodutos(pesqprodutos);
         ListAdapterFiltroProdutos adapter = new ListAdapterFiltroProdutos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);
@@ -61,7 +60,7 @@ public class FragmentFiltroProdutos extends Fragment implements RecyclerViewOnCl
         ListAdapterFiltroProdutos adapter = (ListAdapterFiltroProdutos) mRecyclerView.getAdapter();
 
         String CodProd = adapter.ChamaDados(position);
-        Intent intentp = new Intent(getActivity(), actDadosProdutos.class);
+        Intent intentp = new Intent(getActivity(), DadosProduto.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codproduto), CodProd);
         intentp.putExtras(params);

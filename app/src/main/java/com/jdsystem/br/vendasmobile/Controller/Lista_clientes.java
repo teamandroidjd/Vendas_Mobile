@@ -10,8 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,14 +26,13 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.jdsystem.br.vendasmobile.CadastroClientes;
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
 import com.jdsystem.br.vendasmobile.R;
+import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Util;
-import com.jdsystem.br.vendasmobile.actSincronismo;
-import com.jdsystem.br.vendasmobile.act_CadClientes;
-import com.jdsystem.br.vendasmobile.act_ListClientes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +57,10 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
     private Intent TELA_QUE_CHAMOU_INTENT;
     private String TELA_QUE_CHAMOU;
     private String CodVendedor;
-    private String usuario, senha, URLPrincipal, NumPedido, DATAENTREGA;
+    private String usuario, senha, URLPrincipal, NumPedido, DATAENTREGA, sincclieenvio, sincclie;
     private String CodEmpresa;
     public ProgressDialog dialog;
     public SQLiteDatabase DB;
-    boolean sincclieenvio, sincclie;
     Context ctx;
 
     @Override
@@ -107,8 +103,9 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
         cadastraCliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Lista_clientes.this, act_CadClientes.class);
+                Intent intent = new Intent(Lista_clientes.this, CadastroClientes.class);
                 Bundle params = new Bundle();
+                params.putString("TELA_QUE_CHAMOU", TELA_QUE_CHAMOU);
                 params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
                 params.putString((getString(R.string.intent_usuario)), usuario);
                 params.putString((getString(R.string.intent_senha)), senha);
@@ -249,7 +246,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                         } else if (BloqClie.equals("S")) {
                             Boolean ConexOk = Util.checarConexaoCelular(Lista_clientes.this);
                             if (ConexOk == true) {
-                                actSincronismo.SincronizarClientesStatic(CodVendedor, Lista_clientes.this, usuario, senha, cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT")));
+                                Sincronismo.SincronizarClientesStatic(CodVendedor, Lista_clientes.this, usuario, senha, cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT")));
                                 Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")) + "", null);
                                 cursorclie.moveToFirst();
                                 bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
@@ -365,49 +362,29 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
     @Override
     public void run() {
         try {
-            //actSincronismo.run(this);
-            sincclieenvio = actSincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
-            if (sincclieenvio == false) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplication(), getString(R.string.no_new_clients), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplication(), R.string.newcustomers_successfully, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-            sincclie = actSincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha, 0);
-            if (sincclie == false) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplication(), R.string.no_sync_clients, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplication(), (getString(R.string.syn_clients_successfully)), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            //Toast.makeText(this, "Clientes atualizados com sucesso!", Toast.LENGTH_SHORT).show();
+            //Sincronismo.run(this);
+            sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplication(), sincclieenvio, Toast.LENGTH_SHORT).show();
+                }
+            });
+            sincclie = Sincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha, 0);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplication(), sincclie, Toast.LENGTH_SHORT).show();
+                }
+            });
+            if (dialog.isShowing())
+                dialog.dismiss();
             Intent intent = (Lista_clientes.this).getIntent();
             (Lista_clientes.this).finish();
             startActivity(intent);
-        } finally {
-            if (dialog.isShowing())
-                dialog.dismiss();
+        } catch (Exception e) {
+            e.toString();
         }
-
     }
 
     @Override

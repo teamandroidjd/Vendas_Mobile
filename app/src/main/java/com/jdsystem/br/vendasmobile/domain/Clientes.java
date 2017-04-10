@@ -3,95 +3,111 @@ package com.jdsystem.br.vendasmobile.domain;
 
 public class Clientes {
 
-        private String docFormatado;
-        private String NomeRazao;
-        private String NomeFan;
-        private String Cidade;
-        private String Estado;
-        private String Bairro;
-        private String Telefone;
-        private String CodCliente;
+    private String codClieExt;
+    private String codClienteInt;
+    private String nomeRazao;
+    private String NomeFan;
+    private String documento;
+    private String Estado;
+    private String Cidade;
+    private String Bairro;
+    private String Tel1;
+    private String Tel2;
+    private String bloqueio;
+    private String integrado;
 
 
-        public Clientes() {
-        }
-
-        public Clientes(String docFormat, String nmRazao, String nmFan, String cidade, String estado, String bairro, String telefone, String codCliente) {
-
-            docFormatado = docFormat;
-            NomeRazao = nmRazao;
-            NomeFan = nmFan;
-            Cidade = cidade;
-            Estado = estado;
-            Bairro = bairro;
-            Telefone = telefone;
-            CodCliente = codCliente;
-        }
-
-        public String getDocumento() {
-            return docFormatado;
-        }
-
-        public String getCodCliente() {
-            return CodCliente;
-        }
-
-        public void setCodCliente(String codCliente) {
-
-            CodCliente = codCliente;
-        }
-
-        public void setDocumento(String docFormatado) {
-
-            this.docFormatado = docFormatado;
-        }
-
-        public String getNomeRazao() {
-            return NomeRazao;
-        }
-
-        public void setNomeRazao(String NomeRazao) {
-
-            this.NomeRazao = NomeRazao;
-        }
-
-        public String getNomeFan() {
-            return NomeFan;
-        }
-
-        public void setNomeFan(String NomeFan) {
-            this.NomeFan = NomeFan;
-        }
-
-        public String getCidade() {
-            return Cidade;
-        }
-
-        public void setCidade(String Cidade) {
-            this.Cidade = Cidade;
-        }
-
-        public String getEstado() {
-            return Estado;
-        }
-
-        public void setEstado(String Estado) {
-            this.Estado = Estado;
-        }
-
-        public String getBairro() {
-            return Bairro;
-        }
-
-        public void setBairro(String Bairro) {
-            this.Bairro = Bairro;
-        }
-
-        public String getTelefone() {
-            return Telefone;
-        }
-
-        public void setTelefone(String Telefone) {
-            this.Telefone = Telefone;
-        }
+    public Clientes() {
     }
+
+    public Clientes(String codClieExterno, String codclienteinterno, String nmRazao, String nmFan, String doc, String estado, String cidade, String bairro, String tel1, String tel2,
+                    String bloqclie, String flagintegrado) {
+
+        codClieExt = codClieExterno;
+        codClienteInt = codclienteinterno;
+        nomeRazao = nmRazao;
+        NomeFan = nmFan;
+        documento = doc;
+        Estado = estado;
+        Cidade = cidade;
+        Bairro = bairro;
+        Tel1 = tel1;
+        Tel2 = tel2;
+        bloqueio = bloqclie;
+        integrado = flagintegrado;
+    }
+
+    public String getCodClienteExt() {
+        return codClieExt;
+    }
+
+    public void setCodClienteExt(String CodClie) { this.codClieExt = CodClie;  }
+
+    public String getNomeRazao() {
+        return nomeRazao;
+    }
+
+    public void setNomeRazao(String NomeRazao) { this.nomeRazao = NomeRazao; }
+
+    public String getNomeFan() {
+        return NomeFan;
+    }
+
+    public void setNomeFan(String NomeFan) {
+        this.NomeFan = NomeFan;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {this.documento = documento; }
+
+    public String getEstado() {
+        return Estado;
+    }
+
+    public void setEstado(String Estado) {
+        this.Estado = Estado;
+    }
+
+    public String getCidade() {
+        return Cidade;
+    }
+
+    public void setCidade(String Cidade) {
+        this.Cidade = Cidade;
+    }
+
+    public String getBairro() {
+        return Bairro;
+    }
+
+    public void setBairro(String Bairro) {
+        this.Bairro = Bairro;
+    }
+
+    public String getTelefone1() {
+        return Tel1;
+    }
+
+    public void setTelefone1(String Telefone1) {
+        this.Tel1 = Telefone1;
+    }
+
+    public String getTelefone2() {
+        return Tel2;
+    }
+
+    public void setTelefone2(String Telefone2) {
+        this.Tel2 = Telefone2;
+    }
+
+    public String getCodClienteInt() { return codClienteInt; }
+
+    public void setCodClienteInt(String clieint){this.codClienteInt = clieint;}
+
+    public String getbloqueio() { return bloqueio; }
+
+    public String getflagintegrado() { return integrado; }
+}
