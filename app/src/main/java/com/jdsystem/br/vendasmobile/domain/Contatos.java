@@ -6,6 +6,7 @@ package com.jdsystem.br.vendasmobile.domain;
 
 public class Contatos {
 
+    private int CODCONTATO;
     private String NOME;
     private String CARGO;
     private String EMAIL;
@@ -29,7 +30,8 @@ public class Contatos {
     }
 
     public Contatos(String nmcont, String cargo,  String email, String telefone1, String telefone2, String doc, String data, String cep, String endereco,
-                    String num, String compl, int cidade, int bairro, String uf, int codvend, int codclieint, int codClieExt, String nomeCliente) {
+                    String num, String compl, int cidade, int bairro, String uf, int codvend, int codclieint, int codClieExt, String nomeCliente,
+                    int codContato) {
 
         NOME = nmcont;
         //Cnpj = nCnpj;
@@ -52,6 +54,7 @@ public class Contatos {
         CODCLIENTE = codclieint;
         CODCLIE_EXT = codClieExt;
         NOMERAZAO = nomeCliente;
+        CODCONTATO = codContato;
 
 
 
@@ -183,6 +186,12 @@ public class Contatos {
 
     public void setNOMECLIENTE(String nomecliente) {
         this.NOMERAZAO = nomecliente;
+    }
+
+    public int getCODCONTATO() {return CODCONTATO;}
+
+    public void setCODCONTATO(int codContato) {
+        this.CODCONTATO = codContato;
     }
 
 }

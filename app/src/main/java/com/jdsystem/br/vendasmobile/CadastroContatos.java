@@ -1,6 +1,7 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,14 +13,20 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -27,6 +34,8 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.jdsystem.br.vendasmobile.Util.Util;
+import com.jdsystem.br.vendasmobile.domain.Contatos;
+import com.jdsystem.br.vendasmobile.domain.Contatos;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,10 +49,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CadastroContatos extends AppCompatActivity implements Runnable {
-    String sCodVend, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente;
+    String sCodVend, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente, descBairro;
     Boolean PesqCEP;
+    CheckBox cbSegunda, cbTerca, cbQuarta, cbQuinta, cbSexta, cbSabado, cbDomingo;
+    TimePicker timePicker;
     ImageButton BtnPesqCep;
-    int CodCidade, CodBairro, CodCliente;
+    int CodCidade, CodBairro, CodCliente, hour, minute;
     EditText nome, setor, data, documento, endereco, numero, cep, tel1, tel2, email, OBS, Complemento;
     Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF;
     Context ctx;
@@ -54,6 +65,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
     SQLiteDatabase DB;
     private static ProgressDialog DialogECB;
     private GoogleApiClient client;
+    private TimePicker timerPicker1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,8 +113,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     linearcheck2.setVisibility(EditText.VISIBLE);
                     lineartxtsemana.setVisibility(EditText.VISIBLE);
                 } else if (sTipoContato == "C" && CodCliente == 0) {
-                    linearcheck1.setVisibility(EditText.GONE);
-                    linearcheck2.setVisibility(EditText.GONE);
+                    linearcheck1.setVisibility(EditText.VISIBLE);
+                    linearcheck2.setVisibility(EditText.VISIBLE);
                     lineartxtsemana.setVisibility(EditText.GONE);
                     Intent i = new Intent(CadastroContatos.this, ConsultaClientes.class);
                     Bundle params = new Bundle();
@@ -116,13 +128,13 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     TipoContato.setSelection(1);
                     linearrazao.setVisibility(View.VISIBLE);
                     razaosocial.setText(NomeCliente);
-                    linearcheck1.setVisibility(View.GONE);
-                    linearcheck2.setVisibility(View.GONE);
+                    linearcheck1.setVisibility(View.VISIBLE);
+                    linearcheck2.setVisibility(View.VISIBLE);
                     lineartxtsemana.setVisibility(View.GONE);
                 } else {
                     linearrazao.setVisibility(View.GONE);
-                    linearcheck1.setVisibility(View.GONE);
-                    linearcheck2.setVisibility(View.GONE);
+                    linearcheck1.setVisibility(View.VISIBLE);
+                    linearcheck2.setVisibility(View.VISIBLE);
                     lineartxtsemana.setVisibility(View.GONE);
                 }
             }
@@ -333,6 +345,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     if (CurBai.getCount() > 0) {
                         CurBai.moveToFirst();
                         CodBairro = CurBai.getInt(CurBai.getColumnIndex("CODBAIRRO"));
+                        descBairro = CurBai.getString(CurBai.getColumnIndex("DESCRICAO"));
+
                     }
                     CurBai.close();
                 } catch (Exception E) {
@@ -430,12 +444,17 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             //Cursor CursorContatos = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND NOME = '" + nome.getText().toString() + "'", null);
 
             //if (!(CursorContatos.getCount() > 0)) {
-            DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, COMPLEMENTO,UF,CODVENDEDOR,CODBAIRRO,CODCIDADE, CODCLIENTE ) VALUES(" +
-                    "'" + nome.getText().toString() + "','" + setor.getText().toString() + "','" + email.getText().toString() + "','" + tel1.getText().toString() + "','" + tel2.getText().toString() +
-                    "','" + documento.getText().toString() + "','" + data.getText().toString() + "','" + cep.getText().toString() +
-                    "','" + endereco.getText().toString() + "','" + numero.getText().toString() + "','" + Complemento.getText().toString() + "','" + sUF + "'," + sCodVend + "," + CodBairro + "," + CodCidade +
-                    "," + CodCliente + ");");
+            DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
+                    "COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS) VALUES(" +
+                    "'" + nome.getText().toString() + "', '" + setor.getText().toString() + "', '" +
+                    email.getText().toString() + "', '" + tel1.getText().toString() + "', '" + tel2.getText().toString() +
+                    "', '" + documento.getText().toString() + "', '" + data.getText().toString() + "','" +
+                    cep.getText().toString() +
+                    "', '" + endereco.getText().toString() + "', '" + numero.getText().toString() + "', '" +
+                    Complemento.getText().toString() + "', '" + sUF + "', " + sCodVend + ", '" + descBairro + "', '" +
+                    NomeCidade + "', " + CodCliente +", '" + sTipoContato + "', '" + OBS.getText().toString() + "');");
 
+                    //Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
             //}
             //CursorContatos.close();
         } catch (Exception E) {
@@ -745,4 +764,73 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+
+    public void onCheckedboxClicked(View view) {
+        boolean checked = ((CheckBox) view).isChecked();
+        switch (view.getId()) {
+            case R.id.cb_domingo:
+                if (checked) {
+                    ImageButton imageButton = (ImageButton) findViewById(R.id.add_horario_domingo);
+                    imageButton.setVisibility(View.VISIBLE);
+                    imageButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.editTextGroupLayout);
+
+                            EditText editTextView = new EditText(CadastroContatos.this);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+
+                            editTextView.setLayoutParams(params);
+
+                            linearLayout.addView(editTextView);
+                            editTextView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    new TimePickerDialog(CadastroContatos.this, timePickerListener, hour, minute, false);
+
+                                    /*EditText pickerTimeView = new EditText(CadContatos.this);
+
+                                    TimePicker.LayoutParams params = new TimePicker.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                            TimePicker.LayoutParams.WRAP_CONTENT, 1);
+
+                                    pickerTimeView.setLayoutParams(params);
+
+                                    linearLayout.addView(pickerTimeView);*/
+
+
+                                }
+                            });
+                            /*TimePicker pickerTimeView = new TimePicker(CadContatos.this);
+
+                           TimePicker.LayoutParams params = new TimePicker.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                                   TimePicker.LayoutParams.WRAP_CONTENT, 1);
+
+                            pickerTimeView.setLayoutParams(params);
+
+                            linearLayout.addView(pickerTimeView);*/
+
+                        }
+                    });
+                    ImageView imgView = (ImageView) findViewById(R.id.imageView2);
+                    imgView.setVisibility(View.VISIBLE);
+                } else {
+                    ImageButton imageButton = (ImageButton) findViewById(R.id.add_horario_domingo);
+                    imageButton.setVisibility(View.GONE);
+                    ImageView imgView = (ImageView) findViewById(R.id.imageView2);
+                    imgView.setVisibility(View.GONE);
+                }
+                break;
+
+        }
+    }
+
+    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
+            hour = hourOfDay;
+            minute = minuteOfHour;
+        }
+    };
+
 }

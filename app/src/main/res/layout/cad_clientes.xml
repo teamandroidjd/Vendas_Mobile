@@ -74,20 +74,20 @@
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/EdtCnpjCpf"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:hint="CNPJ"
+                    android:inputType="number"
+                    android:maxLength="19"
+                    android:maxLines="1" />
 
-                    <EditText
-                        android:id="@+id/EdtCnpjCpf"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="CNPJ"
-                        android:inputType="number"
-                        android:maxLength="19"
-                        android:maxLines="1" />
-
-                </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

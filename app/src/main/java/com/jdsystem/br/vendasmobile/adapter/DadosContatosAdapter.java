@@ -1,0 +1,76 @@
+package com.jdsystem.br.vendasmobile.adapter;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.jdsystem.br.vendasmobile.act_TH_contclie;
+import com.jdsystem.br.vendasmobile.act_TH_dadosclie;
+import com.jdsystem.br.vendasmobile.act_TH_dadoscontato;
+import com.jdsystem.br.vendasmobile.act_TH_horarios_contatos;
+import com.jdsystem.br.vendasmobile.act_TH_obsclie;
+import com.jdsystem.br.vendasmobile.act_TH_obscontato;
+import com.jdsystem.br.vendasmobile.act_TH_produtos_contatos;
+
+/**
+ * Created by WKS22 on 28/03/2017.
+ */
+
+public class DadosContatosAdapter extends FragmentStatePagerAdapter {
+
+    CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
+    int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+
+
+    // Build a Constructor and assign the passed Values to appropriate values in the class
+    public DadosContatosAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
+        super(fm);
+
+        this.Titles = mTitles;
+        this.NumbOfTabs = mNumbOfTabsumb;
+
+    }
+
+    //This method return the fragment for the every position in the View Pager
+    @Override
+    public Fragment getItem(int position) {
+
+        if(position == 0) // if the position is 0 we are returning the First tab
+        {
+
+            act_TH_dadoscontato tab1 = new act_TH_dadoscontato();
+            return tab1;
+        }
+        else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+        {
+            act_TH_obscontato tab2 = new act_TH_obscontato();
+            return tab2;
+        }
+        else if (position == 2)
+        {
+            act_TH_horarios_contatos tab3 = new act_TH_horarios_contatos();
+            return tab3;
+        }
+        else
+        {
+            act_TH_produtos_contatos tab4 = new act_TH_produtos_contatos();
+            return tab4;
+        }
+
+
+    }
+
+    // This method return the titles for the Tabs in the Tab Strip
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return Titles[position];
+    }
+
+    // This method return the Number of tabs for the tabs Strip
+
+    @Override
+    public int getCount() {
+        return NumbOfTabs;
+    }
+}

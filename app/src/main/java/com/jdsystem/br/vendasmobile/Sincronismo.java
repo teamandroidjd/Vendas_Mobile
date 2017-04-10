@@ -373,7 +373,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                             }
                         });
 
-                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
                         cursor.moveToFirst();
                         String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
                         int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
@@ -390,7 +390,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                         "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
                                         " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
                                         ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
+                                        " WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'");
                             } else {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, REGIDENT, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
@@ -413,10 +413,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                         "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
                                         " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
                                         ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
+                                        " WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'");
                             }
 
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
                             cursor1.moveToFirst();
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
                             CodClienteExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
@@ -452,6 +452,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                         String EmailContato = null;
                         String Tel1Contato = null;
                         String Tel2Contato = null;
+                        String codExtContato = null;
+                        String documentoContato = null;
+                        String dataAniversario = null;
+                        String cep = null;
+                        String endNumCont = null;
+                        String uf = null;
+                        String bairro = null;
+                        String cidade = null;
 
                         try {
                             for (int co = 0; co < Cont.length(); co++) {
@@ -460,7 +468,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                     NomeContato = cc.getString("nome");
                                     CargoContato = cc.getString("cargo");
                                     EmailContato = cc.getString("email");
-
+                                    codExtContato = cc.getString("CodContato");
+                                    documentoContato = cc.getString("Documento");
+                                    dataAniversario = cc.getString("DataAniversario");
+                                    cep = cc.getString("cep");
+                                    endNumCont = cc.getString("Logradouro");
+                                    uf = cc.getString("uf");
+                                    bairro = cc.getString("Bairro");
+                                    cidade = cc.getString("Cidade");
 
                                     String TelCont1 = cc.getString("telefones");
                                     TelCont1 = "{\"telefones\":" + TelCont1 + "\t}";
@@ -481,6 +496,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                     NomeContato = cc.getString("nome");
                                     CargoContato = cc.getString("cargo");
                                     EmailContato = cc.getString("email");
+                                    codExtContato = cc.getString("CodContato");
+                                    documentoContato = cc.getString("Documento");
+                                    dataAniversario = cc.getString("DataAniversario");
+                                    cep = cc.getString("cep");
+                                    endNumCont = cc.getString("Logradouro");
+                                    uf = cc.getString("uf");
+                                    bairro = cc.getString("Bairro");
+                                    cidade = cc.getString("Cidade");
 
                                     String TelCont2 = cc.getString("telefones");
                                     TelCont2 = "{\"telefones\":" + TelCont2 + "\t}";
@@ -501,6 +524,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                     NomeContato = cc.getString("nome");
                                     CargoContato = cc.getString("cargo");
                                     EmailContato = cc.getString("email");
+                                    codExtContato = cc.getString("CodContato");
+                                    documentoContato = cc.getString("Documento");
+                                    dataAniversario = cc.getString("DataAniversario");
+                                    cep = cc.getString("cep");
+                                    endNumCont = cc.getString("Logradouro");
+                                    uf = cc.getString("uf");
+                                    bairro = cc.getString("Bairro");
+                                    cidade = cc.getString("Cidade");
 
                                     String TelCont3 = cc.getString("telefones");
                                     TelCont3 = "{\"telefones\":" + TelCont3 + "\t}";
@@ -520,11 +551,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
 
                                 try {
                                     if (!NomeContato.equals("0") || !CargoContato.equals("0") || !EmailContato.equals("0") || !Tel1Contato.equals("0") ||
-                                            !Tel1Contato.equals("0") || !Tel2Contato.equals("0")) {
-                                        DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT ) VALUES(" +
-                                                "'" + NomeContato.trim() + "','" + CargoContato.trim() +
-                                                "',' " + EmailContato.trim() + "',' " + Tel1Contato + "',' " + Tel2Contato + "'" +
-                                                "," + CodCliente + ", '" + CodClienteExt + "');");
+                                            !Tel2Contato.equals("0")) {
+                                        DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT, CODCONTATO_EXT," +
+                                                "DOCUMENTO, DATA, CEP, ENDERECO, UF, BAIRRO, DESC_CIDADE ) VALUES(" +
+                                                "'" + NomeContato.trim() + "', '" + CargoContato.trim() +
+                                                "', '" + EmailContato.trim() + "', '" + Tel1Contato.trim() + "', '" + Tel2Contato.trim() +
+                                                "', " + CodCliente.trim() + ", '" + CodClienteExt.trim() + "', '" + codExtContato.trim() +
+                                                "', '" + documentoContato.trim() + "', '" + dataAniversario.trim() + "', '" + cep.trim() +
+                                                "', '" + endNumCont.trim() + "', '" + uf.trim() + "', '" + bairro.trim() +
+                                                "', '" + cidade.trim() + "');");
                                     }
 
                                 } catch (Exception E) {
@@ -943,7 +978,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                         }
                                     });
                                 }
-
                             } catch (Exception E) {
                                 E.toString();
                                 hd.post(new Runnable() {
@@ -3596,7 +3630,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
 
                         jumpTime += 1;
 
-                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
 
                         String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
                         int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
@@ -3615,7 +3649,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                         "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
                                         " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
                                         ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
+                                        " WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'");
                             } else {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, REGIDENT, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
@@ -3638,9 +3672,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                         "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
                                         " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
                                         ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'");
+                                        " WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'");
                             }
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + c.getString(TAG_CNPJCPF) + "'", null);
+
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
                             cursor1.moveToFirst();
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
                             CodClieExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));

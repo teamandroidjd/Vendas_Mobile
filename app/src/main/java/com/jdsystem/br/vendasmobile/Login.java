@@ -231,7 +231,10 @@ public class Login extends AppCompatActivity implements Runnable {
         URLPrincipal = prefs.getString("host", null);
     }
 
+
+
     private void declaraobjetos() {
+
         DB = new ConfigDB(this).getReadableDatabase();
         btnEntrar = (Button) findViewById(R.id.btnEntrar);
         edtUsuario = (EditText) findViewById(R.id.edtUsuario);

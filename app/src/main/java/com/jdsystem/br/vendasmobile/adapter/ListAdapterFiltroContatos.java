@@ -153,6 +153,15 @@ public class ListAdapterFiltroContatos extends RecyclerView.Adapter<ListAdapterF
 
 
     }
+    public int ChamaCodigoContato(int position) {
+
+        return mList.get(position).getCODCLIEEXT();
+    }
+
+    public int CodigoContato(int position) {
+        return mList.get(position).getCODCONTATO();
+    }
+
 }
 
 

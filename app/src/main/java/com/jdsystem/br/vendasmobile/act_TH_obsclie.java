@@ -45,7 +45,6 @@ public class act_TH_obsclie extends Fragment {
                 CodCliente = params.getString(getString(R.string.intent_codcliente));
             }
         }
-
         try {
             Cursor CursorClie = DB.rawQuery(" SELECT OBS FROM CLIENTES " +
                     " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente), null);

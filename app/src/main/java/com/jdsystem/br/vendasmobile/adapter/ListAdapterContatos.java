@@ -95,6 +95,15 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
         notifyItemInserted(position);
     }
 
+    public int ChamaCodigoContato(int position) {
+
+        return mList.get(position).getCODCLIEEXT();
+    }
+
+    public int CodigoContato(int position) {
+        return mList.get(position).getCODCONTATO();
+    }
+
 
     public void removeListItem(int position) {
         mList.remove(position);

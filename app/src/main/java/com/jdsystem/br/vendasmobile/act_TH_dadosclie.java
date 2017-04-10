@@ -63,7 +63,8 @@ public class act_TH_dadosclie extends Fragment {
         }
 
         try {
-            Cursor CursorClie = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+            Cursor CursorClie = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, EMAIL, REGIDENT, CNPJ_CPF, " +
+                    " CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                     " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                     " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
@@ -71,8 +72,8 @@ public class act_TH_dadosclie extends Fragment {
                     " ORDER BY NOMEFAN, NOMERAZAO ", null);
 
             if (CursorClie.getCount() > 0) {
-                CursorClie.moveToFirst();
-                do {
+                    CursorClie.moveToFirst();
+                    do {
                     String Documento = CursorClie.getString(CursorClie.getColumnIndex("CNPJ_CPF"));
                     String CEP = CursorClie.getString(CursorClie.getColumnIndex("CEP"));
                     String Tel1 = CursorClie.getString(CursorClie.getColumnIndex("TEL1"));

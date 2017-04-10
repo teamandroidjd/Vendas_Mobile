@@ -47,11 +47,20 @@
             android:label="Dados do Cliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+        android:name=".act_DadosContatos"
+        android:label="Dados do Contato"
+        android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".Sincronismo"
             android:label="Sincronização de Dados" />
         <activity android:name=".act_TH_contclie" />
         <activity android:name=".act_TH_dadosclie" />
         <activity android:name=".act_TH_obsclie" />
+
+        <activity android:name=".act_TH_dadoscontato" />
+        <activity android:name=".act_TH_horarios_contatos" />
+        <activity android:name=".act_TH_obscontato" />
+        <activity android:name=".act_TH_produtos_contatos" />
 
         <meta-data
             android:name="com.google.android.gms.version"

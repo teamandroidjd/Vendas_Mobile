@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,8 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jdsystem.br.vendasmobile.R;
+import com.jdsystem.br.vendasmobile.DadosCliente;
+import com.jdsystem.br.vendasmobile.act_DadosContatos;
+import com.jdsystem.br.vendasmobile.ConsultaContatos;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterClientes;
 import com.jdsystem.br.vendasmobile.ConsultaContatos;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterContatos;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterFiltroContatos;
 import com.jdsystem.br.vendasmobile.domain.Contatos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
@@ -51,7 +57,16 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void onClickListener(View view, int position) {
+        ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
 
+        int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
+        int CodigoContato = adapterContatos.CodigoContato(position);
+        Intent intentp = new Intent(getActivity(), act_DadosContatos.class);
+        Bundle params = new Bundle();
+        params.putInt("codCliente", CodigoCliente);
+        params.putInt("codContato", CodigoContato);
+        intentp.putExtras(params);
+        startActivity(intentp);
     }
 
     @Override

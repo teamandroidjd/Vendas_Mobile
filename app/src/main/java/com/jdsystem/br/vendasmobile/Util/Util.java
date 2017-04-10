@@ -324,13 +324,13 @@ public class Util extends Activity {
     }
 
     public static String DataHojeComHorasUSA() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date data = new Date();
         return sdf.format(data.getTime());
     }
 
     public static String DataHojeComHorasBR() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date data = new Date();
         return sdf.format(data.getTime());
     }

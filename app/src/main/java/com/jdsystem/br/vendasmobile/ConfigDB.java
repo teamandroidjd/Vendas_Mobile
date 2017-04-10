@@ -90,25 +90,30 @@ public class ConfigDB extends SQLiteOpenHelper {
             " p_desconto_do_vendedor INTEGER);");
 
     private static String SQL_CONTATOS = (" CREATE TABLE IF NOT EXISTS CONTATO (" +
-            " CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
-            " CODCLIENTE                   INTEGER,                  " +
-            " CODCLIE_EXT                  INTEGER,                  " +
-            " NOME                         VARCHAR (60)  NOT NULL,   " +
-            " CARGO                        VARCHAR (30),             " +
-            " DOCUMENTO                    VARCHAR(15),              " +
-            " DATA                         VARCHAR(10),              " +
-            " CEP                          VARCHAR(10),              " +
-            " ENDERECO                     VARCHAR(15),              " +
-            " NUMERO                       VARCHAR(10),              " +
-            " COMPLEMENTO                  VARCHAR(15),              " +
-            " UF                           CHAR(2),                  " +
-            " CODVENDEDOR                  INTEGER,                  " +
-            " CODBAIRRO                    INTEGER,                  " +
-            " CODCIDADE                    INTEGER,                  " +
-            " EMAIL                        VARCHAR (100),            " +
-            " CODPERFIL                    INTEGER,                  " +
-            " TEL1                         VARCHAR (15),             " +
-            " TEL2                         VARCHAR (15))             " +
+            "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
+            "    CODCLIENTE                   INTEGER,                  " +
+            "    CODCLIE_EXT                  INTEGER,                  " +
+            "    CODCONTATO_EXT               VARCHAR (7),              " +
+            "    NOME                         VARCHAR (60)  NOT NULL,   " +
+            "    CARGO                        VARCHAR (30),             " +
+            "    DOCUMENTO                    VARCHAR(15),              " +
+            "    DATA                         VARCHAR(10),              " +
+            "    CEP                          VARCHAR(10),              " +
+            "    ENDERECO                     VARCHAR(15),              " +
+            "    NUMERO                       VARCHAR(10),              " +
+            "    COMPLEMENTO                  VARCHAR(15),              " +
+            "    UF                           CHAR(2),                  " +
+            "    CODVENDEDOR                  INTEGER,                  " +
+            "    CODBAIRRO                    INTEGER,                  " +
+            "    BAIRRO                       VARCHAR (30),             " +
+            "    CODCIDADE                    INTEGER,                  " +
+            "    DESC_CIDADE                  VARCHAR (30),             " +
+            "    EMAIL                        VARCHAR (100),            " +
+            "    TEL1                         VARCHAR (15),             " +
+            "    TEL2                         VARCHAR (15),             " +
+            "    TIPO                         CHAR(1),                  " +
+            "    OBS                          TEXT,                     " +
+            "    CODPERFIL                    INTEGER)                  " +
             ";");
 
     private static String SQL_ITENS = ("CREATE TABLE IF NOT EXISTS ITENS (" +
@@ -278,6 +283,7 @@ public class ConfigDB extends SQLiteOpenHelper {
         db.execSQL(SQL_PERFIL);
 
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int VersaoAntiga, int VersaoNova) {
@@ -506,6 +512,39 @@ public class ConfigDB extends SQLiteOpenHelper {
             }catch (Exception e){
                 e.toString();
             }
+
+            try {
+                db.execSQL("ALTER TABLE CONTATO ADD CODCONTATO_EXT VARCHAR(7)");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODCONTATO_EXT VARCHAR(7)");
+            }
+            try {
+                db.execSQL("ALTER TABLE CONTATO ADD OBS TEXT");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD OBS TEXT");
+            }
+            try {
+                db.execSQL("ALTER TABLE CONTATO ADD BAIRRO VARCHAR(30)");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD BAIRRO (30)");
+            }
+            try {
+                db.execSQL("ALTER TABLE CONTATO ADD DESC_CIDADE VARCHAR(30)");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD DESC_CIDADE (30)");
+            }
+
+            try {
+                db.execSQL("ALTER TABLE CONTATO ADD COMPLEMENTO VARCHAR(30)");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD COMPLEMENTO (30)");
+            }
+            try {
+                db.execSQL("ALTER TABLE CONTATO ADD TIPO CHAR(1)");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD TIPO(1)");
+            }
+
 
         }
     }
