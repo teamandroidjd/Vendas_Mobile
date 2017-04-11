@@ -372,6 +372,8 @@ public class ConsultaProdutos extends AppCompatActivity
                         if (!p1.equals("")) {
                             preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
                         }
+                    }else {
+                        tabela1 = "";
                     }
                     if (!tabela2.equals("")) {
                         String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
@@ -379,6 +381,8 @@ public class ConsultaProdutos extends AppCompatActivity
                         if (!p2.equals("")) {
                             preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
                         }
+                    } else {
+                        tabela2 = "";
                     }
                     if (!tabela3.equals("")) {
                         String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
@@ -386,6 +390,8 @@ public class ConsultaProdutos extends AppCompatActivity
                         if (!p3.equals("")) {
                             preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
                         }
+                    }else {
+                        tabela3 = "";
                     }
                     if (!tabela4.equals("")) {
                         String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
@@ -393,6 +399,8 @@ public class ConsultaProdutos extends AppCompatActivity
                         if (!p4.equals("")) {
                             preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
                         }
+                    }else {
+                        tabela4 = "";
                     }
                     if (!tabela5.equals("")) {
                         String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
@@ -400,6 +408,8 @@ public class ConsultaProdutos extends AppCompatActivity
                         if (!p5.equals("")) {
                             preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
                         }
+                    }else {
+                        tabela5 = "";
                     }
                     if (!tabpromo1.equals("")) {
                         String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
@@ -407,6 +417,8 @@ public class ConsultaProdutos extends AppCompatActivity
                         if (!pp1.equals("")) {
                             precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
                         }
+                    }else {
+                        tabpromo1 = "";
                     }
                     if (!tabpromo2.equals("")) {
                         String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
@@ -414,6 +426,8 @@ public class ConsultaProdutos extends AppCompatActivity
                         if (!pp2.equals("")) {
                             precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
                         }
+                    }else {
+                        tabpromo2 = "";
                     }
                     lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao);
                     DadosLisProdutos.add(lstprodutos);
@@ -438,8 +452,6 @@ public class ConsultaProdutos extends AppCompatActivity
             }
         } catch (Exception e) {
             e.toString();
-            if (pDialog.isShowing())
-                pDialog.dismiss();
             Toast.makeText(this, "Falha no SQL. Tente novamente!", Toast.LENGTH_LONG).show();
         }
 

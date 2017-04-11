@@ -140,51 +140,52 @@ public class Produtos extends ItensPedido {
         Quantidade = quantidade;
     }
 
-    public String getTabela1 () {
-        return Tabela1 ;
+    public String getTabela1() {
+        return Tabela1;
     }
 
-    public void setTabela1 (String tabela1 ) {
-        Tabela1  = tabela1;
-    }
-    public String getTabela2 () {
-        return Tabela2 ;
+    public void setTabela1(String tabela1) {
+        Tabela1 = tabela1;
     }
 
-    public void setTabela2 (String tabela2 ) {
-        Tabela2  = tabela2;
+    public String getTabela2() {
+        return Tabela2;
     }
 
-    public String getTabela3 () {
-        return Tabela3 ;
+    public void setTabela2(String tabela2) {
+        Tabela2 = tabela2;
     }
 
-    public void setTabela3 (String tabela3 ) {
-        Tabela3  = tabela3;
+    public String getTabela3() {
+        return Tabela3;
     }
 
-    public String getTabela4 () {
-        return Tabela4 ;
+    public void setTabela3(String tabela3) {
+        Tabela3 = tabela3;
     }
 
-    public void setTabela4 (String tabela4 ) {
-        Tabela4  = tabela4;
+    public String getTabela4() {
+        return Tabela4;
     }
 
-    public String getTabela5 () {
-        return Tabela5 ;
+    public void setTabela4(String tabela4) {
+        Tabela4 = tabela4;
     }
 
-    public void setTabela5 (String tabela5 ) {
-        Tabela5  = tabela5;
+    public String getTabela5() {
+        return Tabela5;
     }
 
-    public String getTabpromo1 () {
-        return Tabpromo1 ;
+    public void setTabela5(String tabela5) {
+        Tabela5 = tabela5;
     }
 
-    public void setTabpromo1 (String tabpromo1 ) {
-        Tabpromo1  = tabpromo1;
+    public String getTabpromo1() {
+        return Tabpromo1;
+    }
+
+    public void setTabpromo1(String tabpromo1) {
+        Tabpromo1 = tabpromo1;
     }
 
     public String getTabpromo2() {
@@ -212,35 +213,13 @@ public class Produtos extends ItensPedido {
     }
 
 
+    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1, BigDecimal Preco2, BigDecimal Preco3, BigDecimal Preco4, BigDecimal Preco5, BigDecimal PrecoP1, BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao/*BigDecimal PrecoPadrao*/) {
 
-
-    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1,  BigDecimal Preco2,BigDecimal Preco3,BigDecimal Preco4,BigDecimal Preco5,BigDecimal PrecoP1,BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao/*BigDecimal PrecoPadrao*/) {
         this.Descricao = Descricao;
         this.CodigoManual = CodigoManual;
         this.Status = Status;
         this.UnidVenda = UnidVenda;
         this.Apresentacao = Apresentacao;
-        if(Preco1 != null){
-            this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(Preco2 != null){
-            this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(Preco3 != null){
-            this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(Preco4 != null){
-            this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(Preco5 != null){
-            this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(PrecoP1 != null){
-            this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(PrecoP1 != null){
-            this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
         this.Quantidade = Quantidade;
         this.Tabela1 = Tabela1;
         this.Tabela2 = Tabela2;
@@ -250,8 +229,42 @@ public class Produtos extends ItensPedido {
         this.Tabpromo1 = Tabpromo1;
         this.Tabpromo2 = Tabpromo2;
         this.TipoEstoque = TipoEstoque;
-        this.TabelaPadrao = TabelaPdrao;//PrecoPadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.TabelaPadrao = TabelaPdrao;
 
+        if (!Tabela1.equals("")) {
+            if (Preco1 != null) {
+                this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela2.equals("")) {
+            if (Preco2 != null) {
+                this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela3.equals("")) {
+            if (Preco3 != null) {
+                this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela4.equals("")) {
+            if (Preco4 != null) {
+                this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela5.equals("")) {
+            if (Preco5 != null) {
+                this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabpromo1.equals("")) {
+            if (PrecoP1 != null) {
+                this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabpromo2.equals("")) {
+            if (PrecoP1 != null) {
+                this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
     }
-
-    }
+}
