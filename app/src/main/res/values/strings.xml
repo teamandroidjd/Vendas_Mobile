@@ -195,6 +195,8 @@
     <string name="intent_situacaopedido">SitPedido</string>
     <string name="intent_codigoempresa">codempresa</string>
     <string name="intent_flag">flag</string>
+    <string name="intent_numpedido">numpedido</string>
+    <string name="intent_chavepedido">chave</string>
 
 
 </resources>

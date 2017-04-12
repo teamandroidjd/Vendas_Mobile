@@ -54,39 +54,20 @@ import java.util.List;
 public class ConsultaClientes extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
+    private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private Handler handler = new Handler();
     public ListAdapterClientes adapter;
-    String sCodVend, URLPrincipal, sincclieenvio, sincclie, editQuery;
-    ListView edtCliente;
-    SearchView sv;
-    String UsuarioLogado;
+    Clientes lstclientes;
+    FiltroClientes lstFiltroClientes;
+    String sCodVend, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, editQuery, UsuarioLogado, telaInvocada, chavepedido, numPedido;
     SQLiteDatabase DB;
     MenuItem searchItem;
     SearchView searchView;
-
-
-    private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
-    public static final String CONSULTA_CLIENTE = "CONSULTA_CLIENTE";
-    public static String PESQUISAR_CLIENTE_NOME = "Razão Social";
-    public static String PESQUISAR_CLIENTE_FANTASIA = "Nome Fantasia";
-    public static String PESQUISAR_CLIENTE_CIDADE = "Cidade";
-    public static String PESQUISAR_CLIENTE_BAIRRO = "Bairro";
-    private Spinner adm_sp_filtrarcliente;
-    private SimpleCursorAdapter AdapterClientes;
-    private List<String> array_spinner = new ArrayList<String>();
-    private ArrayAdapter<String> arrayAdapter;
-    private String selecao_spinner, CodVendedor, usuario, senha, telaInvocada, chavepedido, numPedido, codEmpresa, codClie;
-    //private Cursor cursor;
-    private EditText adm_txt_pesquisacliente;
-    private ListView adm_listview_cliente;
     private ImageView imgStatus;
     FloatingActionButton cadclie;
     public ProgressDialog dialog;
     public Boolean ConsultaPedido;
-    public int CadastroContato;
-    Clientes lstclientes;
-    FiltroClientes lstFiltroClientes;
-    private int flag;
+    public int CadastroContato, flag;
     Toolbar toolbar;
 
     @Override
@@ -119,24 +100,6 @@ public class ConsultaClientes extends AppCompatActivity
         declaraobjetos();
         carregausuariologado();
 
-       /* array_spinner.add(PESQUISAR_CLIENTE_NOME);
-        array_spinner.add(PESQUISAR_CLIENTE_FANTASIA);
-        array_spinner.add(PESQUISAR_CLIENTE_CIDADE);
-        array_spinner.add(PESQUISAR_CLIENTE_BAIRRO);
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, array_spinner);
-        adm_sp_filtrarcliente.setAdapter(arrayAdapter);
-
-        adm_sp_filtrarcliente.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> spinner, View view, int posicao, long id) {
-                selecao_spinner = spinner.getItemAtPosition(posicao).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });*/
         dialog = new ProgressDialog(ConsultaClientes.this);
         dialog.setTitle(getString(R.string.wait));
         dialog.setMessage(getString(R.string.loading_products));
@@ -146,7 +109,6 @@ public class ConsultaClientes extends AppCompatActivity
         Thread thread = new Thread(ConsultaClientes.this);
         thread.start();
 
-        //mostrar_clientes_listview();
     }
 
     public void cadcliente(View view) {
@@ -183,7 +145,6 @@ public class ConsultaClientes extends AppCompatActivity
         DB = new ConfigDB(this).getReadableDatabase();
         cadclie = (FloatingActionButton) findViewById(R.id.cadclie);
         imgStatus = (ImageView) findViewById(R.id.imgStatus);
-        adm_sp_filtrarcliente = (Spinner) findViewById(R.id.adm_sp_filtrarcliente);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -271,141 +232,6 @@ public class ConsultaClientes extends AppCompatActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-
-    private void mostrar_clientes_listview() {
-
-        /*SqliteClienteBean cliBean = new SqliteClienteBean();
-        SqliteClienteDao cliDao = new SqliteClienteDao(this);
-
-        final Cursor cursor = cliDao.buscar_todos_cliente(sCodVend);
-
-        String[] colunas = new String[]{cliBean.C_CODIGO_CLIENTE_CURSOR, cliBean.C_NOME_DO_CLIENTE, cliBean.C_NOME_FANTASIA, cliBean.C_CIDADE_CLIENTE,
-                cliBean.C_BAIRRO_CLIENTE, cliBean.C_UF_CLIENTE, cliBean.C_TELEFONE_CLIENTE, cliBean.C_CNPJCPF, cliBean.C_ENVIADO};
-        final int[] para;
-
-        if (cliBean.C_ENVIADO == "1") {
-            para = new int[]{R.id.lblCodClie, R.id.lblNomerazao, R.id.lblNomeFanClie, R.id.lblCidade, R.id.lblBairro, R.id.lblEstado,
-                    R.id.lblTel, R.id.lblCNPJ, R.id.bola_vermelha};
-
-        } else {
-            para = new int[]{R.id.lblCodClie, R.id.lblNomerazao, R.id.lblNomeFanClie, R.id.lblCidade, R.id.lblBairro, R.id.lblEstado,
-                    R.id.lblTel, R.id.lblCNPJ, 0};
-        }
-
-        //AdapterClientes = new SimpleCursorAdapter(this, R.layout.lstclientes_card, cursor, colunas, para, 0);
-        AdapterClientes = new SimpleCursorAdapter(this, R.layout.lstclientes_card, cursor, colunas, para, 0);
-        adm_listview_cliente = (ListView) findViewById(R.id.adm_listview_cliente);
-        adm_listview_cliente.setAdapter(AdapterClientes);
-
-        if (cursor.getCount() <= 0) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
-            builder.setTitle(R.string.app_namesair);
-            builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage(R.string.alertsyncclients)
-                    .setCancelable(false)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            return;
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
-
-        adm_listview_cliente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> listview, View view, int posicao, long id) {
-
-                if (CadastroContato == 1) {
-                    //String TipoContato = "C";
-                    Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
-                    int CodCliente = cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT"));
-                    Intent intent = new Intent(getBaseContext(), CadastroContatos.class);
-                    Bundle params = new Bundle();
-                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                    params.putString(getString(R.string.intent_usuario), usuario);
-                    params.putString(getString(R.string.intent_senha), senha);
-                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                    params.putInt(getString(R.string.intent_codcliente), CodCliente);
-                    params.putString(getString(R.string.intent_nomerazao), cliente_cursor.getString(cursor.getColumnIndex("NOMERAZAO")));
-                    //params.putString("C",TipoContato);
-                    intent.putExtras(params);
-                    startActivity(intent);
-
-                } else if (ConsultaPedido.equals(false)) {
-                    Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
-                    Intent intent = new Intent(getBaseContext(), DadosCliente.class);
-                    Bundle params = new Bundle();
-                    params.putInt(getString(R.string.intent_codcliente), cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
-                    params.putString(getString(R.string.intent_nomerazao), cliente_cursor.getString(cursor.getColumnIndex("NOMERAZAO")));
-                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                    params.putString(getString(R.string.intent_usuario), usuario);
-                    params.putString(getString(R.string.intent_senha), senha);
-                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                    intent.putExtras(params);
-                    startActivity(intent);
-                    //finish();
-
-                } else {
-                    Cursor cliente_cursor = (Cursor) listview.getItemAtPosition(posicao);
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra(getString(R.string.intent_codcliente), cliente_cursor.getString(cursor.getColumnIndex("CODCLIE_INT")));
-                    setResult(2, returnIntent);
-                    finish();
-                }
-            }
-        });
-
-        adm_txt_pesquisacliente = (EditText) findViewById(R.id.adm_txt_pesquisacliente);
-        adm_txt_pesquisacliente.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence texto_digitado, int start, int before, int count) {
-                AdapterClientes.getFilter().filter(texto_digitado);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
-
-        AdapterClientes.setFilterQueryProvider(new FilterQueryProvider() {
-
-            private Cursor cursor;
-
-            @Override
-            public Cursor runQuery(CharSequence valor) {
-                SqliteClienteDao cli = new SqliteClienteDao(getApplicationContext());
-
-                if (selecao_spinner == PESQUISAR_CLIENTE_NOME) {
-                    this.cursor = cli.buscar_cliente_na_pesquisa_edittext(valor.toString(), cli.NOME_DO_CLIENTE, sCodVend);
-                }
-
-                if (selecao_spinner == PESQUISAR_CLIENTE_FANTASIA) {
-                    this.cursor = cli.buscar_cliente_na_pesquisa_edittext(valor.toString(), cli.NOME_FANTASIA, sCodVend);
-                }
-
-                if (selecao_spinner == PESQUISAR_CLIENTE_CIDADE) {
-                    this.cursor = cli.buscar_cliente_na_pesquisa_edittext(valor.toString(), cli.NOME_CIDADE, sCodVend);
-                }
-
-                if (selecao_spinner == PESQUISAR_CLIENTE_BAIRRO) {
-                    this.cursor = cli.buscar_cliente_na_pesquisa_edittext(valor.toString(), cli.NOME_BAIRRO, sCodVend);
-                }
-
-                if (cursor.getCount() <= 0) {
-                    Toast.makeText(ConsultaClientes.this, "Nenhum cliente encontrado!", Toast.LENGTH_SHORT).show();
-                }
-
-                return cursor;
-            }
-        });*/
     }
 
     public List<Clientes> CarregarClientes() {
@@ -704,7 +530,6 @@ public class ConsultaClientes extends AppCompatActivity
         return true;
     }
 
-
     @Override
     public void run() {
         if (flag == 0 && CadastroContato == 0) {
@@ -796,7 +621,6 @@ public class ConsultaClientes extends AppCompatActivity
                 params.putString("chave", chavepedido);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
-                params.putCharSequence("pesquisa", editQuery);
                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                 params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
                 params.putString("TELA_QUE_CHAMOU", telaInvocada);

@@ -279,6 +279,8 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         Bundle params = new Bundle();
                                         params.putString("numpedido", NumPedido);
                                         params.putString(getString(R.string.intent_codvendedor), Codvendedor);
+                                        params.putString(getString(R.string.intent_usuario),usuario);
+                                        params.putString(getString(R.string.intent_senha),senha);
                                         VendaProd.putExtras(params);
                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                         ((ConsultaPedidos) getActivity()).finish();

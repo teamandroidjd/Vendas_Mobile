@@ -31,6 +31,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.TabStop;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -3895,55 +3896,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
 
     //Começa daqui para baixo as funções que gerar arquivo de pedido em formato .PDF
 
-    private static void generateLayout(Document doc, PdfContentByte cb) {
-        try {
 
-            cb.setLineWidth(1f);
-
-            // Invoice Detail box layout
-            //cb.rectangle(20, 50, 550, 600);
-            cb.rectangle(20, 200, 570, 500);
-
-            cb.moveTo(20, 680);
-            cb.lineTo(590, 680); //Linha de Baixo ____ (Laterais / Altura)
-
-            //Linhas |
-            cb.moveTo(50, 200);
-            cb.lineTo(50, 700);
-            cb.moveTo(150, 200);
-            cb.lineTo(150, 700);
-            cb.moveTo(400, 200);
-            cb.lineTo(400, 700);
-            cb.moveTo(450, 200);
-            cb.lineTo(450, 700);
-            cb.moveTo(500, 200);
-            cb.lineTo(500, 700);
-            cb.moveTo(550, 200);
-            cb.lineTo(550, 700);
-            cb.stroke();
-
-            // Invoice Detail box Text Headings
-            createHeadings(cb, 22, 683, "Item");
-            createHeadings(cb, 52, 683, "Código");
-            createHeadings(cb, 152, 683, "Descrição");
-            createHeadings(cb, 402, 683, "Qtd");
-            createHeadings(cb, 452, 683, "Und.");
-            createHeadings(cb, 502, 683, "Vl. Unit.");
-            createHeadings(cb, 552, 683, "Vl. Total.");
-
-            //add the images
-            Image companyLogo = Image.getInstance(".gif");
-            companyLogo.setAbsolutePosition(25, 700);
-            companyLogo.scalePercent(25);
-            doc.add(companyLogo);
-
-        } catch (DocumentException dex) {
-            dex.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
 
     public static String GerarPdf(String NumPedido, Context ctxRetPed) {
         DB = new ConfigDB(ctxRetPed).getReadableDatabase();
@@ -3984,8 +3937,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             String ValorTotal = venda.setScale(2, java.math.BigDecimal.ROUND_HALF_UP).toString();
             ValorTotal = ValorTotal.replace('.', ',');
 
-            Document PedidoPdf = new Document();
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf";
+            Document PedidoPdf = new Document(); // cria o PDF
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/forcavendas/pdf"; // diretório no dispositivo que irá gravar o arquivo
             File dir = new File(path);
             if (!dir.exists())
                 dir.mkdirs();
@@ -4060,8 +4013,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             DecimalFormat dftotal = new DecimalFormat("0.00");
             do {
                 createContent(cb, 30, y, Util.AcrescentaZeros(String.valueOf(item), 3), PdfContentByte.ALIGN_CENTER);
-                createContent(cb, 60, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")), PdfContentByte.ALIGN_CENTER);
-                createContent(cb, 152, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")), PdfContentByte.ALIGN_LEFT);
+                createContent(cb, 52, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")), PdfContentByte.ALIGN_CENTER);
+                createContent(cb, 102, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")), PdfContentByte.ALIGN_LEFT);
                 createContent(cb, 430, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")), PdfContentByte.ALIGN_RIGHT);
                 createContent(cb, 460, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("UNIDADE")), PdfContentByte.ALIGN_LEFT);
                 createContent(cb, 540, y, dfunit.format(CursorItensEnv.getDouble(CursorItensEnv.getColumnIndex("VLUNIT"))).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
@@ -4074,13 +4027,13 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             CursorItensEnv.close();
 
             createTotal(cb, 430, 180, "Sub-Total:    R$ ", PdfContentByte.ALIGN_RIGHT);
-            createTotal(cb, 550, 180, SubTotal, PdfContentByte.ALIGN_RIGHT);
+            createTotal(cb, 580, 180, SubTotal, PdfContentByte.ALIGN_RIGHT);
 
             createTotal(cb, 430, 150, "Vl. Desconto: R$ ", PdfContentByte.ALIGN_RIGHT);
-            createTotal(cb, 550, 150, VlDesc, PdfContentByte.ALIGN_RIGHT);
+            createTotal(cb, 580, 150, VlDesc, PdfContentByte.ALIGN_RIGHT);
 
             createTotal(cb, 430, 120, "Valor Total:  R$ ", PdfContentByte.ALIGN_RIGHT);
-            createTotal(cb, 550, 120, ValorTotal, PdfContentByte.ALIGN_RIGHT);
+            createTotal(cb, 580, 120, ValorTotal, PdfContentByte.ALIGN_RIGHT);
 
             // printPageNumber(cb);
 
@@ -4096,6 +4049,68 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
         return NumPedido + ".pdf";
     }
 
+    private static void initializeFonts() {
+        try {
+            bfBold = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+            bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void generateLayout(Document doc, PdfContentByte cb) {
+        try {
+
+            cb.setLineWidth(1f);
+
+            // Invoice Detail box layout
+            //cb.rectangle(20, 50, 550, 600);
+            cb.rectangle(20, 200, 570, 500);
+
+            cb.moveTo(20, 680);
+            cb.lineTo(590, 680); //Linha de Baixo ____ (Laterais / Altura)
+
+            //Linhas |
+            cb.moveTo(41, 200);
+            cb.lineTo(41, 700);
+            cb.moveTo(100, 200);
+            cb.lineTo(100, 700);
+            cb.moveTo(400, 200);
+            cb.lineTo(400, 700);
+            cb.moveTo(450, 200);
+            cb.lineTo(450, 700);
+            cb.moveTo(500, 200);
+            cb.lineTo(500, 700);
+            cb.moveTo(550, 200);
+            cb.lineTo(550, 700);
+            cb.stroke();
+
+            // Invoice Detail box Text Headings
+            createHeadings(cb, 21, 683, "Item");
+            createHeadings(cb, 43, 683, "Código");
+            createHeadings(cb, 102, 683, "Descrição");
+            createHeadings(cb, 402, 683, "Qtd");
+            createHeadings(cb, 452, 683, "Und.");
+            createHeadings(cb, 502, 683, "Vl. Unit.");
+            createHeadings(cb, 552, 683, "Vl. Total.");
+
+            //add the images
+            Image companyLogo = Image.getInstance(".gif");
+            companyLogo.setAbsolutePosition(25, 700);
+            companyLogo.scalePercent(25);
+            doc.add(companyLogo);
+
+        } catch (DocumentException dex) {
+            dex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
     private static void createHeadings(PdfContentByte cb, float x, float y, String text) {
         cb.beginText();
         cb.setFontAndSize(bfBold, 8);
@@ -4104,22 +4119,20 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
         cb.endText();
     }
 
+    private static void createContent(PdfContentByte cb, float x, float y, String text, int align) {
+
+        cb.beginText();
+        cb.setFontAndSize(bf, 8);
+        cb.showTextAligned(align, text.trim(), x, y, 0);
+        cb.endText();
+
+    }
+
     private static void createTotal(PdfContentByte cb, float x, float y, String text, int align) {
         cb.beginText();
         cb.setFontAndSize(bfBold, 14);
         cb.showTextAligned(align, text.trim(), x, y, 0);
         cb.endText();
-    }
-
-    private static void printPageNumber(PdfContentByte cb) {
-
-        cb.beginText();
-        cb.setFontAndSize(bfBold, 8);
-        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, "Pg. " + (pageNumber + 1), 570, 25, 0);
-        cb.endText();
-
-        pageNumber++;
-
     }
 
     private static void InserirRodape(PdfContentByte cb, String Texto) {
@@ -4138,26 +4151,24 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
         cb.endText();
     }
 
-    private static void createContent(PdfContentByte cb, float x, float y, String text, int align) {
+
+
+
+
+    private static void printPageNumber(PdfContentByte cb) {
 
         cb.beginText();
-        cb.setFontAndSize(bf, 8);
-        cb.showTextAligned(align, text.trim(), x, y, 0);
+        cb.setFontAndSize(bfBold, 8);
+        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT, "Pg. " + (pageNumber + 1), 570, 25, 0);
         cb.endText();
 
+        pageNumber++;
+
     }
 
-    private static void initializeFonts() {
-        try {
-            bfBold = BaseFont.createFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-            bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
 
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
+
 
 
     //Termine aqui para cima as funções que são utilizadas para a geração de arquivo do pedido em .PDF

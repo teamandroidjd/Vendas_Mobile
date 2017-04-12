@@ -18,75 +18,76 @@ public class ConfigDB extends SQLiteOpenHelper {
 
 
     private static String SQL_CLIENTE = (" CREATE TABLE IF NOT EXISTS CLIENTES ( CNPJ_CPF VARCHAR (14)  NOT NULL, " +
-            " NOMERAZAO VARCHAR (60) NOT NULL,               " +
-            " NOMEFAN VARCHAR (50) NOT NULL,                 " +
-            " INSCREST VARCHAR (18),                         " +
-            " EMAIL VARCHAR (100) NOT NULL,                  " +
-            " TEL1 VARCHAR (15) NOT NULL,                    " +
-            " TEL2 VARCHAR (15),                             " +
-            " TELFAX VARCHAR (15),                           " +
-            " ENDERECO VARCHAR (50) NOT NULL,                " +
-            " NUMERO VARCHAR (10) NOT NULL,                  " +
-            " COMPLEMENT VARCHAR (15),                       " +
-            " CODBAIRRO INTEGER NOT NULL,                    " +
-            " OBS TEXT,                                      " +
-            " CODCIDADE INTEGER NOT NULL,                    " +
-            " UF CHAR (2) NOT NULL,                          " +
-            " CEP CHAR (8),                                  " +
-            " CODCLIE_INT INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            " CODCLIE_EXT INTEGER,                           " +
-            " CODVENDEDOR INTEGER,                           " +
-            " TIPOPESSOA VARCHAR(1),                         " +
-            " ATIVO VARCHAR(1),                              " +
-            " FLAGINTEGRADO VARCHAR(1),                      " +
-            " REGIDENT VARCHAR(18),                          " +
-            " LIMITECRED DOUBLE,                             " +
-            " BLOQUEIO VARCHAR(2),                           " +
-            " CODPERFIL INTEGER,                             " +
-            " CHAVE VARCHAR(100)                             " +
+            " NOMERAZAO     VARCHAR (60) NOT NULL,            " +
+            " NOMEFAN       VARCHAR (50) NOT NULL,            " +
+            " INSCREST      VARCHAR (18),                     " +
+            " EMAIL         VARCHAR (100) NOT NULL,           " +
+            " TEL1          VARCHAR (15) NOT NULL,            " +
+            " TEL2          VARCHAR (15),                     " +
+            " TELFAX        VARCHAR (15),                     " +
+            " ENDERECO      VARCHAR (50) NOT NULL,            " +
+            " NUMERO        VARCHAR (10) NOT NULL,            " +
+            " COMPLEMENT    VARCHAR (15),                     " +
+            " CODBAIRRO     INTEGER NOT NULL,                 " +
+            " OBS           TEXT,                             " +
+            " CODCIDADE     INTEGER NOT NULL,                 " +
+            " UF            CHAR (2) NOT NULL,                " +
+            " CEP           CHAR (8),                         " +
+            " CODCLIE_INT   INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " CODCLIE_EXT   INTEGER,                           " +
+            " CODVENDEDOR   INTEGER,                           " +
+            " TIPOPESSOA    VARCHAR(1),                        " +
+            " ATIVO         VARCHAR(1),                        " +
+            " FLAGINTEGRADO VARCHAR(1),                        " +
+            " REGIDENT      VARCHAR(18),                       " +
+            " LIMITECRED    DOUBLE,                            " +
+            " BLOQUEIO      VARCHAR(2),                        " +
+            " CODPERFIL     INTEGER,                           " +
+            " CHAVE         VARCHAR(100)                       " +
             ");");
 
     private static String SQL_BAIRROS = ("CREATE TABLE IF NOT EXISTS BAIRROS (" +
-            " CODBAIRRO INTEGER PRIMARY KEY AUTOINCREMENT," +
-            " CODBAIRRO_EXT INTEGER,                      " +
-            " CODCIDADE INTEGER      NOT NULL,            " +
-            " DESCRICAO VARCHAR (30) NOT NULL             " +
+            " CODBAIRRO     INTEGER PRIMARY KEY AUTOINCREMENT," +
+            " CODBAIRRO_EXT INTEGER,                          " +
+            " CODCIDADE     INTEGER      NOT NULL,            " +
+            " DESCRICAO     VARCHAR (30) NOT NULL             " +
             ");");
 
     private static String SQL_CIDADES = ("CREATE TABLE IF NOT EXISTS CIDADES (" +
-            " CODCIDADE INTEGER PRIMARY KEY AUTOINCREMENT," +
-            " CODCIDADE_EXT INTEGER,                      " +
-            " DESCRICAO VARCHAR (50) NOT NULL,            " +
-            " UF        CHAR (2)     NOT NULL             " +
+            " CODCIDADE     INTEGER PRIMARY KEY AUTOINCREMENT," +
+            " CODCIDADE_EXT INTEGER,                          " +
+            " DESCRICAO     VARCHAR (50) NOT NULL,            " +
+            " UF            CHAR (2)     NOT NULL             " +
             ");");
 
     private static String SQL_ESTADOS = ("CREATE TABLE IF NOT EXISTS ESTADOS (" +
-            " UF CHAR(2) PRIMARY KEY,         " +
+            " UF        CHAR(2) PRIMARY KEY,  " +
             " DESCRICAO VARCHAR (20) NOT NULL " +
             ");");
 
     private static String SQL_PARAMAPP = ("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME," +
-            " DT_ULT_CLIE DATETIME,                           " +
-            " DT_ULT_ITENS DATETIME,                          " +
-            " p_usu_codigo INTEGER,                           " +
-            " p_importar_todos_clientes CHAR DEFAULT 1,       " +
-            " p_qual_endereco_ip CHAR DEFAULT 1,              " +
-            " p_usuario VARCHAR DEFAULT 20,                   " +
-            " p_senha VARCHAR DEFAULT 20,                     " +
-            " p_end_ip_local VARCHAR DEFAULT 50,              " +
-            " p_end_ip_remoto VARCHAR DEFAULT 50,             " +
-            " PERCACRESC DECIMAL (7, 4),                      " +
-            " DESCRICAOTAB1 VARCHAR (20),                     " +
-            " DESCRICAOTAB2 VARCHAR (20),                     " +
-            " DESCRICAOTAB3 VARCHAR (20),                     " +
-            " DESCRICAOTAB4 VARCHAR (20),                     " +
-            " DESCRICAOTAB5 VARCHAR (20),                     " +
-            " DESCRICAOTAB6 VARCHAR (20),                     " +
-            " DESCRICAOTAB7 VARCHAR (20),                     " +
-            " HABITEMNEGATIVO CHAR (1),                       " +
-            " HABCRITSITCLIE CHAR (1),                        " +
-            " TIPOCRITICQTDITEM CHAR(1),                      " +
-            " p_trabalhar_com_estoque_negativo CHAR DEFAULT 1," +
+            " DT_ULT_CLIE                      DATETIME,           " +
+            " DT_ULT_ITENS                     DATETIME,           " +
+            " p_usu_codigo                     INTEGER,            " +
+            " p_importar_todos_clientes        CHAR DEFAULT 1,     " +
+            " p_qual_endereco_ip               CHAR DEFAULT 1,     " +
+            " p_usuario                        VARCHAR DEFAULT 20, " +
+            " p_senha                          VARCHAR DEFAULT 20, " +
+            " p_end_ip_local                   VARCHAR DEFAULT 50, " +
+            " p_end_ip_remoto                  VARCHAR DEFAULT 50, " +
+            " PERCACRESC                       DECIMAL (7, 4),     " +
+            " DESCRICAOTAB1                    VARCHAR (20),       " +
+            " DESCRICAOTAB2                    VARCHAR (20),       " +
+            " DESCRICAOTAB3                    VARCHAR (20),       " +
+            " DESCRICAOTAB4                    VARCHAR (20),       " +
+            " DESCRICAOTAB5                    VARCHAR (20),       " +
+            " DESCRICAOTAB6                    VARCHAR (20),       " +
+            " DESCRICAOTAB7                    VARCHAR (20),       " +
+            " HABITEMNEGATIVO                  CHAR (1),           " +
+            " HABCRITSITCLIE                   CHAR (1),           " +
+            " TIPOCRITICQTDITEM                CHAR(1),            " +
+            " CODPERFIL                        INTEGER,            " +
+            " p_trabalhar_com_estoque_negativo CHAR DEFAULT 1,     " +
             " p_desconto_do_vendedor INTEGER);");
 
     private static String SQL_CONTATOS = (" CREATE TABLE IF NOT EXISTS CONTATO (" +
@@ -232,6 +233,7 @@ public class ConfigDB extends SQLiteOpenHelper {
 
     private static String SQL_EMPRESA = ("CREATE TABLE IF NOT EXISTS EMPRESAS (" +
             " CODEMPRESA  INTEGER      NOT NULL,                    " +
+            " CODPERFIL   INTEGER,                                  " +
             " CNPJ        VARCHAR (14) PRIMARY KEY UNIQUE NOT NULL, " +
             " NOMEEMPRE   VARCHAR (60) NOT NULL,                    " +
             " NOMEABREV   VARCHAR (20) NOT NULL,                    " +
@@ -243,10 +245,10 @@ public class ConfigDB extends SQLiteOpenHelper {
             ");");
 
     private static String SQL_USUARIOS = (" CREATE TABLE IF NOT EXISTS USUARIOS (" +
-            " CODVEND INTEGER,      " +
-            " USUARIO VARCHAR (30), " +
-            " SENHA VARCHAR  (100), " +
-            " CODPERFIL INTEGER,    " +
+            " CODVEND    INTEGER,        " +
+            " USUARIO    VARCHAR (30),   " +
+            " SENHA      VARCHAR  (100), " +
+            " CODPERFIL  INTEGER,        " +
             " CODEMPRESA INTEGER ); ");
 
     private static String SQL_BLOQUEIOS = (" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
@@ -543,6 +545,11 @@ public class ConfigDB extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE CONTATO ADD TIPO CHAR(1)");
             } catch (Exception E) {
                 System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD TIPO(1)");
+            }
+            try{
+                db.execSQL("ALTER TABLE EMPRESA ADD CODPERFIL INTEGER");
+            }catch (Exception E){
+                System.out.println("ConfigDB, ALTER TABLE EMPRESA ADD CODPERFIL INTEGER");
             }
 
 

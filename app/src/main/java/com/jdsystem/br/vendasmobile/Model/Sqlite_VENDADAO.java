@@ -198,7 +198,7 @@ public class Sqlite_VENDADAO {
                                 "', UNIDADE = '" + vendaD_item.getVendad_prd_unidade().toString() +
                                 "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
                                 ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
-                                ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
+                                ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() +
                                 " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
                     } else {
                         db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
@@ -206,7 +206,7 @@ public class Sqlite_VENDADAO {
                                 "', '" + vendaD_item.getVendad_prd_codigo() + "','" + vendaD_item.getVendad_prd_descricao()
                                 + "','" + vendaD_item.getVendad_prd_unidade() + "'," + vendaD_item.getVendad_quantidade().toString() +
                                 "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() + "," +
-                                vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
+                                vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + ");");
                     }
                     CursorItem.close();
                 }
@@ -388,7 +388,7 @@ public class Sqlite_VENDADAO {
                 vendac.setVendac_usu_codigo(cursor.getInt(cursor.getColumnIndex(vendac.CODIGO_DO_USUARIO_VENDEDOR)));
                 //vendac.setVendac_usu_nome(cursor.getString(cursor.getColumnIndex(vendac.NOME_DO_USUARIO_VENDEDOR)));
                 vendac.setVendac_formapgto(cursor.getString(cursor.getColumnIndex(vendac.FORMA_DE_PAGAMENTO)));
-                vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(4, BigDecimal.ROUND_UP));
+                vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(2, BigDecimal.ROUND_HALF_UP));
                 vendac.setVendac_desconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.DESCONTO))));
                 vendac.setVendac_percdesconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PERCDESCONTO))));
                 //vendac.setVendac_pesototal(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PESO_TOTAL_DOS_PRODUTOS))));
@@ -422,7 +422,7 @@ public class Sqlite_VENDADAO {
                 vendac.setVendac_usu_codigo(cursor.getInt(cursor.getColumnIndex(vendac.CODIGO_DO_USUARIO_VENDEDOR)));
                 //vendac.setVendac_usu_nome(cursor.getString(cursor.getColumnIndex(vendac.NOME_DO_USUARIO_VENDEDOR)));
                 vendac.setVendac_formapgto(cursor.getString(cursor.getColumnIndex(vendac.FORMA_DE_PAGAMENTO)));
-                vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(2, BigDecimal.ROUND_UP));
+                vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(2, BigDecimal.ROUND_HALF_UP));
                 vendac.setVendac_desconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.DESCONTO))));
                 vendac.setVendac_percdesconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PERCDESCONTO))));
                 //vendac.setVendac_pesototal(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PESO_TOTAL_DOS_PRODUTOS))));
@@ -461,7 +461,7 @@ public class Sqlite_VENDADAO {
                     vendac.setCodVendedor(cursor.getString(cursor.getColumnIndex(vendac.CODIGO_DO_USUARIO_VENDEDOR)));
                     //vendac.setVendac_usu_nome(cursor.getString(cursor.getColumnIndex(vendac.NOME_DO_USUARIO_VENDEDOR)));
                     vendac.setVendac_formapgto(cursor.getString(cursor.getColumnIndex(vendac.FORMA_DE_PAGAMENTO)));
-                    vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(2, BigDecimal.ROUND_UP));
+                    vendac.setVendac_valor(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.VALOR_DA_VENDA))).setScale(2, BigDecimal.ROUND_HALF_UP));
                     vendac.setVendac_desconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.DESCONTO))));
                     vendac.setVendac_percdesconto(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PERCDESCONTO))));
                     //vendac.setVendac_pesototal(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendac.PESO_TOTAL_DOS_PRODUTOS))));

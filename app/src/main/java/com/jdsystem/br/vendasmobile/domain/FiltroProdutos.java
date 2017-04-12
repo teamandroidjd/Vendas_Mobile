@@ -41,27 +41,6 @@ public class FiltroProdutos {
         this.Status = Status;
         this.UnidVenda = UnidVenda;
         this.Apresentacao = Apresentacao;
-        if(Preco1 != null){
-            this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(Preco2 != null){
-            this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(Preco3 != null){
-            this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(Preco4 != null){
-            this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(Preco5 != null){
-            this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(PrecoP1 != null){
-            this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
-        if(PrecoP1 != null){
-            this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-        }
         this.Quantidade = Quantidade;
         this.Tabela1 = Tabela1;
         this.Tabela2 = Tabela2;
@@ -71,8 +50,43 @@ public class FiltroProdutos {
         this.Tabpromo1 = Tabpromo1;
         this.Tabpromo2 = Tabpromo2;
         this.TipoEstoque = TipoEstoque;
-        this.TabelaPadrao = TabelaPdrao; //PrecoPadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+        this.TabelaPadrao = TabelaPdrao;
 
+        if (!Tabela1.equals("")) {
+            if (Preco1 != null) {
+                this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela2.equals("")) {
+            if (Preco2 != null) {
+                this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela3.equals("")) {
+            if (Preco3 != null) {
+                this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela4.equals("")) {
+            if (Preco4 != null) {
+                this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela5.equals("")) {
+            if (Preco5 != null) {
+                this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabpromo1.equals("")) {
+            if (PrecoP1 != null) {
+                this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabpromo2.equals("")) {
+            if (PrecoP1 != null) {
+                this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
 
     }
 
