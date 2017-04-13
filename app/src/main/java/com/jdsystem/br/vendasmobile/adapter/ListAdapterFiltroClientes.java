@@ -63,20 +63,22 @@ public class ListAdapterFiltroClientes extends RecyclerView.Adapter<ListAdapterF
         }
 
         if (mList.get(position).getDocumento().replaceAll("[^0123456789]", "").trim().length() == 14) {
-            myViewHolder.documento.setText(Mask.addMask(mList.get(position).getDocumento(), "##.###.###/####-##"));
+            myViewHolder.documento.setText("CNPJ: " +  Mask.addMask(mList.get(position).getDocumento(), "##.###.###/####-##"));
             myViewHolder.razaoSocial.setText(mList.get(position).getNomeRazao());
             myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
+            myViewHolder.razaoSocial.setVisibility(View.VISIBLE);
         } else {
             myViewHolder.documento.setText("CPF: " + Mask.addMask(mList.get(position).getDocumento(), "###.###.###-##"));
-            myViewHolder.razaoSocial.setText("Nome Completo: " + mList.get(position).getNomeRazao());
+            myViewHolder.nomeFantasia.setText(mList.get(position).getNomeRazao());
+            myViewHolder.razaoSocial.setVisibility(View.GONE);
         }
         String telefone = mList.get(position).getTelefone1().replaceAll("[^0123456789]", "").trim();
         if (telefone.length() == 11) {
-            myViewHolder.telefone1.setText(Mask.addMask(telefone, "(##)#####-####"));
+            myViewHolder.telefone1.setText("Celular: " + Mask.addMask(telefone, "(##)#####-####"));
         } else if (telefone.length() == 10) {
-            myViewHolder.telefone1.setText(Mask.addMask(telefone, "(##)####-####"));
-        } else {
-            myViewHolder.telefone1.setText(mList.get(position).getTelefone1());
+            myViewHolder.telefone1.setText("Telefone: " + Mask.addMask(telefone, "(##)####-####"));
+        }else{
+            myViewHolder.telefone1.setText("Telefone: " + mList.get(position).getTelefone1());
         }
 
     }
@@ -98,6 +100,29 @@ public class ListAdapterFiltroClientes extends RecyclerView.Adapter<ListAdapterF
     public void removeListItem(int position) {
         mList.remove(position);
         notifyItemRemoved(position);
+    }
+
+    public String ChamaCodigoClienteInterno(int position) {
+
+        return mList.get(position).getCodClienteInt();
+    }
+
+    public String ChamaCodigoClienteExterno(int position) {
+
+        return mList.get(position).getCodClienteExt();
+    }
+
+    public String ChamaBloqueioCliente(int position) {
+
+        return mList.get(position).getbloqueio();
+    }
+    public String ChamaFlagIntegradoCliente(int position) {
+
+        return mList.get(position).getflagintegrado();
+    }
+    public String ChamaNomeRazaoCliente(int position) {
+
+        return mList.get(position).getNomeRazao();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

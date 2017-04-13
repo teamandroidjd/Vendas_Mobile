@@ -88,6 +88,7 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 i.putExtras(params);
                 startActivity(i);
+                finish();
 
             }
         });

@@ -69,6 +69,7 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
         params.putInt("codContato", CodigoContato);
         intentp.putExtras(params);
         startActivity(intentp);
+        getActivity().finish();
     }
 
     @Override

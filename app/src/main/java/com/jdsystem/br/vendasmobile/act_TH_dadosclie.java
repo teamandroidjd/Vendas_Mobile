@@ -98,7 +98,12 @@ public class act_TH_dadosclie extends Fragment {
                     TAG_ESTADO.setText("Estado: " + CursorClie.getString(CursorClie.getColumnIndex("UF")));
                     TAG_BAIRRO.setText("Bairro: " + CursorClie.getString(CursorClie.getColumnIndex("BAIRRO")));
                     TAG_ENDERECO.setText("Endereço: " + CursorClie.getString(CursorClie.getColumnIndex("ENDERECO")) + ", " + CursorClie.getString(CursorClie.getColumnIndex("NUMERO")));
-                    TAG_COMPLEMENTO.setText("Complemento: " + CursorClie.getString(CursorClie.getColumnIndex("COMPLEMENT")));
+                    String comp = CursorClie.getString(CursorClie.getColumnIndex("COMPLEMENT"));
+                      if (comp == null || comp.equals(""))  {
+                          TAG_COMPLEMENTO.setVisibility(EditText.GONE);
+                      } else {
+                          TAG_COMPLEMENTO.setText("Complemento: " + comp);
+                      }
 
                     TAG_CEP.setText("CEP: " + Mask.addMask(CEP, "##.###-###"));
                     Tel1.replaceAll("[^0123456789]", "");

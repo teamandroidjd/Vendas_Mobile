@@ -71,6 +71,7 @@ public class act_TH_contclie extends Fragment{
                 Bundle params = new Bundle();
                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                 params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString("urlPrincipal", URLPrincipal);
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putInt(getString(R.string.intent_codcliente),Integer.parseInt(CodCliente));
                 params.putString(getString(R.string.intent_nomerazao),NomeCliente);

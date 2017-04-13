@@ -8,15 +8,14 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"
-        android:layout_marginLeft="6dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="6dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="3dp"
         app:cardMaxElevation="3dp"
         app:cardPreventCornerOverlap="false"
-        app:cardUseCompatPadding="false">
+        app:cardUseCompatPadding="false"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,13 +31,32 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:orientation="vertical"
-
                 android:padding="2dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/lblCodClie"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="11435"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="@dimen/textsize_sw720_40"
+                        android:textStyle="normal|bold" />
+
+                    <ImageView
+                        android:id="@+id/bola_vermelha"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/bola_vermelha"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="16sp"
+                        android:layout_marginLeft="40dp"
+                        android:textStyle="normal|bold" />
+                </LinearLayout>
 
 
                     <LinearLayout
@@ -48,15 +66,6 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/lblCodClie"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="11435"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="@dimen/textsize_sw720_40"
-                            android:textStyle="normal|bold" />
-
-                        <TextView
                             android:id="@+id/lblNomeFanClie"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -64,9 +73,6 @@
                             android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/textsize_sw720_40"
                             android:textStyle="normal|bold" />
-
-                    </LinearLayout>
-
 
                 </LinearLayout>
 

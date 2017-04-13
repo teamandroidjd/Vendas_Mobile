@@ -77,20 +77,22 @@ public class FragmentFiltroClientes extends Fragment implements RecyclerViewOnCl
 
     @Override
     public void onClickListener(View view, int position) {
-        if (flag == 0 && cadContato == 0) {
-            ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
+        if (flag == 0 || flag == 3 && cadContato == 0) {
+            ListAdapterFiltroClientes adapter = (ListAdapterFiltroClientes) mRecyclerView.getAdapter();
             //String CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(position);
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
             Intent intentp = new Intent(getActivity(), DadosCliente.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
-            params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
-            params.putString(getString(R.string.intent_usuario), usuario);
-            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
+            params.putString(getString(R.string.intent_usuario),usuario);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_senha),senha);
             intentp.putExtras(params);
             startActivity(intentp);
-        } else if (flag == 0 && cadContato == 1) {
-            ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
+
+        } else if (flag == 0 || flag == 3 && cadContato == 1) {
+            ListAdapterFiltroClientes adapter = (ListAdapterFiltroClientes) mRecyclerView.getAdapter();
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
 
@@ -105,9 +107,10 @@ public class FragmentFiltroClientes extends Fragment implements RecyclerViewOnCl
             //params.putString("C",TipoContato);
             intent.putExtras(params);
             startActivity(intent);
+            getActivity().finish();
 
         } else {
-            ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
+            ListAdapterFiltroClientes adapter = (ListAdapterFiltroClientes) mRecyclerView.getAdapter();
             String CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(position);
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
 

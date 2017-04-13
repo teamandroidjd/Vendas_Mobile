@@ -191,6 +191,19 @@ public class ConsultaClientes extends AppCompatActivity
                 return false;
             }
         });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+
+            @Override
+            public boolean onClose() {
+
+                flag = 0;
+                Thread thread = new Thread(ConsultaClientes.this);
+                thread.start();
+
+                return true;
+            }
+        });
         return true;
     }
 
@@ -448,18 +461,6 @@ public class ConsultaClientes extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (editQuery != null) {
-            Intent intent = new Intent(ConsultaClientes.this, ConsultaClientes.class);
-            Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
-            intent.putExtras(params);
-            startActivity(intent);
-            finish();
-        } else {
-
             Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString("codvendedor", sCodVend);
@@ -469,7 +470,6 @@ public class ConsultaClientes extends AppCompatActivity
             intent.putExtras(params);
             startActivity(intent);
             finish();
-        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -542,6 +542,7 @@ public class ConsultaClientes extends AppCompatActivity
                 params.putInt("flag", flag);
                 params.putString("numpedido", numPedido);
                 params.putString("chave", chavepedido);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
@@ -558,6 +559,7 @@ public class ConsultaClientes extends AppCompatActivity
                 ft.replace(R.id.rl_fragment_container, frag, "mainFragD");
                 params.putInt("flag", flag);
                 params.putString("numpedido", numPedido);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putString("chave", chavepedido);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);

@@ -101,6 +101,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             params.putString(getString(R.string.intent_codproduto), CodProd);
             intentp.putExtras(params);
             startActivity(intentp);
+            getActivity().finish();
         } else {
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
             String CodProd = adapter.ChamaDados(position);

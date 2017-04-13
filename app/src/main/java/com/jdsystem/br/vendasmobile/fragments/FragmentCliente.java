@@ -83,9 +83,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
             params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
             params.putString(getString(R.string.intent_usuario),usuario);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_senha),senha);
             intentp.putExtras(params);
             startActivity(intentp);
+
         } else if(flag == 0 && cadContato == 1){
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
@@ -102,6 +104,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             //params.putString("C",TipoContato);
             intent.putExtras(params);
             startActivity(intent);
+            getActivity().finish();
 
         } else {
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();

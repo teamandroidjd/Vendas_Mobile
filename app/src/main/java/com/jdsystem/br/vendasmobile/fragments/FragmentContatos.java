@@ -67,6 +67,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
         params.putInt("codContato", CodigoContato);
         intentp.putExtras(params);
         startActivity(intentp);
+        getActivity().finish();
     }
 
     @Override

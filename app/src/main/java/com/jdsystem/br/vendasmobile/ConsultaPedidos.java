@@ -345,6 +345,7 @@ public class ConsultaPedidos extends AppCompatActivity
                         Intent intent = getIntent();
                         finish();
                         startActivity(intent);
+
                     }
                 } catch (Exception E) {
                     //
