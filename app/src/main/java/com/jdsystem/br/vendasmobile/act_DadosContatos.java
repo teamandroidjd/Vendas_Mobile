@@ -99,9 +99,16 @@ public class act_DadosContatos extends ActionBarActivity {
     }
     @Override
     public void onBackPressed() {
-        Intent it = new Intent();
-        it.putExtra("param_ped", true);
-        setResult(1, it);
+        Intent intent = new Intent(act_DadosContatos.this, ConsultaContatos.class);
+        Bundle params = new Bundle();
+        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
+        params.putInt("codCliente", CodCliente);
+        params.putString("codContato", CodContato);
+        intent.putExtras(params);
+        startActivity(intent);
         finish();
     }
 

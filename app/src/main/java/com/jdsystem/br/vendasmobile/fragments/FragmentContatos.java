@@ -30,12 +30,21 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
     private RecyclerView mRecyclerView;
     private List<Contatos> mList;
 
+    String sCodVend, URLPrincipal, usuario, senha;
+
 
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_contatos, container, false);
 
+        Bundle params = getArguments();
+        if (params != null) {
+            sCodVend = params.getString(getString(R.string.intent_codvendedor));
+            URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+            usuario = params.getString(getString(R.string.intent_usuario));
+            senha = params.getString(getString(R.string.intent_senha));
+        }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_sinc);
         mRecyclerView.setHasFixedSize(true);
@@ -49,7 +58,6 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
         ListAdapterContatos adapter = new ListAdapterContatos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);
-
 
         return view;
     }
@@ -65,6 +73,10 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
         Bundle params = new Bundle();
         params.putInt("codCliente", CodigoCliente);
         params.putInt("codContato", CodigoContato);
+        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         intentp.putExtras(params);
         startActivity(intentp);
         getActivity().finish();

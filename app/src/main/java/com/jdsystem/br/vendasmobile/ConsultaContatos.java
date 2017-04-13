@@ -183,6 +183,19 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
                 return false;
             }
         });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+
+            @Override
+            public boolean onClose() {
+
+                flag = 1;
+                Thread thread = new Thread(ConsultaContatos.this);
+                thread.start();
+
+                return true;
+            }
+        });
         return true;
     }
 
@@ -328,14 +341,20 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
             flag = 0;
             try {
                 FragmentContatos frag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFrag");
+                Bundle params = new Bundle();
                 if (frag == null) {
                     frag = new FragmentContatos();
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.rl_fragment_container2, frag, "mainFrag");
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    frag.setArguments(params);
                     ft.commit();
                 }
             } catch (Exception E) {
-
+                E.toString();
             }
             if (pDialog.isShowing())
                 pDialog.dismiss();
@@ -344,16 +363,23 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
 
             flag = 0;
             try {
-
-                    FragmentFiltroContatos frag = new FragmentFiltroContatos();
+                FragmentFiltroContatos frag = (FragmentFiltroContatos) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                Bundle params = new Bundle();
+                if (frag == null) {
+                    frag = new FragmentFiltroContatos();
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.rl_fragment_container2, frag, "mainFrag");
+                    ft.replace(R.id.rl_fragment_container2, frag, "mainFragB");
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    frag.setArguments(params);
                     ft.commit();
+                }
             } catch (Exception E) {
-
+                E.toString();
             }
         }
-
     }
 
     public List<FiltroContatos> listarContatos() {

@@ -28,6 +28,7 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
     private RecyclerView mRecyclerView;
     private List<FiltroContatos> mList;
     CharSequence pesqcontato;
+    String sCodVend, URLPrincipal, usuario, senha;
 
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -37,6 +38,10 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
         Bundle params = getArguments();
         if (params != null) {
             pesqcontato = params.getCharSequence("pesquisa");
+            sCodVend = params.getString(getString(R.string.intent_codvendedor));
+            URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+            usuario = params.getString(getString(R.string.intent_usuario));
+            senha = params.getString(getString(R.string.intent_senha));
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_sinc);
@@ -67,6 +72,10 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
         Bundle params = new Bundle();
         params.putInt("codCliente", CodigoCliente);
         params.putInt("codContato", CodigoContato);
+        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         intentp.putExtras(params);
         startActivity(intentp);
         getActivity().finish();

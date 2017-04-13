@@ -147,8 +147,21 @@ public class ConsultaProdutos extends AppCompatActivity
                 return false;
             }
         });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+
+            @Override
+            public boolean onClose() {
+
+                Flag = 2;
+                Thread thread = new Thread(ConsultaProdutos.this);
+                thread.start();
+
+                return true;
+            }
+        });
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -294,7 +307,7 @@ public class ConsultaProdutos extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if(editQuery != null){
+       /* if(editQuery != null){
             Intent intent = new Intent(ConsultaProdutos.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
@@ -305,7 +318,7 @@ public class ConsultaProdutos extends AppCompatActivity
             startActivity(intent);
             finish();
 
-        }else {
+        }else {*/
             Intent intent = new Intent(ConsultaProdutos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
@@ -315,7 +328,7 @@ public class ConsultaProdutos extends AppCompatActivity
             intent.putExtras(params);
             startActivity(intent);
             finish();
-        }
+       // }
     }
 
     @Override
