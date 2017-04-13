@@ -5,7 +5,7 @@
     android:id="@+id/act_contatos_dados"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jdsystem.br.vendasmobile.act_DadosContatos"
+    tools:context="com.jdsystem.br.vendasmobile.DadosContato"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout

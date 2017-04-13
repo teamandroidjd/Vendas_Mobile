@@ -58,7 +58,7 @@ public class Login extends AppCompatActivity implements Runnable {
     public String Retorno = "0";
     public SharedPreferences prefs;
     public String usuario, senha, URLPrincipal, sCodVend, UFVendedor;
-    private String CodVendedor = "0";
+    private String codVendedor = "0";
     public TextView copyright;
     Boolean ConexOk;
 
@@ -320,7 +320,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 JSONArray JUsuario = jsonObj.getJSONArray("usuario");
                 JSONObject user = JUsuario.getJSONObject(0);
 
-                CodVendedor = user.getString("codvend");
+                codVendedor = user.getString("codvend");
                 CodEmpresa = user.getString("codempresa");
                 UFVendedor = user.getString("uf");
             } catch (Exception e) {
@@ -335,7 +335,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 });
                 return;
             }
-            if (CodVendedor.equals("0")) {
+            if (codVendedor.equals("0")) {
                 Dialogo.dismiss();
                 handler.post(new Runnable() {
                     @Override
@@ -361,13 +361,13 @@ public class Login extends AppCompatActivity implements Runnable {
                 edtEmp.commit();
 
                 DB = new ConfigDB(Login.this).getReadableDatabase();
-                Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
+                Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + codVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
                 if (!(CursorUser.getCount() > 0)) {
-                    DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + CodVendedor + ", CODEMPRESA = " + CodEmpresa +
-                            " WHERE CODVEND = " + CodVendedor);
+                    DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + codVendedor + ", CODEMPRESA = " + CodEmpresa +
+                            " WHERE CODVEND = " + codVendedor);
                     CursorUser.close();
                 }
-                CadastrarLogin(usuario, pass, CodVendedor, CodEmpresa); // Cadastra usuário, senha e código do vendedor
+                CadastrarLogin(usuario, pass, codVendedor, CodEmpresa); // Cadastra usuário, senha e código do vendedor
 
                 String IMEI = "";
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -468,7 +468,7 @@ public class Login extends AppCompatActivity implements Runnable {
                         public void run() {
                             Intent IntVend = new Intent(getApplicationContext(), ConsultaPedidos.class);
                             Bundle params = new Bundle();
-                            params.putString(getString(R.string.intent_codvendedor), CodVendedor);
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
                             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                             params.putString(getString(R.string.intent_usuario), usuario);
                             params.putString(getString(R.string.intent_senha), pass);
@@ -522,7 +522,7 @@ public class Login extends AppCompatActivity implements Runnable {
                         public void run() {
                             Intent IntVend = new Intent(getApplicationContext(), ConsultaPedidos.class);
                             Bundle params = new Bundle();
-                            params.putString(getString(R.string.intent_codvendedor), CodVendedor);
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
                             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                             params.putString(getString(R.string.intent_usuario), usuario);
                             params.putString(getString(R.string.intent_senha), pass);

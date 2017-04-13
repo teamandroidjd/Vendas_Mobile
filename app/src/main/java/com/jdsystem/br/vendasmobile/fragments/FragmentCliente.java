@@ -44,10 +44,10 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
 
         Bundle params = getArguments();
         if (params != null) {
-            flag = params.getInt("flag");
-            CodEmpresa = params.getString("codempresa");
-            numPedido = params.getString("numpedido");
-            chavePedido = params.getString("chave");
+            flag = params.getInt(getString(R.string.intent_flag));
+            CodEmpresa = params.getString(getString(R.string.intent_codigoempresa));
+            numPedido = params.getString(getString(R.string.intent_numpedido));
+            chavePedido = params.getString(getString(R.string.intent_chavepedido));
             telaInvocada = params.getString("TELA_QUE_CHAMOU");
             dataEntrega = params.getString("dataentrega");
             urlPrincipal = params.getString(getString(R.string.intent_urlprincipal));
@@ -76,15 +76,17 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
     public void onClickListener(View view, int position) {
         if (flag == 0 && cadContato == 0) {
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
-            //String CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(position);
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
+            String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             Intent intentp = new Intent(getActivity(), DadosCliente.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
             params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
+            params.putString(getString(R.string.intent_codvendedor),codVendedor);
             params.putString(getString(R.string.intent_usuario),usuario);
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_senha),senha);
+            params.putString(getString(R.string.intent_nomerazao), nomeRazao);
             intentp.putExtras(params);
             startActivity(intentp);
 

@@ -10,13 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.DadosCliente;
-import com.jdsystem.br.vendasmobile.act_DadosContatos;
-import com.jdsystem.br.vendasmobile.ConsultaContatos;
-import com.jdsystem.br.vendasmobile.adapter.ListAdapterClientes;
+import com.jdsystem.br.vendasmobile.DadosContato;
 import com.jdsystem.br.vendasmobile.ConsultaContatos;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterContatos;
-import com.jdsystem.br.vendasmobile.adapter.ListAdapterFiltroContatos;
 import com.jdsystem.br.vendasmobile.domain.Contatos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
@@ -29,8 +25,8 @@ import java.util.List;
 public class FragmentContatos extends Fragment implements RecyclerViewOnClickListenerHack {
     private RecyclerView mRecyclerView;
     private List<Contatos> mList;
-
-    String sCodVend, URLPrincipal, usuario, senha;
+    private String usuario,senha,codVendedor,urlprincipal;
+    private int flag;
 
 
     public View onCreateView(LayoutInflater inflater,
@@ -40,10 +36,11 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
 
         Bundle params = getArguments();
         if (params != null) {
-            sCodVend = params.getString(getString(R.string.intent_codvendedor));
-            URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+            flag = params.getInt(getString(R.string.intent_flag));
             usuario = params.getString(getString(R.string.intent_usuario));
             senha = params.getString(getString(R.string.intent_senha));
+            codVendedor = params.getString(getString(R.string.intent_codvendedor));
+            urlprincipal = params.getString(getString(R.string.intent_urlprincipal));
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_sinc);
@@ -65,21 +62,23 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void onClickListener(View view, int position) {
-        ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
+        if (flag == 0) {
+            ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
 
-        int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
-        int CodigoContato = adapterContatos.CodigoContato(position);
-        Intent intentp = new Intent(getActivity(), act_DadosContatos.class);
-        Bundle params = new Bundle();
-        params.putInt("codCliente", CodigoCliente);
-        params.putInt("codContato", CodigoContato);
-        params.putString(getString(R.string.intent_codvendedor), sCodVend);
-        params.putString(getString(R.string.intent_usuario), usuario);
-        params.putString(getString(R.string.intent_senha), senha);
-        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-        intentp.putExtras(params);
-        startActivity(intentp);
-        getActivity().finish();
+            int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
+            int CodigoContato = adapterContatos.CodigoContato(position);
+            Intent intentp = new Intent(getActivity(), DadosContato.class);
+            Bundle params = new Bundle();
+            params.putInt("codCliente", CodigoCliente);
+            params.putInt("codContato", CodigoContato);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+            intentp.putExtras(params);
+            startActivity(intentp);
+            getActivity().finish();
+        }
     }
 
     @Override

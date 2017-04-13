@@ -47,8 +47,8 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     private RecyclerView mRecyclerView;
     private List<Produtos> mList;
-    private int flag, sprecoprincipal, tabanterior;
-    private String numPedido, chavePedido, usuario, senha, codVendedor, spreco, tab1, tab2, tab3, tab4, tab5, tab6, tab7;
+    private int flag, sprecoprincipal;
+    private String numPedido, chavePedido, usuario, senha, codVendedor, urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7;
     SQLiteDatabase DB;
     private Spinner spntabpreco;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
@@ -64,12 +64,13 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
             Bundle params = getArguments();
             if (params != null) {
-                flag = params.getInt("flag");
-                numPedido = params.getString("numpedido");
-                chavePedido = params.getString("chave");
+                flag = params.getInt(getString(R.string.intent_flag));
+                numPedido = params.getString(getString(R.string.intent_numpedido));
+                chavePedido = params.getString(getString(R.string.intent_chavepedido));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
                 codVendedor = params.getString(getString(R.string.intent_codvendedor));
+                urlprincipal = params.getString(getString(R.string.intent_urlprincipal));
             }
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_Prod);
@@ -92,7 +93,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void onClickListener(View v, int position) {
-        if (flag != 2 && numPedido == null) {
+        if (flag == 0 && numPedido == null) {
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             String CodProd = adapter.ChamaDados(position);

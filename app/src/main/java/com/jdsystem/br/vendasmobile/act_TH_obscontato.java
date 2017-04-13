@@ -20,7 +20,7 @@ import android.widget.Toast;
  */
 
 public class act_TH_obscontato extends Fragment {
-    String  obsContato;
+    String  obsContato,codVendedor,URLPrincipal,usuario,senha;
     int sCodContato;
     SQLiteDatabase DB;
     private Context ctx;
@@ -38,11 +38,15 @@ public class act_TH_obscontato extends Fragment {
 
 
         //Intent intent = act.getIntent();
-        Intent intent = ((act_DadosContatos) getActivity()).getIntent();
+        Intent intent = ((DadosContato) getActivity()).getIntent();
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodContato = params.getInt("codContato");
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
 
             }
         }

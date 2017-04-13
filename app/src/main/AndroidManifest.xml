@@ -47,7 +47,7 @@
             android:label="Dados do Cliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-        android:name=".act_DadosContatos"
+        android:name=".DadosContato"
         android:label="Dados do Contato"
         android:theme="@style/AppTheme.NoActionBar" />
         <activity

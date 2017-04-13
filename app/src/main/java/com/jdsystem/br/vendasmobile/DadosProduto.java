@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 
 public class DadosProduto extends AppCompatActivity {
 
-    String sCodProduto;
+    String sCodProduto,codVendedor,URLPrincipal,usuario,senha;
     SQLiteDatabase DB;
     private Context ctx;
     private TextView TAG_CODMANUAL, TAG_DESCRICAO, TAG_UNIVENDA, TAG_TAB1, TAG_VLVENDA1, TAG_TAB2, TAG_VLVENDA2, TAG_TAB3, TAG_VLVENDA3, TAG_TAB4, TAG_VLVENDA4,
@@ -47,6 +47,10 @@ public class DadosProduto extends AppCompatActivity {
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodProduto = (String) params.getString(getString(R.string.intent_codproduto));
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
             }
         }
         carregarprodutos();
@@ -235,8 +239,16 @@ public class DadosProduto extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
+        Intent intent = new Intent(DadosProduto.this, ConsultaProdutos.class);
+        Bundle params = new Bundle();
+        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
+        intent.putExtras(params);
+        startActivity(intent);
         finish();
+
     }
 }
 

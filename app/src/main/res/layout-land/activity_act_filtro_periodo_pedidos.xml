@@ -65,6 +65,7 @@
                             android:id="@+id/dpResult"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="number"
                             android:elevation="1dp"
                             />
                     </LinearLayout>
@@ -100,6 +101,7 @@
                             android:id="@+id/dpResultFinal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="number"
                             android:elevation="1dp"
                             />
 

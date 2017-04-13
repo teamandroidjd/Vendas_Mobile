@@ -18,36 +18,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.FilterQueryProvider;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
-import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterClientes;
 import com.jdsystem.br.vendasmobile.domain.Clientes;
 import com.jdsystem.br.vendasmobile.domain.FiltroClientes;
-import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentCliente;
-import com.jdsystem.br.vendasmobile.fragments.FragmentFiltroClientes;
-import com.jdsystem.br.vendasmobile.fragments.FragmentProdutos;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +44,8 @@ public class ConsultaClientes extends AppCompatActivity
     public ListAdapterClientes adapter;
     Clientes lstclientes;
     FiltroClientes lstFiltroClientes;
-    String sCodVend, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, editQuery, UsuarioLogado, telaInvocada, chavepedido, numPedido;
+    String codVendedor, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, editQuery,
+            UsuarioLogado, telaInvocada, chavepedido, numPedido;
     SQLiteDatabase DB;
     MenuItem searchItem;
     SearchView searchView;
@@ -85,7 +71,7 @@ public class ConsultaClientes extends AppCompatActivity
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 ConsultaPedido = params.getBoolean("consultapedido");
                 codEmpresa = params.getString(getString(R.string.intent_codigoempresa));
@@ -114,7 +100,7 @@ public class ConsultaClientes extends AppCompatActivity
     public void cadcliente(View view) {
         Intent intent = new Intent(ConsultaClientes.this, CadastroClientes.class);
         Bundle params = new Bundle();
-        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_codvendedor), codVendedor);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -179,7 +165,7 @@ public class ConsultaClientes extends AppCompatActivity
                 editQuery = query;
                 searchView.clearFocus();
 
-                flag = 3;
+                //flag = 3;
 
                 Thread thread = new Thread(ConsultaClientes.this);
                 thread.start();
@@ -197,9 +183,16 @@ public class ConsultaClientes extends AppCompatActivity
             @Override
             public boolean onClose() {
 
-                flag = 0;
-                Thread thread = new Thread(ConsultaClientes.this);
-                thread.start();
+                if(editQuery != null) {
+                    editQuery = null;
+                    searchView.onActionViewCollapsed();
+                    searchView.clearFocus();
+                    Thread thread = new Thread(ConsultaClientes.this);
+                    thread.start();
+                }else{
+                    searchView.onActionViewCollapsed();
+                    searchView.clearFocus();
+                }
 
                 return true;
             }
@@ -248,104 +241,193 @@ public class ConsultaClientes extends AppCompatActivity
     }
 
     public List<Clientes> CarregarClientes() {
-
         ArrayList<Clientes> DadosLisClientes = new ArrayList<Clientes>();
-        try {
-            Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
-            cursorparametro.moveToFirst();
-            String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
-            cursorparametro.close();
-            if (cliexvend.equals("S")) {
-                Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
-                        " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                        " WHERE ATIVO = 'S' AND CODVENDEDOR = " + sCodVend + " ORDER BY NOMEFAN, NOMERAZAO ", null);
-                cursorClientes.moveToFirst();
-                if (cursorClientes.getCount() > 0) {
-                    do {
-                        String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
-                        String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
-                        String nomeRazao = cursorClientes.getString(cursorClientes.getColumnIndex("NOMERAZAO"));
-                        String nomeFantasia = cursorClientes.getString(cursorClientes.getColumnIndex("NOMEFAN"));
-                        String documento = cursorClientes.getString(cursorClientes.getColumnIndex("CNPJ_CPF"));
-                        String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
-                        String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
-                        String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
-                        //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
-                        String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
-                        String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
-                        String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
-                        String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
+        if (editQuery == null) {
+            try {
+                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
+                cursorparametro.moveToFirst();
+                String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
+                cursorparametro.close();
+                if (cliexvend.equals("S")) {
+                    Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                            " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
+                            " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
+                            " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
+                            " WHERE ATIVO = 'S' AND CODVENDEDOR = " + codVendedor + " ORDER BY NOMEFAN, NOMERAZAO ", null);
+                    cursorClientes.moveToFirst();
+                    if (cursorClientes.getCount() > 0) {
+                        do {
+                            String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
+                            String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
+                            String nomeRazao = cursorClientes.getString(cursorClientes.getColumnIndex("NOMERAZAO"));
+                            String nomeFantasia = cursorClientes.getString(cursorClientes.getColumnIndex("NOMEFAN"));
+                            String documento = cursorClientes.getString(cursorClientes.getColumnIndex("CNPJ_CPF"));
+                            String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
+                            String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
+                            String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
+                            //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
+                            String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
+                            String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
+                            String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
+                            String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
 
 
-                        lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
-                        DadosLisClientes.add(lstclientes);
-                    } while (cursorClientes.moveToNext());
-                    cursorClientes.close();
+                            lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
+                            DadosLisClientes.add(lstclientes);
+                        } while (cursorClientes.moveToNext());
+                        cursorClientes.close();
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
+                        builder.setTitle(R.string.app_namesair);
+                        builder.setIcon(R.drawable.logo_ico);
+                        builder.setMessage(R.string.alertsyncclients)
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        return;
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
-                    builder.setTitle(R.string.app_namesair);
-                    builder.setIcon(R.drawable.logo_ico);
-                    builder.setMessage(R.string.alertsyncclients)
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    return;
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                            " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
+                            " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
+                            " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
+                            " WHERE ATIVO = 'S' ORDER BY NOMEFAN, NOMERAZAO ", null);
+                    cursorClientes.moveToFirst();
+                    if (cursorClientes.getCount() > 0) {
+                        do {
+                            String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
+                            String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
+                            String nomeRazao = cursorClientes.getString(cursorClientes.getColumnIndex("NOMERAZAO"));
+                            String nomeFantasia = cursorClientes.getString(cursorClientes.getColumnIndex("NOMEFAN"));
+                            String documento = cursorClientes.getString(cursorClientes.getColumnIndex("CNPJ_CPF"));
+                            String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
+                            String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
+                            String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
+                            //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
+                            String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
+                            String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
+                            String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
+                            String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
+
+
+                            lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
+                            DadosLisClientes.add(lstclientes);
+                        } while (cursorClientes.moveToNext());
+                        cursorClientes.close();
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
+                        builder.setTitle(R.string.app_namesair);
+                        builder.setIcon(R.drawable.logo_ico);
+                        builder.setMessage(R.string.alertsyncclients)
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        return;
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+
                 }
-            } else {
-                Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
-                        " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                        " WHERE ATIVO = 'S' ORDER BY NOMEFAN, NOMERAZAO ", null);
-                cursorClientes.moveToFirst();
-                if (cursorClientes.getCount() > 0) {
-                    do {
-                        String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
-                        String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
-                        String nomeRazao = cursorClientes.getString(cursorClientes.getColumnIndex("NOMERAZAO"));
-                        String nomeFantasia = cursorClientes.getString(cursorClientes.getColumnIndex("NOMEFAN"));
-                        String documento = cursorClientes.getString(cursorClientes.getColumnIndex("CNPJ_CPF"));
-                        String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
-                        String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
-                        String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
-                        //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
-                        String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
-                        String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
-                        String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
-                        String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
-
-
-                        lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
-                        DadosLisClientes.add(lstclientes);
-                    } while (cursorClientes.moveToNext());
-                    cursorClientes.close();
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
-                    builder.setTitle(R.string.app_namesair);
-                    builder.setIcon(R.drawable.logo_ico);
-                    builder.setMessage(R.string.alertsyncclients)
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    return;
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                }
-
+            } catch (Exception e) {
+                e.toString();
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(this, "Falha no SQL. Tente novamente!", Toast.LENGTH_LONG).show();
             }
-        } catch (Exception e) {
-            e.toString();
-            if (dialog.isShowing())
-                dialog.dismiss();
-            Toast.makeText(this, "Falha no SQL. Tente novamente!", Toast.LENGTH_LONG).show();
+        } else {
+            try {
+                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
+                cursorparametro.moveToFirst();
+                String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
+                cursorparametro.close();
+                if (cliexvend.equals("S")) {
+                    Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                            " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
+                            " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
+                            " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
+                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                    cursorClientes.moveToFirst();
+                    if (cursorClientes.getCount() > 0) {
+                        do {
+                            String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
+                            String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
+                            String nomeRazao = cursorClientes.getString(cursorClientes.getColumnIndex("NOMERAZAO"));
+                            String nomeFantasia = cursorClientes.getString(cursorClientes.getColumnIndex("NOMEFAN"));
+                            String documento = cursorClientes.getString(cursorClientes.getColumnIndex("CNPJ_CPF"));
+                            String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
+                            String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
+                            String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
+                            //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
+                            String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
+                            String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
+                            String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
+                            String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
+
+
+                            lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
+                            DadosLisClientes.add(lstclientes);
+                        } while (cursorClientes.moveToNext());
+                        cursorClientes.close();
+                    } else {
+                        Toast.makeText(this, "Nenhum cliente encontrando. Verifique!", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                            " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
+                            " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
+                            " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
+                            " WHERE ATIVO = 'S' OR CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%' OR CLIENTES.NOMEFAN LIKE '%" + editQuery + "%' OR CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%'   ORDER BY NOMEFAN, NOMERAZAO ORDER BY NOMEFAN, NOMERAZAO ", null);
+                    cursorClientes.moveToFirst();
+                    if (cursorClientes.getCount() > 0) {
+                        do {
+                            String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
+                            String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
+                            String nomeRazao = cursorClientes.getString(cursorClientes.getColumnIndex("NOMERAZAO"));
+                            String nomeFantasia = cursorClientes.getString(cursorClientes.getColumnIndex("NOMEFAN"));
+                            String documento = cursorClientes.getString(cursorClientes.getColumnIndex("CNPJ_CPF"));
+                            String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
+                            String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
+                            String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
+                            //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
+                            String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
+                            String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
+                            String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
+                            String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
+
+
+                            lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
+                            DadosLisClientes.add(lstclientes);
+                        } while (cursorClientes.moveToNext());
+                        cursorClientes.close();
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
+                        builder.setTitle(R.string.app_namesair);
+                        builder.setIcon(R.drawable.logo_ico);
+                        builder.setMessage(R.string.alertsyncclients)
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        return;
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+
+                }
+            } catch (Exception e) {
+                e.toString();
+                if (dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(this, "Falha no SQL. Tente novamente!", Toast.LENGTH_LONG).show();
+            }
+
         }
         if (dialog.isShowing())
             dialog.dismiss();
@@ -366,7 +448,7 @@ public class ConsultaClientes extends AppCompatActivity
                         " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                         " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                         " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                        " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + sCodVend + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                        " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                 cursorClientes.moveToFirst();
                 if (cursorClientes.getCount() > 0) {
                     do {
@@ -461,15 +543,54 @@ public class ConsultaClientes extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-            Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);
-            Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
-            intent.putExtras(params);
-            startActivity(intent);
-            finish();
+        switch (flag) {
+            case 0:
+                Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);
+                Bundle params = new Bundle();
+                params.putInt(getString(R.string.intent_flag), flag);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                intent.putExtras(params);
+                startActivity(intent);
+                finish();
+                break;
+            case 1:
+                Intent intent2 = new Intent(ConsultaClientes.this, ConsultaClientes.class);
+                Bundle params2 = new Bundle();
+                params2.putInt(getString(R.string.intent_flag), flag);
+                params2.putString(getString(R.string.intent_numpedido), numPedido);
+                params2.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params2.putString(getString(R.string.intent_usuario), usuario);
+                params2.putString(getString(R.string.intent_senha), senha);
+                params2.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params2.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params2.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                intent2.putExtras(params2);
+                startActivity(intent2);
+                finish();
+                break;
+            case 2:
+                Intent intent3 = new Intent(ConsultaClientes.this, ConsultaClientes.class);
+                Bundle params3 = new Bundle();
+                params3.putInt(getString(R.string.intent_flag), flag);
+                params3.putString(getString(R.string.intent_numpedido), numPedido);
+                params3.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params3.putString(getString(R.string.intent_usuario), usuario);
+                params3.putString(getString(R.string.intent_senha), senha);
+                params3.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params3.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params3.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                params3.putString("TELA_QUE_CHAMOU", telaInvocada);
+                intent3.putExtras(params3);
+                startActivity(intent3);
+                finish();
+                break;
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -483,7 +604,7 @@ public class ConsultaClientes extends AppCompatActivity
         } else if (id == R.id.nav_produtos) {
             Intent intent = new Intent(ConsultaClientes.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
+            params.putString("codvendedor", codVendedor);
             params.putString("urlPrincipal", URLPrincipal);
             params.putString("usuario", usuario);
             params.putString("senha", senha);
@@ -494,7 +615,7 @@ public class ConsultaClientes extends AppCompatActivity
         } else if (id == R.id.nav_pedidos) {
             Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
+            params.putString("codvendedor", codVendedor);
             params.putString("urlPrincipal", URLPrincipal);
             params.putString("usuario", usuario);
             params.putString("senha", senha);
@@ -505,7 +626,7 @@ public class ConsultaClientes extends AppCompatActivity
         } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(ConsultaClientes.this, ConsultaContatos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
+            params.putString("codvendedor", codVendedor);
             params.putString("urlPrincipal", URLPrincipal);
             params.putString("usuario", usuario);
             params.putString("senha", senha);
@@ -516,7 +637,7 @@ public class ConsultaClientes extends AppCompatActivity
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(ConsultaClientes.this, Sincronismo.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
+            params.putString("codvendedor", codVendedor);
             params.putString("urlPrincipal", URLPrincipal);
             params.putString("usuario", usuario);
             params.putString("senha", senha);
@@ -533,40 +654,79 @@ public class ConsultaClientes extends AppCompatActivity
     @Override
     public void run() {
         if (flag == 0 && CadastroContato == 0) {
-            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragD");
+            //uttilizado para carregar todos os clientes.
+            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
             Bundle params = new Bundle();
             if (frag == null) {
                 frag = new FragmentCliente();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragD");
-                params.putInt("flag", flag);
-                params.putString("numpedido", numPedido);
-                params.putString("chave", chavepedido);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                params.putInt(getString(R.string.intent_flag), flag);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 frag.setArguments(params);
                 ft.commit();
+            } else {
+                // utilizado para o filtro de clientes
+                FragmentCliente newfrag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                Bundle newparams = new Bundle();
+                if (newfrag == null) {
+                    newfrag = new FragmentCliente();
+                    FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                    newft.replace(R.id.rl_fragment_container, newfrag, "mainFragB");
+                    newparams.putInt(getString(R.string.intent_flag), flag);
+                    newparams.putString(getString(R.string.intent_numpedido), numPedido);
+                    newparams.putString(getString(R.string.intent_chavepedido), chavepedido);
+                    newparams.putString(getString(R.string.intent_usuario), usuario);
+                    newparams.putString(getString(R.string.intent_senha), senha);
+                    newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    newfrag.setArguments(newparams);
+                    newft.commit();
+                }
             }
 
         } else if (flag == 0 && CadastroContato == 1) {
-            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragD");
+            // utilizado para carregar todos clientes para inclusão de contato
+            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
             Bundle params = new Bundle();
             if (frag == null) {
                 frag = new FragmentCliente();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragD");
-                params.putInt("flag", flag);
-                params.putString("numpedido", numPedido);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params.putString("chave", chavepedido);
+                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                params.putInt(getString(R.string.intent_flag), flag);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 frag.setArguments(params);
                 ft.commit();
+            } else {
+                // utilizado para o filtro de clientes para inclusão de contato
+                FragmentCliente newfrag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                Bundle newparams = new Bundle();
+                if (newfrag == null) {
+                    newfrag = new FragmentCliente();
+                    FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                    newft.replace(R.id.rl_fragment_container, newfrag, "mainFragB");
+                    newparams.putInt(getString(R.string.intent_flag), flag);
+                    newparams.putString(getString(R.string.intent_numpedido), numPedido);
+                    newparams.putString(getString(R.string.intent_chavepedido), chavepedido);
+                    newparams.putString(getString(R.string.intent_usuario), usuario);
+                    newparams.putString(getString(R.string.intent_senha), senha);
+                    newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    newparams.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                    newfrag.setArguments(newparams);
+                    newft.commit();
+                }
             }
 
         } else if (flag == 1) {
@@ -578,7 +738,7 @@ public class ConsultaClientes extends AppCompatActivity
                         Toast.makeText(getApplication(), sincclieenvio, Toast.LENGTH_SHORT).show();
                     }
                 });
-                sincclie = Sincronismo.SincronizarClientesStatic(sCodVend, this, usuario, senha, 0);
+                sincclie = Sincronismo.SincronizarClientesStatic(codVendedor, this, usuario, senha, 0);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -593,7 +753,68 @@ public class ConsultaClientes extends AppCompatActivity
 
             }
         } else if (flag == 2) {
-            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragD");
+            //utilizada para carregar todos os clientes para inclusão no pedido.
+            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
+            Bundle params = new Bundle();
+            if (frag == null) {
+                frag = new FragmentCliente();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                params.putInt(getString(R.string.intent_flag), flag);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                params.putString("TELA_QUE_CHAMOU", telaInvocada);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                frag.setArguments(params);
+                ft.commit();
+            } else {
+                //utilizada para filtrar cliente para inclusão no pedido.
+                FragmentCliente newfrag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                Bundle newparams = new Bundle();
+                if (newfrag == null) {
+                    newfrag = new FragmentCliente();
+                    FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                    newft.replace(R.id.rl_fragment_container, newfrag, "mainFragB");
+                    newparams.putInt(getString(R.string.intent_flag), flag);
+                    newparams.putString(getString(R.string.intent_numpedido), numPedido);
+                    newparams.putString(getString(R.string.intent_chavepedido), chavepedido);
+                    newparams.putString(getString(R.string.intent_usuario), usuario);
+                    newparams.putString(getString(R.string.intent_senha), senha);
+                    newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    newparams.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                    newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    newparams.putString("TELA_QUE_CHAMOU", telaInvocada);
+                    newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    newfrag.setArguments(newparams);
+                    newft.commit();
+                }
+
+            }
+        } /*else if (flag == 3) {
+            FragmentFiltroClientes frag = (FragmentFiltroClientes) getSupportFragmentManager().findFragmentByTag("mainFragF");
+            Bundle params = new Bundle();
+            if (frag == null) {
+                frag = new FragmentFiltroClientes();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.rl_fragment_container, frag, "mainFragF");
+                params.putInt("flag", flag);
+                params.putString("numpedido", numPedido);
+                params.putString("chave", chavePedido);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                params.putString("TELA_QUE_CHAMOU", telaInvocada);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                frag.setArguments(params);
+                ft.commit();
+            }
+        } else if (flag == 3 && CadastroContato == 1) {
+            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
             Bundle params = new Bundle();
             if (frag == null) {
                 frag = new FragmentCliente();
@@ -601,37 +822,15 @@ public class ConsultaClientes extends AppCompatActivity
                 ft.replace(R.id.rl_fragment_container, frag, "mainFragD");
                 params.putInt("flag", flag);
                 params.putString("numpedido", numPedido);
-                params.putString("chave", chavepedido);
+                params.putString("chave", chavePedido);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
-                params.putString("TELA_QUE_CHAMOU", telaInvocada);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
                 frag.setArguments(params);
                 ft.commit();
             }
-        } else if (flag == 3) {
-            FragmentFiltroClientes frag = (FragmentFiltroClientes) getSupportFragmentManager().findFragmentByTag("mainFragE");
-            Bundle params = new Bundle();
-            if (frag == null) {
-                frag = new FragmentFiltroClientes();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragE");
-                params.putInt("flag", flag);
-                params.putString("numpedido", numPedido);
-                params.putString("chave", chavepedido);
-                params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
-                params.putString("TELA_QUE_CHAMOU", telaInvocada);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                frag.setArguments(params);
-                ft.commit();
-            }
-
-        }
+        }*/
         if (dialog.isShowing()) {
             dialog.dismiss();
         }

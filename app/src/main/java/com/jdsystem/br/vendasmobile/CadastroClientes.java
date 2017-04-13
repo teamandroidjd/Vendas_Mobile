@@ -43,7 +43,7 @@ import java.util.List;
 
 public class CadastroClientes extends AppCompatActivity implements Runnable, View.OnFocusChangeListener {
 
-    String sTipoPessoa, sUF, sCodVend, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada;
+    String sTipoPessoa, sUF, codVendedor, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada;
     private Handler handler = new Handler();
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
     int CodCidade, CodBairro, telaInvocada, codClieExt;
@@ -66,7 +66,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             Bundle params = intent.getExtras();
             if (params != null) {
                 TelaChamada = params.getString("TELA_QUE_CHAMOU");
-                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
@@ -195,34 +195,34 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         sUF = "TO";//Tocantins
                         break;
                 }
-                    int CodCidade = 0;
+                int CodCidade = 0;
                 Cursor cursor = null;
-                    try {
-                        if (PesqCEP.equals(false)) {
-                            cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                        } else {
-                            cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
-                        }
-                        List<String> DadosList = new ArrayList<String>();
-                        DadosList.clear();
-                        if (cursor.getCount() > 0) {
-                            cursor.moveToFirst();
-                            do {
-                                String Cidade = cursor.getString(cursor.getColumnIndex("DESCRICAO"));
-                                CodCidade = cursor.getInt(cursor.getColumnIndex("CODCIDADE_EXT"));
-                                DadosList.add(Cidade);
-                            } while (cursor.moveToNext());
-                            cursor.close();
-
-                            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
-                            ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
-                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                            spCidade.setAdapter(spinnerArrayAdapter);
-
-                        }
-                    }catch (Exception E) {
-                        System.out.println("Error" + E);
+                try {
+                    if (PesqCEP.equals(false)) {
+                        cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
+                    } else {
+                        cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
                     }
+                    List<String> DadosList = new ArrayList<String>();
+                    DadosList.clear();
+                    if (cursor.getCount() > 0) {
+                        cursor.moveToFirst();
+                        do {
+                            String Cidade = cursor.getString(cursor.getColumnIndex("DESCRICAO"));
+                            CodCidade = cursor.getInt(cursor.getColumnIndex("CODCIDADE_EXT"));
+                            DadosList.add(Cidade);
+                        } while (cursor.moveToNext());
+                        cursor.close();
+
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                        ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                        spCidade.setAdapter(spinnerArrayAdapter);
+
+                    }
+                } catch (Exception E) {
+                    System.out.println("Error" + E);
+                }
 
                 Thread thread = new Thread(CadastroClientes.this);
                 thread.start();
@@ -438,7 +438,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         } catch (Exception e) {
             System.out.println("Error" + e);
         }
-        if(RetDadosEndereco.equals(getString(R.string.zip_code_not_found))){
+        if (RetDadosEndereco.equals(getString(R.string.zip_code_not_found))) {
             DialogECB.dismiss();
             Toast.makeText(CadastroClientes.this, R.string.CEP_not_found_database, Toast.LENGTH_LONG).show();
             endereco.setText("");
@@ -579,7 +579,10 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         public void onClick(DialogInterface dialog, int id) {
                             Intent intent = new Intent(CadastroClientes.this, ConsultaPedidos.class);
                             Bundle params = new Bundle();
-                            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
                             intent.putExtras(params);
                             startActivity(intent);
                             finish();
@@ -598,7 +601,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         } else {
             Intent i = new Intent(CadastroClientes.this, ConsultaClientes.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -682,7 +685,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         "', CODBAIRRO = '" + CodBairro + "', OBS = '" + edtOBS.getText().toString() + "', CODCIDADE = '" + CodCidade + "', UF = '" + sUF +
                         "', CEP = '" + CEP + "', " +
                         " TIPOPESSOA = '" + sTipoPessoa + "', REGIDENT = '" + EdtRG.getText().toString() + "', ATIVO = 'S'" +
-                        ", CODVENDEDOR = " + sCodVend +
+                        ", CODVENDEDOR = " + codVendedor +
                         " WHERE CNPJ_CPF = '" + CpfCnpj + "'");
             } else {
                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
@@ -693,7 +696,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         "','" + tel1.getText().toString() + "', '" + tel2.getText().toString() + "', '" + endereco.getText().toString() +
                         "','" + numero.getText().toString() + "', '" + Complemento.getText().toString() +
                         "'," + CodBairro + ", '" + edtOBS.getText().toString() + "', " + CodCidade + ", '" + sUF +
-                        "','" + CEP + "', " + sCodVend + ", '" + sTipoPessoa + "', '" + "S" + "', '" + "01" + "', '" + EdtRG.getText().toString() + "','"
+                        "','" + CEP + "', " + codVendedor + ", '" + sTipoPessoa + "', '" + "S" + "', '" + "01" + "', '" + EdtRG.getText().toString() + "','"
                         + "1" + "');");
             }
             CursorClieCons.close();
@@ -713,41 +716,43 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         public void onClick(DialogInterface dialog, int id) {
                             String sitclieenvio;
                             //if (telaInvocada == 0) {
-                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha);
-                                if (sitclieenvio.equals("OK")) {
-                                    handler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(CadastroClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                                    Bundle params = new Bundle();
-                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                                    params.putString(getString(R.string.intent_usuario), usuario);
-                                    params.putString(getString(R.string.intent_senha), senha);
-                                    params.getString("TELA_QUE_CHAMOU",TelaChamada);
-                                    intent.putExtras(params);
-                                    startActivity(intent);
-                                    finish();
+                            sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha);
+                            if (sitclieenvio.equals("OK")) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(CadastroClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                                Bundle params = new Bundle();
+                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                params.putString(getString(R.string.intent_usuario), usuario);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                params.getString("TELA_QUE_CHAMOU", TelaChamada);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
 
-                                } else {
-                                    handler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(CadastroClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                                    Bundle params = new Bundle();
-                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                                    params.putString(getString(R.string.intent_usuario), usuario);
-                                    params.putString(getString(R.string.intent_senha), senha);
-                                    params.getString("TELA_QUE_CHAMOU",TelaChamada);
-                                    intent.putExtras(params);
-                                    startActivity(intent);
-                                    finish();
-                                }
+                            } else {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(CadastroClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                                Bundle params = new Bundle();
+                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                params.putString(getString(R.string.intent_usuario), usuario);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                params.getString("TELA_QUE_CHAMOU", TelaChamada);
+                                intent.putExtras(params);
+                                startActivity(intent);
+                                finish();
+                            }
                             /*} else {
                                 sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha);
                                 if (sitclieenvio.equals("OK")) {
@@ -759,7 +764,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                                     });
                                     Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
                                     intent.putExtras(params);
@@ -774,7 +779,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                                     });
                                     Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
                                     intent.putExtras(params);
@@ -788,20 +793,21 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                     .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             //if (telaInvocada == 0) {
-                                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                                Bundle params = new Bundle();
-                                params.putString(getString(R.string.intent_usuario),usuario);
-                                params.putString(getString(R.string.intent_senha), senha);
-                                params.putString("TELA_QUE_CHAMOU",TelaChamada);
-                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                                intent.putExtras(params);
-                                startActivity(intent);
-                                finish();
+                            Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                            Bundle params = new Bundle();
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString("TELA_QUE_CHAMOU", TelaChamada);
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            intent.putExtras(params);
+                            startActivity(intent);
+                            finish();
 
                            /* } else {
                                 Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                 Bundle params = new Bundle();
-                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                 intent.putExtras(params);
                                 startActivity(intent);
                                 finish();

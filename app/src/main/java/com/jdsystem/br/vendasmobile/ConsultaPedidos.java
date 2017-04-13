@@ -53,7 +53,7 @@ public class ConsultaPedidos extends AppCompatActivity
     String CodClie = "0";
     String DtInicio = "0";
     String DtFinal = "0";
-    String sCodVend, URLPrincipal,usuario, senha, UsuarioLogado, sCodEmpresa;
+    String codVendedor, URLPrincipal,usuario, senha, UsuarioLogado, sCodEmpresa;
     public ListAdapterPedidos adapter;
     ProgressDialog pDialog;
     SearchView sv;
@@ -77,7 +77,7 @@ public class ConsultaPedidos extends AppCompatActivity
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 SitPed = params.getInt(getString(R.string.intent_situacaopedido));
                 CodClie = params.getString(getString(R.string.intent_codcliente));
@@ -177,7 +177,7 @@ public class ConsultaPedidos extends AppCompatActivity
                                     Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
                                     Bundle params = new Bundle();
                                     params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
                                     params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
                                     params.putString(getString(R.string.intent_usuario), usuario);
@@ -198,7 +198,7 @@ public class ConsultaPedidos extends AppCompatActivity
                 Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
                 Bundle params = new Bundle();
                 params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
-                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
                 params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
                 params.putString(getString(R.string.intent_usuario), usuario);
@@ -242,7 +242,7 @@ public class ConsultaPedidos extends AppCompatActivity
                         try {
                             Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
                             Bundle params = new Bundle();
-                            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
                             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                             params.putString(getString(R.string.intent_usuario), usuario);
                             params.putString(getString(R.string.intent_senha), senha);
@@ -275,7 +275,7 @@ public class ConsultaPedidos extends AppCompatActivity
     public void filtrocliped (View view){
         Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
         Bundle params = new Bundle();
-        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_codvendedor), codVendedor);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
@@ -291,7 +291,7 @@ public class ConsultaPedidos extends AppCompatActivity
         if(SitPed > 0){
             Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_usuario), senha);
@@ -301,7 +301,7 @@ public class ConsultaPedidos extends AppCompatActivity
         } else if (!CodClie.equals("0")) {
             Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -311,7 +311,7 @@ public class ConsultaPedidos extends AppCompatActivity
         } else if (!DtInicio.equals("0")) {
             Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -360,7 +360,7 @@ public class ConsultaPedidos extends AppCompatActivity
                     DtFinal = "0";
                     Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
-                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
@@ -386,7 +386,7 @@ public class ConsultaPedidos extends AppCompatActivity
                     DtFinal = data.getExtras().getString(getString(R.string.intent_datafinal));
                     Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
-                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
@@ -417,7 +417,7 @@ public class ConsultaPedidos extends AppCompatActivity
         if (id == R.id.nav_clientes) {
             Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -432,7 +432,7 @@ public class ConsultaPedidos extends AppCompatActivity
         } else if (id == R.id.nav_produtos) {
             Intent intent = new Intent(ConsultaPedidos.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -444,7 +444,7 @@ public class ConsultaPedidos extends AppCompatActivity
         } else if(id == R.id.nav_contatos){
             Intent i = new Intent(ConsultaPedidos.this, ConsultaContatos.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -455,7 +455,7 @@ public class ConsultaPedidos extends AppCompatActivity
         } else if (id == R.id.nav_sincronismo) {
             Intent intent = new Intent(ConsultaPedidos.this, Sincronismo.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -483,7 +483,8 @@ public class ConsultaPedidos extends AppCompatActivity
                         Bundle bundle = new Bundle();
                         bundle.putString(getString(R.string.intent_usuario), usuario);
                         bundle.putString(getString(R.string.intent_senha), senha);
-                        bundle.putString(getString(R.string.intent_codvendedor), sCodVend);
+                        bundle.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        bundle.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                         frag.setArguments(bundle);
                         ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
                         ft.commit();
@@ -510,26 +511,26 @@ public class ConsultaPedidos extends AppCompatActivity
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND PEDOPER.FLAGINTEGRADO = '" + SitPed + "'" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.FLAGINTEGRADO = '" + SitPed + "'" +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             } else if (!CodClie.equals("0")) {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND PEDOPER.CODCLIE = " + CodClie +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODCLIE = " + CodClie +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             }else if (!DtInicio.equals("0")) {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend + " AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal+1 + "')" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal+1 + "')" +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
 
             } else {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + sCodVend +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             }
 

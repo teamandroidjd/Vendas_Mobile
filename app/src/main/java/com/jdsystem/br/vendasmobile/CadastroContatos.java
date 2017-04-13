@@ -13,17 +13,14 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -34,8 +31,6 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.jdsystem.br.vendasmobile.Util.Util;
-import com.jdsystem.br.vendasmobile.domain.Contatos;
-import com.jdsystem.br.vendasmobile.domain.Contatos;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CadastroContatos extends AppCompatActivity implements Runnable {
-    String sCodVend, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente, descBairro;
+    String codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente, descBairro;
     Boolean PesqCEP;
     CheckBox cbSegunda, cbTerca, cbQuarta, cbQuinta, cbSexta, cbSabado, cbDomingo;
     TimePicker timePicker;
@@ -78,7 +73,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
@@ -118,7 +113,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     lineartxtsemana.setVisibility(EditText.GONE);
                     Intent i = new Intent(CadastroContatos.this, ConsultaClientes.class);
                     Bundle params = new Bundle();
-                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
                     params.putInt(getString(R.string.intent_cad_contato), 1);
@@ -451,7 +446,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     "', '" + documento.getText().toString() + "', '" + data.getText().toString() + "','" +
                     cep.getText().toString() +
                     "', '" + endereco.getText().toString() + "', '" + numero.getText().toString() + "', '" +
-                    Complemento.getText().toString() + "', '" + sUF + "', " + sCodVend + ", '" + descBairro + "', '" +
+                    Complemento.getText().toString() + "', '" + sUF + "', " + codVendedor + ", '" + descBairro + "', '" +
                     NomeCidade + "', " + CodCliente +", '" + sTipoContato + "', '" + OBS.getText().toString() + "');");
 
                     //Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
@@ -462,20 +457,20 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         }
 
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroContatos.this);
-        builder.setTitle("Novo Contato");
+        builder.setTitle(R.string.title_novocontato);
         builder.setIcon(R.drawable.logo_ico);
-        builder.setMessage("Deseja cadastrar outro contato para este cliente?")
+        builder.setMessage(R.string.question_newcontact)
                 .setCancelable(false)
                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Intent intent = new Intent(getBaseContext(), CadastroContatos.class);
                         Bundle params = new Bundle();
-                        params.putString("codvendedor", sCodVend);
-                        params.putString("usuario", usuario);
-                        params.putString("senha", senha);
-                        params.putInt("codCliente", CodCliente);
-                        params.putString("nomerazao", NomeCliente);
-                        params.putString("urlPrincipal", URLPrincipal);
+                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                        params.putString(getString(R.string.intent_nomerazao), NomeCliente);
                         intent.putExtras(params);
                         startActivity(intent);
                         finish();
@@ -485,10 +480,10 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     public void onClick(DialogInterface dialog, int id) {
                         Intent intent = new Intent(getBaseContext(), ConsultaPedidos.class);
                         Bundle params = new Bundle();
-                        params.putString("codvendedor", sCodVend);
-                        params.putString("usuario", usuario);
-                        params.putString("senha", senha);
-                        params.putString("urlPrincipal", URLPrincipal);
+                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
                         intent.putExtras(params);
                         startActivity(intent);
                         finish();
@@ -698,10 +693,10 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
     public void onBackPressed() {
         Intent cadcont = new Intent(CadastroContatos.this, ConsultaContatos.class);
         Bundle params = new Bundle();
-        params.putString("codvendedor", sCodVend);
-        params.putString("urlPrincipal", URLPrincipal);
-        params.putString("usuario", usuario);
-        params.putString("senha", senha);
+        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
         cadcont.putExtras(params);
         startActivity(cadcont);
         finish();

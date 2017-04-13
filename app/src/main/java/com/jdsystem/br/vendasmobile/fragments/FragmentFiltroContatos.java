@@ -1,6 +1,5 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,8 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.act_DadosContatos;
-import com.jdsystem.br.vendasmobile.adapter.ListAdapterContatos;
+import com.jdsystem.br.vendasmobile.DadosContato;
 import com.jdsystem.br.vendasmobile.ConsultaContatos;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterFiltroContatos;
 import com.jdsystem.br.vendasmobile.domain.FiltroContatos;
@@ -68,7 +66,7 @@ public class FragmentFiltroContatos extends Fragment implements RecyclerViewOnCl
 
         int CodigoCliente =  adapterFiltroContatos.ChamaCodigoContato(position);
         int CodigoContato = adapterFiltroContatos.CodigoContato(position);
-        Intent intentp = new Intent(getActivity(), act_DadosContatos.class);
+        Intent intentp = new Intent(getActivity(), DadosContato.class);
         Bundle params = new Bundle();
         params.putInt("codCliente", CodigoCliente);
         params.putInt("codContato", CodigoContato);

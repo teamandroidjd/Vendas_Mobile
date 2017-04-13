@@ -21,7 +21,8 @@ import android.widget.Toast;
 
 public class act_TH_obsclie extends Fragment {
 
-    String CodCliente;
+    String CodCliente,codVendedor,URLPrincipal,usuario,senha;
+
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -43,6 +44,11 @@ public class act_TH_obsclie extends Fragment {
             Bundle params = intent.getExtras();
             if (params != null) {
                 CodCliente = params.getString(getString(R.string.intent_codcliente));
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
+
             }
         }
         try {

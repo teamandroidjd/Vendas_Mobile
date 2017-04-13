@@ -164,5 +164,4 @@ public class ListAdapterFiltroClientes extends RecyclerView.Adapter<ListAdapterF
             }
         }
     }
-
 }

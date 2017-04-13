@@ -18,7 +18,7 @@ import com.jdsystem.br.vendasmobile.adapter.ListAdapterViewPager;
  * Created by WKS22 on 27/03/2017.
  */
 
-public class act_DadosContatos extends ActionBarActivity {
+public class DadosContato extends ActionBarActivity {
 
     private String DocClie,sCodVend,URLPrincipal,usuario,senha,NomeCliente;
     int CodCliente;
@@ -65,12 +65,12 @@ public class act_DadosContatos extends ActionBarActivity {
             Bundle params = intent.getExtras();
             if (params != null) {
                 DocClie = params.getString("documento");
-                sCodVend = params.getString("codvendedor");
-                URLPrincipal = params.getString("urlPrincipal");
-                usuario = params.getString("usuario");
-                senha = params.getString("senha");
-                CodCliente = params.getInt("codCliente");
-                NomeCliente = params.getString("nomerazao");
+                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
+                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
                 CodContato = params.getString("codContato");
             }
         }
@@ -99,7 +99,7 @@ public class act_DadosContatos extends ActionBarActivity {
     }
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(act_DadosContatos.this, ConsultaContatos.class);
+        Intent intent = new Intent(DadosContato.this, ConsultaContatos.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), sCodVend);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);

@@ -200,12 +200,12 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                 }
                     Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
                     Bundle params = new Bundle();
-                    params.putString("numpedido", NumPedido);
-                    params.putString("chave", Chave_Venda);
+                    params.putString(getString(R.string.intent_numpedido), NumPedido);
+                    params.putString(getString(R.string.intent_chavepedido), Chave_Venda);
                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
-                    params.putInt("flag",2);
+                    params.putInt(getString(R.string.intent_flag),2);
                     Lista_produtos.putExtras(params);
                     startActivity(Lista_produtos);
                 }

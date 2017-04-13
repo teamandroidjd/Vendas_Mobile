@@ -197,6 +197,8 @@
     <string name="intent_flag">flag</string>
     <string name="intent_numpedido">numpedido</string>
     <string name="intent_chavepedido">chave</string>
+    <string name="title_novocontato">Novo Contato</string>
+    <string name="question_newcontact">Deseja cadastrar outro contato para este cliente?</string>
 
 
 </resources>

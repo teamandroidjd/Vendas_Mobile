@@ -10,13 +10,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewDebug;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.itextpdf.text.pdf.parser.Line;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class act_TH_dadoscontato extends Fragment {
     int sCodCliente;
+    String codVendedor,URLPrincipal,usuario,senha;
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -54,12 +52,16 @@ public class act_TH_dadoscontato extends Fragment {
         TextView EMAILCONTATO = (TextView) v.findViewById(R.id.txt_email_contato);
         TextView ANIVERSARIOCONTATO = (TextView) v.findViewById(R.id.txt_data_aniversario_contato);
 
-        Intent intent = ((act_DadosContatos) getActivity()).getIntent();
+        Intent intent = ((DadosContato) getActivity()).getIntent();
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodCliente = params.getInt("codCliente");
                 sCodContato = params.getInt("codContato");
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
 
             }
         }

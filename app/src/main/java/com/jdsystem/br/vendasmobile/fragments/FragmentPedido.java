@@ -49,8 +49,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     private Context context = this.getActivity();
     private SQLiteDatabase DB;
     int codclie_ext;
-    String limitecred;
-    String bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte;
+    String limitecred,bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte,URLPrincipal;
 
 
     public View onCreateView(LayoutInflater inflater,
@@ -63,6 +62,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             usuario = params.getString(getString(R.string.intent_usuario));
             senha = params.getString(getString(R.string.intent_senha));
             Codvendedor = params.getString(getString(R.string.intent_codvendedor));
+            URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list);
