@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.jdsystem.br.vendasmobile">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <supports-screens android:normalScreens="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_app"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Login"
+            android:label="Força de Vendas"
+            android:theme="@style/AppTheme">
+            <action android:name="android.intent.action.MAIN" />
+        </activity>
+        <activity
+            android:name=".ConsultaClientes"
+            android:label="Clientes"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ConsultaPedidos"
+            android:label="Pedidos"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CadastroClientes"
+            android:label="Cadastro de Clientes"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".DadosCliente"
+            android:label="Dados do Cliente"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+        android:name=".DadosContato"
+        android:label="Dados do Contato"
+        android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Sincronismo"
+            android:label="Sincronização de Dados" />
+        <activity android:name=".act_TH_contclie" />
+        <activity android:name=".act_TH_dadosclie" />
+        <activity android:name=".act_TH_obsclie" />
+
+        <activity android:name=".act_TH_dadoscontato" />
+        <activity android:name=".act_TH_horarios_contatos" />
+        <activity android:name=".act_TH_obscontato" />
+        <activity android:name=".act_TH_produtos_contatos" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".ConfigWeb"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".ConsultaProdutos"
+            android:label="Catálogo de Produtos"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".DadosProduto" />
+        <activity
+            android:name=".act_ListClientesPedidos"
+            android:label="Catálogo de Clientes" />
+        <activity
+            android:name=".Controller.Lista_clientes"
+            android:label="Catálogo de Clientes"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Controller.VenderProdutos"
+            android:label="Cadastrar Pedido"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Controller.Lista_produtos"
+            android:label="Cadastrar Pedido"
+            android:windowSoftInputMode="stateHidden"/>
+
+        <activity
+            android:name=".Controller.ConfPagamento"
+            android:label="Formas de Pagamento"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".actFiltroPeriodoPedidos"
+            android:label="Filtro por Emissão" />
+        <activity
+            android:name=".ConsultaContatos"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="Lista de contatos"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+        <activity android:name=".CadastroContatos"
+            android:label="Cadastro de contatos"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+    </application>
+
+</manifest>

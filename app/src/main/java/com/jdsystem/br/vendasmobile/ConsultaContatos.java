@@ -1,0 +1,540 @@
+package com.jdsystem.br.vendasmobile;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.jdsystem.br.vendasmobile.domain.Contatos;
+import com.jdsystem.br.vendasmobile.domain.FiltroContatos;
+import com.jdsystem.br.vendasmobile.fragments.FragmentContatos;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class ConsultaContatos extends ActionBarActivity implements NavigationView.OnNavigationItemSelectedListener, Runnable {
+    private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
+    String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, editQuery;
+    SQLiteDatabase DB;
+    Contatos lstcontatos;
+    FiltroContatos lstfiltrocontatos;
+    //Contatos lstfiltrocontatos;
+    ProgressDialog pDialog;
+    private EditText pesquisacliente;
+    Handler handler = new Handler();
+    Toolbar toolbar;
+    MenuItem searchItem;
+    SearchView searchView;
+    ProgressDialog Dialogo;
+    int flag;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_act__contatos);
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        } catch (Exception e) {
+
+        }
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            Bundle params = intent.getExtras();
+            if (params != null) {
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
+                URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
+                usuario = params.getString(getString(R.string.intent_usuario));
+                senha = params.getString(getString(R.string.intent_senha));
+            }
+        }
+        FloatingActionButton CadContatos = (FloatingActionButton) findViewById(R.id.cadcontato);
+        CadContatos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(ConsultaContatos.this, CadastroContatos.class);
+                Bundle params = new Bundle();
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                i.putExtras(params);
+                startActivity(i);
+                finish();
+
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(ConsultaContatos.this);
+
+        carregausuariologado();
+
+        pDialog = new ProgressDialog(ConsultaContatos.this);
+        pDialog.setTitle(getString(R.string.wait));
+        pDialog.setMessage(getString(R.string.loadingcontacts));
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        Thread thread = new Thread(ConsultaContatos.this);
+        thread.start();
+
+    }
+
+    private void carregausuariologado() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(ConsultaContatos.this);
+        View header = navigationView.getHeaderView(0);
+        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
+        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
+        if (UsuarioLogado != null) {
+            UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
+            usuariologado.setText("Olá " + UsuarioLogado + "!");
+        } else {
+            usuariologado.setText("Olá " + usuario + "!");
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        switch (flag) {
+            case 0:
+                Intent intent = new Intent(ConsultaContatos.this, ConsultaContatos.class);
+                Bundle params = new Bundle();
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putInt(getString(R.string.intent_flag),flag);
+                intent.putExtras(params);
+                startActivity(intent);
+                finish();
+                break;
+            case 1:
+                Intent intent1 = new Intent(ConsultaContatos.this, ConsultaContatos.class);
+                Bundle params1 = new Bundle();
+                params1.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params1.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params1.putString(getString(R.string.intent_usuario), usuario);
+                params1.putString(getString(R.string.intent_senha), senha);
+                intent1.putExtras(params1);
+                startActivity(intent1);
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.act__contatos, menu);
+        searchItem = menu.findItem(R.id.action_searchable_activity);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                Dialogo = new ProgressDialog(ConsultaContatos.this);
+                Dialogo.setIndeterminate(true);
+                Dialogo.setTitle(getString(R.string.wait));
+                Dialogo.setMessage(getString(R.string.searchingcontacts));
+                Dialogo.setCancelable(false);
+                Dialogo.setProgress(0);
+                Dialogo.show();
+
+                query.toString();
+                editQuery = query;
+                searchView.clearFocus();
+
+
+                Thread thread = new Thread(ConsultaContatos.this);
+                thread.start();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+
+            @Override
+            public boolean onClose() {
+
+                if(editQuery != null) {
+                    editQuery = null;
+                    searchView.onActionViewCollapsed();
+                    searchView.clearFocus();
+                    Thread thread = new Thread(ConsultaContatos.this);
+                    thread.start();
+                }else{
+                    searchView.onActionViewCollapsed();
+                    searchView.clearFocus();
+                }
+                return true;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_clientes) {
+            Intent intent = new Intent(ConsultaContatos.this, ConsultaClientes.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            intent.putExtras(params);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.nav_produtos) {
+            Intent iprod = new Intent(ConsultaContatos.this, ConsultaProdutos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            iprod.putExtras(params);
+            startActivity(iprod);
+            finish();
+
+        } else if (id == R.id.nav_pedidos) {
+            Intent iped = new Intent(ConsultaContatos.this, ConsultaPedidos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            iped.putExtras(params);
+            startActivity(iped);
+            finish();
+
+        } else if (id == R.id.nav_contatos) {
+
+        } else if (id == R.id.nav_sincronismo) {
+            Intent isinc = new Intent(ConsultaContatos.this, Sincronismo.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            isinc.putExtras(params);
+            startActivity(isinc);
+            finish();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    public List<Contatos> carregarcontatos() {
+        ArrayList<Contatos> DadosListContatos = new ArrayList<Contatos>();
+        if (editQuery == null) {
+
+            DB = new ConfigDB(this).getReadableDatabase();
+
+
+            try {
+                Cursor cursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_INT, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+                        "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
+                        "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
+                        "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
+                        "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT " +
+                        "FROM CONTATO " +
+                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
+                        "ORDER BY NOME ", null);
+                cursorContatos.moveToFirst();
+                if (cursorContatos.getCount() > 0) {
+                    do {
+                        String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
+                        String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
+                        String email = cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL"));
+                        String tel1 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL1"));
+                        String tel2 = cursorContatos.getString(cursorContatos.getColumnIndex("TEL2"));
+                        String Doc = cursorContatos.getString(cursorContatos.getColumnIndex("DOCUMENTO"));
+                        String Data = cursorContatos.getString(cursorContatos.getColumnIndex("DATA"));
+                        String Cep = cursorContatos.getString(cursorContatos.getColumnIndex("CEP"));
+                        String Endereco = cursorContatos.getString(cursorContatos.getColumnIndex("ENDERECO"));
+                        String Num = cursorContatos.getString(cursorContatos.getColumnIndex("NUMERO"));
+                        String Compl = cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO"));
+                        String uf = cursorContatos.getString(cursorContatos.getColumnIndex("UF"));
+
+                        int codClieExt = cursorContatos.getInt(cursorContatos.getColumnIndex("CLIENTES.CODCLIE_EXT"));
+                        String nomeCliente;
+                        String tipoContato = cursorContatos.getString(cursorContatos.getColumnIndex("CONTATO.TIPO"));
+                        if (tipoContato == null) {
+                            nomeCliente = cursorContatos.getString(cursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
+                        } else if (tipoContato.equals("O")) {
+                            nomeCliente = "OUTROS";
+                        } else {
+                            nomeCliente = cursorContatos.getString(cursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
+                        }
+                        int codContato = cursorContatos.getInt(cursorContatos.getColumnIndex("CONTATO.CODCONTATO_INT"));
+
+                        lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
+                                0, 0, codClieExt, nomeCliente, codContato);
+                        DadosListContatos.add(lstcontatos);
+                    } while (cursorContatos.moveToNext());
+                    cursorContatos.close();
+
+                } else {
+                    Toast.makeText(this, R.string.no_contacts_found, Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception E) {
+                Toast.makeText(this, "Houve um problema ao acessar a base de dados. Favor entrar em contato com o suporte técnico JD System.", Toast.LENGTH_SHORT).show();
+            }
+
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
+        } else {
+            Cursor CursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+                    "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
+                    "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
+                    "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
+                    "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
+                    "FROM CONTATO " +
+                    "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
+                    "WHERE CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
+                    "LIKE '%" + editQuery + "%'" +
+                    " order by CONTATO.NOME ", null);
+
+            CursorContatos.moveToFirst();
+            if (CursorContatos.getCount() > 0) {
+                do {
+                    String nome = CursorContatos.getString(CursorContatos.getColumnIndex("NOME"));
+                    String cargo = CursorContatos.getString(CursorContatos.getColumnIndex("CARGO"));
+                    String email = CursorContatos.getString(CursorContatos.getColumnIndex("EMAIL"));
+                    String tel1 = CursorContatos.getString(CursorContatos.getColumnIndex("TEL1"));
+                    String tel2 = CursorContatos.getString(CursorContatos.getColumnIndex("TEL2"));
+                    String Doc = CursorContatos.getString(CursorContatos.getColumnIndex("DOCUMENTO"));
+                    String Data = CursorContatos.getString(CursorContatos.getColumnIndex("DATA"));
+                    String Cep = CursorContatos.getString(CursorContatos.getColumnIndex("CEP"));
+                    String Endereco = CursorContatos.getString(CursorContatos.getColumnIndex("ENDERECO"));
+                    String Num = CursorContatos.getString(CursorContatos.getColumnIndex("NUMERO"));
+                    String Compl = CursorContatos.getString(CursorContatos.getColumnIndex("COMPLEMENTO"));
+                    String uf = CursorContatos.getString(CursorContatos.getColumnIndex("UF"));
+                    int codClieExt = CursorContatos.getInt(CursorContatos.getColumnIndex("CLIENTES.CODCLIE_EXT"));
+
+                    String nomeCliente;
+                    String tipoContato = CursorContatos.getString(CursorContatos.getColumnIndex("CONTATO.TIPO"));
+                    if (tipoContato == null) {
+                        nomeCliente = CursorContatos.getString(CursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
+                    } else if (tipoContato.equals("O")) {
+                        nomeCliente = "OUTROS";
+                    } else {
+                        nomeCliente = CursorContatos.getString(CursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
+                    }
+
+                    int codContato = CursorContatos.getInt(CursorContatos.getColumnIndex("CONTATO.CODCONTATO_INT"));
+
+
+                    lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
+                            0, 0, codClieExt, nomeCliente, codContato);
+                    DadosListContatos.add(lstcontatos);
+                } while (CursorContatos.moveToNext());
+            } else {
+                Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT).show();
+            }
+            CursorContatos.close();
+            if (Dialogo.isShowing()) {
+                Dialogo.dismiss();
+            }
+        }
+
+        return DadosListContatos;
+
+    }
+
+    @Override
+    public void run() {
+        if (flag == 0) {
+            try {
+                FragmentContatos frag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                Bundle params = new Bundle();
+                if (frag == null) {
+                    frag = new FragmentContatos();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
+                    params.putInt(getString(R.string.intent_flag), flag);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    frag.setArguments(params);
+                    ft.commit();
+                } else {
+                    FragmentContatos newfrag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                    Bundle newparams = new Bundle();
+                    if (newfrag == null) {
+                        newfrag = new FragmentContatos();
+                        FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                        newft.replace(R.id.rl_fragment_container2, newfrag, "mainFragB");
+                        newparams.putInt(getString(R.string.intent_flag), flag);
+                        newparams.putString(getString(R.string.intent_usuario), usuario);
+                        newparams.putString(getString(R.string.intent_senha), senha);
+                        newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        newfrag.setArguments(newparams);
+                        newft.commit();
+                    }
+
+                }
+            } catch (Exception E) {
+                E.toString();
+            }
+        } else if (flag == 1) {
+            try {
+                FragmentContatos frag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                Bundle params = new Bundle();
+                if (frag == null) {
+                    frag = new FragmentContatos();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
+                    params.putInt(getString(R.string.intent_flag), flag);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    frag.setArguments(params);
+                    ft.commit();
+                } else {
+                    FragmentContatos newfrag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                    Bundle newparams = new Bundle();
+                    if (newfrag == null) {
+                        newfrag = new FragmentContatos();
+                        FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                        newft.replace(R.id.rl_fragment_container2, newfrag, "mainFragB");
+                        newparams.putInt(getString(R.string.intent_flag), flag);
+                        newparams.putString(getString(R.string.intent_usuario), usuario);
+                        newparams.putString(getString(R.string.intent_senha), senha);
+                        newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        newfrag.setArguments(newparams);
+                        newft.commit();
+                    }
+
+                }
+            } catch (Exception E) {
+                E.toString();
+            }
+        }
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+
+    }
+
+    public List<FiltroContatos> listarContatos() {
+
+        Cursor CursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+                "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
+                "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
+                "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
+                "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
+                "FROM CONTATO " +
+                "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
+                "WHERE CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
+                "LIKE '%" + editQuery + "%'" +
+                " order by CONTATO.NOME ", null);
+
+        CursorContatos.moveToFirst();
+        ArrayList<FiltroContatos> DadosList = new ArrayList<FiltroContatos>();
+
+        if (CursorContatos.getCount() > 0) {
+            do {
+                String nome = CursorContatos.getString(CursorContatos.getColumnIndex("NOME"));
+                String cargo = CursorContatos.getString(CursorContatos.getColumnIndex("CARGO"));
+                String email = CursorContatos.getString(CursorContatos.getColumnIndex("EMAIL"));
+                String tel1 = CursorContatos.getString(CursorContatos.getColumnIndex("TEL1"));
+                String tel2 = CursorContatos.getString(CursorContatos.getColumnIndex("TEL2"));
+                String Doc = CursorContatos.getString(CursorContatos.getColumnIndex("DOCUMENTO"));
+                String Data = CursorContatos.getString(CursorContatos.getColumnIndex("DATA"));
+                String Cep = CursorContatos.getString(CursorContatos.getColumnIndex("CEP"));
+                String Endereco = CursorContatos.getString(CursorContatos.getColumnIndex("ENDERECO"));
+                String Num = CursorContatos.getString(CursorContatos.getColumnIndex("NUMERO"));
+                String Compl = CursorContatos.getString(CursorContatos.getColumnIndex("COMPLEMENTO"));
+                String uf = CursorContatos.getString(CursorContatos.getColumnIndex("UF"));
+                int codClieExt = CursorContatos.getInt(CursorContatos.getColumnIndex("CLIENTES.CODCLIE_EXT"));
+
+                String nomeCliente;
+                String tipoContato = CursorContatos.getString(CursorContatos.getColumnIndex("CONTATO.TIPO"));
+                if (tipoContato == null) {
+                    nomeCliente = CursorContatos.getString(CursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
+                } else if (tipoContato.equals("O")) {
+                    nomeCliente = "OUTROS";
+                } else {
+                    nomeCliente = CursorContatos.getString(CursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
+                }
+
+                int codContato = CursorContatos.getInt(CursorContatos.getColumnIndex("CONTATO.CODCONTATO_INT"));
+
+
+                lstfiltrocontatos = new FiltroContatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
+                        0, 0, codClieExt, nomeCliente, codContato);
+                DadosList.add(lstfiltrocontatos);
+            } while (CursorContatos.moveToNext());
+        } else {
+            Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT).show();
+        }
+        CursorContatos.close();
+        if (Dialogo.isShowing()) {
+            Dialogo.dismiss();
+        }
+
+        flag = 0;
+
+        return DadosList;
+    }
+}
+

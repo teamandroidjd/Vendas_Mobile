@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#02a2b6</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#04a3b6</color>
+    <color name="botaologar">#7f8de4</color>
+    <color name="ColorFundo">#79ccd7</color>
+    <color name="ColorText">#000000</color>
+    <color name="colordescClie">#024149</color>
+    <color name="colorCardClie">#ffffff</color>
+    <color name="colorFundoItem">#b8d2e9</color>
+    <color name="ColorFundoSplash">#d5fbff</color>
+    <color name="colorItemAdd">#9dbdda</color>
+    <color name="backgrounndpadrao">#c2c2c2</color>
+</resources>

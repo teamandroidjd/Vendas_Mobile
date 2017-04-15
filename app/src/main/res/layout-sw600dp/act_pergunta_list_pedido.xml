@@ -1,0 +1,111 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:id="@+id/layTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Escolha uma das opções abaixo:"
+            android:textColor="@color/colordescClie"
+            android:textSize="@dimen/textsize_sw600_35" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layTop">
+
+        <RadioGroup
+            android:id="@+id/genderRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp">
+
+            <!--<RadioButton
+                android:id="@+id/rbalterapedido"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Alterar"
+                android:textColor="@color/colordescClie"
+                android:textSize="20dp" />-->
+
+            <RadioButton
+                android:id="@+id/femaleRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Cancelar"
+                android:textColor="@color/colordescClie"
+                android:textSize="@dimen/textsize_sw600_30" />
+
+            <RadioButton
+                android:id="@+id/rbCompart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Compartilhar"
+                android:textColor="@color/colordescClie"
+                android:textSize="@dimen/textsize_sw600_30" />
+
+            <RadioButton
+                android:id="@+id/rbAutoriza"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Gerar Venda"
+                android:textColor="@color/colordescClie"
+                android:textSize="@dimen/textsize_sw600_30" />
+
+            <RadioButton
+                android:id="@+id/maleRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Sincronizar"
+                android:textColor="@color/colordescClie"
+                android:textSize="@dimen/textsize_sw600_30" />
+
+
+            <RadioButton
+                android:id="@+id/rbStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/maleRadioButton"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Verificar Status"
+                android:textColor="@color/colordescClie"
+                android:textSize="@dimen/textsize_sw600_30" />
+
+
+        </RadioGroup>
+    </LinearLayout>
+
+</RelativeLayout>

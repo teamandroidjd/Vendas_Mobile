@@ -1,0 +1,334 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlt1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    android:orientation="vertical"
+    tools:context=".Controller.ConfPagamento">
+
+    <LinearLayout
+        android:id="@+id/lnr1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/conf_txvvalorvenda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Total da venda: R$ 560,60 "
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LnPai"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lnr1"
+        android:padding="5dp"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/conf_spfpgto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colordescClie"
+            android:layout_marginTop="10dp" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/conf_txformadepagamento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Forma de pagamento:"
+                android:textColor="@color/colorAccent"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <RadioGroup
+                android:id="@+id/conf_rgPagamentos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/conf_rbdinheiro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="Dinheiro"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp" />
+
+                <RadioButton
+                    android:id="@+id/conf_rbboleto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/colordescClie"
+                    android:text="Boleto"
+                    android:textSize="16dp" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/conf_txvlabelparcelas"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quantidade de parcelas:"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/conf_txtqtdparcelas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textColor="@color/colordescClie"
+                    android:maxLength="2"
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tit_parcela"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Parcelas: "
+                android:textColor="@color/colorAccent"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:paddingLeft="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/LnPai"
+        android:scrollbars="vertical">
+
+        <HorizontalScrollView
+            android:id="@+id/scrollViewh"
+            android:layout_width="570dp"
+            android:layout_height="fill_parent"
+            android:scrollbars="horizontal">
+
+            <RelativeLayout
+                android:layout_width="550dp"
+                android:layout_height="match_parent"
+                android:weightSum="1">
+
+
+
+                <TextView
+                    android:id="@+id/conf_valorparcela"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:text="Parcela 1/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/conf_valorparcela"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="Parcela 2/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:text="Parcela 3/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela2"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/conf_valorparcela3"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="Parcela 4/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela4"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:text="Parcela 5/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela4"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/conf_valorparcela5"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="Parcela 6/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela6"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:text="Parcela 7/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela6"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/conf_valorparcela7"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="Parcela 8/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela7"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:text="Parcela 9/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela10"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela8"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/conf_valorparcela9"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="Parcela 10/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela11"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela9"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:text="Parcela 11/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/conf_valorparcela12"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/conf_valorparcela10"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/conf_valorparcela11"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="Parcela 12/12: R$ 1000,00"
+                    android:textColor="@color/colordescClie"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/conf_txvlabelvalorrecebido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/scrollView"
+        android:text="Valor recebido:"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
+    <EditText
+        android:id="@+id/conf_txtvalorrecebido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/conf_txvlabelvalorrecebido"
+        android:inputType="numberDecimal"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/conf_btnsalvar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorAccent"
+        android:onClick="salvar_fpgto"
+        android:text="Salvar Forma de Pagamento"
+        android:textColor="@color/colorCardClie"
+        android:textSize="16dp" />
+
+
+</RelativeLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/act_configweb"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.jdsystem.br.vendasmobile.ConfigWeb">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapCharacters"
+        android:ems="10"
+        android:id="@+id/edthost"
+        android:textColor="@color/colordescClie"
+        android:hint="Digite a chave"
+        android:textSize="35dp"
+        android:textAllCaps="true"
+        android:layout_below="@+id/textView4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_height="match_parent"
+        app:srcCompat="@drawable/criptografia"
+        android:id="@+id/imageView4"
+        android:layout_below="@+id/btsalvhost"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="1dp"
+        />
+
+    <Button
+        android:text="Salvar"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="55dp"
+        android:id="@+id/btsalvhost"
+        android:onClick="SalvarHost"
+        android:background="@color/colorPrimary"
+        android:textSize="40sp"
+        android:textStyle="normal|bold"
+        android:textColor="@color/colorCardClie"
+        android:layout_marginRight="38dp"
+        android:layout_marginEnd="38dp"
+        android:layout_below="@+id/edthost"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Configuração de Acesso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:textColor="@color/colorPrimary"
+        android:textSize="40sp"
+        android:textStyle="normal|bold"
+        android:textAlignment="center"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="44dp" />
+
+    <TextView
+        android:text="Chave de acesso:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
+        android:id="@+id/textView4"
+        android:textColor="@color/colorPrimary"
+        android:textSize="35sp"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>
