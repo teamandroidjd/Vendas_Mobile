@@ -81,6 +81,7 @@ public class ConsultaClientes extends AppCompatActivity
                 CadastroContato = params.getInt(getString(R.string.intent_cad_contato), 0);
                 telaInvocada = params.getString("TELA_QUE_CHAMOU");
                 flag = params.getInt(getString(R.string.intent_flag));
+                numPedido = params.getString(getString(R.string.intent_numpedido));
             }
         }
         declaraobjetos();
@@ -668,6 +669,7 @@ public class ConsultaClientes extends AppCompatActivity
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putBoolean("consultapedido", true);
                 frag.setArguments(params);
                 ft.commit();
             } else {
@@ -685,6 +687,7 @@ public class ConsultaClientes extends AppCompatActivity
                     newparams.putString(getString(R.string.intent_senha), senha);
                     newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                     newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    newparams.putBoolean("consultapedido", true);
                     newfrag.setArguments(newparams);
                     newft.commit();
                 }

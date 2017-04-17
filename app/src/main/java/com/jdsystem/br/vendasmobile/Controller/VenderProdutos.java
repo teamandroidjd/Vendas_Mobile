@@ -130,8 +130,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         Intent CLI_CODIGO_INTENT = getIntent();
         CLI_CODIGO = CLI_CODIGO_INTENT.getIntExtra("CLI_CODIGO", 0);
         CodVendedor = CLI_CODIGO_INTENT.getStringExtra(getString(R.string.intent_codvendedor));
-        NumPedido = CLI_CODIGO_INTENT.getStringExtra("numpedido");
-        CodEmpresa = CLI_CODIGO_INTENT.getStringExtra("codempresa");
+        NumPedido = CLI_CODIGO_INTENT.getStringExtra(getString(R.string.intent_numpedido));
+        CodEmpresa = CLI_CODIGO_INTENT.getStringExtra(getString(R.string.intent_codigoempresa));
         CLI_CODIGO_ANT = CLI_CODIGO;
 
         prefs = getSharedPreferences(DATA_ENT, MODE_PRIVATE);
@@ -592,7 +592,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             params.putInt(getString(R.string.intent_codcliente), CLI_CODIGO);
             params.putInt(getString(R.string.intent_flag),2);
             params.putString(getString(R.string.intent_senha), senha);
-            params.putString("numpedido", NumPedido);
+            params.putString(getString(R.string.intent_numpedido), NumPedido);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
@@ -605,6 +605,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
             params.putInt(getString(R.string.intent_codcliente), CLI_CODIGO);
             params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_numpedido),NumPedido);
             params.putInt(getString(R.string.intent_flag),2);
             params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);

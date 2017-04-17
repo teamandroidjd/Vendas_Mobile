@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.jdsystem.br.vendasmobile.CadastroContatos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConsultaClientes;
+import com.jdsystem.br.vendasmobile.ConsultaPedidos;
 import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.DadosCliente;
@@ -35,6 +36,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
     private List<Clientes> mList;
     int flag,cadContato;
     String numPedido, chavePedido, usuario, senha, codVendedor, CodEmpresa, dataEntrega, telaInvocada, urlPrincipal;
+    boolean consultaPedido;
     SQLiteDatabase DB;
 
     public View onCreateView(LayoutInflater inflater,
@@ -55,6 +57,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             senha = params.getString(getString(R.string.intent_senha));
             codVendedor = params.getString(getString(R.string.intent_codvendedor));
             cadContato = params.getInt(getString(R.string.intent_cad_contato));
+            consultaPedido = params.getBoolean("consultapedido");
         }
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list);
@@ -74,7 +77,22 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
 
     @Override
     public void onClickListener(View view, int position) {
-        if (flag == 0 && cadContato == 0) {
+        if(consultaPedido == true){
+            ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
+            String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
+            Intent intentp = new Intent(getActivity(), ConsultaPedidos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
+            params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
+            params.putString(getString(R.string.intent_codvendedor),codVendedor);
+            params.putString(getString(R.string.intent_usuario),usuario);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_senha),senha);
+            intentp.putExtras(params);
+            startActivity(intentp);
+            getActivity().finish();
+
+        }else if (flag == 0 && cadContato == 0) {
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);

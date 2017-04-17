@@ -31,28 +31,28 @@
         </activity>
         <activity
             android:name=".ConsultaClientes"
-            android:label="Clientes"
+            android:label="Consulta clientes"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ConsultaPedidos"
-            android:label="Pedidos"
+            android:label="Consulta pedidos"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CadastroClientes"
-            android:label="Cadastro de Clientes"
+            android:label="Cadastro de clientes"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".DadosCliente"
-            android:label="Dados do Cliente"
+            android:label="Dados do cliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
         android:name=".DadosContato"
-        android:label="Dados do Contato"
+        android:label="Dados do contato"
         android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Sincronismo"
-            android:label="Sincronização de Dados" />
+            android:label="Sincronização de dados" />
         <activity android:name=".act_TH_contclie" />
         <activity android:name=".act_TH_dadosclie" />
         <activity android:name=".act_TH_obsclie" />
@@ -68,23 +68,24 @@
 
         <activity
             android:name=".ConfigWeb"
+            android:label="Configuração da licença"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ConsultaProdutos"
-            android:label="Catálogo de Produtos"
+            android:label="Consulta de produtos"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity android:name=".DadosProduto" />
         <activity
             android:name=".act_ListClientesPedidos"
-            android:label="Catálogo de Clientes" />
+            android:label="Consulta de clientes" />
         <activity
             android:name=".Controller.Lista_clientes"
             android:label="Catálogo de Clientes"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.VenderProdutos"
-            android:label="Cadastrar Pedido"
+            android:label="Cadastrar pedido"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.Lista_produtos"
@@ -93,15 +94,16 @@
 
         <activity
             android:name=".Controller.ConfPagamento"
-            android:label="Formas de Pagamento"
+            android:label="Formas de pagamento"
             android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".actFiltroPeriodoPedidos"
-            android:label="Filtro por Emissão" />
+            android:windowSoftInputMode="stateHidden"
+            android:label="Filtro por emissão" />
         <activity
             android:name=".ConsultaContatos"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="Lista de contatos"
+            android:label="Consulta de contatos"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

@@ -7,7 +7,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -42,7 +45,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
     private int DiaInicio, DiaFim;
     private Date DataIni, DataFim;
 
-    public String DataInicial, DataFinal;
+    public String DataInicial, DataFinal, usuario, senha;
     int year, dayOfMonth, month;
 
     static final int DATE_DIALOG_ID_Inicio = 999;
@@ -53,7 +56,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_filtro_periodo_pedidos);
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         calendar = Calendar.getInstance();
 
         declaraobjetos();
@@ -89,20 +92,28 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
     }
 
     private void declaraobjetos() {
-        btnConfirmar = (Button)findViewById(R.id.btnConfirmar);
+
+        btnConfirmar = (Button) findViewById(R.id.btnConfirmar);
         dpResultFinal = (EditText) findViewById(R.id.dpResultFinal);
+        //dpResultFinal.addTextChangedListener(Mask.insert(Mask.DATA_MASK, dpResultFinal));
         dpResult = (EditText) findViewById(R.id.dpResult);
+        //dpResult.addTextChangedListener(Mask.insert(Mask.DATA_MASK, dpResult));
+
     }
 
-    public void confirmafiltro(View view){
+    public void confirmafiltro(View view) {
+
         if (DataIni.before(DataFim) || (DataIni.equals(DataFim))) {
             Intent returnIntent = new Intent();
             returnIntent.putExtra(getString(R.string.intent_datainicial), DataInicial);
             returnIntent.putExtra(getString(R.string.intent_datafinal), DataFinal);
+            returnIntent.putExtra(getString(R.string.intent_senha), senha);
+            returnIntent.putExtra(getString(R.string.intent_usuario), usuario);
+
             setResult(3, returnIntent);
             finish();
-        }else {
-            Util.msg_toast_personal(actFiltroPeriodoPedidos.this,getString(R.string.data_inicialfinal_invalida), Toast.LENGTH_SHORT);
+        } else {
+            Util.msg_toast_personal(actFiltroPeriodoPedidos.this, getString(R.string.data_inicialfinal_invalida), Toast.LENGTH_SHORT);
         }
 
     }
@@ -112,6 +123,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
 
         public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
 
+
             int tag = ((Integer) view.getTag());
 
             if (tag == DATE_DIALOG_ID_Inicio) {
@@ -119,15 +131,16 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
                 MesInicio = selectedMonth;
                 DiaInicio = selectedDay;
 
-                dpResult.setText(DiaInicio + "/" + (MesInicio+1) + "/" + AnoInicio);
+                dpResult.setText(DiaInicio + "/" + (MesInicio + 1) + "/" + AnoInicio);
 
-                if ((MesInicio + 1) == 12){
+                if ((MesInicio + 1) == 12) {
                     MesInicio = 1;
-                }else {
+                } else {
                     //MesInicio = MesInicio + 1;
                 }
 
-                DataInicial = AnoInicio + "-" + Util.AcrescentaZeros(String.valueOf(MesInicio + 1), 2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaInicio),2);;
+                DataInicial = AnoInicio + "-" + Util.AcrescentaZeros(String.valueOf(MesInicio + 1), 2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaInicio), 2);
+                ;
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 try {
                     DataIni = (Date) formatter.parse(DiaInicio + "/" + (MesInicio + 1) + "/" + AnoInicio);
@@ -135,28 +148,28 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-            } else if(tag == DATE_DIALOG_ID_Fim)
-            {
+            } else if (tag == DATE_DIALOG_ID_Fim) {
                 AnoFim = selectedYear;
                 MesFim = selectedMonth;
                 DiaFim = selectedDay;
 
-                dpResultFinal.setText(DiaFim + "/" + (MesFim+1) + "/" + AnoFim);
+                dpResultFinal.setText(DiaFim + "/" + (MesFim + 1) + "/" + AnoFim);
 
-                if ((MesFim + 1) == 12){
+                if ((MesFim + 1) == 12) {
                     MesFim = 1;
-                }else {
+                } else {
                     MesFim = MesFim + 1;
                 }
 
-                DataFinal = AnoFim + "-" + Util.AcrescentaZeros(String.valueOf((MesFim)),2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaFim),2);
+                DataFinal = AnoFim + "-" + Util.AcrescentaZeros(String.valueOf((MesFim)), 2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaFim), 2);
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 try {
-                    DataFim = (Date)formatter.parse(DiaFim + "/" + MesFim + "/" + AnoFim);
+                    DataFim = (Date) formatter.parse(DiaFim + "/" + MesFim + "/" + AnoFim);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
         }
     };
+
 }
