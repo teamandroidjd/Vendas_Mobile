@@ -664,7 +664,11 @@ public class ConsultaClientes extends AppCompatActivity
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params.putBoolean("consultapedido", true);
+                if(telaInvocada != null){
+                    if(telaInvocada.equals("ConsultaPedidos")) {
+                        params.putBoolean("consultapedido", true);
+                    }
+                }
                 frag.setArguments(params);
                 ft.commit();
             } else {
@@ -682,7 +686,11 @@ public class ConsultaClientes extends AppCompatActivity
                     newparams.putString(getString(R.string.intent_senha), senha);
                     newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                     newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                    newparams.putBoolean("consultapedido", true);
+                    if(telaInvocada != null){
+                        if(telaInvocada.equals("ConsultaPedidos")) {
+                            params.putBoolean("consultapedido", true);
+                        }
+                    }
                     newfrag.setArguments(newparams);
                     newft.commit();
                 }

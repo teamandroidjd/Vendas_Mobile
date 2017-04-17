@@ -235,7 +235,7 @@ public class ConsultaProdutos extends AppCompatActivity
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                         newparams.putString(getString(R.string.intent_senha), senha);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
-                        newfrag.setArguments(params);
+                        newfrag.setArguments(newparams);
                         newft.commit();
                     }
                 }
@@ -273,7 +273,7 @@ public class ConsultaProdutos extends AppCompatActivity
             } catch (Exception e) {
                 e.toString();
             }
-        }else if (Flag == 2){
+        } else if (Flag == 2) {
             try {
                 FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
                 Bundle params = new Bundle();
@@ -308,7 +308,7 @@ public class ConsultaProdutos extends AppCompatActivity
                         newft.commit();
                     }
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.toString();
             }
 
@@ -397,14 +397,16 @@ public class ConsultaProdutos extends AppCompatActivity
                 params2.putString(getString(R.string.intent_usuario), usuario);
                 params2.putString(getString(R.string.intent_senha), senha);
                 params2.putString(getString(R.string.intent_numpedido), numPedido);
-                params2.putInt(getString(R.string.intent_flag),Flag);
+                params2.putInt(getString(R.string.intent_flag), Flag);
                 intent2.putExtras(params2);
                 startActivity(intent2);
                 finish();
                 break;
         }
-        if(numPedido.equals("0")){
-            finish();
+        if (numPedido != null) {
+            if (numPedido.equals("0")) {
+                finish();
+            }
         }
     }
 

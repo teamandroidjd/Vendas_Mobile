@@ -71,11 +71,12 @@ public class act_TH_contclie extends Fragment{
                 Bundle params = new Bundle();
                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                 params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString("urlPrincipal", URLPrincipal);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
                 params.putInt(getString(R.string.intent_codcliente),Integer.parseInt(CodCliente));
                 params.putString(getString(R.string.intent_nomerazao),NomeCliente);
+                params.putString(getString(R.string.intent_telainvocada),"act_TH_contclie");
                 i.putExtras(params);
                 startActivity(i);
                 getActivity().finish();

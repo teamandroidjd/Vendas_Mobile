@@ -44,9 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CadastroContatos extends AppCompatActivity implements Runnable {
-    String codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente, descBairro;
+    String codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente, descBairro,telaInvocada;
     Boolean PesqCEP;
-    CheckBox cbSegunda, cbTerca, cbQuarta, cbQuinta, cbSexta, cbSabado, cbDomingo;
     TimePicker timePicker;
     ImageButton BtnPesqCep;
     int CodCidade, CodBairro, CodCliente, hour, minute;
@@ -79,6 +78,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 senha = params.getString(getString(R.string.intent_senha));
                 CodCliente = params.getInt(getString(R.string.intent_codcliente));
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
+                telaInvocada = params.getString(getString(R.string.intent_telainvocada));
                 //sTipoContato = params.getString("C");
                 //            }
             }
@@ -447,9 +447,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     cep.getText().toString() +
                     "', '" + endereco.getText().toString() + "', '" + numero.getText().toString() + "', '" +
                     Complemento.getText().toString() + "', '" + sUF + "', " + codVendedor + ", '" + descBairro + "', '" +
-                    NomeCidade + "', " + CodCliente +", '" + sTipoContato + "', '" + OBS.getText().toString() + "');");
+                    NomeCidade + "', " + CodCliente + ", '" + sTipoContato + "', '" + OBS.getText().toString() + "');");
 
-                    //Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
+            //Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
             //}
             //CursorContatos.close();
         } catch (Exception E) {
@@ -691,16 +691,32 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
 
     @Override
     public void onBackPressed() {
-        Intent cadcont = new Intent(CadastroContatos.this, ConsultaContatos.class);
-        Bundle params = new Bundle();
-        params.putString(getString(R.string.intent_codvendedor), codVendedor);
-        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-        params.putString(getString(R.string.intent_usuario), usuario);
-        params.putString(getString(R.string.intent_senha), senha);
-        cadcont.putExtras(params);
-        startActivity(cadcont);
-        finish();
-        super.onBackPressed();
+        if (telaInvocada != null) {
+            if (telaInvocada.equals("act_TH_contclie")) {
+
+                Intent cadcont = new Intent(CadastroContatos.this, DadosCliente.class);
+                Bundle params = new Bundle();
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_codcliente),String.valueOf(CodCliente));
+                cadcont.putExtras(params);
+                startActivity(cadcont);
+                finish();
+            }
+        } else {
+            Intent cadcont = new Intent(CadastroContatos.this, ConsultaContatos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            cadcont.putExtras(params);
+            startActivity(cadcont);
+            finish();
+            super.onBackPressed();
+        }
     }
 
     public void run() {

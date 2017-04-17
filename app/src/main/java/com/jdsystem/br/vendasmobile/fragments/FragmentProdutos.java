@@ -100,6 +100,10 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             Intent intentp = new Intent(getActivity(), DadosProduto.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codproduto), CodProd);
+            params.putString(getString(R.string.intent_codvendedor),codVendedor);
+            params.putString(getString(R.string.intent_usuario),usuario);
+            params.putString(getString(R.string.intent_senha),senha);
+            params.putString(getString(R.string.intent_urlprincipal),urlprincipal);
             intentp.putExtras(params);
             startActivity(intentp);
             getActivity().finish();

@@ -279,6 +279,7 @@ public class ConsultaPedidos extends AppCompatActivity
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
+        params.putString("TELA_QUE_CHAMOU","ConsultaPedidos");
         params.putBoolean("consultapedido", true);
         intent.putExtras(params);
         //finish();

@@ -40,16 +40,16 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CadastroClientes"
-            android:label="Cadastro de clientes"
+            android:label="Cadastro de cliente"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".DadosCliente"
             android:label="Dados do cliente"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-        android:name=".DadosContato"
-        android:label="Dados do contato"
-        android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".DadosContato"
+            android:label="Dados do contato"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Sincronismo"
             android:label="Sincronização de dados" />
@@ -75,7 +75,9 @@
             android:label="Consulta de produtos"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".DadosProduto" />
+        <activity
+            android:name=".DadosProduto"
+            android:label="Dados do produto" />
         <activity
             android:name=".act_ListClientesPedidos"
             android:label="Consulta de clientes" />
@@ -89,32 +91,33 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Controller.Lista_produtos"
-            android:label="Cadastrar Pedido"
-            android:windowSoftInputMode="stateHidden"/>
+            android:label="Cadastrar pedido"
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".Controller.ConfPagamento"
             android:label="Formas de pagamento"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".actFiltroPeriodoPedidos"
-            android:windowSoftInputMode="stateHidden"
-            android:label="Filtro por emissão" />
+            android:label="Filtro por emissão"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ConsultaContatos"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label="Consulta de contatos"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".CadastroContatos"
-            android:label="Cadastro de contatos"
-            android:windowSoftInputMode="stateHidden">
-        </activity>
+        <activity
+            android:name=".CadastroContatos"
+            android:label="Cadastro de contato"
+            android:windowSoftInputMode="stateHidden"></activity>
     </application>
 
 </manifest>

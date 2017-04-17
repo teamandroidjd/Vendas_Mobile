@@ -199,6 +199,7 @@
     <string name="intent_chavepedido">chave</string>
     <string name="title_novocontato">Novo Contato</string>
     <string name="question_newcontact">Deseja cadastrar outro contato para este cliente?</string>
+    <string name="intent_telainvocada">telainvocada</string>
 
 
 </resources>
