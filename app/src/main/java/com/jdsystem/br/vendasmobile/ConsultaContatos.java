@@ -171,7 +171,8 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
 
                 query.toString();
                 editQuery = query;
-                searchView.clearFocus();
+                searchView.setQuery("",false);
+               // searchView.clearFocus();
 
 
                 Thread thread = new Thread(ConsultaContatos.this);
@@ -190,16 +191,11 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
             @Override
             public boolean onClose() {
 
-                if(editQuery != null) {
-                    editQuery = null;
-                    searchView.onActionViewCollapsed();
-                    searchView.clearFocus();
-                    Thread thread = new Thread(ConsultaContatos.this);
-                    thread.start();
-                }else{
-                    searchView.onActionViewCollapsed();
-                    searchView.clearFocus();
-                }
+               // flag = 1;
+                searchView.onActionViewCollapsed();
+                Thread thread = new Thread(ConsultaContatos.this);
+                thread.start();
+
                 return true;
             }
         });

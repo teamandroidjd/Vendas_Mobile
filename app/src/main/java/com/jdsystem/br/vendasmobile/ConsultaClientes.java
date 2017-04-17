@@ -164,7 +164,8 @@ public class ConsultaClientes extends AppCompatActivity
 
                 query.toString();
                 editQuery = query;
-                searchView.clearFocus();
+                searchView.setQuery("",false);
+               // searchView.clearFocus();
 
                 //flag = 3;
 
@@ -184,16 +185,10 @@ public class ConsultaClientes extends AppCompatActivity
             @Override
             public boolean onClose() {
 
-                if(editQuery != null) {
-                    editQuery = null;
-                    searchView.onActionViewCollapsed();
-                    searchView.clearFocus();
-                    Thread thread = new Thread(ConsultaClientes.this);
-                    thread.start();
-                }else{
-                    searchView.onActionViewCollapsed();
-                    searchView.clearFocus();
-                }
+                flag = 0;
+                searchView.onActionViewCollapsed();
+                Thread thread = new Thread(ConsultaClientes.this);
+                thread.start();
 
                 return true;
             }

@@ -130,7 +130,8 @@ public class ConsultaProdutos extends AppCompatActivity
 
                 query.toString();
                 editQuery = query;
-                searchView.clearFocus();
+                searchView.setQuery("",false);
+                //searchView.clearFocus();
                 if(Flag != 0){
                     Flag = 2;
                 }
@@ -150,16 +151,11 @@ public class ConsultaProdutos extends AppCompatActivity
             @Override
             public boolean onClose() {
 
-                if(editQuery != null) {
-                    editQuery = null;
-                    searchView.onActionViewCollapsed();
-                    searchView.clearFocus();
-                    Thread thread = new Thread(ConsultaProdutos.this);
-                    thread.start();
-                }else{
-                    searchView.onActionViewCollapsed();
-                    searchView.clearFocus();
-                }
+                //Flag = 2;
+                searchView.onActionViewCollapsed();
+                Thread thread = new Thread(ConsultaProdutos.this);
+                thread.start();
+
                 return true;
             }
         });
