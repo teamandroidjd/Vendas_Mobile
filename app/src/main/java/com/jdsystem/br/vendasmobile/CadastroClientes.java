@@ -707,59 +707,21 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
             Toast.makeText(this, "Cliente salvo com sucesso!", Toast.LENGTH_SHORT).show();
 
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroClientes.this);
-            builder.setTitle(R.string.synchronization);
-            builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage(R.string.synchronize_registered_customer)
-                    .setCancelable(false)
-                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            String sitclieenvio;
-                            //if (telaInvocada == 0) {
-                            sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha);
-                            if (sitclieenvio.equals("OK")) {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(CadastroClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                                Bundle params = new Bundle();
-                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                                params.putString(getString(R.string.intent_usuario), usuario);
-                                params.putString(getString(R.string.intent_senha), senha);
-                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                params.getString("TELA_QUE_CHAMOU", TelaChamada);
-                                intent.putExtras(params);
-                                startActivity(intent);
-                                finish();
-
-                            } else {
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(CadastroClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                                Bundle params = new Bundle();
-                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                                params.putString(getString(R.string.intent_usuario), usuario);
-                                params.putString(getString(R.string.intent_senha), senha);
-                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                params.getString("TELA_QUE_CHAMOU", TelaChamada);
-                                intent.putExtras(params);
-                                startActivity(intent);
-                                finish();
-                            }
-                            /*} else {
+            if (Util.checarConexaoCelular(this)) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroClientes.this);
+                builder.setTitle(R.string.synchronization);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage(R.string.synchronize_registered_customer)
+                        .setCancelable(false)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                String sitclieenvio;
                                 sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha);
-                                if (sitclieenvio.equals("OK")) {
+                                if (sitclieenvio.equals(getString(R.string.newcustomers_successfully))) {
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(CadastroClientes.this, getString(R.string.newcustomers_successfully), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(CadastroClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
                                         }
                                     });
                                     Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
@@ -767,9 +729,12 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
+                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                    params.getString("TELA_QUE_CHAMOU", TelaChamada);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
+
                                 } else {
                                     handler.post(new Runnable() {
                                         @Override
@@ -782,46 +747,49 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
+                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                    params.getString("TELA_QUE_CHAMOU", TelaChamada);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
                                 }
-
-                            }*/
-                        }
-                    })
-                    .setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            //if (telaInvocada == 0) {
-                            Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                            Bundle params = new Bundle();
-                            params.putString(getString(R.string.intent_usuario), usuario);
-                            params.putString(getString(R.string.intent_senha), senha);
-                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                            params.putString("TELA_QUE_CHAMOU", TelaChamada);
-                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                            intent.putExtras(params);
-                            startActivity(intent);
-                            finish();
-
-                           /* } else {
+                            }
+                        })
+                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                 Bundle params = new Bundle();
+                                params.putString(getString(R.string.intent_usuario), usuario);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                params.putString("TELA_QUE_CHAMOU", TelaChamada);
                                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                 intent.putExtras(params);
                                 startActivity(intent);
                                 finish();
 
-                            }*/
-                        }
-                    });
-            android.app.AlertDialog alert = builder.create();
-            alert.show();
+                            }
+                        });
+                android.app.AlertDialog alert = builder.create();
+                alert.show();
+            } else {
+                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                Bundle params = new Bundle();
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putString("TELA_QUE_CHAMOU", TelaChamada);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                intent.putExtras(params);
+                startActivity(intent);
+                finish();
+            }
 
         } catch (Exception E) {
             //Toast.makeText(this, "Não foi possivel salvar o CLiente!", Toast.LENGTH_SHORT).show();
             System.out.println("Error" + E);
         }
+
     }
 
     public void consultacnpj(View view) {

@@ -277,10 +277,11 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         final String NumPedido = adapter.ChamaDados(position);
                                         Intent VendaProd = new Intent((ConsultaPedidos) getActivity(), VenderProdutos.class);
                                         Bundle params = new Bundle();
-                                        params.putString("numpedido", NumPedido);
+                                        params.putString(getString(R.string.intent_numpedido), NumPedido);
                                         params.putString(getString(R.string.intent_codvendedor), Codvendedor);
                                         params.putString(getString(R.string.intent_usuario),usuario);
                                         params.putString(getString(R.string.intent_senha),senha);
+                                        params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
                                         VendaProd.putExtras(params);
                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                         ((ConsultaPedidos) getActivity()).finish();

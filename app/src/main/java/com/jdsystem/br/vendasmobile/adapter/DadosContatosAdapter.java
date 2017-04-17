@@ -48,14 +48,15 @@ public class DadosContatosAdapter extends FragmentStatePagerAdapter {
         }
         else if (position == 2)
         {
-            act_TH_horarios_contatos tab3 = new act_TH_horarios_contatos();
+            act_TH_produtos_contatos tab3 = new act_TH_produtos_contatos();
             return tab3;
         }
         else
         {
-            act_TH_produtos_contatos tab4 = new act_TH_produtos_contatos();
+            act_TH_horarios_contatos tab4 = new act_TH_horarios_contatos();
             return tab4;
         }
+
 
 
     }
