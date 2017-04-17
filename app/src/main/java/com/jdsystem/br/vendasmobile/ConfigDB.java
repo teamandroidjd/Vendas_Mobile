@@ -459,7 +459,7 @@ public class ConfigDB extends SQLiteOpenHelper {
                 System.out.println("ConfigDB, falha no CREATE TABLE IF NOT EXISTS BLOQCLIE");
             }
 
-            //MODIFICAÇÕES NA VERSÃO 6 DO BANCO DE DADOS
+            //MODIFICAÇÕES NA VERSÃO 6 DO BANCO DE DADOS versionCode 12
             try {
                 db.execSQL("ALTER TABLE CONTATO ADD CODCLIENTE INTEGER");
             } catch (Exception E) {
@@ -551,6 +551,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             }catch (Exception E){
                 System.out.println("ConfigDB, ALTER TABLE EMPRESA ADD CODPERFIL INTEGER");
             }
+
+            //MODIFICAÇÕES NA VERSÃO 7 DO BANCO DE DADOS versionCode 13
 
 
         }
