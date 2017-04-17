@@ -186,6 +186,7 @@ public class ConsultaClientes extends AppCompatActivity
             public boolean onClose() {
 
                 flag = 0;
+                editQuery = null;
                 searchView.onActionViewCollapsed();
                 Thread thread = new Thread(ConsultaClientes.this);
                 thread.start();

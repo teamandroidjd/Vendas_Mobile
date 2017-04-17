@@ -152,6 +152,7 @@ public class ConsultaProdutos extends AppCompatActivity
             public boolean onClose() {
 
                 //Flag = 2;
+                editQuery = null;
                 searchView.onActionViewCollapsed();
                 Thread thread = new Thread(ConsultaProdutos.this);
                 thread.start();

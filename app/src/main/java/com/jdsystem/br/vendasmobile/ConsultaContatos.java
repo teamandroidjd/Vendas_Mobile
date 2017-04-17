@@ -192,6 +192,7 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
             public boolean onClose() {
 
                // flag = 1;
+                editQuery = null;
                 searchView.onActionViewCollapsed();
                 Thread thread = new Thread(ConsultaContatos.this);
                 thread.start();
