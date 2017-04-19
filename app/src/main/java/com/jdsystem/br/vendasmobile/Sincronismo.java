@@ -1889,7 +1889,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                         "valor_seguro: '" + ValorSeguro + "'," +
                                         "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
                                         "valor_desconto: '" + vldesconto + "'," +
-                                        "obs_pedido: '" + OBS + "'," +
+                                        "obs_pedido: '" + Observacao + "'," +
                                         "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
                                         "chavePedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
                                         "codempresa: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODEMPRESA")) + "'," +

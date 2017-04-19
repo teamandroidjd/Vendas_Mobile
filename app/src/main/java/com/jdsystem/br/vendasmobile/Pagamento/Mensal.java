@@ -21,9 +21,13 @@ public class Mensal implements iPagamento {
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private String ChavePedido;
 
 
     public void gerar_parcela(SqliteConfPagamentoBean pagamento, SqliteVendaCBean vendaCBean, Context ctx) {
+
+        ChavePedido = vendaCBean.getVendac_chave();
+        new SqliteConRecDao(ctx).excluir_Parcela_Chave(ChavePedido);
 
         Calendar calendar_default = Calendar.getInstance(new Locale("pt", "BR"));
         calendar_default.set(Calendar.YEAR, 2000);

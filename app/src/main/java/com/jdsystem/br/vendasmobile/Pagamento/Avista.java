@@ -15,10 +15,14 @@ import java.math.BigDecimal;
 
 
 public class Avista implements iPagamento {
+    private String ChavePedido;
 
 
     @Override
     public void gerar_parcela(SqliteConfPagamentoBean pagamento, SqliteVendaCBean vendaCBean, Context ctx) {
+
+        ChavePedido = vendaCBean.getVendac_chave();
+        new SqliteConRecDao(ctx).excluir_Parcela_Chave(ChavePedido);
 
         //BigDecimal PERCENTUAL_DESCONTO = new BigDecimal(new SqliteParametroDao(ctx).busca_parametros().getP_desconto_do_vendedor());
         //BigDecimal PERCENTUAL_DESCONTO = BigDecimal.valueOf(0);

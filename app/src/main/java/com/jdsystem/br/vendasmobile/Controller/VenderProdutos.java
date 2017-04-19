@@ -921,9 +921,12 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     venda_ok = gravavenda.grava_vendasalva(vendaCBean, itens_venda);
                 }
                 if (venda_ok > 0) {
+
                     gerar_parcelas_venda();
                     // atualizando a chave da venda nas configuracoes de pagamento
-                    new SqliteConfPagamentoDao(this).AtualizaVendac_chave_CONFPAGAMENTO(vendaCBean.getVendac_chave());
+                    if (NumPedido.equals("0")) {
+                        new SqliteConfPagamentoDao(this).AtualizaVendac_chave_CONFPAGAMENTO(vendaCBean.getVendac_chave());
+                    }
                     if (sincpedido == true) {
                         sincronizaPedidosAposSalvar();
                     } else {

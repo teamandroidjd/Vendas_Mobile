@@ -21,6 +21,7 @@ public class SqliteConRecDao {
     private String sql;
     private boolean gravou;
     private SQLiteStatement stmt;
+    private SQLiteStatement stmtDel;
     private SQLiteDatabase db;
     private Cursor cursor;
 
@@ -61,6 +62,21 @@ public class SqliteConRecDao {
             }
             return gravou;
         }
+
+    public void excluir_Parcela_Chave(String ChavePedido) {
+        db = new ConfigDB(ctx).getWritableDatabase();
+        String SqlDel = "DELETE FROM CONREC WHERE vendac_chave ="+ChavePedido;
+        try {
+            stmtDel = db.compileStatement(SqlDel);
+            stmtDel.executeUpdateDelete();
+            stmtDel.clearBindings();
+        } catch (SQLiteException e) {
+            Log.d("excluir_FormaPgto_Chave", e.getMessage());
+        } finally {
+
+            stmtDel.close();
+        }
+    }
 
 //***********************************************************************************
 

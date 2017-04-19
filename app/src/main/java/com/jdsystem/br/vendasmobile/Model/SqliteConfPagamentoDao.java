@@ -33,9 +33,6 @@ public class SqliteConfPagamentoDao {
         gravou = false;
         try {
             if (AtuPedido.equals(true)) {
-
-                excluir_FormaPgto_Chave(ChavePedido);
-
                 Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado)  VALUES (?,?,?,?,?,?,?)";
                 stmt = db.compileStatement(Sql);
                 stmt.bindString(1, pagamento.getConf_sementrada_comentrada());
@@ -232,8 +229,8 @@ public class SqliteConfPagamentoDao {
     }
 
     public void excluir_FormaPgto_Chave(String ChavePedido) {
-
-        String SqlDel = "DELETE FROM CONFPAGAMENTO WHERE vendac_chave = " + ChavePedido;
+        db = new ConfigDB(ctx).getWritableDatabase();
+        String SqlDel = "DELETE FROM CONFPAGAMENTO WHERE vendac_chave ="+ChavePedido;
         try {
             stmtDel = db.compileStatement(SqlDel);
             stmtDel.executeUpdateDelete();

@@ -218,8 +218,10 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
         if (validar_forma_de_pagamento()) {
 
-            if ( ChavePedido == null) {
+            if (ChavePedido == null) {
                 new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
+            } else {
+                new SqliteConfPagamentoDao(this).excluir_FormaPgto_Chave(ChavePedido);
             }
 
             Util.log("TIPO_PAGAMENTO :" + TIPO_PAGAMENTO);

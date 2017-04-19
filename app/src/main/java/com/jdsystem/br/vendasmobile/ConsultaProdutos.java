@@ -129,7 +129,7 @@ public class ConsultaProdutos extends AppCompatActivity
                 dialog = new ProgressDialog(ConsultaProdutos.this);
                 dialog.setIndeterminate(true);
                 dialog.setTitle(getString(R.string.wait));
-                dialog.setMessage(getString(R.string.searchingclients));
+                dialog.setMessage(getString(R.string.sync_products));
                 dialog.setCancelable(false);
                 dialog.setProgress(0);
                 dialog.show();

@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="support-compat-24.2.1">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.android/build-cache/62d137a154e248e86542813c419e4f4008a8c74b/output/jars/libs/internal_impl-24.2.1.jar!/" />
-      <root url="file://$USER_HOME$/.android/build-cache/62d137a154e248e86542813c419e4f4008a8c74b/output/res" />
-      <root url="jar://$USER_HOME$/.android/build-cache/62d137a154e248e86542813c419e4f4008a8c74b/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/ec11f206fe505314ec6d29fbba2af7556f4c83ae/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/ec11f206fe505314ec6d29fbba2af7556f4c83ae/output/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.android/build-cache/ec11f206fe505314ec6d29fbba2af7556f4c83ae/output/jars/libs/internal_impl-24.2.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://C:/Users/rafael.costa/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/support-compat/24.2.1/support-compat-24.2.1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../rafael.costa/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/support-compat/24.2.1/support-compat-24.2.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
