@@ -62,6 +62,10 @@
         <activity android:name=".act_TH_obscontato" />
         <activity android:name=".act_TH_produtos_contatos" />
 
+        <activity
+            android:name=".InfoJDSystem"
+            android:label="Informações de contato" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

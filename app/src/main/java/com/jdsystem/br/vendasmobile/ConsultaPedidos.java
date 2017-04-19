@@ -474,36 +474,16 @@ public class ConsultaPedidos extends AppCompatActivity
         } else if (id == R.id.nav_exit) {
             finish();
         } else if (id == R.id.nav_sobre) {
-            LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.info_jdsystem, null);
-            AlertDialog.Builder alerta = new AlertDialog.Builder(this);
-            alerta.setCancelable(false);
-            alerta.setView(view);
+            Intent intent = new Intent(ConsultaPedidos.this, InfoJDSystem.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            intent.putExtras(params);
+            startActivity(intent);
+            finish();
 
-            ImageButton maps = (ImageButton) view.findViewById(R.id.imgbtnmaps);
-            TextView versao = (TextView) view.findViewById(R.id.txtversao);
-            PackageInfo pInfo = null;
-            try {
-                pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-            String version = pInfo.versionName;
-            versao.setText("Versão "+version);
-            maps.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Uri uri = Uri.parse(getString(R.string.link_mapsjdsystem));
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    startActivity(intent);
-                }
-            });
-
-            alerta.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {}
-            });
-            alerta.show();
 
         }
 
