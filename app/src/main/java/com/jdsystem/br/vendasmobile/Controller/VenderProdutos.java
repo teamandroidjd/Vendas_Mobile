@@ -189,7 +189,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         }
 
         FloatingActionButton incluirProduto = (FloatingActionButton) findViewById(R.id.fab_inclui_produto);
-        incluirProduto.setOnClickListener(new View.OnClickListener() {
+        incluirProduto.setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (venda_txt_desconto.getText().toString().isEmpty()) {
@@ -206,6 +207,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
+                params.putString(getString(R.string.intent_telainvocada),"VENDER_PRODUTOS");
                 params.putInt(getString(R.string.intent_flag), 2);
                 Lista_produtos.putExtras(params);
                 startActivity(Lista_produtos);
@@ -462,6 +464,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             }
 
         } else if (!NumPedido.equals("0")) {
+            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).retornaItensOculto(Chave_Venda);
+            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensTemp(Chave_Venda);
+            Alterar_Pedido_listview_e_calcula_total();
             itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
             if (!itens_venda.isEmpty()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
@@ -789,6 +794,12 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
     }
 
     private void finalzarvenda(boolean sincpedido) {
+        if(!NumPedido.equals("0")) {
+            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensOculto(Chave_Venda);
+            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaItensTemp(Chave_Venda);
+            Alterar_Pedido_listview_e_calcula_total();
+        }
+
         BigDecimal valor_recebido = null;
         BigDecimal total_venda = null;
         if (venda_txt_desconto.getText().toString().isEmpty()) {
@@ -1075,7 +1086,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                 public void onClick(DialogInterface arg0, int arg1) {
 
                     SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
-                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
+                    String codprod = item.getVendad_prd_codigo();
+                    //String chaveitem = item.getVendac_chave();
+                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod);
+
+                    //new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
 
                     Alterar_Pedido_listview_e_calcula_total();
                 }

@@ -231,8 +231,6 @@ public class Login extends AppCompatActivity implements Runnable {
         URLPrincipal = prefs.getString("host", null);
     }
 
-
-
     private void declaraobjetos() {
 
         DB = new ConfigDB(this).getReadableDatabase();
@@ -445,14 +443,14 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this,edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    Sincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this,"0");
+                    Sincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, "0");
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -474,6 +472,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             params.putString(getString(R.string.intent_senha), pass);
                             IntVend.putExtras(params);
                             startActivity(IntVend);
+                            finish();
                         }
                     });
                 } else if (HabUsuarioApp.equals("True")) {
@@ -515,7 +514,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    Sincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this,"0");
+                    Sincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, "0");
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
@@ -528,6 +527,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             params.putString(getString(R.string.intent_senha), pass);
                             IntVend.putExtras(params);
                             startActivity(IntVend);
+                            finish();
                         }
                     });
                 } else {
@@ -630,6 +630,9 @@ public class Login extends AppCompatActivity implements Runnable {
 
     @Override
     protected void onResume() {
+        if (Dialogo != null) {
+            Dialogo.show();
+        }
         super.onResume();
         carregarpreferencias();
     }

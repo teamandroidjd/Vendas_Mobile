@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 6;
+    public static int versao = 7;
 
     public ConfigDB(Context ctx) {
 
@@ -195,6 +195,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " VLTOTAL       DECIMAL(10,2)   NOT NULL,                 " +
             " VLICMSST      FLOAT,                                    " +
             " VLIPI         FLOAT,                                    " +
+            " VIEW          CHAR(1),                                  " +
             " CODPERFIL     INTEGER                                   " +
             ");");
 
@@ -553,6 +554,13 @@ public class ConfigDB extends SQLiteOpenHelper {
             }
 
             //MODIFICAÇÕES NA VERSÃO 7 DO BANCO DE DADOS versionCode 13
+
+            try{
+                db.execSQL("ALTER TABLE PEDITENS ADD VIEW CHAR(1)");
+            }catch (Exception e){
+                e.toString();
+
+            }
 
 
         }

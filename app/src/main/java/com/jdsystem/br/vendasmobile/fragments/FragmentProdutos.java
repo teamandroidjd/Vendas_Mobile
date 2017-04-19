@@ -11,9 +11,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -23,6 +26,7 @@ import android.widget.TextView;
 
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConsultaProdutos;
+import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
@@ -48,12 +52,13 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     private RecyclerView mRecyclerView;
     private List<Produtos> mList;
     private int flag, sprecoprincipal;
-    private String numPedido, chavePedido, usuario, senha, codVendedor, urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7;
+    private String numPedido, chavePedido, usuario, senha, codVendedor, urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7,telaInvocada;
     SQLiteDatabase DB;
     private Spinner spntabpreco;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
     private SharedPreferences prefs;
     private ListView prod_listview_itenstemp;
+    public AlertDialog dlg;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -71,6 +76,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 senha = params.getString(getString(R.string.intent_senha));
                 codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 urlprincipal = params.getString(getString(R.string.intent_urlprincipal));
+                telaInvocada = params.getString(getString(R.string.intent_telainvocada));
             }
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_Prod);
@@ -100,10 +106,10 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             Intent intentp = new Intent(getActivity(), DadosProduto.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codproduto), CodProd);
-            params.putString(getString(R.string.intent_codvendedor),codVendedor);
-            params.putString(getString(R.string.intent_usuario),usuario);
-            params.putString(getString(R.string.intent_senha),senha);
-            params.putString(getString(R.string.intent_urlprincipal),urlprincipal);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
             intentp.putExtras(params);
             startActivity(intentp);
             getActivity().finish();
@@ -304,8 +310,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Preco = Preco.replace('.', ',');
 
                     info_txv_precoproduto.setText(Preco);
-                    info_txt_quantidadecomprada.setText("");
-                    //info_txt_quantidadecomprada.selectAll();
                 } else if (tabelaPadrao.equals(tab2)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA2"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -313,8 +317,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Preco = Preco.replace('.', ',');
 
                     info_txv_precoproduto.setText(Preco);
-                    info_txt_quantidadecomprada.setText("");
-                    //info_txt_quantidadecomprada.selectAll();
                 } else if (tabelaPadrao.equals(tab3)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA3"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -322,8 +324,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Preco = Preco.replace('.', ',');
 
                     info_txv_precoproduto.setText(Preco);
-                    info_txt_quantidadecomprada.setText("");
-                    //info_txt_quantidadecomprada.selectAll();
                 } else if (tabelaPadrao.equals(tab4)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA4"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -331,8 +331,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Preco = Preco.replace('.', ',');
 
                     info_txv_precoproduto.setText(Preco);
-                    info_txt_quantidadecomprada.setText("");
-                    //info_txt_quantidadecomprada.selectAll();
                 } else if (tabelaPadrao.equals(tab5)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA5"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -340,8 +338,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Preco = Preco.replace('.', ',');
 
                     info_txv_precoproduto.setText(Preco);
-                    info_txt_quantidadecomprada.setText("");
-                    //info_txt_quantidadecomprada.selectAll();
                 } else if (tabelaPadrao.equals(tab6)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDAP1"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -349,8 +345,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Preco = Preco.replace('.', ',');
 
                     info_txv_precoproduto.setText(Preco);
-                    info_txt_quantidadecomprada.setText("");
-                    //info_txt_quantidadecomprada.selectAll();
                 } else if (tabelaPadrao.equals(tab7)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDAP2"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -358,9 +352,8 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Preco = Preco.replace('.', ',');
 
                     info_txv_precoproduto.setText(Preco);
-                    info_txt_quantidadecomprada.setText("");
-                    //info_txt_quantidadecomprada.selectAll();
                 }
+
                 cursoritem.close();
 
                 final Double finalQtdestoque = qtdestoque;
@@ -396,6 +389,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                     itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
                                     itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
                                     itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
+                                    //itemBean1.setVendad_prd_view("S");
 
                                     //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
                                     String ValorItem = info_txv_precoproduto.getText().toString();
@@ -407,7 +401,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
                                         itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
                                         itemDao.insere_item(itemBean1);
-                                        atualiza_listview_com_os_itens_da_venda();
+                                        //atualiza_listview_com_os_itens_da_venda();
                                         getActivity().finish();
                                     } else {
                                         Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
@@ -690,6 +684,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     info_txt_quantidadecomprada.setText("");
                     //info_txt_quantidadecomprada.selectAll();
                 }
+                info_txt_quantidadecomprada.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 cursoritem.close();
 
                 alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
@@ -712,7 +707,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 }
 
                                 SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
-                                SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
+                                final SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
                                 SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
                                 Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getActivity(), codVendedor, true);
 
@@ -725,6 +720,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                     itemBean1.setVendad_prd_unidade(UNIDADE);
                                     itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
                                     itemBean1.setVendac_chave(chavePedido);
+                                    itemBean1.setvendad_prd_view("T");
 
                                     //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
                                     String ValorItem = info_txv_precoproduto.getText().toString();
@@ -744,6 +740,27 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         return;
                                     }
                                 } else {
+                                    /*AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    builder.setTitle("Atençao");
+                                    builder.setMessage("Esse item ja esteve no pedido. Deseja adicionar novamente?");
+                                    builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+
+                                            String codprod = itemBean2.getVendad_prd_codigo();
+                                            new Sqlite_VENDADAO(getActivity(), codVendedor, true).reexibe_item_da_venda(codprod, chavePedido);
+                                            getActivity().finish();
+
+
+                                        }
+                                    });
+                                    builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            dlg.dismiss();
+                                        }
+                                    });
+                                    dlg = builder.create();
+                                    dlg.show();*/
+
                                     Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
                                     return;
                                 }
@@ -775,7 +792,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void onLongClickListener(View view, int position) {
-
     }
 
     public void GravaPreferencias(int preco) {
@@ -787,19 +803,4 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     }
 
-    public void atualiza_listview_com_os_itens_da_venda() {
-
-        prod_listview_itenstemp = (ListView) getView().findViewById(R.id.prod_listview_produtotemp);
-        List<SqliteVendaD_TempBean> itens_da_venda_temp = new SqliteVendaD_TempDao(getActivity()).busca_todos_itens_da_venda();
-        /*prod_listview_itenstemp.setAdapter(new ListAdapterItensTemporarios(getActivity(), itens_da_venda_temp));
-
-
-        prod_listview_itenstemp.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> listview, View view, int posicao, long l) {
-                //confirmar_exclusao_do_produto(listview, posicao);
-                return false;
-            }
-        });*/
-    }
 }

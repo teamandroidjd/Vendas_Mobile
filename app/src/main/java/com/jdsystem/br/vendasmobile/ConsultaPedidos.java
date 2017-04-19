@@ -7,8 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -23,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -53,7 +57,7 @@ public class ConsultaPedidos extends AppCompatActivity
     String CodClie = "0";
     String DtInicio = "0";
     String DtFinal = "0";
-    String codVendedor, URLPrincipal,usuario, senha, UsuarioLogado, sCodEmpresa;
+    String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, sCodEmpresa;
     public ListAdapterPedidos adapter;
     ProgressDialog pDialog;
     SearchView sv;
@@ -124,7 +128,7 @@ public class ConsultaPedidos extends AppCompatActivity
         TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
         SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
         UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
-        usuariologado.setText("Olá " +UsuarioLogado+"!");
+        usuariologado.setText("Olá " + UsuarioLogado + "!");
     }
 
     private void declaraobjetos() {
@@ -139,7 +143,7 @@ public class ConsultaPedidos extends AppCompatActivity
         mmCliePedido = (FloatingActionButton) findViewById(R.id.mmCliePedido);
     }
 
-    public void novopedido(View view){
+    public void novopedido(View view) {
 
         sCodEmpresa = "0";
         try {
@@ -179,10 +183,10 @@ public class ConsultaPedidos extends AppCompatActivity
                                     params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
-                                    params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
+                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
-                                    params.putInt(getString(R.string.intent_flag),2);
+                                    params.putInt(getString(R.string.intent_flag), 2);
                                     intent.putExtras(params);
                                     startActivityForResult(intent, 1);
                                 } catch (Exception E) {
@@ -200,7 +204,7 @@ public class ConsultaPedidos extends AppCompatActivity
                 params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
-                params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
                 intent.putExtras(params);
@@ -212,7 +216,7 @@ public class ConsultaPedidos extends AppCompatActivity
 
     }
 
-    public void filtrositped (View view){
+    public void filtrositped(View view) {
 
         View viewSitPed = (LayoutInflater.from(ConsultaPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
 
@@ -266,20 +270,20 @@ public class ConsultaPedidos extends AppCompatActivity
 
     }
 
-    public void filtroemissaoped (View view){
+    public void filtroemissaoped(View view) {
         Intent intent = new Intent(ConsultaPedidos.this, actFiltroPeriodoPedidos.class);
         //finish();
         startActivityForResult(intent, 3);
     }
 
-    public void filtrocliped (View view){
+    public void filtrocliped(View view) {
         Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), codVendedor);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
-        params.putString("TELA_QUE_CHAMOU","ConsultaPedidos");
+        params.putString("TELA_QUE_CHAMOU", "ConsultaPedidos");
         params.putBoolean("consultapedido", true);
         intent.putExtras(params);
         //finish();
@@ -289,7 +293,7 @@ public class ConsultaPedidos extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if(SitPed > 0){
+        if (SitPed > 0) {
             Intent intent = new Intent(ConsultaPedidos.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
@@ -319,7 +323,7 @@ public class ConsultaPedidos extends AppCompatActivity
             intent.putExtras(params);
             startActivity(intent);
             finish();
-        }else {
+        } else {
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -442,7 +446,7 @@ public class ConsultaPedidos extends AppCompatActivity
             finish();
 
 
-        } else if(id == R.id.nav_contatos){
+        } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(ConsultaPedidos.this, ConsultaContatos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
@@ -463,6 +467,44 @@ public class ConsultaPedidos extends AppCompatActivity
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
+        } else if (id == R.id.nav_logout) {
+            Intent intent = new Intent(ConsultaPedidos.this, Login.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.nav_exit) {
+            finish();
+        } else if (id == R.id.nav_sobre) {
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.info_jdsystem, null);
+            AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+            alerta.setCancelable(false);
+            alerta.setView(view);
+
+            ImageButton maps = (ImageButton) view.findViewById(R.id.imgbtnmaps);
+            TextView versao = (TextView) view.findViewById(R.id.txtversao);
+            PackageInfo pInfo = null;
+            try {
+                pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            String version = pInfo.versionName;
+            versao.setText("Versão "+version);
+            maps.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = Uri.parse(getString(R.string.link_mapsjdsystem));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+
+            alerta.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
+            });
+            alerta.show();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -520,11 +562,11 @@ public class ConsultaPedidos extends AppCompatActivity
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
                         " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODCLIE = " + CodClie +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
-            }else if (!DtInicio.equals("0")) {
+            } else if (!DtInicio.equals("0")) {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal+1 + "')" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal + 1 + "')" +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
 
             } else {

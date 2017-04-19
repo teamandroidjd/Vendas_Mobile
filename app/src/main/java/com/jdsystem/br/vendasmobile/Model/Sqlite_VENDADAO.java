@@ -491,6 +491,84 @@ public class Sqlite_VENDADAO {
         }
     }
 
+    public void oculta_item_da_venda(String item) {
+        db = new ConfigDB(ctx).getWritableDatabase();
+        try {
+            db.execSQL("update peditens set view = 'N' where CODITEMANUAL = '"+item+"'");
+
+
+        } catch (SQLiteException e) {
+            Util.log("SQLiteException excluir_um_item_da_venda" + e.getMessage());
+        }
+    }
+
+    public void reexibe_item_da_venda(String item, String chave) {
+        db = new ConfigDB(ctx).getWritableDatabase();
+        try {
+            db.execSQL("update peditens set view = null where CODITEMANUAL = '"+item+"' and CHAVEPEDIDO = '"+chave+"'");
+
+
+        } catch (SQLiteException e) {
+            Util.log("SQLiteException excluir_um_item_da_venda" + e.getMessage());
+        }
+    }
+
+    public void retornaItensOculto(String Chave_Venda){
+        db = new ConfigDB(ctx).getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N'", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                db.execSQL("UPDATE PEDITENS SET VIEW = NULL WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N')");
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+
+    }
+
+    public void atualizaItensTemp(String Chave_Venda){
+        db = new ConfigDB(ctx).getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T'", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                db.execSQL("UPDATE PEDITENS SET VIEW = NULL WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'T')");
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+
+    }
+
+    public void excluiItensTemp(String Chave_Venda){
+        db = new ConfigDB(ctx).getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T'", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                db.execSQL("DELETE FROM PEDITENS WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'T')");
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+
+    }
+
+    public void excluiItensOculto(String Chave_Venda){
+        db = new ConfigDB(ctx).getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N'", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                db.execSQL("DELETE FROM PEDITENS WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N')");
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+
+    }
+
     public void excluir_todos_itens_da_venda () {
         db = new ConfigDB(ctx).getWritableDatabase();
         try {
@@ -508,12 +586,12 @@ public class Sqlite_VENDADAO {
 
         try {
             if (!Chave_Venda.equals("0")) {
-                cursor = db.rawQuery("select * from PEDITENS where CHAVEPEDIDO = '" + Chave_Venda + "'", null);
+                cursor = db.rawQuery("select * from PEDITENS where (CHAVEPEDIDO = '" + Chave_Venda + "') AND ((VIEW IS NULL) OR (VIEW = 'T'))", null);
                 if (cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     do {
                         SqliteVendaDBean vendaD = new SqliteVendaDBean();
-                        //vendaD.setVendad_prd_codigo(cursor.getString(cursor.getColumnIndex(vendaD.NUMPED)));
+                        vendaD.setVendac_chave(cursor.getString(cursor.getColumnIndex("CHAVEPEDIDO")));
                         vendaD.setVendad_prd_codigo(cursor.getString(cursor.getColumnIndex("CODITEMANUAL")));
                         vendaD.setVendad_prd_descricao(cursor.getString(cursor.getColumnIndex("DESCRICAO")));
                         vendaD.setVendad_prd_unidade(cursor.getString(cursor.getColumnIndex("UNIDADE")));
@@ -533,11 +611,13 @@ public class Sqlite_VENDADAO {
         return lista_registros_vendaD;
     }
 
+
+
     public SqliteVendaDBean altera_item_na_venda(SqliteVendaDBean item) {
         SqliteVendaDBean produto = null;
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            sql = "select * from PEDITENS where CODITEMANUAL = ? ";
+            sql = "select * from PEDITENS where CODITEMANUAL = ? and view <> 'N' ";
             cursor = db.rawQuery(sql, new String[]{item.getVendad_prd_codigo().toString()});
             if (cursor.moveToFirst()) {
                 produto = new SqliteVendaDBean();
@@ -561,7 +641,7 @@ public class Sqlite_VENDADAO {
         try {
             try {
                 db = new ConfigDB(ctx).getWritableDatabase();
-                sql = "insert into PEDITENS (CODITEMANUAL,DESCRICAO,QTDMENORPED,VLUNIT,VLTOTAL,UNIDADE,CHAVEPEDIDO) values (?,?,?,?,?,?,?) ";
+                sql = "insert into PEDITENS (CODITEMANUAL,DESCRICAO,QTDMENORPED,VLUNIT,VLTOTAL,UNIDADE,CHAVEPEDIDO,VIEW) values (?,?,?,?,?,?,?,?) ";
                 stmt = db.compileStatement(sql);
                 //stmt.bindString(1, item.getVendad_eanTEMP());
                 stmt.bindString(1, item.getVendad_prd_codigo());
@@ -572,6 +652,7 @@ public class Sqlite_VENDADAO {
                 String und = item.getVendad_prd_unidade();
                 stmt.bindString(6, item.getVendad_prd_unidade());
                 stmt.bindString(7, item.getVendac_chave());
+                stmt.bindString(8, item.getvendad_prd_view());
                 if (stmt.executeInsert() > 0) {
                     gravacao = true;
                 }

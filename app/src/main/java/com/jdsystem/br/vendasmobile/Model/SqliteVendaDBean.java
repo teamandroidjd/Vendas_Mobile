@@ -19,6 +19,7 @@ public class SqliteVendaDBean {
     public static final String PRECOPRODUTO = "VLUNIT";
     public static final String TOTALPRODUTO = "VLTOTAL";
     public static final String VLMERCAD = "VLMERCAD";
+    public static final String PRODVIEW = "VIEW";
 
     private String vendac_chave;
     private Integer vendad_nro_item ;
@@ -28,6 +29,7 @@ public class SqliteVendaDBean {
     private String vendad_prd_unidade ;
     private Integer vendad_prd_codigoitem ;
     private Integer numped;
+    private String vendad_prd_view;
 
     public String getVendad_prd_unidade() {
         return vendad_prd_unidade;
@@ -143,5 +145,13 @@ public class SqliteVendaDBean {
 
     public void setVendad_prd_codigoitem(Integer vendad_prd_codigoitem) {
         this.vendad_prd_codigoitem = vendad_prd_codigoitem;
+    }
+
+    public String getvendad_prd_view() {
+        return vendad_prd_view;
+    }
+
+    public void setvendad_prd_view(String vendad_prd_view) {
+        this.vendad_prd_view = vendad_prd_view;
     }
 }

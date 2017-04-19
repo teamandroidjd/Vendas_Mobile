@@ -5,8 +5,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -18,10 +21,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -89,7 +94,8 @@ public class ConsultaClientes extends AppCompatActivity
 
         dialog = new ProgressDialog(ConsultaClientes.this);
         dialog.setTitle(getString(R.string.wait));
-        dialog.setMessage(getString(R.string.loading_products));
+        dialog.setMessage(getString(R.string.loading_clients));
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setCancelable(false);
         dialog.show();
 
@@ -348,7 +354,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         do {
@@ -379,7 +385,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ATIVO = 'S' OR CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%' OR CLIENTES.NOMEFAN LIKE '%" + editQuery + "%' OR CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%'   ORDER BY NOMEFAN, NOMERAZAO ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         do {
@@ -445,7 +451,7 @@ public class ConsultaClientes extends AppCompatActivity
                         " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                         " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                         " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                        " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                        " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                 cursorClientes.moveToFirst();
                 if (cursorClientes.getCount() > 0) {
                     do {
@@ -487,7 +493,7 @@ public class ConsultaClientes extends AppCompatActivity
                         " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                         " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                         " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                        " WHERE ATIVO = 'S' OR CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%' OR CLIENTES.NOMEFAN LIKE '%" + editQuery + "%' OR CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%'   ORDER BY NOMEFAN, NOMERAZAO ORDER BY NOMEFAN, NOMERAZAO ", null);
+                        " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                 cursorClientes.moveToFirst();
                 if (cursorClientes.getCount() > 0) {
                     do {
@@ -641,6 +647,43 @@ public class ConsultaClientes extends AppCompatActivity
             i.putExtras(params);
             startActivity(i);
             finish();
+        } else if (id == R.id.nav_logout) {
+            Intent intent = new Intent(ConsultaClientes.this, Login.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.nav_exit) {
+            finish();
+        } else if (id == R.id.nav_sobre) {
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.info_jdsystem, null);
+            AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+            alerta.setCancelable(false);
+            alerta.setView(view);
+
+            ImageButton maps = (ImageButton) view.findViewById(R.id.imgbtnmaps);
+            TextView versao = (TextView) view.findViewById(R.id.txtversao);
+            PackageInfo pInfo = null;
+            try {
+                pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            String version = pInfo.versionName;
+            versao.setText("Versão "+version);
+            maps.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = Uri.parse(getString(R.string.link_mapsjdsystem));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+
+            alerta.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
+            });
+            alerta.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -651,50 +694,89 @@ public class ConsultaClientes extends AppCompatActivity
     @Override
     public void run() {
         if (flag == 0 && CadastroContato == 0) {
-            //uttilizado para carregar todos os clientes.
-            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
-            Bundle params = new Bundle();
-            if (frag == null) {
-                frag = new FragmentCliente();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                params.putInt(getString(R.string.intent_flag), flag);
-                params.putString(getString(R.string.intent_numpedido), numPedido);
-                params.putString(getString(R.string.intent_chavepedido), chavepedido);
-                params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                if(telaInvocada != null){
-                    if(telaInvocada.equals("ConsultaPedidos")) {
-                        params.putBoolean("consultapedido", true);
-                    }
-                }
-                frag.setArguments(params);
-                ft.commit();
-            } else {
-                // utilizado para o filtro de clientes
-                FragmentCliente newfrag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragB");
-                Bundle newparams = new Bundle();
-                if (newfrag == null) {
-                    newfrag = new FragmentCliente();
-                    FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
-                    newft.replace(R.id.rl_fragment_container, newfrag, "mainFragB");
-                    newparams.putInt(getString(R.string.intent_flag), flag);
-                    newparams.putString(getString(R.string.intent_numpedido), numPedido);
-                    newparams.putString(getString(R.string.intent_chavepedido), chavepedido);
-                    newparams.putString(getString(R.string.intent_usuario), usuario);
-                    newparams.putString(getString(R.string.intent_senha), senha);
-                    newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
-                    newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                    if(telaInvocada != null){
-                        if(telaInvocada.equals("ConsultaPedidos")) {
+            if(telaInvocada == null) {
+                //uttilizado para carregar todos os clientes.
+                FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                Bundle params = new Bundle();
+                if (frag == null) {
+                    frag = new FragmentCliente();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                    params.putInt(getString(R.string.intent_flag), flag);
+                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    if (telaInvocada != null) {
+                        if (telaInvocada.equals("ConsultaPedidos")) {
                             params.putBoolean("consultapedido", true);
                         }
                     }
-                    newfrag.setArguments(newparams);
-                    newft.commit();
+                    frag.setArguments(params);
+                    ft.commit();
+                } else {
+                    // utilizado para o filtro de clientes
+                    FragmentCliente newfrag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                    Bundle newparams = new Bundle();
+                    if (newfrag == null) {
+                        newfrag = new FragmentCliente();
+                        FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                        newft.replace(R.id.rl_fragment_container, newfrag, "mainFragB");
+                        newparams.putInt(getString(R.string.intent_flag), flag);
+                        newparams.putString(getString(R.string.intent_numpedido), numPedido);
+                        newparams.putString(getString(R.string.intent_chavepedido), chavepedido);
+                        newparams.putString(getString(R.string.intent_usuario), usuario);
+                        newparams.putString(getString(R.string.intent_senha), senha);
+                        newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        if (telaInvocada != null) {
+                            if (telaInvocada.equals("ConsultaPedidos")) {
+                                params.putBoolean("consultapedido", true);
+                            }
+                        }
+                        newfrag.setArguments(newparams);
+                        newft.commit();
+                    }
                 }
+            }else {
+                //uttilizado para carregar todos os clientes para inclusão do pedido.
+                FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                Bundle params = new Bundle();
+                if (frag == null) {
+                    frag = new FragmentCliente();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                    params.putInt(getString(R.string.intent_flag), 2);
+                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    frag.setArguments(params);
+                    ft.commit();
+                } else {
+                    // utilizado para o filtro de clientes para inclusão no pedido
+                    FragmentCliente newfrag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                    Bundle newparams = new Bundle();
+                    if (newfrag == null) {
+                        newfrag = new FragmentCliente();
+                        FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                        newft.replace(R.id.rl_fragment_container, newfrag, "mainFragB");
+                        newparams.putInt(getString(R.string.intent_flag), 2);
+                        newparams.putString(getString(R.string.intent_numpedido), numPedido);
+                        newparams.putString(getString(R.string.intent_chavepedido), chavepedido);
+                        newparams.putString(getString(R.string.intent_usuario), usuario);
+                        newparams.putString(getString(R.string.intent_senha), senha);
+                        newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        newfrag.setArguments(newparams);
+                        newft.commit();
+                    }
+                }
+
             }
 
         } else if (flag == 0 && CadastroContato == 1) {

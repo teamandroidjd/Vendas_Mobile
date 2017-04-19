@@ -1,10 +1,15 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -16,10 +21,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -126,7 +133,7 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
     public void onBackPressed() {
         switch (flag) {
             case 0:
-                Intent intent = new Intent(ConsultaContatos.this, ConsultaContatos.class);
+                Intent intent = new Intent(ConsultaContatos.this, ConsultaPedidos.class);
                 Bundle params = new Bundle();
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -268,6 +275,44 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
             isinc.putExtras(params);
             startActivity(isinc);
             finish();
+        } else if (id == R.id.nav_logout) {
+            Intent intent = new Intent(ConsultaContatos.this, Login.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.nav_exit) {
+            finish();
+        } else if (id == R.id.nav_sobre) {
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.info_jdsystem, null);
+            AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+            alerta.setCancelable(false);
+            alerta.setView(view);
+
+            ImageButton maps = (ImageButton) view.findViewById(R.id.imgbtnmaps);
+            TextView versao = (TextView) view.findViewById(R.id.txtversao);
+            PackageInfo pInfo = null;
+            try {
+                pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            String version = pInfo.versionName;
+            versao.setText("Versão "+version);
+            maps.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = Uri.parse(getString(R.string.link_mapsjdsystem));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+
+            alerta.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
+            });
+            alerta.show();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

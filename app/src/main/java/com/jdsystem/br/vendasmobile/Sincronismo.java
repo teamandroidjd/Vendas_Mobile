@@ -1550,6 +1550,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
 
     }
 
+    @Override
+    protected void onResume() {
+        if(Dialog != null){
+            Dialog.show();
+
+        }
+        super.onResume();
+    }
 
     // Métodos que podem ser invocados de outras activity's.
 /*

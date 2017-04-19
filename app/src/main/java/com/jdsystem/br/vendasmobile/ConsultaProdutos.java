@@ -6,8 +6,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -18,11 +21,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +46,7 @@ public class ConsultaProdutos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
 
-    String codVendedor, URLPrincipal, usuario, senha, dtUltAtu, usuarioLogado, sincprod, numPedido, chavePedido, editQuery;
+    String codVendedor, URLPrincipal, usuario, senha, dtUltAtu, usuarioLogado, sincprod, numPedido, chavePedido, editQuery,telaInvocada;
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private EditText prod_txt_pesquisaproduto;
     private ProgressDialog dialog;
@@ -72,6 +77,7 @@ public class ConsultaProdutos extends AppCompatActivity
                 numPedido = params.getString(getString(R.string.intent_numpedido));
                 chavePedido = params.getString(getString(R.string.intent_chavepedido));
                 Flag = params.getInt(getString(R.string.intent_flag));
+                telaInvocada = params.getString(getString(R.string.intent_telainvocada));
                 //Pedido = params.getBoolean("pedido");
             }
         }
@@ -289,6 +295,7 @@ public class ConsultaProdutos extends AppCompatActivity
                     params.putString(getString(R.string.intent_senha), senha);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putString(getString(R.string.intent_telainvocada),telaInvocada);
                     frag.setArguments(params);
                     ft.commit();
                 } else {
@@ -305,6 +312,7 @@ public class ConsultaProdutos extends AppCompatActivity
                         newparams.putString(getString(R.string.intent_senha), senha);
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        newparams.putString(getString(R.string.intent_telainvocada),telaInvocada);
                         newfrag.setArguments(newparams);
                         newft.commit();
                     }
@@ -366,9 +374,15 @@ public class ConsultaProdutos extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        if(telaInvocada != null){
+            if(telaInvocada.equals("VENDER_PRODUTOS")){
+                finish();
+                return;
+            }
+        }
         switch (Flag) {
             case 0:
-                Intent intent = new Intent(ConsultaProdutos.this, ConsultaProdutos.class);
+                Intent intent = new Intent(ConsultaProdutos.this, ConsultaPedidos.class);
                 Bundle params = new Bundle();
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -468,6 +482,44 @@ public class ConsultaProdutos extends AppCompatActivity
             i.putExtras(params);
             startActivity(i);
             finish();
+        } else if (id == R.id.nav_logout) {
+            Intent intent = new Intent(ConsultaProdutos.this, Login.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.nav_exit) {
+            finish();
+        } else if (id == R.id.nav_sobre) {
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.info_jdsystem, null);
+            AlertDialog.Builder alerta = new AlertDialog.Builder(this);
+            alerta.setCancelable(false);
+            alerta.setView(view);
+
+            ImageButton maps = (ImageButton) view.findViewById(R.id.imgbtnmaps);
+            TextView versao = (TextView) view.findViewById(R.id.txtversao);
+            PackageInfo pInfo = null;
+            try {
+                pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            String version = pInfo.versionName;
+            versao.setText("Versão "+version);
+            maps.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = Uri.parse(getString(R.string.link_mapsjdsystem));
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
+                }
+            });
+
+            alerta.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {}
+            });
+            alerta.show();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
