@@ -115,7 +115,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             getActivity().finish();
         } else {
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
-            String CodProd = adapter.ChamaDados(position);
+            String CodProd = adapter.ChamaDados(position).trim();
             final Double qtdestoque;
             String codItem = null;
             String descricao = null;
@@ -135,7 +135,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 if (vendenegativo.equals("N") && ConexOk == true) {
                     String sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, Integer.parseInt(CodProd));
                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = " + CodProd, null);
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"'", null);
                         CursItens.moveToFirst();
                         qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                         CursItens.close();
@@ -144,17 +144,19 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             return;
                         }
                     } else {
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodProd, null);
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"'", null);
                         CursItens.moveToFirst();
-                        qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-                        CursItens.close();
-                        if (vendenegativo.equals("N") && qtdestoque <= 0) {
-                            Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
-                            return;
-                        }
+
+                            qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                            CursItens.close();
+                            if (vendenegativo.equals("N") && qtdestoque <= 0) {
+                                Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                return;
+                            }
+
                     }
                 } else {
-                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodProd, null);
+                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"'", null);
                     CursItens.moveToFirst();
                     qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                     CursItens.close();
