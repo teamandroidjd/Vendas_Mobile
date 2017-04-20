@@ -265,6 +265,23 @@ public class ConfigDB extends SQLiteOpenHelper {
             " HOST       VARCHAR (50),                        " +
             " NOMEPERFIL VARCHAR (20) ); ");
 
+    private static String SQL_DIAS_CONTATOS = ("create table if not exists diascontatotemporario (" +
+            "coddiacontato      integer primary key autoincrement, " +
+            "dia_visita        varchar(40), " +
+            "cod_dia_semana     integer,     " +
+            "hora_inicio        integer,     " +
+            "minuto_inicio      integer,     " +
+            "hora_final         integer,     " +
+            "minuto_final       integer);    ");
+
+    private static String SQL_DIAS_CONTATOS_FINAL = ("create table if not exists dias_contatos (" +
+            "coddiacontato      integer primary key autoincrement, " +
+            "cod_dia_semana     integer, " +
+            "codcontatoint      integer, " +
+            "hora_inicio        integer, " +
+            "minuto_inicio      integer, " +
+            "hora_final         integer, " +
+            "minuto_final       integer);");
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -284,6 +301,8 @@ public class ConfigDB extends SQLiteOpenHelper {
         db.execSQL(SQL_USUARIOS);
         db.execSQL(SQL_BLOQUEIOS);
         db.execSQL(SQL_PERFIL);
+        db.execSQL(SQL_DIAS_CONTATOS);
+        db.execSQL(SQL_DIAS_CONTATOS_FINAL);
 
     }
 
@@ -547,6 +566,14 @@ public class ConfigDB extends SQLiteOpenHelper {
             } catch (Exception E) {
                 System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD TIPO(1)");
             }
+            try {
+                db.execSQL("create table if not exists diascontatotemporario (" +
+                        "coddiacontato integer primary key autoincrement, " +
+                        "dia_visita varchar(40), " +
+                        "cod_dia_semana);");
+            } catch (Exception E) {
+                System.out.println("ConfigDB, falha no INSERT DIASCONTATOTEMPORARIO");
+            }
             try{
                 db.execSQL("ALTER TABLE EMPRESA ADD CODPERFIL INTEGER");
             }catch (Exception E){
@@ -562,6 +589,15 @@ public class ConfigDB extends SQLiteOpenHelper {
 
             }
 
+            try {
+                db.execSQL("create table if not exists dias_contatos (" +
+                        "coddiacontato integer primary key autoincrement, " +
+                        "dia_visita varchar(40), " +
+                        "cod_dia_semana integer, " +
+                        "codcontatoint integer);");
+            } catch (Exception E){
+                System.out.println("ConfigDB, falha no INSERT DIAS_CONTATOS");
+            }
 
         }
     }

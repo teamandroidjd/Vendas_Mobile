@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -8,19 +9,26 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.icu.text.RelativeDateTimeFormatter;
+import android.icu.text.TimeZoneFormat;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewDebug;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -40,26 +48,48 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import static java.lang.Integer.parseInt;
+
 public class CadastroContatos extends AppCompatActivity implements Runnable {
+    String sDiaSemana, horarioInicial, horarioFinal,
+            agendaContato;
+    String DOMINGO = "Domingo",
+            SEGUNDA = "Segunda-feira",
+            TERCA = "Terça-feira",
+            QUARTA = "Quarta-feira",
+            QUINTA = "Quinta-feira",
+            SEXTA = "Sexta-feira",
+            SABADO = "Sábado";
+
     String codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente, descBairro,telaInvocada;
     Boolean PesqCEP;
     TimePicker timePicker;
-    ImageButton BtnPesqCep;
-    int CodCidade, CodBairro, CodCliente, hour, minute;
-    EditText nome, setor, data, documento, endereco, numero, cep, tel1, tel2, email, OBS, Complemento;
-    Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF;
+    ImageButton BtnPesqCep, btnInformaDiasVisita;
+    int CodCidade, CodBairro, CodCliente, hour, minute, codInternoUlt;
+    EditText nome, setor, data, documento, endereco, numero, cep, tel1, tel2, email, OBS, Complemento, horaFinal, horaInicial, idEditText;
+    Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF, horarioContato;
     Context ctx;
     LinearLayout linearcheck1, linearcheck2, lineartxtsemana, linearrazao;
     TextView razaosocial;
-    //private CheckBox domingo, segunda, terca, quarta, quinta, sexta;
     private Handler handler = new Handler();
     SQLiteDatabase DB;
     private static ProgressDialog DialogECB;
     private GoogleApiClient client;
     private TimePicker timerPicker1;
+    ListView listView;
+    ArrayList<String> diasContatos;
+    ArrayAdapter<String> arrayAdapter;
+    int hora1, minute1, hora2, minute2;
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+    TimePickerDialog timePickerDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +97,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         setContentView(R.layout.activity_cad_contatos);
 
         declaraobjetos();
+        excluiBaseTempContatos(CadastroContatos.this);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -104,13 +135,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 if (sTipoContato == "O") {
                     CodCliente = 0;
                     linearrazao.setVisibility(View.GONE);
-                    linearcheck1.setVisibility(EditText.VISIBLE);
-                    linearcheck2.setVisibility(EditText.VISIBLE);
                     lineartxtsemana.setVisibility(EditText.VISIBLE);
                 } else if (sTipoContato == "C" && CodCliente == 0) {
-                    linearcheck1.setVisibility(EditText.VISIBLE);
-                    linearcheck2.setVisibility(EditText.VISIBLE);
-                    lineartxtsemana.setVisibility(EditText.GONE);
+                    lineartxtsemana.setVisibility(EditText.VISIBLE);
                     Intent i = new Intent(CadastroContatos.this, ConsultaClientes.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
@@ -123,14 +150,10 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     TipoContato.setSelection(1);
                     linearrazao.setVisibility(View.VISIBLE);
                     razaosocial.setText(NomeCliente);
-                    linearcheck1.setVisibility(View.VISIBLE);
-                    linearcheck2.setVisibility(View.VISIBLE);
-                    lineartxtsemana.setVisibility(View.GONE);
+                    lineartxtsemana.setVisibility(View.VISIBLE);
                 } else {
                     linearrazao.setVisibility(View.GONE);
-                    linearcheck1.setVisibility(View.VISIBLE);
-                    linearcheck2.setVisibility(View.VISIBLE);
-                    lineartxtsemana.setVisibility(View.GONE);
+                    lineartxtsemana.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -353,6 +376,65 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        listView.setOnTouchListener(new ListView.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+                // Handle ListView touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder confirmRemove = new AlertDialog.Builder(CadastroContatos.this);
+                confirmRemove.setTitle(R.string.remove_hour);
+                confirmRemove.setMessage(R.string.remove_schedule)
+                        .setCancelable(true)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                String itemLista = listView.getItemAtPosition(position).toString();
+                                arrayAdapter.remove(diasContatos.get(position));
+                                arrayAdapter.notifyDataSetChanged();
+                                try {
+                                    DB.execSQL("delete from diascontatotemporario " +
+                                            "where dia_visita = '" + itemLista + "'");
+                                }catch (Exception E){
+                                    System.out.println(E);
+                                }
+                            }
+                        })
+                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                return;
+                            }
+                        });
+                AlertDialog alert = confirmRemove.create();
+                alert.show();
+            }
+        });
+
+        btnInformaDiasVisita.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                criaAgendaVisitas();
+            }
+        });
     }
 
     private void declaraobjetos() {
@@ -364,8 +446,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         spUF = (Spinner) findViewById(R.id.spnUF);
         spCidade = (Spinner) findViewById(R.id.spnCidade);
         spBairro = (Spinner) findViewById(R.id.spnBairro);
-        linearcheck1 = (LinearLayout) findViewById(R.id.lnrcheckbox);
-        linearcheck2 = (LinearLayout) findViewById(R.id.lnrcheckbox2);
         lineartxtsemana = (LinearLayout) findViewById(R.id.lnrtxtdiasemana);
         linearrazao = (LinearLayout) findViewById(R.id.linearrazaosocial);
         nome = (EditText) findViewById(R.id.EdtNomeCompleto);
@@ -381,6 +461,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         OBS = (EditText) findViewById(R.id.EdtOBS);
         data = (EditText) findViewById(R.id.EdtData);
         razaosocial = (TextView) findViewById(R.id.txtrazaocontato);
+        btnInformaDiasVisita = (ImageButton) findViewById(R.id.btn_add_dias_contato);
+        listView = (ListView) findViewById(R.id.list_view_agenda_contato);
+
 
         final EditText etCEP = (EditText) findViewById(R.id.EdtCep);
         etCEP.addTextChangedListener(Mask.insert(Mask.CEP_MASK, etCEP));
@@ -448,6 +531,11 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     "', '" + endereco.getText().toString() + "', '" + numero.getText().toString() + "', '" +
                     Complemento.getText().toString() + "', '" + sUF + "', " + codVendedor + ", '" + descBairro + "', '" +
                     NomeCidade + "', " + CodCliente + ", '" + sTipoContato + "', '" + OBS.getText().toString() + "');");
+
+            returnLastId();
+            salvarAgenda();
+
+            //DB.execSQL("select diascontatotemporario.dia_visita, diascontatotemporario.cod_dia_semana");
 
             //Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
             //}
@@ -593,14 +681,14 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                                     " WHERE DESCRICAO = '" + NomeCidade + "'");
                             Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                             cursor1.moveToFirst();
-                            CodCidade = Integer.parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE_EXT")));
+                            CodCidade = parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE_EXT")));
                             cursor1.close();
                         } else {
                             DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF)" +
                                     " VALUES('" + NomeCidade + "','" + Estado + "');");
                             Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                             cursor1.moveToFirst();
-                            CodCidade = Integer.parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE_EXT")));
+                            CodCidade = parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE_EXT")));
                             cursor1.close();
                         }
                         CursorCidade.close();
@@ -776,64 +864,163 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         client.disconnect();
     }
 
-    public void onCheckedboxClicked(View view) {
-        boolean checked = ((CheckBox) view).isChecked();
-        switch (view.getId()) {
-            case R.id.cb_domingo:
-                if (checked) {
-                    ImageButton imageButton = (ImageButton) findViewById(R.id.add_horario_domingo);
-                    imageButton.setVisibility(View.VISIBLE);
-                    imageButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.editTextGroupLayout);
+    private void criaAgendaVisitas() {
+        View view = (LayoutInflater.from(CadastroContatos.this)).inflate(R.layout.input_horario_contato, null);
 
-                            EditText editTextView = new EditText(CadastroContatos.this);
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT, 1);
-
-                            editTextView.setLayoutParams(params);
-
-                            linearLayout.addView(editTextView);
-                            editTextView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    new TimePickerDialog(CadastroContatos.this, timePickerListener, hour, minute, false);
-
-                                    /*EditText pickerTimeView = new EditText(CadContatos.this);
-
-                                    TimePicker.LayoutParams params = new TimePicker.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                            TimePicker.LayoutParams.WRAP_CONTENT, 1);
-
-                                    pickerTimeView.setLayoutParams(params);
-
-                                    linearLayout.addView(pickerTimeView);*/
+        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CadastroContatos.this);
+        alertBuilder.setView(view);
+        final Spinner horario_contato = (Spinner) view.findViewById(R.id.spn_horario_contato);
+        timePickerDialog = new TimePickerDialog(CadastroContatos.this, timePickerListener, hour, minute, true);
 
 
-                                }
-                            });
-                            /*TimePicker pickerTimeView = new TimePicker(CadContatos.this);
+        horaInicial = (EditText) view.findViewById(R.id.horario_inicial);
+        horaInicial.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //v.onTouchEvent(event);   // handle the event first
+                idEditText = horaInicial;
 
-                           TimePicker.LayoutParams params = new TimePicker.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                   TimePicker.LayoutParams.WRAP_CONTENT, 1);
-
-                            pickerTimeView.setLayoutParams(params);
-
-                            linearLayout.addView(pickerTimeView);*/
-
-                        }
-                    });
-                    ImageView imgView = (ImageView) findViewById(R.id.imageView2);
-                    imgView.setVisibility(View.VISIBLE);
-                } else {
-                    ImageButton imageButton = (ImageButton) findViewById(R.id.add_horario_domingo);
-                    imageButton.setVisibility(View.GONE);
-                    ImageView imgView = (ImageView) findViewById(R.id.imageView2);
-                    imgView.setVisibility(View.GONE);
+                if (timePickerDialog.isShowing()) {
+                    timePickerDialog.dismiss();
+                    timePickerDialog = new TimePickerDialog(CadastroContatos.this, timePickerListener, hour, minute, true);
                 }
-                break;
+                timePickerDialog.show();
+                return true;
+            }
+        });
+
+        horaFinal = (EditText) view.findViewById(R.id.horario_final);
+        horaFinal.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                idEditText = horaFinal;
+                if (timePickerDialog.isShowing()) {
+                    timePickerDialog.dismiss();
+                    timePickerDialog = new TimePickerDialog(CadastroContatos.this, timePickerListener, hour, minute, true);
+                }
+                timePickerDialog.show();
+                return true;
+            }
+        });
+        alertBuilder.setView(view);
+        alertBuilder.setCancelable(true)
+                .setPositiveButton("Ok", null)
+                .setView(view);
+
+        final AlertDialog mAlertDialog = alertBuilder.create();
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String diaSemana = horario_contato.getSelectedItem().toString();
+                        int codDiaSemana = 0;
+                        if (diaSemana.equals(DOMINGO)) {
+                            sDiaSemana = DOMINGO;
+                            codDiaSemana = 0;
+                        } else if (diaSemana.equals(SEGUNDA)) {
+                            sDiaSemana = SEGUNDA;
+                            codDiaSemana = 1;
+                        } else if (diaSemana.equals(TERCA)) {
+                            sDiaSemana = TERCA;
+                            codDiaSemana = 2;
+                        } else if (diaSemana.equals(QUARTA)) {
+                            sDiaSemana = QUARTA;
+                            codDiaSemana = 3;
+                        } else if (diaSemana.equals(QUINTA)) {
+                            sDiaSemana = QUINTA;
+                            codDiaSemana = 4;
+                        } else if (diaSemana.equals(SEXTA)) {
+                            sDiaSemana = SEXTA;
+                            codDiaSemana = 5;
+                        } else if (diaSemana.equals(SABADO)) {
+                            sDiaSemana = SABADO;
+                            codDiaSemana = 6;
+                        }
+
+                        if ((horaFinal.getText().toString().equals("")) || (horaInicial.getText().toString().equals(""))) {
+                            if ((horaInicial.getText().toString().equals(""))|| (horaInicial.getText().toString().equals(null))) {
+                                Util.msg_toast_personal(CadastroContatos.this, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT);
+                            } else if ((horaFinal.getText().toString().equals("")) || (horaFinal.getText().toString().equals(null))) {
+                                Util.msg_toast_personal(CadastroContatos.this, "Horário final de visita não informado!", Toast.LENGTH_SHORT);
+                            }
+                        } else {
+                            horarioInicial = horaInicial.getText().toString();
+                            horarioFinal = horaFinal.getText().toString();
+
+                            int a = parseInt(horarioFinal.substring(0, 2));
+                            int b = parseInt(horarioInicial.substring(0, 2));
+
+                            if (a < b) {
+                                Util.msg_toast_personal(CadastroContatos.this, "Horário final " +
+                                        "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT);
+                            } else {
+                                agendaContato = sDiaSemana + ", de " + converteZero(Integer.toString(hora1)) +
+                                        ":" + converteZero(Integer.toString(minute1)) + " às " + converteZero(Integer.toString(hora2)) + ":" +
+                                        converteZero(Integer.toString(minute2));
+                                if(insereContatos(agendaContato, codDiaSemana)){
+                                    diasContatos = listaContatos();
+
+                                    arrayAdapter = new ArrayAdapter<String>(CadastroContatos.this,
+                                            android.R.layout.simple_list_item_1, diasContatos);
+                                    listView.setAdapter(arrayAdapter);
+                                    mAlertDialog.dismiss();
+                                };
+                                //listView
+
+                            }
+                        }
+                    }
+                });
+            }
+        });
+        mAlertDialog.show();
+    }
+
+    private boolean insereContatos(String diaVisita, int nCodDiaSemana) {
+        try {
+            Cursor cursor = DB.rawQuery("select diascontatotemporario.dia_visita " +
+                    "from diascontatotemporario " +
+                    "where dia_visita = '" + diaVisita + "'", null);
+
+            if (cursor.getCount() > 0) {
+                Util.msg_toast_personal(CadastroContatos.this, getString(R.string.sched_already_exist), Toast.LENGTH_SHORT);
+
+                return false;
+            } else {
+                DB.execSQL("insert into diascontatotemporario (dia_visita, cod_dia_semana, hora_inicio, minuto_inicio, hora_final, " +
+                        "minuto_final) values ('" + diaVisita + "', " +
+                        nCodDiaSemana + ", " + hora1 + ", " + minute1 + ", " + hora2 + ", " + minute2 + " );");
+            }
+        } catch (Exception E) {
+            E.toString();
 
         }
+        return true;
+    }
+
+    private ArrayList<String> listaContatos() {
+        ArrayList<String> diasMarcados = new ArrayList<String>();
+        try {
+            Cursor cursor = DB.rawQuery("select dia_visita, cod_dia_semana from diascontatotemporario " +
+                    "order by cod_dia_semana", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                do {
+                    String dataContato = cursor.getString(cursor.getColumnIndex("dia_visita"));
+
+                    diasMarcados.add(dataContato);
+
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+        } catch (Exception E) {
+            E.toString();
+        }
+        return diasMarcados;
+
     }
 
     private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
@@ -841,7 +1028,77 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
             hour = hourOfDay;
             minute = minuteOfHour;
+
+            if (idEditText.equals(horaFinal)) {
+                hora2 = hour;
+                minute2 = minute;
+                //horarioFinal = converteZero(Integer.toString(hour)) + converteZero(Integer.toString(minute));
+                horaFinal.setText(converteZero(Integer.toString(hour)) + ":" + converteZero(Integer.toString(minute)));
+                idEditText = null;
+            } else if (idEditText.equals(horaInicial)) {
+                hora1 = hour;
+                minute1 = minute;
+                //horarioInicial = converteZero(Integer.toString(hour)) + converteZero(Integer.toString(minute));
+                horaInicial.setText(converteZero(Integer.toString(hour)) + ":" + converteZero(Integer.toString(minute)));
+                idEditText = null;
+            }
+
+            Calendar time = Calendar.getInstance();
+            time.set(Calendar.HOUR_OF_DAY, hour);
+            time.set(Calendar.MINUTE, minute);
+
         }
     };
+
+    public static String converteZero(String valor) {
+        valor = valor.format("%2s", valor);
+        valor = valor.replace(' ', '0');
+        return valor;
+    }
+
+    public static void excluiBaseTempContatos(Context ctx) {
+        SQLiteDatabase db = new ConfigDB(ctx).getReadableDatabase();
+        db.execSQL("delete from diascontatotemporario");
+    }
+
+    private void returnLastId() {
+        Cursor cursor = DB.rawQuery("select last_insert_rowid()", null);
+        try {
+            if (cursor.moveToFirst()) {
+                codInternoUlt = cursor.getInt(cursor.getColumnIndex("last_insert_rowid()"));
+            }
+        } catch (Exception E) {
+            System.out.println(E);
+        }
+    }
+
+    private ArrayList<String> salvarAgenda() {
+        ArrayList<String> diasContatos = new ArrayList<String>();
+        try {
+            Cursor cursor = DB.rawQuery("select cod_dia_semana, hora_inicio, minuto_inicio, " +
+                    "hora_final, minuto_final " +
+                    "from diascontatotemporario " +
+                    "order by cod_dia_semana", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                do {
+                    //String dataContato = cursor.getString(cursor.getColumnIndex("dia_visita"));
+                    int codDiaSemana = cursor.getInt(cursor.getColumnIndex("cod_dia_semana"));
+                    int horaInicio = cursor.getInt(cursor.getColumnIndex("hora_inicio"));
+                    int minutoInicio = cursor.getInt(cursor.getColumnIndex("minuto_inicio"));
+                    int horaFinal = cursor.getInt(cursor.getColumnIndex("hora_final"));
+                    int minutoFinal = cursor.getInt(cursor.getColumnIndex("minuto_final"));
+
+                    DB.execSQL("insert into dias_contatos (cod_dia_semana, codcontatoint, hora_inicio, minuto_inicio, " +
+                            "hora_final, minuto_final) values (" + codDiaSemana + ", " + codInternoUlt + ", " +
+                            horaInicio + ", " + minutoInicio + ", " + horaFinal + ", " + minutoFinal + ");");
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+        } catch (Exception E) {
+            E.toString();
+        }
+        return diasContatos;
+    }
 
 }

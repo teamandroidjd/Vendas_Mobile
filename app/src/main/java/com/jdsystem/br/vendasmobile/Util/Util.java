@@ -25,6 +25,9 @@ import java.util.InputMismatchException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.R.attr.breadCrumbShortTitle;
+import static android.R.attr.data;
+
 public class Util extends Activity {
 
 
@@ -67,7 +70,7 @@ public class Util extends Activity {
         return conectado;
     }
 
-    public static String AnoAtual(){
+    public static String AnoAtual() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         Date data = new Date();
         return sdf.format(data.getTime());
@@ -191,7 +194,7 @@ public class Util extends Activity {
 
     }
 
-    public static String AcrescentaZeros(String Zeros, int Qtd ){
+    public static String AcrescentaZeros(String Zeros, int Qtd) {
         int Tamanho;
         String aux;
 
@@ -199,7 +202,7 @@ public class Util extends Activity {
         Tamanho = Zeros.length();
         Zeros = "";
 
-        for (int I = 0; I < (Qtd-Tamanho); I++) {
+        for (int I = 0; I < (Qtd - Tamanho); I++) {
             Zeros = Zeros + "0";
         }
         aux = Zeros + aux;
@@ -207,7 +210,7 @@ public class Util extends Activity {
 
     }
 
-    public static String AcrescentaEspacosEsquerda(String Espaco, int Qtd ){
+    public static String AcrescentaEspacosEsquerda(String Espaco, int Qtd) {
         int Tamanho;
         String aux;
 
@@ -215,13 +218,14 @@ public class Util extends Activity {
         Tamanho = Espaco.length();
         Espaco = "";
 
-        for (int I = 0; I < (Qtd-Tamanho); I++) {
+        for (int I = 0; I < (Qtd - Tamanho); I++) {
             Espaco = Espaco + " ";
         }
         aux = Espaco + aux;
         return aux;
     }
-    public static String AcrescentaEspacosDireita(String Espaco, int Qtd ){
+
+    public static String AcrescentaEspacosDireita(String Espaco, int Qtd) {
         int Tamanho;
         String aux;
 
@@ -229,7 +233,7 @@ public class Util extends Activity {
         Tamanho = Espaco.length();
         Espaco = "";
 
-        for (int I = 0; I < (Qtd-Tamanho); I++) {
+        for (int I = 0; I < (Qtd - Tamanho); I++) {
             Espaco = Espaco + " ";
         }
         aux = aux + Espaco;
@@ -353,7 +357,33 @@ public class Util extends Activity {
         return sdf.format(data.getTime());
     }
 
-
+    public static String diaSemana(int num) {
+        String mDiaSemana = null;
+        switch (num) {
+            case 0:
+                mDiaSemana = "Domingo";
+                break;
+            case 1:
+                mDiaSemana = "Segunda-feira";
+                break;
+            case 2:
+                mDiaSemana = "Terça-feira";
+                break;
+            case 3:
+                mDiaSemana = "Quarta-feira";
+                break;
+            case 4:
+                mDiaSemana = "Quinta-feira";
+                break;
+            case 5:
+                mDiaSemana = "Sexta-feira";
+                break;
+            case 6:
+                mDiaSemana = "Sábado";
+                break;
+        }
+        return mDiaSemana;
+    }
 }
 
 

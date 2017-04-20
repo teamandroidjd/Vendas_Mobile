@@ -44,13 +44,15 @@
                     android:layout_height="wrap_content"
                     android:text="Razao Social:"
                     android:textColor="@color/colordescClie"
+                    android:textSize="22dp"
                     android:textStyle="normal|bold" />
 
                 <TextView
                     android:id="@+id/txtrazaocontato"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="nome do clientes que ira vincular o contato que está sendo cadastrado." />
+                    android:text="nome do cliente que ira vincular o contato"
+                    android:textSize="22dp" />
 
             </LinearLayout>
 
@@ -290,7 +292,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/txtdiassemana"
@@ -302,114 +304,38 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lnrcheckbox"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <CheckBox
-                    android:id="@+id/cb_domingo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="onCheckedboxClicked"
-                    android:text="Domingo" />
+                android:layout_height="200dp"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:orientation="vertical">
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5">
 
-                    <ImageButton
-                        android:id="@+id/add_horario_domingo"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_add_prod"
-                        android:layout_gravity="right"
-                        android:elevation="3dp"
-                        android:clickable="true"
-                        android:visibility="gone"/>
-
-                    <LinearLayout
-                        android:id="@+id/editTextGroupLayout"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" >
-                    </LinearLayout>
-
-                    <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginTop="10dp"
-                        android:background="#aa000000"
-                        android:visibility="gone"/>
-
+                        <ListView
+                            android:id="@+id/list_view_agenda_contato"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                        </ListView>
                 </LinearLayout>
 
-
-                <!--<EditText
-                    android:id="@+id/edt_domingo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Dias de Domingo"
-                    android:inputType="time"
-                    android:maxLines="1"
-                    android:visibility="gone"
-                    android:cursorVisible="false"/>-->
-
-                <CheckBox
-                    android:id="@+id/cb_segunda"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Segunda" />
+                    android:layout_gravity="end"
+                    android:gravity="end">
 
-                <CheckBox
-                    android:id="@+id/cb_terca"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Terça" />
 
-                <CheckBox
-                    android:id="@+id/cb_quarta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Quarta" />
+                    <ImageButton
+                        android:id="@+id/btn_add_dias_contato"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/ic_add_prod" />
+                </LinearLayout>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lnrcheckbox2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <CheckBox
-                    android:id="@+id/cb_quinta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Quinta" />
-
-                <CheckBox
-                    android:id="@+id/cb_sexta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sexta" />
-
-                <CheckBox
-                    android:id="@+id/cb_sabado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sábado" />
-
-            </LinearLayout>
-
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

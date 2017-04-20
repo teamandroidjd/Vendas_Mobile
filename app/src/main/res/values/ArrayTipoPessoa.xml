@@ -62,4 +62,13 @@
     <string-array name="Cargo_espec">
         <item>Selecione o Cargo/Especialidade</item>
     </string-array>
+    <string-array name="horario_contato">
+        <item>Domingo</item>
+        <item>Segunda-feira</item>
+        <item>Terça-feira</item>
+        <item>Quarta-feira</item>
+        <item>Quinta-feira</item>
+        <item>Sexta-feira</item>
+        <item>Sábado</item>
+    </string-array>
 </resources>
