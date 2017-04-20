@@ -11,6 +11,7 @@ import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.interfaces.iPagamento;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,7 +38,11 @@ public class Mensal implements iPagamento {
 
 
         BigDecimal DIVISOR = new BigDecimal(pagamento.getConf_parcelas());
-        BigDecimal VALOR_PARCELA_DIVIDIDA = vendaCBean.getTotal().divide(DIVISOR, BigDecimal.ROUND_UP);
+        BigDecimal VALOR_PARCELA_DIVIDIDA = vendaCBean.getTotal().divide(DIVISOR,2, BigDecimal.ROUND_DOWN);
+
+        BigDecimal recalculo = VALOR_PARCELA_DIVIDIDA.multiply(DIVISOR);
+        BigDecimal diferenca = vendaCBean.getTotal().subtract(recalculo);
+        BigDecimal vl_parcelas = null;
 
 
         Calendar calendar_1 = Calendar.getInstance(new Locale("pt", "BR"));
@@ -56,6 +61,11 @@ public class Mensal implements iPagamento {
 
             Date data_de_vencimento = calendar_1.getTime();
 
+            if (parcela == 1) {
+                vl_parcelas = VALOR_PARCELA_DIVIDIDA.add(diferenca);
+            } else {
+                vl_parcelas = VALOR_PARCELA_DIVIDIDA;
+            }
 
             new SqliteConRecDao(ctx).gravar_parcela(
                     new SqliteConRecBean(
@@ -64,7 +74,7 @@ public class Mensal implements iPagamento {
                             vendaCBean.getVendac_cli_nome(),
                             vendaCBean.getVendac_chave(),
                             Util.DataHojeSemHorasUSA(),
-                            VALOR_PARCELA_DIVIDIDA.setScale(2, BigDecimal.ROUND_UP),
+                            vl_parcelas.setScale(2, RoundingMode.HALF_EVEN),
                             BigDecimal.ZERO,
                             dateFormat.format(data_de_vencimento),
                             dateFormat.format(data_padrao),
