@@ -107,6 +107,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             params.putString(getString(R.string.intent_nomerazao), nomeRazao);
             intentp.putExtras(params);
             startActivity(intentp);
+            getActivity().finish();
 
         } else if(flag == 0 && cadContato == 1){
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();

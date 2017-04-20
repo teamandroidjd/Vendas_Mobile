@@ -182,6 +182,31 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                         GravaPreferencias(spntabpreco.getSelectedItemPosition());
+                        String spreco = spntabpreco.getSelectedItem().toString();
+
+                        if (!tab1.equals("")) {
+                            spreco = spreco.replace(tab1, "");
+                        }
+                        if (!tab2.equals("")) {
+                            spreco = spreco.replace(tab2, "");
+                        }
+                        if (!tab3.equals("")) {
+                            spreco = spreco.replace(tab3, "");
+                        }
+                        if (!tab4.equals("")) {
+                            spreco = spreco.replace(tab4, "");
+                        }
+                        if (!tab5.equals("")) {
+                            spreco = spreco.replace(tab5, "");
+                        }
+                        if (!tab6.equals("")) {
+                            spreco = spreco.replace(tab6, "");
+                        }
+                        if (!tab7.equals("")) {
+                            spreco = spreco.replace(tab7, "");
+                        }
+                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                        info_txv_precoproduto.setText(spreco);
                     }
 
                     @Override
@@ -497,6 +522,32 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                         GravaPreferencias(spntabpreco.getSelectedItemPosition());
+
+                        String spreco = spntabpreco.getSelectedItem().toString();
+
+                        if (!tab1.equals("")) {
+                            spreco = spreco.replace(tab1, "");
+                        }
+                        if (!tab2.equals("")) {
+                            spreco = spreco.replace(tab2, "");
+                        }
+                        if (!tab3.equals("")) {
+                            spreco = spreco.replace(tab3, "");
+                        }
+                        if (!tab4.equals("")) {
+                            spreco = spreco.replace(tab4, "");
+                        }
+                        if (!tab5.equals("")) {
+                            spreco = spreco.replace(tab5, "");
+                        }
+                        if (!tab6.equals("")) {
+                            spreco = spreco.replace(tab6, "");
+                        }
+                        if (!tab7.equals("")) {
+                            spreco = spreco.replace(tab7, "");
+                        }
+                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                        info_txv_precoproduto.setText(spreco);
                     }
 
                     @Override
@@ -740,26 +791,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         return;
                                     }
                                 } else {
-                                    /*AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setTitle("Atençao");
-                                    builder.setMessage("Esse item ja esteve no pedido. Deseja adicionar novamente?");
-                                    builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
-
-                                            String codprod = itemBean2.getVendad_prd_codigo();
-                                            new Sqlite_VENDADAO(getActivity(), codVendedor, true).reexibe_item_da_venda(codprod, chavePedido);
-                                            getActivity().finish();
-
-
-                                        }
-                                    });
-                                    builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface arg0, int arg1) {
-                                            dlg.dismiss();
-                                        }
-                                    });
-                                    dlg = builder.create();
-                                    dlg.show();*/
 
                                     Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
                                     return;

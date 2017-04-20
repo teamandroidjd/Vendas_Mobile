@@ -110,7 +110,7 @@ public class act_TH_dadosclie extends Fragment {
                       }
 
                     TAG_CEP.setText("CEP: " + Mask.addMask(CEP, "##.###-###"));
-                    Tel1.replaceAll("[^0123456789]", "");
+                    Tel1 = Tel1.replaceAll("[^0123456789]", "");
                     if (Tel1.length() == 11) {
                         TAG_TELEFONE_1.setText("Telefone 1: " + Mask.addMask(Tel1, "(##)#####-####"));
                     } else if (Tel1.length() == 10) {
@@ -119,11 +119,11 @@ public class act_TH_dadosclie extends Fragment {
                         TAG_TELEFONE_1.setText("Telefone 1: " + CursorClie.getString(CursorClie.getColumnIndex("TEL1")));
                     }
 
-                    Tel2.replaceAll("[^0123456789]", "");
+                    Tel2 = Tel2.replaceAll("[^0123456789]", "");
                     if (Tel2.length() == 11) {
-                        TAG_TELEFONE_2.setText("Telefone 1: " + Mask.addMask(Tel2, "(##)#####-####"));
+                        TAG_TELEFONE_2.setText("Telefone 2: " + Mask.addMask(Tel2, "(##)#####-####"));
                     } else if (Tel2.length() == 10) {
-                        TAG_TELEFONE_2.setText("Telefone 1: " + Mask.addMask(Tel2, "(##)####-####"));
+                        TAG_TELEFONE_2.setText("Telefone 2: " + Mask.addMask(Tel2, "(##)####-####"));
                     }else  {
                         TAG_TELEFONE_2.setText("Telefone 2: " + CursorClie.getString(CursorClie.getColumnIndex("TEL2")));
                     }

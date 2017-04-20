@@ -202,6 +202,7 @@
     <string name="question_newcontact">Deseja cadastrar outro contato para este cliente?</string>
     <string name="intent_telainvocada">telainvocada</string>
     <string name="link_mapsjdsystem">https://www.google.com.br/maps/place/J+D+System/@-22.8909128,-43.1258554,17z/data=!3m1!4b1!4m5!3m4!1s0x9983c680f05473:0x9e54004d06d8e11c!8m2!3d-22.8909128!4d-43.1236667</string>
+    <string name="intent_consultapedido">consultapedido</string>
 
 
 </resources>

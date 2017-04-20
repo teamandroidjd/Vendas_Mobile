@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -59,7 +60,7 @@ public class Login extends AppCompatActivity implements Runnable {
     public SharedPreferences prefs;
     public String usuario, senha, URLPrincipal, sCodVend, UFVendedor;
     private String codVendedor = "0";
-    public TextView copyright;
+    public TextView copyright,versao;
     Boolean ConexOk;
 
     public void onAttachedToWindow() {
@@ -88,6 +89,15 @@ public class Login extends AppCompatActivity implements Runnable {
             edtSenha.setText(senha);
             cbGravSenha.setChecked(true);
         }
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        String version = pInfo.versionName;
+        versao.setText("Versão " + version);
+
         copyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
     }
 
@@ -233,6 +243,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
     private void declaraobjetos() {
 
+        versao = (TextView) findViewById(R.id.txtversaologin);
         DB = new ConfigDB(this).getReadableDatabase();
         btnEntrar = (Button) findViewById(R.id.btnEntrar);
         edtUsuario = (EditText) findViewById(R.id.edtUsuario);

@@ -1156,6 +1156,32 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                 spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                         GravaPreferencias(spntabpreco.getSelectedItemPosition());
+
+                                        String spreco = spntabpreco.getSelectedItem().toString();
+
+                                        if (!tab1.equals("")) {
+                                            spreco = spreco.replace(tab1, "");
+                                        }
+                                        if (!tab2.equals("")) {
+                                            spreco = spreco.replace(tab2, "");
+                                        }
+                                        if (!tab3.equals("")) {
+                                            spreco = spreco.replace(tab3, "");
+                                        }
+                                        if (!tab4.equals("")) {
+                                            spreco = spreco.replace(tab4, "");
+                                        }
+                                        if (!tab5.equals("")) {
+                                            spreco = spreco.replace(tab5, "");
+                                        }
+                                        if (!tab6.equals("")) {
+                                            spreco = spreco.replace(tab6, "");
+                                        }
+                                        if (!tab7.equals("")) {
+                                            spreco = spreco.replace(tab7, "");
+                                        }
+                                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                                        info_txv_precoproduto.setText(spreco);
                                     }
 
                                     @Override
@@ -1399,6 +1425,32 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                 spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                         GravaPreferencias(spntabpreco.getSelectedItemPosition());
+
+                                        String spreco = spntabpreco.getSelectedItem().toString();
+
+                                        if (!tab1.equals("")) {
+                                            spreco = spreco.replace(tab1, "");
+                                        }
+                                        if (!tab2.equals("")) {
+                                            spreco = spreco.replace(tab2, "");
+                                        }
+                                        if (!tab3.equals("")) {
+                                            spreco = spreco.replace(tab3, "");
+                                        }
+                                        if (!tab4.equals("")) {
+                                            spreco = spreco.replace(tab4, "");
+                                        }
+                                        if (!tab5.equals("")) {
+                                            spreco = spreco.replace(tab5, "");
+                                        }
+                                        if (!tab6.equals("")) {
+                                            spreco = spreco.replace(tab6, "");
+                                        }
+                                        if (!tab7.equals("")) {
+                                            spreco = spreco.replace(tab7, "");
+                                        }
+                                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                                        info_txv_precoproduto.setText(spreco);
                                     }
 
                                     @Override

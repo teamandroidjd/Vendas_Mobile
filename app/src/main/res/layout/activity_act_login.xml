@@ -10,6 +10,16 @@
     android:scrollbarAlwaysDrawVerticalTrack="true"
     tools:context=".Login">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAlignment="center"
+        android:id="@+id/txtversaologin"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textSize="12sp"
+        android:text="versao"/>
+
 
     <RelativeLayout
         android:id="@+id/rltprincipal"
