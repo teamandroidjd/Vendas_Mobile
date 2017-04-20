@@ -64,7 +64,11 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
 
         }
 
-        if (mList.get(position).getDocumento().replaceAll("[^0123456789]", "").trim().length() == 14) {
+        if (mList.get(position).getDocumento() == null || mList.get(position).getDocumento().equals("")){
+            myViewHolder.documento.setText("CPF/CNPJ: ");
+            myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
+            myViewHolder.razaoSocial.setVisibility(View.GONE);
+        } else if (mList.get(position).getDocumento().replaceAll("[^0123456789]", "").trim().length() == 14) {
             myViewHolder.documento.setText("CNPJ: " +  Mask.addMask(mList.get(position).getDocumento(), "##.###.###/####-##"));
             myViewHolder.razaoSocial.setText(mList.get(position).getNomeRazao());
             myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());

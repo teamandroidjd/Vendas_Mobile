@@ -83,12 +83,35 @@ public class act_TH_dadosclie extends Fragment {
                     String Tel1 = CursorClie.getString(CursorClie.getColumnIndex("TEL1"));
                     String Tel2 = CursorClie.getString(CursorClie.getColumnIndex("TEL2"));
                     Documento.replaceAll("[^0123456789]", "");
-                    if (Documento.length() == 14) {
+
+                    if (Documento.equals("")) {
+                        TAG_DOCUMENTO.setText("CPF/CNPJ: ");
+                        if (CursorClie.getString(CursorClie.getColumnIndex("REGIDENT")).equals("")) {
+                            TAG_RG.setVisibility(EditText.GONE);
+                        } else {
+                            TAG_RG.setText("Identidade: " + CursorClie.getString(CursorClie.getColumnIndex("REGIDENT")));
+                            TAG_RG.setVisibility(EditText.VISIBLE);
+                        }
+                        if (CursorClie.getString(CursorClie.getColumnIndex("INSCREST")).equals("")) {
+                            TAG_IE.setVisibility(EditText.GONE);
+                        } else {
+                            TAG_IE.setText("Inscrição Estadual: " + CursorClie.getString(CursorClie.getColumnIndex("INSCREST")));
+                            TAG_IE.setVisibility(EditText.VISIBLE);
+                        }
+                        TAG_NOMEFANTASIA.setText(CursorClie.getString(CursorClie.getColumnIndex("NOMEFAN")));
+                        TAG_RAZAOSOCIAL.setText(CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO")));
+                        TEXTO_NOMEFANTASIA.setVisibility(TextView.VISIBLE);
+                        TEXTO_RAZAOSOCIAL.setVisibility(TextView.VISIBLE);
+
+                    } else if (Documento.length() == 14) {
                         TAG_DOCUMENTO.setText("CNPJ: " + Mask.addMask(Documento, "##.###.###/####-##"));
                         TAG_NOMEFANTASIA.setText(CursorClie.getString(CursorClie.getColumnIndex("NOMEFAN")));
                         TAG_RAZAOSOCIAL.setText(CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO")));
+                        TEXTO_NOMEFANTASIA.setVisibility(TextView.VISIBLE);
+                        TEXTO_RAZAOSOCIAL.setVisibility(TextView.VISIBLE);
                         TAG_RG.setVisibility(EditText.GONE);
                         TAG_IE.setText("Inscrição Estadual: " + CursorClie.getString(CursorClie.getColumnIndex("INSCREST")));
+                        TAG_IE.setVisibility(EditText.VISIBLE);
                     } else {
                         TEXTO_NOMEFANTASIA.setVisibility(TextView.GONE);
                         TEXTO_RAZAOSOCIAL.setVisibility(TextView.GONE);
@@ -96,6 +119,7 @@ public class act_TH_dadosclie extends Fragment {
                         TAG_RAZAOSOCIAL.setText("Nome Completo: " + CursorClie.getString(CursorClie.getColumnIndex("NOMERAZAO")));
                         TAG_NOMEFANTASIA.setVisibility(EditText.GONE);
                         TAG_RG.setText("Identidade: " + CursorClie.getString(CursorClie.getColumnIndex("REGIDENT")));
+                        TAG_RG.setVisibility(EditText.VISIBLE);
                         TAG_IE.setVisibility(EditText.GONE);
                     }
                     TAG_CIDADE.setText("Cidade: " + CursorClie.getString(CursorClie.getColumnIndex("CIDADE")));
