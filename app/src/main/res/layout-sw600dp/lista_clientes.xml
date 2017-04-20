@@ -13,7 +13,7 @@
         <Spinner
             android:id="@+id/adm_sp_filtrarcliente"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="wrap_content">
 
         </Spinner>
     </LinearLayout>
@@ -26,13 +26,13 @@
             android:id="@+id/adm_txt_pesquisacliente"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Pesquisa"
-            android:textSize="30dp"/>
+            android:singleLine="true"
+            android:hint="Pesquisa" />
     </LinearLayout>
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coord_list_clie_ped"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -60,6 +60,7 @@
             app:layout_anchorGravity="bottom|right" />
 
     </android.support.design.widget.CoordinatorLayout>
+
 
 
 </LinearLayout>

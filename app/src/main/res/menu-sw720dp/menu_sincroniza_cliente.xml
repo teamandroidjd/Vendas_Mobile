@@ -4,5 +4,12 @@
     <item android:id="@+id/menu_sinc_cliente"
         android:title="Sincronizar"
         android:orderInCategory="100"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_searchable_activity"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_search"
+        android:title="Buscar"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="android.widget.SearchView" />
 </menu>

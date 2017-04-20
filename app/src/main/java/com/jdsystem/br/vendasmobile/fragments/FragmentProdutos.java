@@ -124,6 +124,8 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             Cursor cursoritem = null;
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
+            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
 
             if (numPedido.equals("0")) {
                 Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
@@ -379,6 +381,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Preco = Preco.replace('.', ',');
 
                     info_txv_precoproduto.setText(Preco);
+                    info_txt_quantidadecomprada.setText("");
                 }
 
                 cursoritem.close();

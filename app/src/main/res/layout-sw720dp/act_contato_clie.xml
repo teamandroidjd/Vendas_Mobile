@@ -16,5 +16,23 @@
         android:layout_weight="1"
         android:id="@+id/lstcontatos"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|end">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/cadcontatoclie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/fab_margin"
+            android:src= "@drawable/ic_adicionar"/>
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

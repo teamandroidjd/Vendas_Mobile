@@ -29,37 +29,37 @@
             android:singleLine="true"
             android:hint="Pesquisa" />
     </LinearLayout>
-            <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/coord_list_clie_ped"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coord_list_clie_ped"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/adm_listview_cliente"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:cacheColorHint="@color/colorAccent"
+            android:fastScrollAlwaysVisible="true"
+            android:fastScrollEnabled="true">
 
-            <ListView
-                android:id="@+id/adm_listview_cliente"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:cacheColorHint="@color/colorAccent"
-                android:fastScrollAlwaysVisible="true"
-                android:fastScrollEnabled="true">
+        </ListView>
 
-            </ListView>
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_inclui_cliente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="14dp"
+            android:src= "@drawable/ic_adicionar"
+            app:backgroundTint="@color/colorPrimary"
+            app:layout_anchor="@+id/adm_listview_cliente"
+            app:layout_anchorGravity="bottom|right" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_inclui_cliente"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginBottom="12dp"
-                android:layout_marginRight="14dp"
-                android:src= "@drawable/ic_adicionar"
-                app:backgroundTint="@color/colorPrimary"
-                app:layout_anchor="@+id/adm_listview_cliente"
-                app:layout_anchorGravity="bottom|right" />
-
-        </android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 
 

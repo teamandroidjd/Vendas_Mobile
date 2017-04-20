@@ -16,11 +16,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:orientation="vertical">
 
         <Spinner
             android:id="@+id/adm_sp_filtrarcliente"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -32,6 +32,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:orientation="vertical">
+
         <EditText
             android:id="@+id/adm_txt_pesquisacliente"
             android:layout_width="match_parent"

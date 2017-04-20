@@ -13,6 +13,7 @@ import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -46,6 +47,8 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
 
         if (ChaveAcesso != null) {
             edtChave.setText(ChaveAcesso);
+        }else{
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
 

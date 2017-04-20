@@ -60,11 +60,11 @@ public class ConsultaPedidos extends AppCompatActivity
     String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, sCodEmpresa;
     public ListAdapterPedidos adapter;
     ProgressDialog pDialog;
-    SearchView sv;
+    //SearchView sv;
     Pedidos lstpedidos;
     LinearLayout lnenhum;
     SQLiteDatabase DB;
-    private Context ctx;
+    //private Context ctx;
     //private AlertDialog dlg;
     private GoogleApiClient client;
     FloatingActionMenu mmPrinc_Pedido, mmPrincNovoPed;
@@ -491,7 +491,6 @@ public class ConsultaPedidos extends AppCompatActivity
         return true;
     }
 
-
     @Override
     public void run() {
         handler.post(new Runnable() {
@@ -606,7 +605,7 @@ public class ConsultaPedidos extends AppCompatActivity
                         lstpedidos = new Pedidos(Situacao, NomeCliente, ValorTotal, Vendedor, sDataVenda, NumPedido, NumPedidoExt, NumFiscal, Empresa);
                         DadosList.add(lstpedidos);
                     } catch (Exception E) {
-                        Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, E.toString(), Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -624,4 +623,11 @@ public class ConsultaPedidos extends AppCompatActivity
         return DadosList;
     }
 
+    @Override
+    protected void onResume() {
+        if(pDialog != null){
+            pDialog.show();
+        }
+        super.onResume();
+    }
 }

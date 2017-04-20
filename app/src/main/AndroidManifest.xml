@@ -12,6 +12,7 @@
     <supports-screens android:normalScreens="true" />
 
     <application
+        android:largeHeap="true"
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
         android:supportsRtl="true"

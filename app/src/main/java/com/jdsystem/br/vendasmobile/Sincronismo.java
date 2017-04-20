@@ -322,17 +322,17 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                     Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
                 }
             });
-        } else {
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetClientes);
+            JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
+
             try {
                 DtUlt = Util.DataHojeComHorasMinSecBR();
                 DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "'");
             } catch (Exception e) {
                 e.toString();
             }
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetClientes);
-            JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
 
             int jumpTime = 0;
             Dialog.setProgress(jumpTime);
@@ -731,19 +731,17 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                 }
             });
 
-        } else {
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetProdutos);
+            JSONArray ProdItens = jsonObj.getJSONArray(TAG_PRODUTOSINFO);
+
             try {
                 DtUltItem = Util.DataHojeComHorasMinSecBR();
                 DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "'");
             } catch (Exception e) {
                 e.toString();
             }
-        }
-
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetProdutos);
-            JSONArray ProdItens = jsonObj.getJSONArray(TAG_PRODUTOSINFO);
 
             int jumpTime = 0;
             final int totalProgressTime = ProdItens.length();
@@ -1552,7 +1550,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
 
     @Override
     protected void onResume() {
-        if(Dialog != null){
+        if (Dialog != null) {
             Dialog.show();
 
         }
@@ -1778,7 +1776,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                         Boolean ConexOk = Util.checarConexaoCelular(ctxPedEnv);
                                         if (ConexOk == true) {
                                             Envio.call("", envelope);
-                                        }else {
+                                        } else {
                                             sincpedenviostatic = ctxPedEnv.getString(R.string.no_connection);
                                             return sincpedenviostatic;
                                         }
@@ -1818,7 +1816,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                     }
                     while (CursorPedido.moveToNext());
                     CursorPedido.close();
-                }else {
+                } else {
                     sincpedenviostatic = "Nenhum pedido a ser enviado.";
                     return sincpedenviostatic;
                 }
@@ -1954,7 +1952,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                     Boolean ConexOk = Util.checarConexaoCelular(ctxPedEnv);
                                     if (ConexOk == true) {
                                         Envio.call("", envelope);
-                                    }else{
+                                    } else {
                                         sincpedenviostatic = ctxPedEnv.getString(R.string.no_connection);
                                         return sincpedenviostatic;
                                     }
@@ -1999,7 +1997,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                     }
                     while (CursorPedido.moveToNext());
                     CursorPedido.close();
-                }else{
+                } else {
                     sincpedenviostatic = "Nenhum pedido a ser enviado.";
                     return sincpedenviostatic;
                 }
@@ -2034,7 +2032,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             if (ConexOk == true) {
                 Envio.call("", envelope);
 
-            }else {
+            } else {
                 sincatucidade = ctxEnv.getString(R.string.no_connection);
                 return sincatucidade;
             }
@@ -2043,11 +2041,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             sincatucidade = ctxEnv.getString(R.string.failure_communicate);
             return sincatucidade;
         }
-        try{
+        try {
             SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
             RetCidades = (String) envelope.getResponse();
             System.out.println("Response :" + resultsRequestSOAP.toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.toString();
             sincatucidade = ctxEnv.getString(R.string.failed_return);
             return sincatucidade;
@@ -2934,7 +2932,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
             if (ConexOk == true) {
                 Envio.call("", envelope);
-            }else {
+            } else {
                 sinctabelasstatic = ctxEnv.getString(R.string.no_connection);
                 return sinctabelasstatic;
             }
@@ -2947,7 +2945,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
             RetDescTabelas = (String) envelope.getResponse();
             System.out.println("Response :" + resultsRequestSOAP.toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.toString();
             sinctabelasstatic = ctxEnv.getString(R.string.failed_return);
         }
@@ -3021,7 +3019,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
             if (ConexOk == true) {
                 Envio.call("", envelope);
-            }else {
+            } else {
                 sincbloqstatic = ctxEnv.getString(R.string.no_connection);
                 return sincbloqstatic;
             }
@@ -3033,7 +3031,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
             SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
             RetBloqueios = (String) envelope.getResponse();
             System.out.println("Response :" + resultsRequestSOAP.toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.toString();
             sincbloqstatic = ctxEnv.getString(R.string.failed_return);
             return sincbloqstatic;
@@ -3201,7 +3199,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                     if (ConexOk == true) {
                                         Envio.call("", envelope);
 
-                                    }else {
+                                    } else {
                                         sincclieenvstatic = ctxEnvClie.getString(R.string.no_connection);
                                         return sincclieenvstatic;
                                     }
@@ -3214,7 +3212,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                                     SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                                     RetClieEnvio = (String) envelope.getResponse();
                                     System.out.println("Response :" + resultsRequestSOAP.toString());
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     sincclieenvstatic = ctxEnvClie.getString(R.string.failed_return);
                                     return sincclieenvstatic;
                                 }
@@ -3368,18 +3366,18 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
         } catch (Exception e) {
             System.out.println("Error" + e);
         }
-        if (codItem == 0) {
-            try {
-                DtUltItem = Util.DataHojeComHorasMinSecBR();
-                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "'");
-            } catch (Exception e) {
-                e.toString();
-            }
-        }
-
         try {
             JSONObject jsonObj = new JSONObject(RetProdutos);
             JSONArray ProdItens = jsonObj.getJSONArray(TAG_PRODUTOSINFO);
+
+            if (codItem == 0) {
+                try {
+                    DtUltItem = Util.DataHojeComHorasMinSecBR();
+                    DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "'");
+                } catch (Exception e) {
+                    e.toString();
+                }
+            }
 
             int jumpTime = 0;
 
@@ -3584,7 +3582,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
                 sinccliestatic = ctxEnvClie.getString(R.string.failed_return);
                 return sinccliestatic;
             }
-        }else {
+        } else {
             sinccliestatic = ctxEnvClie.getString(R.string.no_connection);
             return sinccliestatic;
         }
@@ -3594,13 +3592,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
         } else if (RetClientes == null) {
             sinccliestatic = ctxEnvClie.getString(R.string.failure_communicate);
             return sinccliestatic;
-        } else if (Codclie == 0) {
-            try {
-                DtUlt = Util.DataHojeComHorasMinSecBR();
-                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "'");
-            } catch (Exception e) {
-                e.toString();
-            }
         }
         try {
             //String SHA1Ret = RetClientes.substring(0, 40);
@@ -3609,6 +3600,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
 
             JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
+
+            if (Codclie == 0) {
+                try {
+                    DtUlt = Util.DataHojeComHorasMinSecBR();
+                    DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "'");
+                } catch (Exception e) {
+                    e.toString();
+                }
+            }
 
             int jumpTime = 0;
             final int totalProgressTime = pedidosblq.length();
@@ -3906,7 +3906,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
     //Começa daqui para baixo as funções que gerar arquivo de pedido em formato .PDF
 
 
-
     public static String GerarPdf(String NumPedido, Context ctxRetPed) {
         DB = new ConfigDB(ctxRetPed).getReadableDatabase();
 
@@ -4161,9 +4160,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
     }
 
 
-
-
-
     private static void printPageNumber(PdfContentByte cb) {
 
         cb.beginText();
@@ -4174,10 +4170,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable {
         pageNumber++;
 
     }
-
-
-
-
 
 
     //Termine aqui para cima as funções que são utilizadas para a geração de arquivo do pedido em .PDF
