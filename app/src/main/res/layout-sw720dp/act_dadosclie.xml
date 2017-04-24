@@ -223,6 +223,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Telefone1"
+                    android:autoLink="phone"
                     android:textColor="@color/colordescClie"
                     android:textSize="@dimen/textsize_sw720_40"
                     android:textStyle="normal|bold" />
@@ -237,6 +238,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Telefone2"
+                    android:autoLink="phone"
                     android:textColor="@color/colordescClie"
                     android:textSize="@dimen/textsize_sw720_40"
                     android:textStyle="normal|bold" />
@@ -251,6 +253,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Email"
+                    android:autoLink="email"
                     android:textColor="@color/colordescClie"
                     android:textSize="@dimen/textsize_sw720_40"
                     android:textStyle="normal|bold" />

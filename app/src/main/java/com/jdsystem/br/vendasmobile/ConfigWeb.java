@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.Util.Util;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -32,7 +34,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     private EditText edtChave;
     private Button btsalvhost;
     public SharedPreferences prefs;
-    public String ChaveAcesso, RetHost;
+    public String ChaveAcesso, RetHost,host;
     ProgressDialog DialogECB;
     private SQLiteDatabase DB;
     private Handler hd = new Handler();
@@ -47,7 +49,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
 
         if (ChaveAcesso != null) {
             edtChave.setText(ChaveAcesso);
-        }else{
+        } else {
             this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
@@ -193,11 +195,24 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             });
             return;
         }
-        //gravarperfil(); // habilitar essa chamada de método somente na 2.0
+        try {
+            JSONObject jsonObj = new JSONObject(RetHost);
+            JSONArray infolicenca = jsonObj.getJSONArray("perfil");
+            JSONObject c = infolicenca.getJSONObject(0);
+            String licenca = c.getString("codlicenca");
+            String perfil = c.getString("nomeempresa");
+            host = c.getString("host");
+
+         if ((gravarperfil(host, perfil, licenca)) == false){
+             return;
+         }
+        } catch (Exception e) {
+            e.toString();
+        }
         DialogECB.dismiss();
         SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
         editorhost.putString("ChaveAcesso", edtChave.getText().toString());
-        editorhost.putString("host", RetHost);
+        editorhost.putString("host", host);
         editorhost.apply();
         hd.post(new Runnable() {
             public void run() {
@@ -207,25 +222,28 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         finish();
     }
 
-    // A função abaixo será usada na versão 2.0
-
-    /*private void gravarperfil() {
-        try{
-            Cursor cursorlicenca = DB.rawQuery("SELECT LICENCA,NOMEPERFIL FROM PERFIL WHERE LICENCA = '"+edtChave.getText().toString()+"'",null);
+    private boolean gravarperfil(String host, String perfil, String licenca) {
+        try {
+            Cursor cursorlicenca = DB.rawQuery("SELECT LICENCA,NOMEPERFIL FROM PERFIL WHERE LICENCA = '" + edtChave.getText().toString() + "'", null);
             cursorlicenca.moveToFirst();
-            if(cursorlicenca.getCount() > 0){
-                String nomePerfil = cursorlicenca.getString(cursorlicenca.getColumnIndex("NOMEPERFIL")).trim();
+            if (cursorlicenca.getCount() > 0) {
+                final String nomePerfil = cursorlicenca.getString(cursorlicenca.getColumnIndex("NOMEPERFIL")).trim();
                 DialogECB.dismiss();
-                Toast.makeText(ConfigWeb.this, "Licença já registrada para "+nomePerfil+". Verifique!", Toast.LENGTH_SHORT).show();
-                return;
-
-            }else {
-                DB.execSQL("INSERT INTO PERFIL (LICENCA, HOST) VALUES('"+edtChave.getText().toString()+"','"+RetHost+"');");
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ConfigWeb.this, "Licença já registrada para " + nomePerfil + ". Verifique!", Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                DB.execSQL("INSERT INTO PERFIL(LICENCA,HOST,NOMEPERFIL) VALUES('" + edtChave.getText().toString() + "','" + host + "','" + perfil + "');");
+                return true;
             }
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.toString();
         }
-    }*/
+        return false;
+    }
 
 }

@@ -249,8 +249,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             " CODVEND    INTEGER,        " +
             " USUARIO    VARCHAR (30),   " +
             " SENHA      VARCHAR  (100), " +
-            " CODPERFIL  INTEGER,        " +
-            " CODEMPRESA INTEGER ); ");
+            " CODEMPRESA INTEGER,        " +
+            " CODPERFIL INTEGER ); ");
 
     private static String SQL_BLOQUEIOS = (" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
             " CODBLOQ   VARCHAR (3),  " +
