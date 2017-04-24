@@ -102,8 +102,13 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
     }
 
     public void confirmafiltro(View view) {
-
-        if (DataIni.before(DataFim) || (DataIni.equals(DataFim))) {
+        if(DataIni == null){
+            Util.msg_toast_personal(actFiltroPeriodoPedidos.this, "Informar a data inicial!", Toast.LENGTH_SHORT);
+            return;
+        } else if (DataFim == null){
+            Util.msg_toast_personal(actFiltroPeriodoPedidos.this, "Informar a data final", Toast.LENGTH_SHORT);
+            return;
+        } else if (DataIni.before(DataFim) || (DataIni.equals(DataFim))) {
             Intent returnIntent = new Intent();
             returnIntent.putExtra(getString(R.string.intent_datainicial), DataInicial);
             returnIntent.putExtra(getString(R.string.intent_datafinal), DataFinal);

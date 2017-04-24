@@ -65,6 +65,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
                             android:elevation="1dp"
                             />
                     </LinearLayout>
@@ -101,6 +103,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
                             android:elevation="1dp"
                             />
 

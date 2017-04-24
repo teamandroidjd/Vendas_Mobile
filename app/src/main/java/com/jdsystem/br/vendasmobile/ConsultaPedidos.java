@@ -57,7 +57,7 @@ public class ConsultaPedidos extends AppCompatActivity
     String CodClie = "0";
     String DtInicio = "0";
     String DtFinal = "0";
-    String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, sCodEmpresa;
+    String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, sCodEmpresa, nomeCliente, NomeSitPed;
     public ListAdapterPedidos adapter;
     ProgressDialog pDialog;
     //SearchView sv;
@@ -89,6 +89,8 @@ public class ConsultaPedidos extends AppCompatActivity
                 DtFinal = params.getString(getString(R.string.intent_datafinal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
+                nomeCliente = params.getString(getString(R.string.intent_nomerazao));
+                NomeSitPed = params.getString("tipositped");
             }
             if (DtInicio == null) {
                 DtInicio = "0";
@@ -228,7 +230,7 @@ public class ConsultaPedidos extends AppCompatActivity
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String NomeSitPed = spSituacaoPedido.getSelectedItem().toString();
+                        NomeSitPed = spSituacaoPedido.getSelectedItem().toString();
 
                         if (NomeSitPed.equals("Orçamento")) {
                             SitPed = 1;
@@ -252,6 +254,7 @@ public class ConsultaPedidos extends AppCompatActivity
                             params.putString(getString(R.string.intent_senha), senha);
                             params.putInt(getString(R.string.intent_situacaopedido), SitPed);
                             params.putInt(getString(R.string.intent_codcliente), 0);
+                            params.putString("tipositped",NomeSitPed);
                             params.putString(getString(R.string.intent_datainicial), "0");
                             params.putString(getString(R.string.intent_datafinal), "0");
 
@@ -510,12 +513,8 @@ public class ConsultaPedidos extends AppCompatActivity
                         ft.replace(R.id.rl_fragment_container, frag, "mainFrag");
                         ft.commit();
                     }
-                    //CarregarPedidos();
                 } catch (Exception E) {
-
-                } finally {
-                    if (pDialog.isShowing())
-                        pDialog.dismiss();
+                    E.toString();
                 }
             }
 
@@ -577,7 +576,6 @@ public class ConsultaPedidos extends AppCompatActivity
                         if (SitPed.equals("5")) {
                             Situacao = "Gerar Venda";
                         }
-
                         String NomeCliente = CursorPed.getString(CursorPed.getColumnIndex("NOMECLIE"));
 
                         Double VlTotal = (CursorPed.getDouble(CursorPed.getColumnIndex("VALORTOTAL")) -
@@ -613,21 +611,28 @@ public class ConsultaPedidos extends AppCompatActivity
                 CursorPed.close();
 
             } else {
-                lnenhum.setVisibility(View.VISIBLE);
+                if (SitPed > 0) {
+                    Toast.makeText(this, "Nenhum pedido do tipo " + NomeSitPed + " encontrado!", Toast.LENGTH_LONG).show();
+                    lnenhum.setVisibility(View.VISIBLE);
+                } else if (!CodClie.equals("0")) {
+                    Toast.makeText(this, "Nenhum pedido do cliente " + nomeCliente + " encontrado!", Toast.LENGTH_LONG).show();
+                    lnenhum.setVisibility(View.VISIBLE);
+                } else if (!DtInicio.equals("0")) {
+                    Toast.makeText(this, "Nenhum pedido encontrado com o período de " + DtInicio + " até " + DtFinal + ".", Toast.LENGTH_LONG).show();
+                    lnenhum.setVisibility(View.VISIBLE);
+                } else {
+                    lnenhum.setVisibility(View.VISIBLE);
+                }
+
             }
 
 
         } catch (Exception E) {
             E.toString();
         }
-        return DadosList;
-    }
-
-    @Override
-    protected void onResume() {
-        if(pDialog != null){
-            pDialog.show();
+        if (pDialog.isShowing()) {
+            pDialog.dismiss();
         }
-        super.onResume();
+        return DadosList;
     }
 }

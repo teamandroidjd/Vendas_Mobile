@@ -80,6 +80,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
         if(consultaPedido == true){
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
+            String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             Intent intentp = new Intent(getActivity(), ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
@@ -88,6 +89,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             params.putString(getString(R.string.intent_usuario),usuario);
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_senha),senha);
+            params.putString(getString(R.string.intent_nomerazao), nomeRazao);
             intentp.putExtras(params);
             startActivity(intentp);
             getActivity().finish();
