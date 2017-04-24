@@ -5,51 +5,51 @@
     xmlns:local="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="40sp"
     android:background="@color/colorPrimary"
     local:theme="@style/Theme.AppCompat.Light">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/finalizar_venda"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
             android:src="@drawable/salvar" />
 
         <ImageView
             android:id="@+id/cancel_venda"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
             android:layout_toEndOf="@+id/finalizar_venda"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="20dp"
             android:src="@drawable/cancelar" />
 
         <ImageView
             android:id="@+id/item_obspedido"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
             android:layout_toLeftOf="@+id/item_formapgto"
             android:layout_marginRight="20dp"
             android:src="@drawable/observacao" />
 
         <ImageView
             android:id="@+id/item_formapgto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
             android:layout_toLeftOf="@+id/item_dtentrega"
             android:layout_marginRight="20dp"
             android:src="@drawable/pagamento" />
 
         <ImageView
             android:id="@+id/item_dtentrega"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="5dp"
             android:src="@drawable/calendario"/>
     </RelativeLayout>
 

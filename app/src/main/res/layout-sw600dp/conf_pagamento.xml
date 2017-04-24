@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colordescClie"
-            android:padding="25dp"/>
+            android:padding="10dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -98,7 +98,7 @@
 
                 <EditText
                     android:id="@+id/conf_txtqtdparcelas"
-                    android:layout_width="match_parent"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/conf_txvlabelparcelas"
                     android:layout_marginTop="5dp"
@@ -118,10 +118,7 @@
                 android:text="Parcelas: "
                 android:textColor="@color/colorAccent"
                 android:textSize="25dp"
-                android:textStyle="bold"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 

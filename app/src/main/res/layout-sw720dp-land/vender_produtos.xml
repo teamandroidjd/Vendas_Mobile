@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="Cliente: 005 - PAULO ROBERTO DOS SANTOS COUITNHO PINHEIRO FERNANDES DA SILVA SAURO SANTOS DA ROCHA"
             android:textColor="#ffffff"
-            android:textSize="@dimen/textsize_sw720_40"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -32,27 +32,27 @@
                 android:id="@+id/venda_txv_empresa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Empresa"
+                android:text="Empresa: Empresa 1"
                 android:textColor="#ffffff"
-                android:textSize="@dimen/textsize_sw720_40" />
+                android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/venda_txv_datavenda"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="20dp"
                 android:text="Data/Hora Venda : 03/09/2015 19:32:00"
                 android:textColor="#ffffff"
-                android:textSize="@dimen/textsize_sw720_40" />
+                android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/venda_txv_dataentrega"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="20dp"
                 android:text="Data da Entrega :"
                 android:textColor="#ffffff"
-                android:textSize="@dimen/textsize_sw720_40" />
+                android:textSize="25sp" />
 
 
         </LinearLayout>
@@ -74,7 +74,7 @@
             android:paddingLeft="4dp"
             android:text="Descrição"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw720"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <TextView
@@ -84,7 +84,7 @@
             android:gravity="center"
             android:text="Qtd."
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw720"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <TextView
@@ -94,7 +94,7 @@
             android:gravity="center"
             android:text="Vl.Unit."
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw720"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <TextView
@@ -105,7 +105,7 @@
             android:paddingRight="4dp"
             android:text="Vl.Total"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw720"
+            android:textSize="25sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -130,10 +130,9 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_inclui_produto"
-            android:layout_width="114dp"
-            android:layout_height="103dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginBottom="8dp"
             android:layout_marginRight="12dp"
             android:src="@drawable/ic_adicionar"
             app:backgroundTint="@color/colorPrimary"
@@ -156,7 +155,7 @@
             android:layout_margin="10dp"
             android:text="Informar desconto na venda :"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw720"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <EditText
@@ -165,11 +164,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginLeft="10dp"
-            android:gravity="right"
+            android:gravity="center"
             android:inputType="numberDecimal"
             android:text="0"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw720"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <TextView
@@ -179,7 +178,7 @@
             android:layout_margin="10dp"
             android:text="%"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw720"
+            android:textSize="25sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -201,7 +200,7 @@
             android:paddingRight="6dp"
             android:text="Total da venda = 0,00"
             android:textColor="@color/ColorText"
-            android:textSize="@dimen/textsize_sw720_45"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
     </LinearLayout>

@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="Cliente: 005 - PAULO ROBERTO DOS SANTOS COUITNHO PINHEIRO FERNANDES DA SILVA SAURO SANTOS DA ROCHA"
             android:textColor="#ffffff"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="25dp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -32,28 +32,30 @@
                 android:id="@+id/venda_txv_empresa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Empresa"
+                android:text="Empresa: Empresa 1"
                 android:textColor="#ffffff"
-                android:textSize="@dimen/textsize_sw600_30" />
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/venda_txv_datavenda"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
                 android:text="Data/Hora Venda : 03/09/2015 19:32:00"
                 android:textColor="#ffffff"
-                android:textSize="@dimen/textsize_sw600_30" />
+                android:textSize="20dp" />
 
             <TextView
                 android:id="@+id/venda_txv_dataentrega"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Data da Entrega :"
+                android:text="Data da Entrega: "
+                android:layout_marginLeft="20dp"
                 android:textColor="#ffffff"
-                android:textSize="@dimen/textsize_sw600_30" />
-
+                android:textSize="20dp" />
 
         </LinearLayout>
+
 
 
     </LinearLayout>
@@ -68,43 +70,42 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.17"
+            android:layout_weight="2.00"
             android:gravity="center|left"
             android:paddingLeft="4dp"
             android:text="Descrição"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.83"
+            android:layout_weight="0.40"
             android:gravity="center"
             android:text="Qtd."
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.87"
+            android:layout_weight="0.60"
             android:gravity="center"
             android:text="Vl.Unit."
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.70"
             android:gravity="center"
-            android:paddingRight="4dp"
             android:text="Vl.Total"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="20dp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -129,10 +130,9 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_inclui_produto"
-            android:layout_width="92dp"
-            android:layout_height="85dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginBottom="8dp"
             android:layout_marginRight="12dp"
             android:src="@drawable/ic_adicionar"
             app:backgroundTint="@color/colorPrimary"
@@ -155,7 +155,7 @@
             android:layout_margin="10dp"
             android:text="Informar desconto na venda :"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <EditText
@@ -164,11 +164,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginLeft="10dp"
-            android:gravity="right"
+            android:gravity="center"
             android:inputType="numberDecimal"
             android:text="0"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
         <TextView
@@ -178,7 +178,7 @@
             android:layout_margin="10dp"
             android:text="%"
             android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw600_30"
+            android:textSize="20dp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -200,7 +200,7 @@
             android:paddingRight="10dp"
             android:text="Total da venda = 0,00"
             android:textColor="@color/ColorText"
-            android:textSize="@dimen/textsize_sw600_35"
+            android:textSize="25dp"
             android:textStyle="bold" />
 
     </LinearLayout>

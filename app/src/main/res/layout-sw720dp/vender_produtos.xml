@@ -28,7 +28,7 @@
             android:id="@+id/venda_txv_empresa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Empresa"
+            android:text="Empresa: Empresa 1"
             android:textColor="#ffffff"
             android:textSize="@dimen/textsize_sw720" />
 
@@ -110,7 +110,7 @@
         <ListView
             android:id="@+id/ListView_ItensVendidos"
             android:layout_width="match_parent"
-            android:layout_height="435dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:cacheColorHint="@color/colorAccent"
             android:fastScrollAlwaysVisible="true"
@@ -120,10 +120,9 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_inclui_produto"
-            android:layout_width="114dp"
-            android:layout_height="103dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginBottom="8dp"
             android:layout_marginRight="12dp"
             android:src= "@drawable/ic_adicionar"
             app:backgroundTint="@color/colorPrimary"
@@ -155,7 +154,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_marginLeft="10dp"
-            android:gravity="right"
+            android:gravity="center"
             android:inputType="numberDecimal"
             android:text="0"
             android:textColor="@color/colordescClie"
