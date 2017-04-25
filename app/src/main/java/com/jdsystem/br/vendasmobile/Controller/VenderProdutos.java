@@ -95,13 +95,15 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
     private Spinner spntabpreco;
     Handler handler = new Handler();
     public static final String DATA_ENT = "DATA DE ENTREGA";
-    public SharedPreferences prefs;
     private SimpleCursorAdapter adapter;
     private SqliteVendaCBean vendaCBean;
     private SqliteVendaDBean vendaDBean;
     private SqliteConfPagamentoDao confDao;
     private SqliteConfPagamentoBean confBean;
     SQLiteDatabase DB;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +112,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         setContentView(R.layout.vender_produtos);
 
         declaraObjetos();
+        carregarpreferencias();
 
         ObsPedido = "";
         setDateTimeField();
@@ -279,6 +282,11 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         });
 
         //obterConfiguracoesPagamento();
+    }
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     private void incluirobs() {
@@ -572,7 +580,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         DB = new ConfigDB(this).getReadableDatabase();
         //TextView venda_txv_empresa = (TextView) findViewById(R.id.venda_txv_empresa);
         try {
-            Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
+            Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa +" AND CODPERFIL = "+idPerfil, null);
             if (CursorEmpresa.getCount() > 0) {
                 CursorEmpresa.moveToFirst();
                 do {
@@ -626,7 +634,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         if (!NumPedido.equals("0")) {
             nomeabrevemp = "0";
             try {
-                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = "+idPerfil, null);
                 CursEmpr.moveToFirst();
                 if (CursEmpr.getCount() > 1) {
                     List<String> DadosListEmpresa = new ArrayList<String>();
@@ -675,7 +683,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         } else {
             nomeabrevemp = "0";
             try {
-                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = "+idPerfil, null);
                 CursEmpr.moveToFirst();
                 if (CursEmpr.getCount() > 1) {
                     List<String> DadosListEmpresa = new ArrayList<String>();

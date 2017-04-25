@@ -69,6 +69,9 @@ public class ConsultaPedidos extends AppCompatActivity
     private GoogleApiClient client;
     FloatingActionMenu mmPrinc_Pedido, mmPrincNovoPed;
     FloatingActionButton mmSitPedido, mmEmissaoPedido, mmCliePedido, mmNovoPedido;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,7 @@ public class ConsultaPedidos extends AppCompatActivity
         }
         declaraobjetos();
         carregausuariologado();
+        carregarpreferencias();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -121,6 +125,12 @@ public class ConsultaPedidos extends AppCompatActivity
         Thread thread = new Thread(ConsultaPedidos.this);
         thread.start();
 
+    }
+
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     private void carregausuariologado() {
@@ -149,7 +159,7 @@ public class ConsultaPedidos extends AppCompatActivity
 
         sCodEmpresa = "0";
         try {
-            Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' ", null);
+            Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = "+idPerfil, null);
             CursEmpr.moveToFirst();
             if (CursEmpr.getCount() > 1) {
                 List<String> DadosListEmpresa = new ArrayList<String>();
@@ -523,29 +533,29 @@ public class ConsultaPedidos extends AppCompatActivity
         try {
             Cursor CursorPed = null;
             if (SitPed > 0) {
-                CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
+                CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.CODPERFIL, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.FLAGINTEGRADO = '" + SitPed + "'" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.FLAGINTEGRADO = '" + SitPed + "' AND PEDOPER.CODPERFIL = " +idPerfil+
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             } else if (!CodClie.equals("0")) {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODCLIE = " + CodClie +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODCLIE = " + CodClie + " AND PEDOPER.CODPERFIL = " +idPerfil+
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             } else if (!DtInicio.equals("0")) {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal + 1 + "')" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODPERFIL = "+idPerfil+" AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal + 1 + "')" +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
 
             } else {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor +" AND PEDOPER.CODPERFIL = " +idPerfil+
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             }
 

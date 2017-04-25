@@ -65,9 +65,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     private static SQLiteDatabase DB;
     Handler hd;
     ProgressBar PrgGeral;
-    int it;
+    int idPerfil;
     private ProgressDialog Dialog, DialogECB;
-
     //Handler progressHandler;
     Button btnSinc;
     //TextView txtSinc;
@@ -81,6 +80,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     public static String DataUltSt2 = null;
     private GoogleApiClient client;
     Toolbar toolbar;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 senha = params.getString(getString(R.string.intent_senha));
             }
         }
+        carregarpreferencias();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -164,6 +166,13 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         );
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+    public void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
+
+
     }
 
     private void carregausuariologado() {
@@ -264,11 +273,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         try {
             SincronizarClientes(sCodVend, usuario, senha);
             SincronizarProdutos(usuario, senha);
-            SincronizarClientesEnvio();
-            SincronizarPedidosEnvio();
             SincDescricaoTabelas();
             SincBloqueios();
             SincParametros();
+            SincronizarClientesEnvio();
+            SincronizarPedidosEnvio();
         } catch (Exception e) {
             e.toString();
             Dialog.dismiss();
@@ -322,12 +331,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
         String CodVendedor = sCodVend;
 
-        Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE FROM PARAMAPP", null);
+        Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE,CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
         cursorparamapp.moveToFirst();
+
         String DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_CLIE"));
         if (DtUlt == null) {
             DtUlt = "01/01/2000 10:00:00";
         }
+
         cursorparamapp.close();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -346,7 +357,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         Boolean ConexOk = Util.checarConexaoCelular(this);
         if (ConexOk == true) {
             try {
-                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES", null);
+                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL =" + idPerfil, null);
                 if (cursorVerificaClie.getCount() == 0) {
                     hd.post(new Runnable() {
                         @Override
@@ -442,7 +453,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             try {
                 DtUlt = Util.DataHojeComHorasMinSecBR();
-                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "'");
+                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil);
             } catch (Exception e) {
                 e.toString();
             }
@@ -488,7 +499,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             }
                         });
 
-                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
+                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
                         cursor.moveToFirst();
                         String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
                         int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
@@ -497,41 +508,85 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             if (cursor.getCount() > 0) {
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
-                                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
-                                        " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
-                                        ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'");
+                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
+                                        "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) +
+                                        "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
+                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) +
+                                        "', EMAIL = '" + c.getString(TAG_EMAILS) +
+                                        "', TEL1 = '" + Tel1 +
+                                        "', TEL2 = '" + Tel2 +
+                                        "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
+                                        "', NUMERO = '" + c.getString(TAG_NUMERO) +
+                                        "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
+                                        "', CODBAIRRO = '" + CodBairro +
+                                        "', OBS = '" + c.getString(TAG_OBS) +
+                                        "', CODCIDADE = '" + CodCidade +
+                                        "', UF = '" + CodEstado +
+                                        "', CEP = '" + c.getString(TAG_CEP) +
+                                        "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
+                                        "', TIPOPESSOA = '" + c.getString(TAG_TIPO) +
+                                        "', ATIVO = '" + c.getString(TAG_ATIVO) +
+                                        "', CODPERFIL = " + idPerfil +
+                                        ",  CODVENDEDOR = " + CodVendedor +
+                                        ",  FLAGINTEGRADO = '2' " +
+                                        "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
+                                        "'  AND CODPERFIL = " + idPerfil + "");
                             } else {
                                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, REGIDENT, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED,BLOQUEIO, ATIVO, FLAGINTEGRADO) VALUES(" +
-                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") + "','" + c.getString(TAG_RG).trim() +
-                                        "',' " + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
-                                        "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO).trim() +
-                                        "',' " + c.getString(TAG_NUMERO).trim() + "', '" + c.getString(TAG_COMPLEMENTO).trim() +
-                                        "',' " + CodBairro + "','" + c.getString(TAG_OBS) + "','" + CodCidade + "','" + CodEstado +
-                                        "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
-                                        "',' " + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_LIMITECRED) + "','" + c.getString(TAG_BLOQUEIO) + "','" + c.getString(TAG_ATIVO) +
+                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED,BLOQUEIO, ATIVO, CODPERFIL, FLAGINTEGRADO) VALUES(" +
+                                        "'" + c.getString(TAG_CNPJCPF) + "'" +
+                                        ",'" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
+                                        "','" + c.getString(TAG_RG).trim() +
+                                        "',' " + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
+                                        "',' " + c.getString(TAG_INSCESTADUAL) +
+                                        "',' " + c.getString(TAG_EMAILS) +
+                                        "',' " + Tel1 +
+                                        "', '" + Tel2 +
+                                        "', '" + c.getString(TAG_LOGRADOURO).trim() +
+                                        "',' " + c.getString(TAG_NUMERO).trim() +
+                                        "', '" + c.getString(TAG_COMPLEMENTO).trim() +
+                                        "',' " + CodBairro +
+                                        "','" + c.getString(TAG_OBS) +
+                                        "','" + CodCidade +
+                                        "','" + CodEstado +
+                                        "',' " + c.getString(TAG_CEP) +
+                                        "', '" + c.getString(TAG_CODIGO) +
+                                        "',' " + CodVendedor +
+                                        "','" + c.getString(TAG_TIPO) +
+                                        "','" + c.getString(TAG_LIMITECRED) +
+                                        "','" + c.getString(TAG_BLOQUEIO) +
+                                        "','" + c.getString(TAG_ATIVO) +
+                                        "', '" + idPerfil +
                                         "',' " + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
-                                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
-                                        " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
-                                        ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'");
+                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
+                                        "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) +
+                                        "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
+                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) +
+                                        "', EMAIL = '" + c.getString(TAG_EMAILS) +
+                                        "', TEL1 = '" + Tel1 +
+                                        "', TEL2 = '" + Tel2 +
+                                        "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
+                                        "', NUMERO = '" + c.getString(TAG_NUMERO) +
+                                        "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
+                                        "', CODBAIRRO = '" + CodBairro +
+                                        "', OBS = '" + c.getString(TAG_OBS) +
+                                        "', CODCIDADE = '" + CodCidade +
+                                        "', UF = '" + CodEstado +
+                                        "', CEP = '" + c.getString(TAG_CEP) +
+                                        "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
+                                        "', TIPOPESSOA = '" + c.getString(TAG_TIPO) +
+                                        "', ATIVO = '" + c.getString(TAG_ATIVO) +
+                                        "', CODPERFIL = " + idPerfil +
+                                        ",  CODVENDEDOR = " + CodVendedor +
+                                        ",  FLAGINTEGRADO = '2' " +
+                                        "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
+                                        "'  AND CODPERFIL = " + idPerfil + "");
                             }
 
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
                             cursor1.moveToFirst();
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
                             CodClienteExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
@@ -542,20 +597,24 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         } catch (Exception E) {
                             System.out.println("Sincronismo Clientes, falha na atualização ou inclusão de clientes. Tente novamente");
                         }
-                        if (CodClienteExt == null) {
-                            Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
-                            CursorContatosEnv.moveToFirst();
-                            if ((CursorContatosEnv.getCount() > 0)) {
-                                DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente);
-                                CursorContatosEnv.close();
+                        try {
+                            if (CodClienteExt == null) {
+                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND CODPERFIL = " + idPerfil + "", null);
+                                CursorContatosEnv.moveToFirst();
+                                if ((CursorContatosEnv.getCount() > 0)) {
+                                    DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND CODPERFIL = " + idPerfil + "");
+                                    CursorContatosEnv.close();
+                                }
+                            } else {
+                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIE_EXT = " + CodClienteExt + " AND CODPERFIL = " + idPerfil + "", null);
+                                CursorContatosEnv.moveToFirst();
+                                if ((CursorContatosEnv.getCount() > 0)) {
+                                    DB.execSQL("DELETE FROM CONTATO WHERE CODCLIE_EXT = " + CodClienteExt + " AND CODPERFIL = " + idPerfil + "");
+                                    CursorContatosEnv.close();
+                                }
                             }
-                        } else {
-                            Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIE_EXT = " + CodClienteExt, null);
-                            CursorContatosEnv.moveToFirst();
-                            if ((CursorContatosEnv.getCount() > 0)) {
-                                DB.execSQL("DELETE FROM CONTATO WHERE CODCLIE_EXT = " + CodClienteExt);
-                                CursorContatosEnv.close();
-                            }
+                        } catch (Exception e) {
+                            e.toString();
                         }
 
                         String Contatos = c.getString(TAG_CONTATOSINFO);
@@ -668,12 +727,12 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     if (!NomeContato.equals("0") || !CargoContato.equals("0") || !EmailContato.equals("0") || !Tel1Contato.equals("0") ||
                                             !Tel2Contato.equals("0")) {
                                         DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT, CODCONTATO_EXT," +
-                                                "DOCUMENTO, DATA, CEP, ENDERECO, UF, BAIRRO, DESC_CIDADE ) VALUES(" +
+                                                "DOCUMENTO, DATA, CEP, ENDERECO, UF, CODPERFIL, BAIRRO, DESC_CIDADE ) VALUES(" +
                                                 "'" + NomeContato.trim() + "', '" + CargoContato.trim() +
                                                 "', '" + EmailContato.trim() + "', '" + Tel1Contato.trim() + "', '" + Tel2Contato.trim() +
                                                 "', " + CodCliente.trim() + ", '" + CodClienteExt.trim() + "', '" + codExtContato.trim() +
                                                 "', '" + documentoContato.trim() + "', '" + dataAniversario.trim() + "', '" + cep.trim() +
-                                                "', '" + endNumCont.trim() + "', '" + uf.trim() + "', '" + bairro.trim() +
+                                                "', '" + endNumCont.trim() + "', '" + uf.trim() + "', '" + idPerfil + "', '" + bairro.trim() +
                                                 "', '" + cidade.trim() + "');");
                                     }
 
@@ -725,7 +784,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ITENS FROM PARAMAPP", null);
+        Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ITENS, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
         cursorparamapp.moveToFirst();
         String DtUltItem = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ITENS"));
         if (DtUltItem == null) {
@@ -746,7 +805,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         Boolean ConexOk = Util.checarConexaoCelular(this);
         if (ConexOk == true) {
             try {
-                Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS", null);
+                Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL =" + idPerfil, null);
                 if (cursorVerificaProd.getCount() == 0) {
                     hd.post(new Runnable() {
                         @Override
@@ -851,7 +910,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             try {
                 DtUltItem = Util.DataHojeComHorasMinSecBR();
-                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "'");
+                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "' WHERE CODPERFIL = " + idPerfil);
             } catch (Exception e) {
                 e.toString();
             }
@@ -878,7 +937,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 Dialog.setMessage(getString(R.string.sync_products));
                             }
                         });
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) + " AND CODPERFIL = " + idPerfil + "", null);
                         try {
                             if (CursItens.getCount() > 0) {
                                 CursItens.moveToFirst();
@@ -898,13 +957,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', ATIVO = '" + Ativo +
-                                        "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
+                                        "', CODPERFIL = " + idPerfil +
+                                        ", QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() + "'" +
-                                        " WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
+                                        "   WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
+                                        "   AND CODPERFIL = " + idPerfil + "");
                             } else {
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
                                         "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, TABELAPADRAO, " +
-                                        "ATIVO, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
+                                        "ATIVO,CODPERFIL, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
                                         "',' " + CItens.getString(TAG_CODMANUAL).trim() +
                                         "',' " + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
                                         "',' " + CItens.getString(TAG_FABRICANTE).trim() +
@@ -921,7 +982,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "',' " + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "',' " + Ativo +
-                                        "',' " + CItens.getString(TAG_QTDESTOQUE) +
+                                        "',  " + idPerfil +
+                                        " ,' " + CItens.getString(TAG_QTDESTOQUE) +
                                         "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
 
                                 //está tendo que atualizar cadas item que é incluso para tirar os espaçõs em alguns campos, pois somente na inserção não tira.
@@ -941,9 +1003,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "', ATIVO = '" + Ativo +
-                                        "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
+                                        "', CODPERFIL = " + idPerfil +
+                                        " , QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
-                                        "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
+                                        "'  WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
+                                        "   AND CODPERFIL = " + idPerfil + "");
                             }
                             CursItens.close();
 
@@ -1417,7 +1481,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         String DescTab6 = c.getString("nometabp1");
                         String DescTab7 = c.getString("nometabp2");
 
-                        Cursor CursorTabela = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                        Cursor CursorTabela = DB.rawQuery(" SELECT CODPERFIL, DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
                         CursorTabela.moveToFirst();
                         if (CursorTabela.getCount() > 0) {
                             DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
@@ -1430,8 +1494,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     "'");
                         } else {
 
-                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7)" +
-                                    " VALUES(" + DescTab1.trim() + ",'" + DescTab2.trim() + "', '" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "' );");
+                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,CODPERFIL)" +
+                                    " VALUES(" + "'" + DescTab1.trim() + "','" + DescTab2.trim() + "','" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "', " + idPerfil + " );");
                         }
                         CursorTabela.close();
 
@@ -1633,18 +1697,19 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         String habcritsitclie = c.getString("habcritsitclie");
                         String habcritqtditens = c.getString("habcritqtditens");
 
-                        Cursor CursorParam = DB.rawQuery(" SELECT PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM", null);
+                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL, PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
                         CursorParam.moveToFirst();
                         if (CursorParam.getCount() > 0) {
                             DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
                                     "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
                                     "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
+                                    "', CODPERFIL = '" + idPerfil +
                                     "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
                                     "'");
                         } else {
 
-                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "','" + habcritqtditens.trim() + "');");
+                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
+                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
                         }
                         CursorParam.close();
 
@@ -1754,6 +1819,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static String SincronizarPedidosEnvioStatic(String sUsuario, String sSenha, final Context ctxPedEnv, String NumPedido) {
+        SharedPreferences prefsHost = ctxPedEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
+        SharedPreferences prefs = ctxPedEnv.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
         String sincpedenviostatic = null;
         if (NumPedido.equals("0")) {
 
@@ -1764,7 +1837,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             String RetClieEnvio = null;
 
             try {
-                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE FLAGINTEGRADO = '5' ", null);
+                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE FLAGINTEGRADO = '5' AND CODPERFIL = " + idPerfil, null);
 
                 int jumpTime = 0;
                 final int totalProgressTime = CursorPedido.getCount();
@@ -1780,7 +1853,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                                 int CodClie_Int = CursorPedido.getInt(CursorPedido.getColumnIndex("CODCLIE"));
 
-                                Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "'", null);
+                                Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT,CODPERFIL,FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "' AND CODPERFIL = " + idPerfil, null);
                                 CursorClie.moveToFirst();
                                 int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
                                 String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
@@ -1874,9 +1947,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                                     StrictMode.setThreadPolicy(policy);
 
-                                    SharedPreferences prefsHost = ctxPedEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-                                    URLPrincipal = prefsHost.getString("host", null);
-
                                     SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
                                     soap.addProperty("aJson", JPedidos);
                                     soap.addProperty("aUsuario", sUsuario);
@@ -1910,10 +1980,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     try {
                                         DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
-                                        Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+                                        Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "' AND CODPERFIL = " + idPerfil, null);
                                         CursPedAtu.moveToFirst();
                                         if (CursPedAtu.getCount() > 0) {
-                                            DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
+                                            DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "' AND CODPERFIL = " + idPerfil);
                                         }
                                         sincpedenviostatic = "OK";
                                         CursPedAtu.close();
@@ -1948,21 +2018,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             int CodClie_Int;
 
             try {
-                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "' ", null);
+                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "' AND CODPERFIL = " + idPerfil, null);
                 CursorPedido.moveToFirst();
                 CodClie_Int = CursorPedido.getInt(CursorPedido.getColumnIndex("CODCLIE"));
 
-                CursorCliente = DB.rawQuery("SELECT CODCLIE_EXT FROM CLIENTES WHERE CODCLIE_INT = " + CodClie_Int + "", null);
+                CursorCliente = DB.rawQuery("SELECT CODCLIE_EXT FROM CLIENTES WHERE CODCLIE_INT = " + CodClie_Int + " AND CODPERFIL =" + idPerfil, null);
                 CursorCliente.moveToFirst();
                 CodClie_Ext = CursorCliente.getInt(CursorCliente.getColumnIndex("CODCLIE_EXT"));
                 CursorCliente.close();
 
-                SharedPreferences prefs = ctxPedEnv.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-                usuario = prefs.getString("usuario", null);
-                senha = prefs.getString("senha", null);
-
-                SharedPreferences prefsHost = ctxPedEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-                URLPrincipal = prefsHost.getString("host", null);
                 String RetClieEnvio = null;
 
                 int jumpTime = 0;
@@ -2095,10 +2159,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         try {
                             DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
                             if (!RetClieEnvio.equals("0")) {
-                                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
+                                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "' AND CODPERFIL =" + idPerfil, null);
                                 CursPedAtu.moveToFirst();
                                 if (CursPedAtu.getCount() > 0) {
-                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
+                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "' AND CODPERFIL =" + idPerfil);
                                 }
                                 sincpedenviostatic = "OK";
                                 CursPedAtu.close();
@@ -2541,14 +2605,22 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static boolean AtualizaPedido(String numPedido, Context ctxAtu, String tipoAtu) {
+        SharedPreferences prefsHost = ctxAtu.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
+        SharedPreferences prefs = ctxAtu.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
         boolean sincAtuPedido = false;
         DB = new ConfigDB(ctxAtu).getReadableDatabase();
         if (tipoAtu.equals("C")) {
             try {
-                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + numPedido + "'", null);
+                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + numPedido + "' AND CODPERFIL = " + idPerfil, null);
                 CursPedAtu.moveToFirst();
                 if (CursPedAtu.getCount() > 0) {
-                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '4' WHERE NUMPED = '" + numPedido + "'");
+                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '4' WHERE NUMPED = '" + numPedido + "' AND CODPERFIL = " + idPerfil);
                 }
                 CursPedAtu.close();
             } catch (Exception E) {
@@ -2559,10 +2631,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
         } else if (tipoAtu.equals("A")) {
             try {
-                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + numPedido + "'", null);
+                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + numPedido + "' AND CODPERFIL = " + idPerfil, null);
                 CursPedAtu.moveToFirst();
                 if (CursPedAtu.getCount() > 0) {
-                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE NUMPED = '" + numPedido + "'");
+                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE NUMPED = '" + numPedido + "' AND CODPERFIL = " + idPerfil);
                 }
                 CursPedAtu.close();
             } catch (Exception E) {
@@ -2580,7 +2652,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             String NumFiscal = "";
 
             try {
-                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPEDIDOERP = " + numPedido, null);
+                CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPEDIDOERP = " + numPedido + " AND CODPERFIL = " + idPerfil, null);
 
                 Dialog = new ProgressDialog(ctxAtu);
                 Dialog.setTitle("Aguarde...");
@@ -2591,12 +2663,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 Dialog.setMax(0);
                 Dialog.show();
 
-                SharedPreferences prefs = ctxAtu.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-                usuario = prefs.getString("usuario", null);
-                senha = prefs.getString("senha", null);
-
-                SharedPreferences prefsHost = ctxAtu.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-                URLPrincipal = prefsHost.getString("host", null);
                 String RetStatusPedido = null;
 
                 int jumpTime = 0;
@@ -2641,11 +2707,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         }
                         try {
                             DB = new ConfigDB(ctxAtu).getReadableDatabase();
-                            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPEDIDOERP = " + numPedido, null);
+                            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPEDIDOERP = " + numPedido + " AND CODPERFIL = " + idPerfil, null);
                             CursPedAtu.moveToFirst();
                             if (CursPedAtu.getCount() > 0) {
                                 if (!RetStatusPedido.equals("Orçamento")) {
-                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '3', NUMFISCAL = " + RetStatusPedido + " WHERE NUMPEDIDOERP = '" + numPedido + "'");
+                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '3', NUMFISCAL = " + RetStatusPedido + " WHERE NUMPEDIDOERP = '" + numPedido + "' AND CODPERFIL = " + idPerfil);
                                 }
                             }
                             sincAtuPedido = true;
@@ -2832,6 +2898,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static String SincEmpresas(String sUsuario, String sSenha, final Context ctxEnv) {
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
         String sincempresastatic = null;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -2904,23 +2973,36 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             e.toString();
                         }*/
 
-                        Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
+                        Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa + " AND CODPERFIL = " + idPerfil + "", null);
                         if (CursorEmpresa.getCount() > 0) {
-                            DB.execSQL(" UPDATE EMPRESAS SET CODEMPRESA = '" + CodEmpresa + "', NOMEEMPRE = '" + NomeEmpresa + "', NOMEABREV = '" + NomeAbreviado + "'," +
-                                    " CNPJ = '" + Cnpj + "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', EMAIL = '" + Email + "', ATIVO = '" + Ativo + "'" +
-                                    //" LOGO = '" + imgRecebida + "'" +
-                                    " WHERE CODEMPRESA = " + CodEmpresa);
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
+                            DB.execSQL(" UPDATE EMPRESAS SET CODEMPRESA = '" + CodEmpresa +
+                                    "', NOMEEMPRE = '" + NomeEmpresa +
+                                    "', NOMEABREV = '" + NomeAbreviado +
+                                    "', CNPJ = '" + Cnpj +
+                                    "', TEL1 = '" + Tel1 +
+                                    "', TEL2 = '" + Tel2 +
+                                    "', EMAIL = '" + Email +
+                                    "', ATIVO = '" + Ativo +
+                                    "', CODPERFIL = " + idPerfil +
+                                    "   WHERE CODEMPRESA = " + CodEmpresa + " AND CODPERFIL = " + idPerfil);
+                            /*Cursor cursor1 = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
                             cursor1.moveToFirst();
-                            //CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
-                            cursor1.close();
+                            CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
+                            cursor1.close();*/
                         } else {
-                            DB.execSQL(" INSERT INTO EMPRESAS (CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO)" +
-                                    " VALUES(" + CodEmpresa + ",'" + NomeEmpresa + "', '" + NomeAbreviado + "','" + Cnpj + "','" + Tel1 + "','" + Tel2 +
-                                    "','" + Email + "','" + Ativo + "' );");
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
+                            DB.execSQL(" INSERT INTO EMPRESAS (CODEMPRESA, CODPERFIL, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL, ATIVO)" +
+                                    " VALUES(" + CodEmpresa +
+                                    "," + idPerfil +
+                                    ",'" + NomeEmpresa +
+                                    "','" + NomeAbreviado +
+                                    "','" + Cnpj +
+                                    "','" + Tel1 +
+                                    "','" + Tel2 +
+                                    "','" + Email +
+                                    "','" + Ativo + "' );");
+                            //Cursor cursor1 = DB.rawQuery(" SELECT CODEMPRESA, NOMEEMPRE, NOMEABREV, CNPJ, TEL1, TEL2, EMAIL FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa, null);
                             sincempresastatic = "OK";
-                            cursor1.close();
+                            //cursor1.close();
                         }
                         sincempresastatic = "OK";
                         CursorEmpresa.close();
@@ -2939,6 +3021,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static String SincParametrosStatic(String sUsuario, String sSenha, Context ctxEnv) {
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
         String sincparaetrosstatic = null;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -2995,18 +3080,19 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         String habcritsitclie = c.getString("habcritsitclie");
                         String habcritqtditens = c.getString("habcritqtditens");
 
-                        Cursor CursorParam = DB.rawQuery(" SELECT PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP", null);
+                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL, PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
                         CursorParam.moveToFirst();
                         if (CursorParam.getCount() > 0) {
                             DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
                                     "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
                                     "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
+                                    "', CODPERFIL = '" + idPerfil +
                                     "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
                                     "'");
                         } else {
 
-                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "','" + habcritqtditens.trim() + "');");
+                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
+                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
                         }
                         sincparaetrosstatic = "OK";
                         CursorParam.close();
@@ -3025,6 +3111,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static String SincDescricaoTabelasStatic(String sUsuario, String sSenha, Context ctxEnv) {
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
         String sinctabelasstatic = null;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -3083,7 +3172,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         String DescTab6 = c.getString("nometabp1");
                         String DescTab7 = c.getString("nometabp2");
 
-                        Cursor CursorTabela = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                        Cursor CursorTabela = DB.rawQuery(" SELECT CODPERFIL, DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
                         CursorTabela.moveToFirst();
                         if (CursorTabela.getCount() > 0) {
                             DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
@@ -3096,8 +3185,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     "'");
                         } else {
 
-                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7)" +
-                                    " VALUES(" + "'" + DescTab1.trim() + "','" + DescTab2.trim() + "', '" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "' );");
+                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,CODPERFIL)" +
+                                    " VALUES(" + "'" + DescTab1.trim() + "','" + DescTab2.trim() + "','" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "', " + idPerfil + " );");
                         }
                         sinctabelasstatic = "OK";
                         CursorTabela.close();
@@ -3113,6 +3202,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static String SincBloqueiosStatic(String sUsuario, String sSenha, Context ctxEnv) {
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
         String sincbloqstatic = null;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -3169,14 +3261,22 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         String fpavista = c.getString("fpavista");
 
 
-                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq, null);
+                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, CODPERFIL, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq + " AND CODPERFIL = " + idPerfil, null);
                         if (CursorBloqueio.getCount() > 0) {
-                            DB.execSQL(" UPDATE BLOQCLIE SET CODBLOQ = '" + codblq + "', DESCRICAO = '" + descricao + "', BLOQUEAR = '" + bloquear + "'," +
-                                    " LIBERAR = '" + liberar + "', FPAVISTA = '" + fpavista + "'" +
+                            DB.execSQL(" UPDATE BLOQCLIE SET CODBLOQ = '" + codblq +
+                                    "', DESCRICAO = '" + descricao +
+                                    "', BLOQUEAR = '" + bloquear +
+                                    "', LIBERAR = '" + liberar +
+                                    "', FPAVISTA = '" + fpavista + "'" +
                                     " WHERE CODBLOQ = " + codblq);
                         } else {
-                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
-                                    " VALUES(" + codblq + ",'" + descricao + "', '" + bloquear + "','" + liberar + "','" + fpavista + "' );");
+                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, CODPERFIL, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
+                                    " VALUES(" + codblq +
+                                    "," + idPerfil +
+                                    ",'" + descricao +
+                                    "','" + bloquear +
+                                    "','" + liberar +
+                                    "','" + fpavista + "' );");
                         }
                         sincbloqstatic = "OK";
                         CursorBloqueio.close();
@@ -3193,6 +3293,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static String SincronizarClientesEnvioStatic(String CodClie_Int, Context ctxEnvClie, String user, String pass) {
+        SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
+        SharedPreferences prefs = ctxEnvClie.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
         String sincclieenvstatic = null;
 
         String Jcliente = null;
@@ -3204,20 +3312,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             if (CodClie_Int.equals("0")) {
                 CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                         " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE FLAGINTEGRADO = '1' " +
+                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE FLAGINTEGRADO = '1' AND CODPERFIL = " + idPerfil + " " +
                         " ORDER BY NOMEFAN, NOMERAZAO ", null);
             } else {
                 CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
                         " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE  CODCLIE_INT = " + CodClie_Int, null);
+                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE  CODCLIE_INT = " + CodClie_Int + " AND CODPERFIL = " + idPerfil, null);
             }
 
-            SharedPreferences prefs = ctxEnvClie.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-            usuario = prefs.getString("usuario", null);
-            senha = prefs.getString("senha", null);
 
-            SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-            URLPrincipal = prefsHost.getString("host", null);
             String RetClieEnvio = null;
 
             int jumpTime = 0;
@@ -3338,10 +3441,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     }
                     try {
                         if (!RetClieEnvio.equals("0")) {
-                            Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'", null);
+                            Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "' AND CODPERFIL = " + idPerfil, null);
                             CursClieAtu.moveToFirst();
                             if (CursClieAtu.getCount() > 0) {
-                                DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + RetClieEnvio + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'");
+                                DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + RetClieEnvio + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'AND CODPERFIL = " + idPerfil);
                             }
                             sincclieenvstatic = ctxEnvClie.getString(R.string.newcustomers_successfully);
                             CursClieAtu.close();
@@ -3366,6 +3469,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static String SincronizarProdutosStatic(Context ctxSincProd, String user, String pass, int codItem) {
+        SharedPreferences prefsHost = ctxSincProd.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
+        SharedPreferences prefs = ctxSincProd.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
+        String sincparaetrosstatic = null;
         String sincprodstatic = null;
         String DtUltItem = null;
 
@@ -3394,7 +3506,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         String TAG_QTDESTOQUE = "qtd_disponivel";
 
         if (codItem == 0) {
-            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ITENS FROM PARAMAPP", null);
+            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ITENS, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
             cursorparamapp.moveToFirst();
             DtUltItem = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ITENS"));
             if (DtUltItem == null) {
@@ -3402,15 +3514,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             }
             cursorparamapp.close();
         }
-
-        SharedPreferences prefs = ctxSincProd.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString("usuario", null);
-        senha = prefs.getString("senha", null);
-
-        //DtUlt = DataUltSt2;
-
-        SharedPreferences prefsHost = ctxSincProd.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -3486,7 +3589,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             if (codItem == 0) {
                 try {
                     DtUltItem = Util.DataHojeComHorasMinSecBR();
-                    DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "'");
+                    DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "' WHERE CODPERFIL = " + idPerfil);
                 } catch (Exception e) {
                     e.toString();
                 }
@@ -3507,16 +3610,16 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             Ativo = "N";
                         }
 
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM), null);
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) + " AND CODPERFIL = " + idPerfil + "", null);
                         try {
                             if (CursItens.getCount() > 0) {
                                 CursItens.moveToFirst();
                                 DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
                                         "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
-                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
-                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim().replace("'", "") +
-                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim().replace("'", "") +
+                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim() +
+                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim() +
+                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim() +
+                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim() +
                                         "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
                                         "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
                                         "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
@@ -3524,35 +3627,39 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
                                         "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
                                         "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
+                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', ATIVO = '" + Ativo +
-                                        "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
-                                        "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
+                                        "', CODPERFIL = " + idPerfil +
+                                        ", QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
+                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() + "'" +
+                                        "   WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
+                                        "   AND CODPERFIL = " + idPerfil + "");
                             } else {
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
                                         "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, TABELAPADRAO, " +
-                                        "ATIVO, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
+                                        "ATIVO,CODPERFIL, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
                                         "',' " + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "','" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "',' " + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
-                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
-                                        "',' " + CItens.getString(TAG_CLASSE).trim().replace("'", "") +
-                                        "',' " + CItens.getString(TAG_MARCA).trim().replace("'", "") +
-                                        "', '" + CItens.getString(TAG_UNIVENDA).replaceAll(" ", "") +
+                                        "',' " + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
+                                        "',' " + CItens.getString(TAG_FABRICANTE).trim() +
+                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim() +
+                                        "',' " + CItens.getString(TAG_CLASSE).trim() +
+                                        "',' " + CItens.getString(TAG_MARCA).trim() +
+                                        "',' " + CItens.getString(TAG_UNIVENDA).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA1).trim() +
-                                        "', '" + CItens.getString(TAG_VLVENDA2).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA2).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA3).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA4).trim() +
-                                        "','" + CItens.getString(TAG_VLVENDA5).trim() +
+                                        "',' " + CItens.getString(TAG_VLVENDA5).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', '" + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "', '" + Ativo +
-                                        "', '" + CItens.getString(TAG_QTDESTOQUE) +
-                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") + "');");
+                                        "',' " + CItens.getString(TAG_TABELAPADRAO).trim() +
+                                        "',' " + Ativo +
+                                        "',  " + idPerfil +
+                                        " ,' " + CItens.getString(TAG_QTDESTOQUE) +
+                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
 
+                                //está tendo que atualizar cadas item que é incluso para tirar os espaçõs em alguns campos, pois somente na inserção não tira.
                                 DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
                                         "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
                                         "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
@@ -3569,9 +3676,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
                                         "', ATIVO = '" + Ativo +
-                                        "', QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
+                                        "', CODPERFIL = " + idPerfil +
+                                        " , QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
                                         "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
-                                        "' WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM));
+                                        "'  WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
+                                        "   AND CODPERFIL = " + idPerfil + "");
                             }
                             CursItens.close();
 
@@ -3599,6 +3708,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     }
 
     public static String SincronizarClientesStatic(String sCodVend, Context ctxEnvClie, String user, String pass, int Codclie) {
+        SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
+        SharedPreferences prefs = ctxEnvClie.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
         String sinccliestatic = null;
 
         String METHOD_NAME = "Carregar";
@@ -3629,7 +3746,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         String DtUlt = null;
 
         if (Codclie == 0) {
-            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE FROM PARAMAPP", null);
+            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
             cursorparamapp.moveToFirst();
 
             DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_CLIE"));
@@ -3638,14 +3755,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             }
             cursorparamapp.close();
         }
-
-        SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SharedPreferences prefs = ctxEnvClie.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString("usuario", null);
-        senha = prefs.getString("senha", null);
-
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -3717,7 +3826,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             if (Codclie == 0) {
                 try {
                     DtUlt = Util.DataHojeComHorasMinSecBR();
-                    DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "'");
+                    DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil);
                 } catch (Exception e) {
                     e.toString();
                 }
@@ -3759,49 +3868,91 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                         jumpTime += 1;
 
-                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
-
+                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
+                        cursor.moveToFirst();
                         String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
                         int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
                         int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade);
-
                         try {
                             if (cursor.getCount() > 0) {
-                                cursor.moveToFirst();
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '" + c.getString(TAG_RG) + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO) +
-                                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
-                                        " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
-                                        ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'");
+                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
+                                        "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) +
+                                        "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
+                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) +
+                                        "', EMAIL = '" + c.getString(TAG_EMAILS) +
+                                        "', TEL1 = '" + Tel1 +
+                                        "', TEL2 = '" + Tel2 +
+                                        "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
+                                        "', NUMERO = '" + c.getString(TAG_NUMERO) +
+                                        "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
+                                        "', CODBAIRRO = '" + CodBairro +
+                                        "', OBS = '" + c.getString(TAG_OBS) +
+                                        "', CODCIDADE = '" + CodCidade +
+                                        "', UF = '" + CodEstado +
+                                        "', CEP = '" + c.getString(TAG_CEP) +
+                                        "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
+                                        "', TIPOPESSOA = '" + c.getString(TAG_TIPO) +
+                                        "', ATIVO = '" + c.getString(TAG_ATIVO) +
+                                        "', CODPERFIL = " + idPerfil +
+                                        ",  CODVENDEDOR = " + CodVendedor +
+                                        ",  FLAGINTEGRADO = '2' " +
+                                        "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
+                                        "'  AND CODPERFIL = " + idPerfil + "");
                             } else {
-                                DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, REGIDENT, INSCREST, EMAIL, TEL1, TEL2, " +
+                                DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, REGIDENT, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED, BLOQUEIO, ATIVO, FLAGINTEGRADO) VALUES(" +
-                                        "'" + c.getString(TAG_CNPJCPF) + "','" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") + "','" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "',' " + c.getString(TAG_RG) + "',' " + c.getString(TAG_INSCESTADUAL) + "',' " + c.getString(TAG_EMAILS) +
-                                        "',' " + Tel1 + "', '" + Tel2 + "', '" + c.getString(TAG_LOGRADOURO) +
-                                        "',' " + c.getString(TAG_NUMERO) + "', '" + c.getString(TAG_COMPLEMENTO) +
-                                        "','" + CodBairro + "',' " + c.getString(TAG_OBS) + "','" + CodCidade + "',' " + CodEstado +
-                                        "',' " + c.getString(TAG_CEP) + "', '" + c.getString(TAG_CODIGO) +
-                                        "','" + CodVendedor + "','" + c.getString(TAG_TIPO) + "','" + c.getString(TAG_LIMITECRED) + "','" + c.getString(TAG_BLOQUEIO) + "','" + c.getString(TAG_ATIVO)
-                                        + "','" + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
+                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED,BLOQUEIO, ATIVO, CODPERFIL, FLAGINTEGRADO) VALUES(" +
+                                        "'" + c.getString(TAG_CNPJCPF) + "'" +
+                                        ",'" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
+                                        "','" + c.getString(TAG_RG).trim() +
+                                        "',' " + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
+                                        "',' " + c.getString(TAG_INSCESTADUAL) +
+                                        "',' " + c.getString(TAG_EMAILS) +
+                                        "',' " + Tel1 +
+                                        "', '" + Tel2 +
+                                        "', '" + c.getString(TAG_LOGRADOURO).trim() +
+                                        "',' " + c.getString(TAG_NUMERO).trim() +
+                                        "', '" + c.getString(TAG_COMPLEMENTO).trim() +
+                                        "',' " + CodBairro +
+                                        "','" + c.getString(TAG_OBS) +
+                                        "','" + CodCidade +
+                                        "','" + CodEstado +
+                                        "',' " + c.getString(TAG_CEP) +
+                                        "', '" + c.getString(TAG_CODIGO) +
+                                        "',' " + CodVendedor +
+                                        "','" + c.getString(TAG_TIPO) +
+                                        "','" + c.getString(TAG_LIMITECRED) +
+                                        "','" + c.getString(TAG_BLOQUEIO) +
+                                        "','" + c.getString(TAG_ATIVO) +
+                                        "', '" + idPerfil +
+                                        "',' " + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
                                         "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '" + c.getString(TAG_RG) + "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) + "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) + "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 + "', TEL2 = '" + Tel2 + "', ENDERECO = '" + c.getString(TAG_LOGRADOURO) +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) + "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO) +
-                                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + c.getString(TAG_OBS) + "', CODCIDADE = '" + CodCidade + "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) + "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "', " +
-                                        " TIPOPESSOA = '" + c.getString(TAG_TIPO) + "', ATIVO = '" + c.getString(TAG_ATIVO) + "'" +
-                                        ", CODVENDEDOR = '" + CodVendedor + "', FLAGINTEGRADO = '2' " +
-                                        " WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'");
+                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
+                                        "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) +
+                                        "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
+                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) +
+                                        "', EMAIL = '" + c.getString(TAG_EMAILS) +
+                                        "', TEL1 = '" + Tel1 +
+                                        "', TEL2 = '" + Tel2 +
+                                        "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
+                                        "', NUMERO = '" + c.getString(TAG_NUMERO) +
+                                        "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
+                                        "', CODBAIRRO = '" + CodBairro +
+                                        "', OBS = '" + c.getString(TAG_OBS) +
+                                        "', CODCIDADE = '" + CodCidade +
+                                        "', UF = '" + CodEstado +
+                                        "', CEP = '" + c.getString(TAG_CEP) +
+                                        "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
+                                        "', TIPOPESSOA = '" + c.getString(TAG_TIPO) +
+                                        "', ATIVO = '" + c.getString(TAG_ATIVO) +
+                                        "', CODPERFIL = " + idPerfil +
+                                        ",  CODVENDEDOR = " + CodVendedor +
+                                        ",  FLAGINTEGRADO = '2' " +
+                                        "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
+                                        "'  AND CODPERFIL = " + idPerfil + "");
                             }
 
                             Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
@@ -3942,6 +4093,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         String TAG_SITUACAOCLIENTE = "sitclie";
         String TAG_SITCLIENTE = "situacaoclie";
         String TAG_DESCBLOQUEIO = "descricaobloqueio";
+        vltotalped = vltotalped.replace(",", ".");
 
         SharedPreferences prefs = ctxEnvClie.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
@@ -3971,14 +4123,30 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         envelope.setOutputSoapObject(soap);
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 60000);
         String RetCliexVend = null;
+        /*int i = 0;
+        do {
 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
         try {
             Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
             if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetCliexVend = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
+
+                try {
+                    Envio.call("", envelope);
+                } catch (Exception e) {
+                    e.toString();
+                }
+                try {
+                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                    RetCliexVend = (String) envelope.getResponse();
+                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                } catch (Exception e) {
+                    e.toString();
+                }
             } else {
                 situacao = "Sem conexão com o servidor. Tente novamente!";
                 return situacao;
@@ -3986,6 +4154,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         } catch (Exception e) {
             System.out.println("Error na solicitação" + e);
         }
+        //i = i + 1;
+        //}while (RetCliexVend == null && i <= 20);
+
         try {
 
             JSONObject jsonObj = new JSONObject(RetCliexVend);

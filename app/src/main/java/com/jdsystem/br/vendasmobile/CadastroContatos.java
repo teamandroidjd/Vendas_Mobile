@@ -56,6 +56,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.jdsystem.br.vendasmobile.Login.NOME_USUARIO;
 import static java.lang.Integer.parseInt;
 
 public class CadastroContatos extends AppCompatActivity implements Runnable {
@@ -69,11 +70,11 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             SEXTA = "Sexta-feira",
             SABADO = "Sábado";
 
-    String codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente, descBairro,telaInvocada;
+    String codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade, NomeCliente, descBairro, telaInvocada;
     Boolean PesqCEP;
     TimePicker timePicker;
     ImageButton BtnPesqCep, btnInformaDiasVisita;
-    int CodCidade, CodBairro, CodCliente, hour, minute, codInternoUlt;
+    int CodCidade, CodBairro, CodCliente, hour, minute, codInternoUlt, idPerfil;
     EditText nome, setor, data, documento, endereco, numero, cep, tel1, tel2, email, OBS, Complemento, horaFinal, horaInicial, idEditText;
     Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF, horarioContato;
     Context ctx;
@@ -90,6 +91,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
     int hora1, minute1, hora2, minute2;
     SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
     TimePickerDialog timePickerDialog;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +101,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
 
         declaraobjetos();
         excluiBaseTempContatos(CadastroContatos.this);
+        carregarpreferencias();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -412,7 +416,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                                 try {
                                     DB.execSQL("delete from diascontatotemporario " +
                                             "where dia_visita = '" + itemLista + "'");
-                                }catch (Exception E){
+                                } catch (Exception E) {
                                     System.out.println(E);
                                 }
                             }
@@ -435,6 +439,16 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 criaAgendaVisitas();
             }
         });
+    }
+
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     private void declaraobjetos() {
@@ -523,14 +537,26 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
 
             //if (!(CursorContatos.getCount() > 0)) {
             DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
-                    "COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS) VALUES(" +
-                    "'" + nome.getText().toString() + "', '" + setor.getText().toString() + "', '" +
-                    email.getText().toString() + "', '" + tel1.getText().toString() + "', '" + tel2.getText().toString() +
-                    "', '" + documento.getText().toString() + "', '" + data.getText().toString() + "','" +
-                    cep.getText().toString() +
-                    "', '" + endereco.getText().toString() + "', '" + numero.getText().toString() + "', '" +
-                    Complemento.getText().toString() + "', '" + sUF + "', " + codVendedor + ", '" + descBairro + "', '" +
-                    NomeCidade + "', " + CodCliente + ", '" + sTipoContato + "', '" + OBS.getText().toString() + "');");
+                    "COMPLEMENTO, UF, CODVENDEDOR, CODPERFIL, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS) VALUES(" +
+                    "'" + nome.getText().toString() +
+                    "', '" + setor.getText().toString() +
+                    "', '" + email.getText().toString() +
+                    "', '" + tel1.getText().toString() +
+                    "', '" + tel2.getText().toString() +
+                    "', '" + documento.getText().toString() +
+                    "', '" + data.getText().toString() +
+                    "', '" + cep.getText().toString() +
+                    "', '" + endereco.getText().toString() +
+                    "', '" + numero.getText().toString() +
+                    "', '" + Complemento.getText().toString() +
+                    "', '" + sUF +
+                    "', " + codVendedor +
+                    ", " + idPerfil +
+                    ", '" + descBairro +
+                    "', '" + NomeCidade +
+                    "', " + CodCliente +
+                    ", '" + sTipoContato +
+                    "', '" + OBS.getText().toString() + "');");
 
             returnLastId();
             salvarAgenda();
@@ -544,42 +570,43 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             E.toString();
         }
 
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroContatos.this);
-        builder.setTitle(R.string.title_novocontato);
-        builder.setIcon(R.drawable.logo_ico);
-        builder.setMessage(R.string.question_newcontact)
-                .setCancelable(false)
-                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(getBaseContext(), CadastroContatos.class);
-                        Bundle params = new Bundle();
-                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                        params.putString(getString(R.string.intent_usuario), usuario);
-                        params.putString(getString(R.string.intent_senha), senha);
-                        params.putInt(getString(R.string.intent_codcliente), CodCliente);
-                        params.putString(getString(R.string.intent_nomerazao), NomeCliente);
-                        intent.putExtras(params);
-                        startActivity(intent);
-                        finish();
-                    }
-                })
-                .setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(getBaseContext(), ConsultaPedidos.class);
-                        Bundle params = new Bundle();
-                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                        params.putString(getString(R.string.intent_usuario), usuario);
-                        params.putString(getString(R.string.intent_senha), senha);
-                        intent.putExtras(params);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
-        android.app.AlertDialog alert = builder.create();
-        alert.show();
-
+        if(sTipoContato.equals("C")) {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroContatos.this);
+            builder.setTitle(R.string.title_novocontato);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage(R.string.question_newcontact)
+                    .setCancelable(false)
+                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(getBaseContext(), CadastroContatos.class);
+                            Bundle params = new Bundle();
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
+                            params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                            params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                            intent.putExtras(params);
+                            startActivity(intent);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(getBaseContext(), ConsultaPedidos.class);
+                            Bundle params = new Bundle();
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
+                            intent.putExtras(params);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+            android.app.AlertDialog alert = builder.create();
+            alert.show();
+        }
 
         Toast.makeText(this, "Contato Salvo com sucesso!", Toast.LENGTH_SHORT).show();
     }
@@ -593,9 +620,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        String URLPrincipal = prefsHost.getString("host", null);
-
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "PesquisaCEP");
         soap.addProperty("aCEP", cep);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -606,11 +630,36 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         try {
             Boolean ConexOk = Util.checarConexaoCelular(this);
             if (ConexOk == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                RetDadosEndereco = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
+                try {
+                    Envio.call("", envelope);
+                } catch (Exception e) {
+                    DialogECB.dismiss();
+                    e.toString();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(CadastroContatos.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    PesqCEP = false;
+                    return PesqCEP;
+                }
+                try {
+                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                    RetDadosEndereco = (String) envelope.getResponse();
+                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                } catch (Exception e) {
+                    DialogECB.dismiss();
+                    e.toString();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(CadastroContatos.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    PesqCEP = false;
+                    return PesqCEP;
+                }
             } else {
                 DialogECB.cancel();
                 Toast.makeText(this, "Sem conexão com a internet! Verifique.", Toast.LENGTH_LONG).show();
@@ -788,8 +837,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codcliente),String.valueOf(CodCliente));
-                params.putString(getString(R.string.intent_nomerazao),NomeCliente);
+                params.putString(getString(R.string.intent_codcliente), String.valueOf(CodCliente));
+                params.putString(getString(R.string.intent_nomerazao), NomeCliente);
                 cadcont.putExtras(params);
                 startActivity(cadcont);
                 finish();
@@ -942,7 +991,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                         }
 
                         if ((horaFinal.getText().toString().equals("")) || (horaInicial.getText().toString().equals(""))) {
-                            if ((horaInicial.getText().toString().equals(""))|| (horaInicial.getText().toString().equals(null))) {
+                            if ((horaInicial.getText().toString().equals("")) || (horaInicial.getText().toString().equals(null))) {
                                 Util.msg_toast_personal(CadastroContatos.this, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT);
                             } else if ((horaFinal.getText().toString().equals("")) || (horaFinal.getText().toString().equals(null))) {
                                 Util.msg_toast_personal(CadastroContatos.this, "Horário final de visita não informado!", Toast.LENGTH_SHORT);
@@ -961,14 +1010,15 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                                 agendaContato = sDiaSemana + ", de " + converteZero(Integer.toString(hora1)) +
                                         ":" + converteZero(Integer.toString(minute1)) + " às " + converteZero(Integer.toString(hora2)) + ":" +
                                         converteZero(Integer.toString(minute2));
-                                if(insereContatos(agendaContato, codDiaSemana)){
+                                if (insereContatos(agendaContato, codDiaSemana)) {
                                     diasContatos = listaContatos();
 
                                     arrayAdapter = new ArrayAdapter<String>(CadastroContatos.this,
                                             android.R.layout.simple_list_item_1, diasContatos);
                                     listView.setAdapter(arrayAdapter);
                                     mAlertDialog.dismiss();
-                                };
+                                }
+                                ;
                                 //listView
 
                             }

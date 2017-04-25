@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile.Model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -19,14 +20,16 @@ import java.util.List;
 public class Sqlite_VENDADAO {
 
     private Context ctx;
-    private String CodVend;
+    private String CodVend,URLPrincipal;
     private String sql;
     private SQLiteStatement stmt;
     private SQLiteDatabase db;
     private Cursor cursor;
     private Boolean bAltera;
     private boolean gravacao;
-    int numpedido;
+    int numpedido,idPerfil;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
 
 
     public Sqlite_VENDADAO(Context ctx, String CodVend, Boolean bAltera) {
@@ -34,8 +37,11 @@ public class Sqlite_VENDADAO {
         this.ctx = ctx;
         this.CodVend = CodVend;
         this.bAltera = bAltera;
-    }
 
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
+    }
     public Long grava_venda(SqliteVendaCBean venda, List<SqliteVendaD_TempBean> itens_temp) {
 
         int numero_item = 1;
@@ -80,14 +86,24 @@ public class Sqlite_VENDADAO {
                         "', LONGITUDEPEDIDO = " + venda.getVendac_longitude() +
                         " WHERE CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() + "'");
             } else*/ // {
-            db.execSQL("INSERT INTO PEDOPER (CHAVE_PEDIDO, DATAEMIS, DATAPREVISTAENTREGA, CODCLIE, CODCLIE_EXT, NOMECLIE, CODEMPRESA, CODVENDEDOR, " +
+            db.execSQL("INSERT INTO PEDOPER (CHAVE_PEDIDO,CODPERFIL, DATAEMIS, DATAPREVISTAENTREGA, CODCLIE, CODCLIE_EXT, NOMECLIE, CODEMPRESA, CODVENDEDOR, " +
                     "VALORTOTAL, VLDESCONTO,PERCDESCO, STATUS, LATITUDEPEDIDO, OBS, FLAGINTEGRADO, LONGITUDEPEDIDO, VLMERCAD) VALUES(" +
-                    "'" + venda.getVendac_chave().toString() + "','" + venda.getVendac_datahoravenda().toString() + "','" + venda.getVendac_previsaoentrega().toString() +
-                    "'," + venda.getVendac_cli_codigo().toString() + ",' " + venda.getVendac_cli_codigo_ext().toString().toString()
-                    + "',' " + venda.getVendac_cli_nome().toString() +
-                    "'," + venda.getCodEmpresa().toString() + ", '" + CodVend + "'," + venda.getVendac_valor().toString() +
-                    "," + venda.getVendac_desconto().toString() + ", '" + venda.getVendac_percdesconto().toString() + "', '" + venda.getVendac_enviada().toString() +
-                    "'," + venda.getVendac_latitude() + ",'" + venda.getObservacao().toString() + "','1'," + venda.getVendac_longitude() +
+                    "'"   + venda.getVendac_chave().toString() +
+                    "',"  + idPerfil +
+                    ",'"  + venda.getVendac_datahoravenda().toString() +
+                    "','" + venda.getVendac_previsaoentrega().toString() +
+                    "',"  + venda.getVendac_cli_codigo().toString() +
+                    ",'"  + venda.getVendac_cli_codigo_ext().toString().toString() +
+                    "','" + venda.getVendac_cli_nome().toString() +
+                    "'," + venda.getCodEmpresa().toString() +
+                    ", '" + CodVend +
+                    "'," + venda.getVendac_valor().toString() +
+                    "," + venda.getVendac_desconto().toString() +
+                    ", '" + venda.getVendac_percdesconto().toString() +
+                    "', '" + venda.getVendac_enviada().toString() +
+                    "'," + venda.getVendac_latitude() +
+                    ",'" + venda.getObservacao().toString() +
+                    "','1'," + venda.getVendac_longitude() +
                     "," + venda.getTotal().toString() + ");");
             // }
             id_venda = 1;
@@ -177,7 +193,7 @@ public class Sqlite_VENDADAO {
         if (id_venda != -1) {
             boolean Erro = false;
             try {
-                Cursor numped = db.rawQuery("select NUMPED, CHAVE_PEDIDO from PEDOPER where CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() + "'", null);
+                Cursor numped = db.rawQuery("select NUMPED, CODPERFIL, CHAVE_PEDIDO from PEDOPER where CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() + "' AND CODPERFIL = "+idPerfil, null);
                 numped.moveToFirst();
                 numpedido = numped.getInt(numped.getColumnIndex("NUMPED"));
                 numped.close();
@@ -188,10 +204,11 @@ public class Sqlite_VENDADAO {
                 for (int i = 0; i < venda.getItens_da_venda().size(); i++) {
                     SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
                     Cursor CursorItem = db.rawQuery(" SELECT DESCRICAO, CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
-                            + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "'", null);
+                            + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "' AND CODPERFIL = "+idPerfil, null);
                     if (CursorItem.getCount() > 0) {
                         db.execSQL(" UPDATE PEDITENS SET CHAVEPEDIDO = '" + vendaD_item.getVendac_chave().toString() +
                                 "', NUMPED = " + numpedido +
+                                ",  CODPERFIL = " +idPerfil+
                                 " , NUMEROITEM = '" + vendaD_item.getVendad_nro_item().toString() +
                                 "', CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
                                 "', DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
@@ -201,12 +218,16 @@ public class Sqlite_VENDADAO {
                                 ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() +
                                 " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
                     } else {
-                        db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
-                                " VALUES('" + vendaD_item.getVendac_chave() + "','" + vendaD_item.getVendad_nro_item() +
-                                "', '" + vendaD_item.getVendad_prd_codigo() + "','" + vendaD_item.getVendad_prd_descricao()
-                                + "','" + vendaD_item.getVendad_prd_unidade() + "'," + vendaD_item.getVendad_quantidade().toString() +
-                                "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() + "," +
-                                vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + ");");
+                        db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODPERFIL, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
+                                " VALUES('" + vendaD_item.getVendac_chave() +
+                                "','" + vendaD_item.getVendad_nro_item() +
+                                "',"  + idPerfil +
+                                ",'"  + vendaD_item.getVendad_prd_codigo() +
+                                "','" + vendaD_item.getVendad_prd_descricao() +
+                                "','" + vendaD_item.getVendad_prd_unidade() +
+                                "',"  + vendaD_item.getVendad_quantidade().toString() +
+                                ","   + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
+                                ","   + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + ");");
                     }
                     CursorItem.close();
                 }
@@ -277,6 +298,7 @@ public class Sqlite_VENDADAO {
                         ", NOMECLIE = '" + venda.getVendac_cli_nome().toString() +
                         "', CODEMPRESA = " + venda.getCodEmpresa().toString() +
                         ", CODVENDEDOR = " + CodVend +
+                        ", CODPERFIL = "  + idPerfil +
                         ", VLMERCAD = " + venda.getTotal().toString() +
                         ", VALORTOTAL = " + venda.getVendac_valor().toString() +
                         ", VLDESCONTO = " + venda.getVendac_desconto().toString() +
@@ -286,16 +308,26 @@ public class Sqlite_VENDADAO {
                         ", OBS = '" + venda.getObservacao().toString() +
                         "', FLAGINTEGRADO = '" + 1 +
                         "', LONGITUDEPEDIDO = " + venda.getVendac_longitude() +
-                        " WHERE CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() + "'");
+                        " WHERE CHAVE_PEDIDO = '" + venda.getVendac_chave().toString() + "' AND CODPERFIL = "+idPerfil);
             } else {
-                db.execSQL("INSERT INTO PEDOPER (CHAVE_PEDIDO, DATAEMIS, DATAPREVISTAENTREGA, CODCLIE, CODCLIE_EXT, NOMECLIE, CODEMPRESA, CODVENDEDOR, " +
+                db.execSQL("INSERT INTO PEDOPER (CHAVE_PEDIDO, CODPERFIL, DATAEMIS, DATAPREVISTAENTREGA, CODCLIE, CODCLIE_EXT, NOMECLIE, CODEMPRESA, CODVENDEDOR, " +
                         "VALORTOTAL, VLDESCONTO,PERCDESCO, STATUS, LATITUDEPEDIDO, OBS, FLAGINTEGRADO, LONGITUDEPEDIDO, VLMERCAD) VALUES(" +
-                        "'" + venda.getVendac_chave().toString() + "','" + venda.getVendac_datahoravenda().toString() + "','" + venda.getVendac_previsaoentrega().toString() +
-                        "'," + venda.getVendac_cli_codigo().toString() + ",' " + venda.getVendac_cli_codigo_ext().toString().toString()
-                        + "',' " + venda.getVendac_cli_nome().toString() +
-                        "'," + venda.getCodEmpresa().toString() + ", '" + CodVend + "'," + venda.getVendac_valor().toString() +
-                        "," + venda.getVendac_desconto().toString() + ", '" + venda.getVendac_percdesconto().toString() + "', '" + venda.getVendac_enviada().toString() +
-                        "'," + venda.getVendac_latitude() + ",'" + venda.getObservacao().toString() + "','1'," + venda.getVendac_longitude() +
+                        "'" + venda.getVendac_chave().toString() +
+                        "',"+ idPerfil +
+                        ",'" + venda.getVendac_datahoravenda().toString() +
+                        "','" + venda.getVendac_previsaoentrega().toString() +
+                        "'," + venda.getVendac_cli_codigo().toString() +
+                        ",' " + venda.getVendac_cli_codigo_ext().toString().toString() +
+                        "',' " + venda.getVendac_cli_nome().toString() +
+                        "'," + venda.getCodEmpresa().toString() +
+                        ", '" + CodVend +
+                        "'," + venda.getVendac_valor().toString() +
+                        "," + venda.getVendac_desconto().toString() +
+                        ", '" + venda.getVendac_percdesconto().toString() +
+                        "', '" + venda.getVendac_enviada().toString() +
+                        "'," + venda.getVendac_latitude() +
+                        ",'" + venda.getObservacao().toString() +
+                        "','1'," + venda.getVendac_longitude() +
                         "," + venda.getTotal().toString() + ");");
             }
             id_venda = 1;
@@ -310,25 +342,30 @@ public class Sqlite_VENDADAO {
                 try {
                     for (int i = 0; i < venda.getItens_da_venda().size(); i++) {
                         SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
-                        Cursor CursorItem = db.rawQuery(" SELECT CODITEMANUAL, DESCRICAO, CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
-                                + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "'", null);
+                        Cursor CursorItem = db.rawQuery(" SELECT CODITEMANUAL, CODPERFIL, DESCRICAO, CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
+                                + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "' AND CODPERFIL = "+idPerfil, null);
                         if (CursorItem.getCount() > 0) {
                             db.execSQL(" UPDATE PEDITENS SET CHAVEPEDIDO = '" + vendaD_item.getVendac_chave().toString() +
                                     "', NUMEROITEM = '" + vendaD_item.getVendad_nro_item().toString() +
-                                    "', CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
+                                    "', CODPERFIL = " + idPerfil +
+                                    ",  CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
                                     "', DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
                                     "', UNIDADE = '" + vendaD_item.getVendad_prd_unidade().toString() +
                                     "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
-                                    ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
-                                    ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
-                                    " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
+                                    ",  VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
+                                    ",  VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
+                                    " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "' AND CODPERFIL = "+idPerfil);
                         } else {
-                            db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
-                                    " VALUES('" + vendaD_item.getVendac_chave() + "','" + vendaD_item.getVendad_nro_item() +
-                                    "', '" + vendaD_item.getVendad_prd_codigo() + "','" + vendaD_item.getVendad_prd_descricao()
-                                    + "','" + vendaD_item.getVendad_prd_unidade() + "'," + vendaD_item.getVendad_quantidade().toString() +
-                                    "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() + "," +
-                                    vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
+                            db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, CODPERFIL, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
+                                    " VALUES('" + vendaD_item.getVendac_chave() +
+                                    "'," + idPerfil +
+                                    ",'" + vendaD_item.getVendad_nro_item() +
+                                    "', '" + vendaD_item.getVendad_prd_codigo() +
+                                    "','" + vendaD_item.getVendad_prd_descricao() +
+                                    "','" + vendaD_item.getVendad_prd_unidade() +
+                                    "'," + vendaD_item.getVendad_quantidade().toString() +
+                                    "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
+                                    "," + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
                         }
                         CursorItem.close();
                     }
@@ -343,25 +380,30 @@ public class Sqlite_VENDADAO {
             try {
                 for (int i = 0; i < venda.getItens_da_venda().size(); i++) {
                     SqliteVendaDBean vendaD_item = (SqliteVendaDBean) venda.getItens_da_venda().get(i);
-                    Cursor CursorItem = db.rawQuery(" SELECT DESCRICAO, CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
-                            + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "'", null);
+                    Cursor CursorItem = db.rawQuery(" SELECT DESCRICAO, CODPERFIL. CHAVEPEDIDO FROM PEDITENS WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString().trim()
+                            + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "' AND CODPERFIL ="+idPerfil, null);
                     if (CursorItem.getCount() > 0) {
                         db.execSQL(" UPDATE PEDITENS SET CHAVEPEDIDO = '" + vendaD_item.getVendac_chave().toString() +
                                 "', NUMEROITEM = '" + vendaD_item.getVendad_nro_item().toString() +
                                 "', CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
                                 "', DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
                                 "', UNIDADE = '" + vendaD_item.getVendad_prd_unidade().toString() +
-                                "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
+                                "'," + idPerfil +
+                                ", QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
                                 ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
                                 ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
                                 " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
                     } else {
                         db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
-                                " VALUES('" + vendaD_item.getVendac_chave() + "','" + vendaD_item.getVendad_nro_item() +
-                                "', '" + vendaD_item.getVendad_prd_codigo() + "','" + vendaD_item.getVendad_prd_descricao()
-                                + "','" + vendaD_item.getVendad_prd_unidade() + "'," + vendaD_item.getVendad_quantidade().toString() +
-                                "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() + "," +
-                                vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
+                                " VALUES('" + vendaD_item.getVendac_chave() +
+                                "','" + vendaD_item.getVendad_nro_item() +
+                                "', '" + vendaD_item.getVendad_prd_codigo() +
+                                "','" + vendaD_item.getVendad_prd_descricao() +
+                                "','" + vendaD_item.getVendad_prd_unidade() +
+                                "'," +  idPerfil +
+                                "," + vendaD_item.getVendad_quantidade().toString() +
+                                "," + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
+                                "," + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() + ");");
                     }
                     CursorItem.close();
                 }
@@ -445,7 +487,7 @@ public class Sqlite_VENDADAO {
         db = new ConfigDB(ctx).getReadableDatabase();
         SqliteVendaCBean vendac = new SqliteVendaCBean();
         try {
-            cursor = db.rawQuery("select * from PEDOPER where NUMPED = '" + NumPedido + "'", null);
+            cursor = db.rawQuery("select * from PEDOPER where NUMPED = '" + NumPedido + "' AND CODPERFIL = "+idPerfil, null);
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 do {
@@ -494,7 +536,7 @@ public class Sqlite_VENDADAO {
     public void oculta_item_da_venda(String item) {
         db = new ConfigDB(ctx).getWritableDatabase();
         try {
-            db.execSQL("update peditens set view = 'N' where CODITEMANUAL = '"+item+"'");
+            db.execSQL("update peditens set view = 'N' where CODITEMANUAL = '"+item+"' and codperfil = "+idPerfil);
 
 
         } catch (SQLiteException e) {
@@ -516,10 +558,10 @@ public class Sqlite_VENDADAO {
     public void retornaItensOculto(String Chave_Venda){
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N'", null);
+            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N' AND CODPERFIL = "+idPerfil, null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
-                db.execSQL("UPDATE PEDITENS SET VIEW = NULL WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N')");
+                db.execSQL("UPDATE PEDITENS SET VIEW = NULL WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N') AND (CODPERFIL = "+idPerfil+")");
             }
         }catch (Exception e){
             e.toString();
@@ -530,10 +572,10 @@ public class Sqlite_VENDADAO {
     public void atualizaItensTemp(String Chave_Venda){
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T'", null);
+            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T' AND CODPERFIL = "+idPerfil, null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
-                db.execSQL("UPDATE PEDITENS SET VIEW = NULL WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'T')");
+                db.execSQL("UPDATE PEDITENS SET VIEW = NULL WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'T') AND (CODPERFIL = "+idPerfil+")");
             }
         }catch (Exception e){
             e.toString();
@@ -544,10 +586,10 @@ public class Sqlite_VENDADAO {
     public void excluiItensTemp(String Chave_Venda){
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T'", null);
+            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T' AND CODPERFIL = "+idPerfil, null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
-                db.execSQL("DELETE FROM PEDITENS WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'T')");
+                db.execSQL("DELETE FROM PEDITENS WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'T') AND (CODPERFIL = "+idPerfil+")");
             }
         }catch (Exception e){
             e.toString();
@@ -558,10 +600,10 @@ public class Sqlite_VENDADAO {
     public void excluiItensOculto(String Chave_Venda){
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N'", null);
+            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N' AND CODPERFIL = "+idPerfil, null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
-                db.execSQL("DELETE FROM PEDITENS WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N')");
+                db.execSQL("DELETE FROM PEDITENS WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N') AND (CODPERFIL = "+idPerfil+")");
             }
         }catch (Exception e){
             e.toString();
@@ -586,7 +628,7 @@ public class Sqlite_VENDADAO {
 
         try {
             if (!Chave_Venda.equals("0")) {
-                cursor = db.rawQuery("select * from PEDITENS where (CHAVEPEDIDO = '" + Chave_Venda + "') AND ((VIEW IS NULL) OR (VIEW = 'T'))", null);
+                cursor = db.rawQuery("select * from PEDITENS where ((CHAVEPEDIDO = '" + Chave_Venda + "') AND (CODPERFIL = "+idPerfil+")) AND ((VIEW IS NULL) OR (VIEW = 'T'))", null);
                 if (cursor.getCount() > 0) {
                     cursor.moveToFirst();
                     do {
@@ -617,7 +659,7 @@ public class Sqlite_VENDADAO {
         SqliteVendaDBean produto = null;
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            sql = "select * from PEDITENS where CODITEMANUAL = ? and view <> 'N' ";
+            sql = "select * from PEDITENS where CODITEMANUAL = ? and view <> 'N' AND CODPERFIL = "+idPerfil+" ";
             cursor = db.rawQuery(sql, new String[]{item.getVendad_prd_codigo().toString()});
             if (cursor.moveToFirst()) {
                 produto = new SqliteVendaDBean();
@@ -641,7 +683,7 @@ public class Sqlite_VENDADAO {
         try {
             try {
                 db = new ConfigDB(ctx).getWritableDatabase();
-                sql = "insert into PEDITENS (CODITEMANUAL,DESCRICAO,QTDMENORPED,VLUNIT,VLTOTAL,UNIDADE,CHAVEPEDIDO,VIEW) values (?,?,?,?,?,?,?,?) ";
+                sql = "insert into PEDITENS (CODITEMANUAL,DESCRICAO,QTDMENORPED,VLUNIT,VLTOTAL,UNIDADE,CHAVEPEDIDO,VIEW,CODPERFIL) values (?,?,?,?,?,?,?,?,?) ";
                 stmt = db.compileStatement(sql);
                 //stmt.bindString(1, item.getVendad_eanTEMP());
                 stmt.bindString(1, item.getVendad_prd_codigo());
@@ -653,6 +695,7 @@ public class Sqlite_VENDADAO {
                 stmt.bindString(6, item.getVendad_prd_unidade());
                 stmt.bindString(7, item.getVendac_chave());
                 stmt.bindString(8, item.getvendad_prd_view());
+                stmt.bindString(9, String.valueOf(idPerfil));
                 if (stmt.executeInsert() > 0) {
                     gravacao = true;
                 }
@@ -675,7 +718,7 @@ public class Sqlite_VENDADAO {
             try {
                 db = new ConfigDB(ctx).getWritableDatabase();
                 sql = "UPDATE PEDITENS SET CODITEMANUAL = ?, DESCRICAO = ?,QTDMENORPED = ?, " +
-                        "VLUNIT = ?, VLTOTAL = ?, UNIDADE = ? where CODITEMANUAL =  " + item.getVendad_prd_codigo();
+                        "VLUNIT = ?, VLTOTAL = ?, UNIDADE = ? where CODITEMANUAL =  " + item.getVendad_prd_codigo() +" AND CODPERFIL = "+idPerfil;
                 stmt = db.compileStatement(sql);
                 //stmt.bindString(1, item.getVendad_eanTEMP());
                 stmt.bindString(1, item.getVendad_prd_codigo());
@@ -705,11 +748,11 @@ public class Sqlite_VENDADAO {
         boolean pedcancelado = false;
         try {
             db = new ConfigDB(ctx).getWritableDatabase();
-            Cursor pedcancel = db.rawQuery("SELECT CHAVE_PEDIDO, NUMPED FROM PEDOPER WHERE CHAVE_PEDIDO = '" + chaveped + "'", null);
+            Cursor pedcancel = db.rawQuery("SELECT CHAVE_PEDIDO, NUMPED FROM PEDOPER WHERE CHAVE_PEDIDO = '" + chaveped + "' AND CODPERFIL = "+idPerfil, null);
             pedcancel.moveToFirst();
             if (pedcancel.getCount() == 1) {
                 String flagintegrado = "4";
-                db.execSQL("UPDATE PEDOPER SET FLAGINTEGRADO = '" + flagintegrado + "' WHERE CHAVE_PEDIDO = " + chaveped);
+                db.execSQL("UPDATE PEDOPER SET FLAGINTEGRADO = '" + flagintegrado + "' WHERE CHAVE_PEDIDO = " + chaveped +" AND CODPERFIL = "+idPerfil);
                 pedcancelado = true;
             } else {
                 Toast.makeText(ctx, "Foram encontrados mais de um pedido com a mesma identificação. Verifique!", Toast.LENGTH_SHORT).show();

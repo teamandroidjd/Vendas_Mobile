@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -59,11 +60,19 @@ public class act_TH_horarios_contatos extends Fragment {
     ArrayList<String> diasContatos;
     ArrayAdapter<String> arrayAdapter;
     ListView listView;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.act_horarios_contato, container, false);
         ctx = getContext();
+
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
+
         TAG_HORARIOS_CONTATOS = (TextView) v.findViewById(R.id.txt_horarios_contatos);
         listView = (ListView) v.findViewById(R.id.lv_horarios_contatos);
         listView.setOnTouchListener(new ListView.OnTouchListener() {

@@ -53,7 +53,9 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
     MenuItem searchItem;
     SearchView searchView;
     ProgressDialog Dialogo;
-    int flag;
+    int flag,idPerfil;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
 
 
     @Override
@@ -102,6 +104,7 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(ConsultaContatos.this);
 
         carregausuariologado();
+        carregarpreferencias();
 
         pDialog = new ProgressDialog(ConsultaContatos.this);
         pDialog.setTitle(getString(R.string.wait));
@@ -112,6 +115,12 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
         Thread thread = new Thread(ConsultaContatos.this);
         thread.start();
 
+    }
+
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     private void carregausuariologado() {
@@ -307,13 +316,13 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
 
 
             try {
-                Cursor cursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_INT, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+                Cursor cursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_INT, CONTATO.CODPERFIL, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
                         "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
                         "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
                         "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
                         "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT " +
                         "FROM CONTATO " +
-                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
+                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT WHERE CONTATO.CODPERFIL = "+idPerfil+" "+
                         "ORDER BY NOME ", null);
                 cursorContatos.moveToFirst();
                 if (cursorContatos.getCount() > 0) {
@@ -360,14 +369,14 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
                 pDialog.dismiss();
             }
         } else {
-            Cursor CursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+            Cursor CursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.CODPERFIL, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
                     "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
                     "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
                     "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
                     "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
                     "FROM CONTATO " +
                     "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
-                    "WHERE CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
+                    "WHERE (CONTATO.CODPERFIL = "+idPerfil+") AND CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
                     "LIKE '%" + editQuery + "%'" +
                     " order by CONTATO.NOME ", null);
 

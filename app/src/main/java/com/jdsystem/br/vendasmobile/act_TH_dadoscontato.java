@@ -4,6 +4,7 @@ package com.jdsystem.br.vendasmobile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -29,6 +30,9 @@ public class act_TH_dadoscontato extends Fragment {
     private Activity act;
     int sCodContato;
     Cursor CursorClie;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
@@ -36,6 +40,10 @@ public class act_TH_dadoscontato extends Fragment {
         View v = inflater.inflate(R.layout.act_dados_contatos, container, false);
         ctx = getContext();
         DB = new ConfigDB(ctx).getReadableDatabase();
+
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
 
         TextView NOMEFANTASIA = (TextView) v.findViewById(R.id.txv_nomefantasia_cliente);
         TextView NOMECONTATO = (TextView) v.findViewById(R.id.txt_nome_contato);
@@ -67,14 +75,14 @@ public class act_TH_dadoscontato extends Fragment {
         }
         try {
 
-            CursorClie = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+            CursorClie = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.NOME, CONTATO.CODPERFIL, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
                     "CONTATO.TEL2, CONTATO.CEP , CONTATO.DOCUMENTO, CONTATO.DATA,  " +
                     "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
                     "CONTATO.CODVENDEDOR,  CONTATO.BAIRRO, " +
                     "CLIENTES.NOMERAZAO, CONTATO.DESC_CIDADE, CONTATO.CODCLIENTE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
                     "FROM CONTATO " +
                     "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
-                    "WHERE CONTATO.CODCONTATO_INT = " + sCodContato, null);
+                    "WHERE CONTATO.CODCONTATO_INT = " + sCodContato +" AND CONTATO.CODPERFIL = "+idPerfil, null);
 
             CursorClie.moveToFirst();
 

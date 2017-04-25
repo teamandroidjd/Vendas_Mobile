@@ -3,6 +3,7 @@ package com.jdsystem.br.vendasmobile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -26,6 +27,9 @@ public class act_TH_dadosclie extends Fragment {
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
 
     public View onCreateView(LayoutInflater inflater,
@@ -34,6 +38,9 @@ public class act_TH_dadosclie extends Fragment {
         View v = inflater.inflate(R.layout.act_dadosclie, container, false);
         ctx = getContext();
 
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
 
         DB = new ConfigDB(ctx).getReadableDatabase();
 
@@ -72,7 +79,7 @@ public class act_TH_dadosclie extends Fragment {
                     " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                     " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente) +
+                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente) + " AND CODPERFIL ="+idPerfil+
                     " ORDER BY NOMEFAN, NOMERAZAO ", null);
 
             if (CursorClie.getCount() > 0) {

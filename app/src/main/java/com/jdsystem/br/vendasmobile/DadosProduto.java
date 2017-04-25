@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -34,6 +35,9 @@ public class DadosProduto extends AppCompatActivity {
             TAG_ATIVO, TAG_QTDESTOQUE, TAG_VLVENDAPADRAO, TAG_TABPADRAO;
     private RelativeLayout TAG_LINEAR1, TAG_LINEAR2, TAG_LINEAR3, TAG_LINEAR4, TAG_LINEAR5, TAG_LINEAR6, TAG_LINEAR7;
     private LinearLayout TAG_LINEARESTOQUE;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,13 @@ public class DadosProduto extends AppCompatActivity {
             }
         }
         carregarprodutos();
+        carregarpreferencias();
+    }
+
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     private void declaraobjetos() {
@@ -100,7 +111,7 @@ public class DadosProduto extends AppCompatActivity {
         try {
             Cursor CursorProd = DB.rawQuery("SELECT CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA," +
                     "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2,QTDESTPROD, " +
-                    "ATIVO, APRESENTACAO FROM ITENS WHERE CODITEMANUAL = '" + (sCodProduto) + "'", null);
+                    "ATIVO, APRESENTACAO FROM ITENS WHERE CODITEMANUAL = '" + (sCodProduto) + "' AND CODPERFIL = "+idPerfil, null);
 
             Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,TIPOCRITICQTDITEM FROM PARAMAPP", null);
             CursorParametro.moveToFirst();

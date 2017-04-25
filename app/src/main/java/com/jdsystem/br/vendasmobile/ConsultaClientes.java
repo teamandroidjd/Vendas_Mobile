@@ -58,8 +58,10 @@ public class ConsultaClientes extends AppCompatActivity
     FloatingActionButton cadclie;
     public ProgressDialog dialog;
     public Boolean ConsultaPedido;
-    public int CadastroContato, flag;
+    public int CadastroContato, flag,idPerfil;
     Toolbar toolbar;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,8 @@ public class ConsultaClientes extends AppCompatActivity
         }
         declaraobjetos();
         carregausuariologado();
+        carregarpreferencias();
+
 
         dialog = new ProgressDialog(ConsultaClientes.this);
         dialog.setTitle(getString(R.string.wait));
@@ -102,6 +106,12 @@ public class ConsultaClientes extends AppCompatActivity
         Thread thread = new Thread(ConsultaClientes.this);
         thread.start();
 
+    }
+
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     public void cadcliente(View view) {
@@ -211,7 +221,7 @@ public class ConsultaClientes extends AppCompatActivity
             SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
             if (ConexOk == true) {
                 flag = 1;
-                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES", null);
+                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL = "+idPerfil, null);
                 if (cursorVerificaClie.getCount() == 0) {
                     dialog = new ProgressDialog(ConsultaClientes.this);
                     dialog.setTitle(R.string.wait);
@@ -247,7 +257,7 @@ public class ConsultaClientes extends AppCompatActivity
         ArrayList<Clientes> DadosLisClientes = new ArrayList<Clientes>();
         if (editQuery == null) {
             try {
-                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
+                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
                 cursorparametro.moveToFirst();
                 String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
                 cursorparametro.close();
@@ -256,7 +266,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ATIVO = 'S' AND CODVENDEDOR = " + codVendedor + " ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE ATIVO = 'S' AND CODVENDEDOR = " + codVendedor + " AND CODPERFIL = "+idPerfil+" ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         do {
@@ -298,7 +308,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ATIVO = 'S' ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE (ATIVO = 'S') AND (CODPERFIL = "+idPerfil+") ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         do {
@@ -345,7 +355,7 @@ public class ConsultaClientes extends AppCompatActivity
             }
         } else {
             try {
-                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
+                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP WHERE CODPERFIL ="+idPerfil, null);
                 cursorparametro.moveToFirst();
                 String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
                 cursorparametro.close();
@@ -354,7 +364,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")AND (CODPERFIL = "+idPerfil+")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         do {
@@ -385,7 +395,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         do {

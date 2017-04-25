@@ -257,6 +257,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " DESCRICAO VARCHAR (30), " +
             " BLOQUEAR  CHAR    (1),  " +
             " LIBERAR   CHAR    (1),  " +
+            " CODPERFIL INTEGER,      " +
             " FPAVISTA  VARCHAR (3) ); ");
 
     private static String SQL_PERFIL = (" CREATE TABLE IF NOT EXISTS PERFIL (" +
@@ -597,6 +598,11 @@ public class ConfigDB extends SQLiteOpenHelper {
                         "codcontatoint integer);");
             } catch (Exception E){
                 System.out.println("ConfigDB, falha no INSERT DIAS_CONTATOS");
+            }
+            try{
+                db.execSQL("ALTER TABLE BLOQCLIE ADD CODPERFIL INTEGER");
+            }catch (Exception e){
+                e.toString();
             }
 
         }

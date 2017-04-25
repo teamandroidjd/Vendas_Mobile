@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,13 +23,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +46,9 @@ import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Login extends AppCompatActivity implements Runnable {
     public static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
@@ -60,8 +67,10 @@ public class Login extends AppCompatActivity implements Runnable {
     public SharedPreferences prefs;
     public String usuario, senha, URLPrincipal, sCodVend, UFVendedor;
     private String codVendedor = "0";
-    public TextView copyright,versao;
+    public TextView copyright, versao;
+    Spinner spPerfilInput;
     Boolean ConexOk;
+    int idPerfil;
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -76,7 +85,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
         declaraobjetos();
         carregarpreferencias();
-        //carregarperfil(); // habilitar essa chamada de método somente na 2.0
+        carregarperfil(); // habilitar essa chamada de método somente na 2.0
 
         if (URLPrincipal == null) {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
@@ -101,22 +110,21 @@ public class Login extends AppCompatActivity implements Runnable {
         copyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
     }
 
-    // A função abaixo será usada na versão 2.0
-    /*private void carregarperfil() {
+    private void carregarperfil() {
         try {
-            Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL",null);
+            Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL", null);
             cursorPerfil.moveToFirst();
             if (cursorPerfil.getCount() > 1) {
                 List<String> DadosListPerfil = new ArrayList<String>();
                 do {
-                    DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("LICENCA")));
+                    DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL")));
                 } while (cursorPerfil.moveToNext());
 
-                View viewEmp = (LayoutInflater.from(Login.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+                View viewEmp = (LayoutInflater.from(Login.this)).inflate(R.layout.input_perfil, null);
 
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Login.this);
                 alertBuilder.setView(viewEmp);
-                final Spinner spPerfilInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
+                spPerfilInput = (Spinner) viewEmp.findViewById(R.id.spnperfil);
 
                 ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(Login.this, android.R.layout.simple_spinner_dropdown_item, DadosListPerfil);
                 ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
@@ -129,12 +137,27 @@ public class Login extends AppCompatActivity implements Runnable {
                             public void onClick(DialogInterface dialog, int which) {
                                 String NomePerfil = spPerfilInput.getSelectedItem().toString();
                                 try {
-                                    Cursor cursorperfil = DB.rawQuery(" SELECT LICENCA, HOST, NOMEPERFIL  FROM PERFIL WHERE NOMEPERFIL = '" + NomePerfil + "'", null);
+                                    Cursor cursorperfil = DB.rawQuery(" SELECT LICENCA,CODPERFIL,HOST,NOMEPERFIL FROM PERFIL WHERE NOMEPERFIL = '" + NomePerfil + "'", null);
                                     cursorperfil.moveToFirst();
+                                    int idPerfil = 0;
+                                    String host = null;
+                                    String chave = null;
                                     if (cursorperfil.getCount() > 0) {
-                                        int CODPERFIL = cursorperfil.getInt(cursorperfil.getColumnIndex("CODPERFIL"));
+                                        idPerfil = cursorperfil.getInt(cursorperfil.getColumnIndex("CODPERFIL"));
+                                        host = cursorperfil.getString(cursorperfil.getColumnIndex("HOST"));
+                                        chave = cursorperfil.getString(cursorperfil.getColumnIndex("LICENCA"));
                                     }
                                     cursorperfil.close();
+
+                                    SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
+                                    editorhost.putString("ChaveAcesso", chave);
+                                    editorhost.putString("host", host);
+                                    editorhost.putInt("idperfil", idPerfil);
+                                    editorhost.apply();
+
+                                    URLPrincipal = host;
+
+
                                 } catch (Exception E) {
                                     System.out.println("Error" + E);
                                 }
@@ -147,7 +170,7 @@ public class Login extends AppCompatActivity implements Runnable {
         } catch (Exception E) {
             E.toString();
         }
-    }*/
+    }
 
     public void logar(View view) {
         final String user = edtUsuario.getText().toString();
@@ -239,6 +262,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil",0);
     }
 
     private void declaraobjetos() {
@@ -589,12 +613,12 @@ public class Login extends AppCompatActivity implements Runnable {
     private int CadastrarLogin(String NomeUsuario, String Senha, String CodVendedor, String CodEmpresa) {
         int CodVend;
         try {
-            Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODEMPRESA = " + CodEmpresa, null);
+            Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODEMPRESA = " + CodEmpresa +" AND CODPERFIL = "+idPerfil, null);
             if (CursorLogin.getCount() > 0) {
                 CursorLogin.moveToFirst();
                 CodVend = CursorLogin.getInt(CursorLogin.getColumnIndex("CODVEND"));
             } else {
-                DB.execSQL("INSERT INTO USUARIOS VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + ");");
+                DB.execSQL("INSERT INTO USUARIOS VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + ","+idPerfil+");");
                 Cursor cursor1 = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
                 cursor1.moveToFirst();
                 CodVend = cursor1.getInt(cursor1.getColumnIndex("CODVEND"));
@@ -611,7 +635,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
     private String ValidarLogin(String NomeUsuario, String Senha) {
 
-        Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "'", null);
+        Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODPERFIL = "+idPerfil+"", null);
         if (CursorLogin.getCount() > 0) {
             CursorLogin.moveToFirst();
             String sCodVend = CursorLogin.getString(CursorLogin.getColumnIndex("CODVEND"));

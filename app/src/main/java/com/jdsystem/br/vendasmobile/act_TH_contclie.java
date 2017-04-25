@@ -3,6 +3,7 @@ package com.jdsystem.br.vendasmobile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -38,6 +39,9 @@ public class act_TH_contclie extends Fragment{
     public ArrayAdapter<String> adapter;
     ArrayList<HashMap<String, String>> ListaContatos;
     ListView lstContatos;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,6 +49,10 @@ public class act_TH_contclie extends Fragment{
         ctx = getContext();
 
         DB = new ConfigDB(ctx).getReadableDatabase();
+
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
 
         TextView TAG_TELEFONE_1 = (TextView) v.findViewById(R.id.lblTel1Contato);
         TextView TAG_TELEFONE_2 = (TextView) v.findViewById(R.id.lblTel2Contato);
@@ -87,7 +95,7 @@ public class act_TH_contclie extends Fragment{
 
 
         try {
-            Cursor CursorClie = DB.rawQuery(" SELECT CODCONTATO_INT AS _id, NOME, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO WHERE CODCLIENTE = " + Integer.parseInt(CodCliente), null);
+            Cursor CursorClie = DB.rawQuery(" SELECT CODCONTATO_INT AS _id, NOME, CODPERFIL, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO WHERE CODCLIENTE = " + Integer.parseInt(CodCliente) +" AND CODPERFIL ="+idPerfil, null);
             if (CursorClie.getCount() > 0) {
                 /*CursorClie.moveToFirst();
                 String Tel1 =  CursorClie.getString(CursorClie.getColumnIndex("TEL1"));
@@ -124,6 +132,7 @@ public class act_TH_contclie extends Fragment{
         }
         return v;
     }
+
 
 
 

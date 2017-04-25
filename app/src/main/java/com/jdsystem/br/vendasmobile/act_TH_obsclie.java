@@ -3,6 +3,7 @@ package com.jdsystem.br.vendasmobile;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -26,12 +27,18 @@ public class act_TH_obsclie extends Fragment {
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.act_obs_cliente,container,false);
         ctx = getContext();
 
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
 
         DB = new ConfigDB(ctx).getReadableDatabase();
 
@@ -52,8 +59,8 @@ public class act_TH_obsclie extends Fragment {
             }
         }
         try {
-            Cursor CursorClie = DB.rawQuery(" SELECT OBS FROM CLIENTES " +
-                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente), null);
+            Cursor CursorClie = DB.rawQuery(" SELECT OBS, CODPERFIL FROM CLIENTES " +
+                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente) +" AND CODPERFIL = "+idPerfil, null);
 
             if (CursorClie.getCount() > 0) {
                 CursorClie.moveToFirst();

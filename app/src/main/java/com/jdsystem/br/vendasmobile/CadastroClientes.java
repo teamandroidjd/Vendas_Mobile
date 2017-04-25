@@ -40,19 +40,23 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jdsystem.br.vendasmobile.Login.NOME_USUARIO;
+
 
 public class CadastroClientes extends AppCompatActivity implements Runnable, View.OnFocusChangeListener {
 
     String sTipoPessoa, sUF, codVendedor, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada;
     private Handler handler = new Handler();
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
-    int CodCidade, CodBairro, telaInvocada, codClieExt;
+    int CodCidade, CodBairro, telaInvocada, codClieExt,idPerfil;
     Boolean PesqCEP;
     ImageButton BtnPesqCep, BtnconsultaCNPJ;
     private static ProgressDialog DialogECB;
     EditText nomerazao, nomefan, nomecompleto, cnpjcpf, Edtcpf, EdtRG, ie, endereco, numero, cep, tel1, tel2, email, edtOBS, Complemento;
     SQLiteDatabase DB;
     private GoogleApiClient client;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         setContentView(R.layout.cad_clientes);
 
         declaraobjetos();
+        carregarpreferencias();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -330,6 +335,16 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         });
     }
 
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil",0);
+    }
+
     private void declaraobjetos() {
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -426,10 +441,27 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         try {
             Boolean ConexOK = Util.checarConexaoCelular(this);
             if (ConexOK == true) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetDadosEndereco = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
+                try {
+                    Envio.call("", envelope);
+                } catch (Exception e) {
+                    DialogECB.dismiss();
+                    e.toString();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(CadastroClientes.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                try {
+                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                    RetDadosEndereco = (String) envelope.getResponse();
+                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                }catch (Exception e){
+                    e.toString();
+
+                }
             } else {
                 DialogECB.dismiss();
                 Toast.makeText(CadastroClientes.this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
@@ -673,35 +705,60 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
         Cursor CursorClieCons = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                 " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                " CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "'", null);
+                " CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, CODPERFIL, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "' AND CODPERFIL = "+idPerfil+"", null);
         try {
             if (CursorClieCons.getCount() > 0) {
                 CursorClieCons.moveToFirst();
                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + NomePessoa +
                         "', NOMEFAN = '" + NomeFantasia +
-                        "', INSCREST = '" + ie.getText().toString() + "', EMAIL = '" + email.getText().toString() +
-                        "', TEL1 = '" + tel1.getText().toString() + "', TEL2 = '" + tel2.getText().toString() + "', ENDERECO = '" + endereco.getText().toString() +
-                        "', NUMERO = '" + numero.getText().toString() + "', COMPLEMENT = '" + Complemento.getText().toString() +
-                        "', CODBAIRRO = '" + CodBairro + "', OBS = '" + edtOBS.getText().toString() + "', CODCIDADE = '" + CodCidade + "', UF = '" + sUF +
+                        "', INSCREST = '" + ie.getText().toString() +
+                        "', EMAIL = '" + email.getText().toString() +
+                        "', TEL1 = '" + tel1.getText().toString() +
+                        "', TEL2 = '" + tel2.getText().toString() +
+                        "', ENDERECO = '" + endereco.getText().toString() +
+                        "', NUMERO = '" + numero.getText().toString() +
+                        "', COMPLEMENT = '" + Complemento.getText().toString() +
+                        "', CODBAIRRO = '" + CodBairro +
+                        "', OBS = '" + edtOBS.getText().toString() +
+                        "', CODCIDADE = '" + CodCidade +
+                        "', UF = '" + sUF +
                         "', CEP = '" + CEP + "', " +
-                        " TIPOPESSOA = '" + sTipoPessoa + "', REGIDENT = '" + EdtRG.getText().toString() + "', ATIVO = 'S'" +
+                        " TIPOPESSOA = '" + sTipoPessoa +
+                        "', REGIDENT = '" + EdtRG.getText().toString() +
+                        "', ATIVO = 'S'" +
                         ", CODVENDEDOR = " + codVendedor +
-                        " WHERE CNPJ_CPF = '" + CpfCnpj + "'");
+                        " WHERE CNPJ_CPF = '" + CpfCnpj + "'" +
+                        " AND CODPERFIL = "+idPerfil+"");
             } else {
                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                        "CEP, CODVENDEDOR, TIPOPESSOA, ATIVO, BLOQUEIO, REGIDENT, FLAGINTEGRADO) VALUES(" +
-                        "'" + CpfCnpj + "', '" + NomePessoa +
-                        "','" + NomeFantasia + "', '" + ie.getText().toString() + "', '" + email.getText().toString() +
-                        "','" + tel1.getText().toString() + "', '" + tel2.getText().toString() + "', '" + endereco.getText().toString() +
-                        "','" + numero.getText().toString() + "', '" + Complemento.getText().toString() +
-                        "'," + CodBairro + ", '" + edtOBS.getText().toString() + "', " + CodCidade + ", '" + sUF +
-                        "','" + CEP + "', " + codVendedor + ", '" + sTipoPessoa + "', '" + "S" + "', '" + "01" + "', '" + EdtRG.getText().toString() + "','"
+                        "CEP, CODVENDEDOR, CODPERFIL, TIPOPESSOA, ATIVO, BLOQUEIO, REGIDENT, FLAGINTEGRADO) VALUES(" +
+                        "'" + CpfCnpj +
+                        "', '" + NomePessoa +
+                        "','" + NomeFantasia +
+                        "', '" + ie.getText().toString() +
+                        "', '" + email.getText().toString() +
+                        "','" + tel1.getText().toString() +
+                        "', '" + tel2.getText().toString() +
+                        "', '" + endereco.getText().toString() +
+                        "','" + numero.getText().toString() +
+                        "', '" + Complemento.getText().toString() +
+                        "'," + CodBairro +
+                        ", '" + edtOBS.getText().toString() +
+                        "', " + CodCidade +
+                        ", '" + sUF +
+                        "','" + CEP +
+                        "', " + codVendedor +
+                        ",  " + idPerfil +
+                        ", '" + sTipoPessoa +
+                        "', '" + "S" +
+                        "', '" + "01" +
+                        "', '" + EdtRG.getText().toString() + "','"
                         + "1" + "');");
             }
             CursorClieCons.close();
 
-            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "'", null);
+            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "' AND CODPERFIL = "+idPerfil+"", null);
             cursor1.moveToFirst();
             final String CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
 
@@ -909,7 +966,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             String CNPJ = cnpjcpf.getText().toString().replaceAll("[^0123456789]", "");
             Cursor CursorClie = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                     " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + cnpjcpf.getText().toString().replaceAll("[^0123456789]", "") + "'", null);
+                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + cnpjcpf.getText().toString().replaceAll("[^0123456789]", "") + "'AND CODPERFIL = "+idPerfil+"", null);
             CursorClie.moveToFirst();
             try {
                 if (CursorClie.getCount() > 0) {
@@ -927,7 +984,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             String CPF = Edtcpf.getText().toString().replaceAll("[^0123456789]", "");
             Cursor CursorClie = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                     " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + Edtcpf.getText().toString().replaceAll("[^0123456789]", "") + "'", null);
+                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + Edtcpf.getText().toString().replaceAll("[^0123456789]", "") + "'AND CODPERFIL = "+idPerfil+"", null);
             CursorClie.moveToFirst();
             try {
                 if (CursorClie.getCount() > 0) {

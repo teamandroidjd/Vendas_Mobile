@@ -57,6 +57,9 @@ public class ConsultaProdutos extends AppCompatActivity
     Handler handler = new Handler();
     MenuItem searchItem;
     SearchView searchView;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
 
     @Override
@@ -90,6 +93,7 @@ public class ConsultaProdutos extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         carregausuariologado();
+        carregarpreferencias();
 
         dialog = new ProgressDialog(ConsultaProdutos.this);
         dialog.setTitle(getString(R.string.wait));
@@ -99,6 +103,12 @@ public class ConsultaProdutos extends AppCompatActivity
 
         Thread thread = new Thread(ConsultaProdutos.this);
         thread.start();
+    }
+
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     private void carregausuariologado() {
@@ -176,7 +186,7 @@ public class ConsultaProdutos extends AppCompatActivity
             if (item.getItemId() == R.id.menu_sinc_cliente) {
                 Boolean ConexOk = Util.checarConexaoCelular(ConsultaProdutos.this);
                 if (ConexOk == true) {
-                    Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS", null);
+                    Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL = "+idPerfil, null);
                     if (cursorVerificaProd.getCount() == 0) {
                         Flag = 1;
                         dialog = new ProgressDialog(this);
@@ -510,7 +520,7 @@ public class ConsultaProdutos extends AppCompatActivity
             BigDecimal precoP2 = null;
 
             try {
-                Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM, CODPERFIL, HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL ="+idPerfil, null);
                 CursorParametro.moveToFirst();
                 String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
                 String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
@@ -521,7 +531,7 @@ public class ConsultaProdutos extends AppCompatActivity
                 String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                 String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
 
-                Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ATIVO = 'S' ORDER BY DESCRICAO", null);
+                Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ATIVO = 'S' AND CODPERFIL = "+idPerfil+" ORDER BY DESCRICAO", null);
                 cursorProdutos.moveToFirst();
                 if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
                     do {
@@ -635,7 +645,7 @@ public class ConsultaProdutos extends AppCompatActivity
 
             try {
 
-                Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM, CODPERFIL, HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL ="+idPerfil, null);
                 CursorParametro.moveToFirst();
                 String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
                 String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
@@ -647,7 +657,7 @@ public class ConsultaProdutos extends AppCompatActivity
 
                 String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
 
-                Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE (ATIVO = 'S') AND ((DESCRICAO LIKE '%" + editQuery + "%') OR (CODITEMANUAL LIKE '%" + editQuery + "%') OR (CLASSE LIKE '%" + editQuery + "%')" +
+                Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = "+idPerfil+")) AND ((DESCRICAO LIKE '%" + editQuery + "%') OR (CODITEMANUAL LIKE '%" + editQuery + "%') OR (CLASSE LIKE '%" + editQuery + "%')" +
                         " OR (FABRICANTE LIKE '%" + editQuery + "%') OR (FORNECEDOR LIKE '%" + editQuery + "%') OR (MARCA LIKE '%" + editQuery + "%')) ORDER BY DESCRICAO", null);
                 cursorProdutos.moveToFirst();
                 if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {

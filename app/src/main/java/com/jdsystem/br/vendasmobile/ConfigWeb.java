@@ -35,6 +35,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     private Button btsalvhost;
     public SharedPreferences prefs;
     public String ChaveAcesso, RetHost,host;
+    public int idPerfil;
     ProgressDialog DialogECB;
     private SQLiteDatabase DB;
     private Handler hd = new Handler();
@@ -126,7 +127,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 });
                 return;
             }
-            if (RetHost.equals("0")) {
+            if (RetHost.equals("{\"perfil\":[0]}")) {
                 DialogECB.dismiss();
                 hd.post(new Runnable() {
                     @Override
@@ -210,16 +211,30 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             e.toString();
         }
         DialogECB.dismiss();
-        SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
-        editorhost.putString("ChaveAcesso", edtChave.getText().toString());
-        editorhost.putString("host", host);
-        editorhost.apply();
+        gravarpreferencias();
         hd.post(new Runnable() {
             public void run() {
                 Toast.makeText(ConfigWeb.this, R.string.license_validated, Toast.LENGTH_SHORT).show();
             }
         });
         finish();
+    }
+
+    private void gravarpreferencias() {
+        try {
+            Cursor idlicenca = DB.rawQuery("SELECT LICENCA,CODPERFIL FROM PERFIL WHERE LICENCA = '" + edtChave.getText().toString() + "'", null);
+            idlicenca.moveToFirst();
+            if (idlicenca.getCount() > 0) {
+                idPerfil = idlicenca.getInt(idlicenca.getColumnIndex("CODPERFIL"));
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+        SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
+        editorhost.putString("ChaveAcesso", edtChave.getText().toString());
+        editorhost.putString("host", host);
+        editorhost.putInt("idperfil",idPerfil);
+        editorhost.apply();
     }
 
     private boolean gravarperfil(String host, String perfil, String licenca) {
