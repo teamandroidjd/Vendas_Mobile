@@ -44,6 +44,8 @@ public class DadosProduto extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_dados_produtos);
 
+
+        carregarpreferencias();
         declaraobjetos();
 
         Intent intent = getIntent();
@@ -58,7 +60,7 @@ public class DadosProduto extends AppCompatActivity {
             }
         }
         carregarprodutos();
-        carregarpreferencias();
+
     }
 
     private void carregarpreferencias() {
@@ -109,11 +111,11 @@ public class DadosProduto extends AppCompatActivity {
 
     public void carregarprodutos(){
         try {
-            Cursor CursorProd = DB.rawQuery("SELECT CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA," +
+            Cursor CursorProd = DB.rawQuery("SELECT CODITEMANUAL,CODPERFIL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA," +
                     "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2,QTDESTPROD, " +
                     "ATIVO, APRESENTACAO FROM ITENS WHERE CODITEMANUAL = '" + (sCodProduto) + "' AND CODPERFIL = "+idPerfil, null);
 
-            Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,TIPOCRITICQTDITEM FROM PARAMAPP", null);
+            Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL ="+idPerfil, null);
             CursorParametro.moveToFirst();
             String tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
             String tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
