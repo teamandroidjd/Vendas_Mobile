@@ -48,7 +48,7 @@
                         android:layout_height="wrap_content"
                         android:text="DESCRIÇÃO"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="normal|bold" />
 
                 </LinearLayout>
@@ -63,7 +63,7 @@
                         android:layout_height="wrap_content"
                         android:text="Código: "
                         android:textColor="@color/colordescClie"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -72,15 +72,19 @@
                         android:layout_height="wrap_content"
                         android:text="CÓDIGO"
                         android:textColor="@color/colordescClie"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="normal|bold" />
 
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/lbl2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text=" - "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="18sp"
+                        android:textStyle="normal|bold" />
 
                     <TextView
                         android:id="@+id/lbl4"
@@ -131,11 +135,8 @@
                             android:id="@+id/lbl1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
                             android:layout_marginLeft="10dp"
-                            android:layout_marginStart="3dp"
-                            android:layout_toEndOf="@+id/txtunvenda"
-                            android:layout_toRightOf="@+id/txtunvenda"
+                            android:layout_marginRight="10dp"
                             android:text=" - "
                             android:textColor="@color/colordescClie"
                             android:textSize="18sp"
@@ -485,7 +486,7 @@
                         android:layout_height="match_parent"
                         android:text="Estoque disponível: "
                         android:textColor="@color/colordescClie"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -494,7 +495,7 @@
                         android:layout_height="wrap_content"
                         android:text="1000000"
                         android:textColor="@color/colorAccent"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="normal|bold" />
 
 

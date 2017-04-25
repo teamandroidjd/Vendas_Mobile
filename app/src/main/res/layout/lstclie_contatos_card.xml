@@ -59,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:text="NOME DO CLIENTE "
                         android:textColor="@color/colordescClie"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
                 <LinearLayout
@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:text="Contato"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
                     </LinearLayout>
 
@@ -89,7 +89,6 @@
                         android:layout_height="wrap_content"
                         android:text="Cargo: "
                         android:textColor="@color/colordescClie"
-                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
                     <TextView
                         android:id="@+id/lblCargoContato"
@@ -112,7 +111,6 @@
                         android:layout_height="wrap_content"
                         android:text="Email: "
                         android:textColor="@color/colordescClie"
-                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
 
                     <TextView
@@ -121,7 +119,6 @@
                         android:layout_height="wrap_content"
                         android:text="Email"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
 
                 </LinearLayout>
@@ -136,7 +133,6 @@
                         android:layout_height="wrap_content"
                         android:text="Telefone 1: "
                         android:textColor="@color/colordescClie"
-                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
                     <TextView
                         android:id="@+id/lblTel1Contato"
@@ -144,7 +140,6 @@
                         android:layout_height="wrap_content"
                         android:text="Telefone1"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
                 <LinearLayout
@@ -157,7 +152,6 @@
                         android:layout_height="wrap_content"
                         android:text="Telefone 2: "
                         android:textColor="@color/colordescClie"
-                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
                     <TextView
                         android:id="@+id/lblTel2Contato"
@@ -165,7 +159,6 @@
                         android:layout_height="wrap_content"
                         android:text="Telefone2"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="15sp"
                         android:textStyle="normal|bold" />
 
 

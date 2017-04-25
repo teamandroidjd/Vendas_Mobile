@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:text="Horários"
             android:textColor="@color/colordescClie"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:textStyle="normal|bold" />
     </LinearLayout>
 

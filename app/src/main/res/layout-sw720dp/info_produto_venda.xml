@@ -18,7 +18,7 @@
         android:text="Código do Produto:"
         android:textStyle="bold"
         android:textColor="@color/colordescClie"
-        android:textSize="35dp"/>
+        android:textSize="35sp"/>
 
     <TextView
         android:id="@+id/info_txv_codproduto"
@@ -33,7 +33,7 @@
         android:text="0125"
         android:textStyle="bold"
         android:textColor="@color/colorAccent"
-        android:textSize="35dp"/>
+        android:textSize="35sp"/>
 
     <TextView
         android:id="@+id/txv02"
@@ -47,7 +47,7 @@
         android:text="Descrição Produto:"
         android:textStyle="bold"
         android:textColor="@color/colordescClie"
-        android:textSize="35dp"/>
+        android:textSize="35sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -64,7 +64,7 @@
             android:text="Coca cola 600 ml 2 litros e 5000 mil reais de produtos com nome grande para acertar aqui"
             android:textStyle="bold"
             android:textColor="@color/colorAccent"
-            android:textSize="35dp"/>
+            android:textSize="35sp"/>
 
     </LinearLayout>
 
@@ -80,7 +80,7 @@
         android:text="Unidade de Medida:"
         android:textColor="@color/colordescClie"
         android:textStyle="bold"
-        android:textSize="35dp"/>
+        android:textSize="35sp"/>
 
     <TextView
         android:id="@+id/info_txv_unmedida"
@@ -91,15 +91,15 @@
         android:layout_alignTop="@+id/txv04"
         android:text="LT"
         android:textColor="@color/colorAccent"
-        android:textSize="35dp"/>
+        android:textSize="35sp"/>
 
     <Spinner
         android:id="@+id/spntabpreco"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="40dp"
+        android:padding="20dp"
         android:textColor="@color/colordescClie"
-        android:textSize="35dp"
+        android:textSize="35sp"
         android:layout_below="@+id/txv04"
         android:entries="@array/tabela_preco"
         android:layout_alignParentLeft="true"
@@ -118,7 +118,7 @@
         android:text="Preço do Produto:"
         android:textColor="@color/colordescClie"
         android:textStyle="bold"
-        android:textSize="35dp"/>
+        android:textSize="35sp"/>
 
     <TextView
         android:id="@+id/info_txv_precoproduto"
@@ -129,7 +129,7 @@
         android:layout_alignTop="@+id/txv06"
         android:text="3.50"
         android:textColor="@color/colorAccent"
-        android:textSize="35dp"/>
+        android:textSize="35sp"/>
 
     <TextView
         android:id="@+id/txv07"
@@ -143,7 +143,7 @@
         android:text="Informe a quantidade:"
         android:textStyle="bold"
         android:textColor="@color/colordescClie"
-        android:textSize="35dp"/>
+        android:textSize="35sp"/>
 
     <EditText
         android:id="@+id/info_txt_quantidadecomprada"
@@ -156,12 +156,7 @@
         android:layout_below="@+id/txv07"
         android:text="1"
         android:textColor="@color/colorAccent"
-        android:textSize="35dp"/>
-
-
-
-
-
+        android:textSize="35sp"/>
 </RelativeLayout>
 
 

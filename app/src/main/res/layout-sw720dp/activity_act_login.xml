@@ -82,7 +82,7 @@
                     android:singleLine="true"
                     android:hint="Usuário"
                     android:textAllCaps="true"
-                    android:textSize="40dp"
+                    android:textSize="35dp"
                     android:inputType="textCapCharacters"/>
             </android.support.design.widget.TextInputLayout>
             <android.support.design.widget.TextInputLayout
@@ -96,7 +96,7 @@
                     android:layout_width="match_parent"
                     android:drawableRight="@drawable/icn_block"
                     android:layout_height="wrap_content"
-                    android:textSize="40dp"
+                    android:textSize="35dp"
                     android:hint="Senha"
                     android:ems="10"
                     android:inputType="textWebPassword" />
@@ -107,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#4d4d4d"
-                android:textSize="35dp"
+                android:textSize="28sp"
                 android:id="@+id/cbGravSenha"
                 android:layout_gravity="right"
                 android:buttonTint="@color/colorPrimary" />

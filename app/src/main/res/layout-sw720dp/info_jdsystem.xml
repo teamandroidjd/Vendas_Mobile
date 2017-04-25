@@ -1,174 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-    <ScrollView
+    <include
+        layout="@layout/app_bar_info_jdsystem"
         android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_infojd"
+        app:menu="@menu/infojd_drawer" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
-        android:src="@drawable/logo" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Força de vendas"
-        android:textAlignment="center"
-        android:textColor="@color/colordescClie"
-        android:textSize="50dp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:id="@+id/txtversao"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="versao"
-        android:textAlignment="center"
-        android:textSize="30dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Fale conosco:"
-        android:textColor="@color/colordescClie"
-        android:textSize="25dp"
-        android:textStyle="normal|bold" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="E-mail: "
-            android:textColor="@color/colordescClie"
-            android:textSize="25dp"
-            android:textStyle="normal|bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:autoLink="email"
-            android:text="sac@jdsystem.com.br"
-            android:textSize="25dp"
-            android:textStyle="normal|bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="Site: "
-            android:textColor="@color/colordescClie"
-            android:textSize="25dp"
-            android:textStyle="normal|bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:autoLink="web"
-            android:linksClickable="true"
-            android:text="http://www.jdsystem.com.br"
-            android:textSize="25dp"
-            android:textStyle="normal|bold" />
-
-    </LinearLayout>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Tels.: +55 (21) 2618-2950 / +55 (21) 2618-3834"
-        android:textSize="25dp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+55 (21) 2622-2087 / +55 (21) 2717-7938 "
-        android:textSize="25dp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+55 (21) 3629-0157 / +55 (21) 3629-5071 "
-        android:textSize="25dp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+55 (21) 3629-0157 / +55 (21) 3629-5071 "
-        android:textSize="25dp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+55 (21) 2722-1439"
-        android:textSize="25dp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="End.: Rua Visconde do Rio Branco,305 - Sala 502 e 503 - Centro - Niterói - RJ"
-        android:textSize="25dp"
-        android:textStyle="normal|bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CEP: 24020-004"
-        android:textSize="25dp"
-        android:textStyle="normal|bold" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="80dp">
-
-        <ImageButton
-            android:id="@+id/imgbtnmaps"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/mapsjdsystem" />
-    </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+</android.support.v4.widget.DrawerLayout>

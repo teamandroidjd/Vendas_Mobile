@@ -440,15 +440,6 @@ public class ConsultaProdutos extends AppCompatActivity
             finish();
 
         } else if (id == R.id.nav_produtos) {
-            Intent i = new Intent(ConsultaProdutos.this, ConsultaProdutos.class);
-            Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-            params.putString(getString(R.string.intent_usuario), usuario);
-            params.putString(getString(R.string.intent_senha), senha);
-            i.putExtras(params);
-            startActivity(i);
-
 
         } else if (id == R.id.nav_pedidos) {
             Intent i = new Intent(ConsultaProdutos.this, ConsultaPedidos.class);
@@ -487,7 +478,7 @@ public class ConsultaProdutos extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_exit) {
-            finish();
+            System.exit(1);
         } else if (id == R.id.nav_sobre) {
             Intent intent = new Intent(ConsultaProdutos.this, InfoJDSystem.class);
             Bundle params = new Bundle();

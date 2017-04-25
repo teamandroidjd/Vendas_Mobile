@@ -433,7 +433,6 @@ public class ConsultaPedidos extends AppCompatActivity
             startActivityForResult(intent, 1);
             finish();
 
-
         } else if (id == R.id.nav_pedidos) {
 
         } else if (id == R.id.nav_produtos) {
@@ -446,7 +445,6 @@ public class ConsultaPedidos extends AppCompatActivity
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
-
 
         } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(ConsultaPedidos.this, ConsultaContatos.class);
@@ -474,7 +472,7 @@ public class ConsultaPedidos extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_exit) {
-            finish();
+            System.exit(1);
         } else if (id == R.id.nav_sobre) {
             Intent intent = new Intent(ConsultaPedidos.this, InfoJDSystem.class);
             Bundle params = new Bundle();
@@ -485,10 +483,7 @@ public class ConsultaPedidos extends AppCompatActivity
             intent.putExtras(params);
             startActivity(intent);
             finish();
-
-
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

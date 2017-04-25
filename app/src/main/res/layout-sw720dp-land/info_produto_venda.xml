@@ -3,9 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_margin="30dp"
     android:background="@color/colorCardClie"
     android:orientation="vertical">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorCardClie"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
 
     <TextView
         android:id="@+id/txv01"
@@ -23,7 +33,7 @@
     <TextView
         android:id="@+id/info_txv_codproduto"
         android:layout_margin="10dp"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="35dp"
@@ -97,7 +107,7 @@
         android:id="@+id/spntabpreco"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="40dp"
+        android:padding="10dp"
         android:textColor="@color/colordescClie"
         android:textSize="35dp"
         android:layout_below="@+id/txv04"
@@ -140,27 +150,25 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txv06"
         android:layout_marginTop="10dp"
-        android:text="Informe a quantidade:"
+        android:text="Informe a quantidade: "
         android:textStyle="bold"
         android:textColor="@color/colordescClie"
         android:textSize="35dp"/>
 
     <EditText
         android:id="@+id/info_txt_quantidadecomprada"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txv07"
+        android:layout_toEndOf="@+id/txv07"
+        android:layout_toRightOf="@+id/txv07"
+        android:layout_alignTop="@+id/txv07"
         android:text="1"
+        android:textAlignment="center"
         android:textColor="@color/colorAccent"
         android:textSize="35dp"/>
 
-
-
-
+    </RelativeLayout>
 
 </RelativeLayout>
 

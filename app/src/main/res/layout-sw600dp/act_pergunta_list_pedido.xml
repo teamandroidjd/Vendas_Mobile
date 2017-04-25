@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="15dp">
 
-            <!--<RadioButton
+            <RadioButton
                 android:id="@+id/rbalterapedido"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 android:gravity="center"
                 android:text="Alterar"
                 android:textColor="@color/colordescClie"
-                android:textSize="20dp" />-->
+                android:textSize="30dp" />
 
             <RadioButton
                 android:id="@+id/femaleRadioButton"

@@ -290,7 +290,6 @@
             </ScrollView>
         </HorizontalScrollView>
 
-
     <TextView
         android:id="@+id/conf_txvlabelvalorrecebido"
         android:layout_width="match_parent"
@@ -301,13 +300,13 @@
         android:textStyle="bold"
         android:visibility="invisible" />
 
-    <EditText
-        android:id="@+id/conf_txtvalorrecebido"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/conf_txvlabelvalorrecebido"
-        android:inputType="numberDecimal"
-        android:visibility="invisible" />
+        <EditText
+            android:id="@+id/conf_txtvalorrecebido"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/conf_txvlabelvalorrecebido"
+            android:inputType="numberDecimal"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

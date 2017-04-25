@@ -28,8 +28,8 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_marginLeft="5dp"
                     android:src="@drawable/bola_vermelha" />
 
@@ -39,7 +39,7 @@
                     android:layout_marginLeft="2dp"
                     android:text="Orçamento"
                     android:textColor="@color/ColorText"
-                    android:textSize="@dimen/textsize_legendas_texto_pedidos_sw720"
+                    android:textSize="30sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -48,8 +48,8 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_marginLeft="5dp"
                     android:src="@drawable/bola_preta" />
 
@@ -59,7 +59,7 @@
                     android:layout_marginLeft="2dp"
                     android:text="Cancelado"
                     android:textColor="@color/ColorText"
-                    android:textSize="@dimen/textsize_legendas_texto_pedidos_sw720"
+                    android:textSize="30sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -68,8 +68,8 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_marginLeft="5dp"
                     android:src="@drawable/bola_azul" />
 
@@ -79,7 +79,7 @@
                     android:layout_marginLeft="2dp"
                     android:text="Faturado"
                     android:textColor="@color/ColorText"
-                    android:textSize="@dimen/textsize_legendas_texto_pedidos_sw720"
+                    android:textSize="30sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -100,8 +100,8 @@
                     android:layout_height="wrap_content">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_marginLeft="5dp"
                         android:src="@drawable/bola_verde" />
 
@@ -111,7 +111,7 @@
                         android:layout_marginLeft="2dp"
                         android:text="Sincronizado"
                         android:textColor="@color/ColorText"
-                        android:textSize="@dimen/textsize_legendas_texto_pedidos_sw720"
+                        android:textSize="30sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -121,8 +121,8 @@
                     android:gravity="center">
 
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
                         android:layout_marginLeft="5dp"
                         android:src="@drawable/bola_laranja" />
 
@@ -132,7 +132,7 @@
                         android:layout_marginLeft="2dp"
                         android:text="Gerar Venda"
                         android:textColor="@color/ColorText"
-                        android:textSize="@dimen/textsize_legendas_texto_pedidos_sw720"
+                        android:textSize="30sp"
                         android:textStyle="bold"
                         android:id="@+id/textView7" />
                 </LinearLayout>
@@ -143,9 +143,7 @@
     <RelativeLayout
         android:id="@+id/rl_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/inc_tb_bottom"
-        android:layout_below="@+id/tb_main">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/lnenhum"
@@ -156,13 +154,10 @@
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="30dp"
                 android:text="Nenhum pedido cadastrado!"
                 android:textAlignment="center"
-                android:textSize="@dimen/textsize_nenhumpedidocadastrado_sw720" />
+                android:textSize="40sp" />
         </LinearLayout>
 
     </RelativeLayout>

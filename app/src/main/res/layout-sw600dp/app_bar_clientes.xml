@@ -21,6 +21,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/cadclie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:onClick="cadcliente"
+        android:src= "@drawable/ic_adicionar"
+        app:backgroundTint="@color/colorPrimary" />
+
     <include layout="@layout/content_clientes" />
 
 

@@ -280,7 +280,7 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_exit) {
-            finish();
+            System.exit(1);
         } else if (id == R.id.nav_sobre) {
             Intent intent = new Intent(ConsultaContatos.this, InfoJDSystem.class);
             Bundle params = new Bundle();

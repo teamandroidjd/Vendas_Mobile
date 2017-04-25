@@ -69,7 +69,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.26"
+            android:layout_weight="2.50"
             android:gravity="center|left"
             android:paddingLeft="4dp"
             android:text="Descrição"
@@ -80,7 +80,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.83"
+            android:layout_weight="0.60"
             android:gravity="center"
             android:text="Qtd."
             android:textColor="@color/colordescClie"
@@ -90,7 +90,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.07"
+            android:layout_weight="1.00"
             android:gravity="center"
             android:text="Vl.Unit."
             android:textColor="@color/colordescClie"
@@ -100,7 +100,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.80"
             android:gravity="center"
             android:paddingRight="4dp"
             android:text="Vl.Total"

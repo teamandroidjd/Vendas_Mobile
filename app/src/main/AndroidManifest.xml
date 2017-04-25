@@ -53,6 +53,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Sincronismo"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="Sincronização de dados" />
         <activity android:name=".act_TH_contclie" />
         <activity android:name=".act_TH_dadosclie" />
@@ -65,6 +66,7 @@
 
         <activity
             android:name=".InfoJDSystem"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="Informações de contato" />
 
         <meta-data
