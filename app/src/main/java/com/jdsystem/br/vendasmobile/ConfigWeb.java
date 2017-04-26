@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.Util.Util;
@@ -26,6 +27,9 @@ import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ConfigWeb extends AppCompatActivity implements Runnable {
@@ -39,6 +43,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     ProgressDialog DialogECB;
     private SQLiteDatabase DB;
     private Handler hd = new Handler();
+    TextView licenca1, licenca2, licenca3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +53,13 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         declaraobjetos();
         carregarpreferencias();
 
+
         if (ChaveAcesso != null) {
             edtChave.setText(ChaveAcesso);
         } else {
             this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
+        carregarlicencas();
     }
 
     public void SalvarHost(View view) {
@@ -79,6 +86,9 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     }
 
     private void declaraobjetos() {
+        licenca1 = (TextView) findViewById(R.id.txtlicenca1);
+        licenca2 = (TextView) findViewById(R.id.txtlicenca2);
+        licenca3 = (TextView) findViewById(R.id.txtlicenca3);
         DB = new ConfigDB(this).getReadableDatabase();
         btsalvhost = (Button) findViewById(R.id.btsalvhost);
         edtChave = (EditText) findViewById(R.id.edthost);
@@ -259,6 +269,47 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             e.toString();
         }
         return false;
+    }
+
+    private void carregarlicencas(){
+        String nomeperfil1 = null;
+        String nomeperfil2 = null;
+        String nomeperfil3 = null;
+        List<String> DadosListPerfil = new ArrayList<String>();
+        Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL", null);
+        cursorPerfil.moveToFirst();
+        if (cursorPerfil.getCount() > 0) {
+
+            do {
+                DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL"))+" licença "+cursorPerfil.getString(cursorPerfil.getColumnIndex("LICENCA")));
+            } while (cursorPerfil.moveToNext());
+            int i = DadosListPerfil.size();
+            switch (i){
+                case 1:
+                    nomeperfil1 = DadosListPerfil.get(0);
+                    licenca1.setText("Aplicativo registrado para a "+nomeperfil1);
+                    licenca2.setVisibility(View.GONE);
+                    licenca3.setVisibility(View.GONE);
+                    edtChave = null;
+
+                    break;
+                case 2:
+                    nomeperfil1 = DadosListPerfil.get(0);
+                    licenca1.setText("Aplicativo registrado para a "+nomeperfil1);
+                    nomeperfil2 = DadosListPerfil.get(1);
+                    licenca2.setText("Aplicativo registrado para a "+nomeperfil2);
+                    licenca3.setVisibility(View.GONE);
+                    break;
+                case 3:
+                    nomeperfil1 = DadosListPerfil.get(0);
+                    licenca1.setText("Aplicativo registrado para a "+nomeperfil1);
+                    nomeperfil2 = DadosListPerfil.get(1);
+                    licenca2.setText("Aplicativo registrado para a "+nomeperfil2);
+                    nomeperfil3 = DadosListPerfil.get(2);
+                    licenca3.setText("Aplicativo registrado para a "+nomeperfil3);
+            }
+
+        }
     }
 
 }

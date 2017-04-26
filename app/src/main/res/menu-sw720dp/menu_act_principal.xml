@@ -1,11 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.jdsystem.br.vendasmobile.actPrincipal">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/alteraperfil"
+        android:orderInCategory="100"
+        android:title="Alterar perfil"
+        android:icon="@drawable/alteraperfil"
+        app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/act_configweb"
+        android:icon="@drawable/configuracao"
         android:orderInCategory="100"
         android:title="Configurações"
-        app:showAsAction="always"
-        android:icon="@drawable/configuracao"/>
+        app:showAsAction="ifRoom" />
+
 </menu>

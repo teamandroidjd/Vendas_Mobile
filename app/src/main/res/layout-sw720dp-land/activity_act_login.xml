@@ -103,6 +103,16 @@
                     android:inputType="textWebPassword" />
             </android.support.design.widget.TextInputLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:id="@+id/txtempresalogin"
+                android:text="empresa"
+                android:textSize="40dp"
+                android:textColor="@color/colordescClie"
+                android:textStyle="normal|bold"/>
+
             <CheckBox
                 android:text="Salvar Senha?"
                 android:layout_width="wrap_content"

@@ -22,6 +22,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -67,7 +68,7 @@ public class Login extends AppCompatActivity implements Runnable {
     public SharedPreferences prefs;
     public String usuario, senha, URLPrincipal, sCodVend, UFVendedor;
     private String codVendedor = "0";
-    public TextView copyright, versao;
+    public TextView copyright, versao, empresa;
     Spinner spPerfilInput;
     Boolean ConexOk;
     int idPerfil;
@@ -85,7 +86,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
         declaraobjetos();
         carregarpreferencias();
-        carregarperfil(); // habilitar essa chamada de método somente na 2.0
+        carregarperfil();
 
         if (URLPrincipal == null) {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
@@ -142,10 +143,12 @@ public class Login extends AppCompatActivity implements Runnable {
                                     int idPerfil = 0;
                                     String host = null;
                                     String chave = null;
+                                    String nomePerfil = null;
                                     if (cursorperfil.getCount() > 0) {
                                         idPerfil = cursorperfil.getInt(cursorperfil.getColumnIndex("CODPERFIL"));
                                         host = cursorperfil.getString(cursorperfil.getColumnIndex("HOST"));
                                         chave = cursorperfil.getString(cursorperfil.getColumnIndex("LICENCA"));
+                                        nomePerfil = cursorperfil.getString(cursorperfil.getColumnIndex("NOMEPERFIL"));
                                     }
                                     cursorperfil.close();
 
@@ -156,6 +159,7 @@ public class Login extends AppCompatActivity implements Runnable {
                                     editorhost.apply();
 
                                     URLPrincipal = host;
+                                    empresa.setText(nomePerfil);
 
 
                                 } catch (Exception E) {
@@ -166,6 +170,8 @@ public class Login extends AppCompatActivity implements Runnable {
                 Dialog dialog = alertBuilder.create();
                 dialog.show();
 
+            }else {
+                empresa.setVisibility(View.GONE);
             }
         } catch (Exception E) {
             E.toString();
@@ -267,6 +273,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
     private void declaraobjetos() {
 
+        empresa = (TextView) findViewById(R.id.txtempresalogin);
         versao = (TextView) findViewById(R.id.txtversaologin);
         DB = new ConfigDB(this).getReadableDatabase();
         btnEntrar = (Button) findViewById(R.id.btnEntrar);
@@ -659,6 +666,8 @@ public class Login extends AppCompatActivity implements Runnable {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
             startActivity(intent);
             return true;
+        }else if(item.getItemId() == R.id.alteraperfil){
+            carregarperfil();
         }
         return super.onOptionsItemSelected(item);
     }

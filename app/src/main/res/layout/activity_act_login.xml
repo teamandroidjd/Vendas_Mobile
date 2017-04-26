@@ -81,6 +81,16 @@
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:id="@+id/txtempresalogin"
+                android:text="empresa"
+                android:textSize="20dp"
+                android:textColor="@color/colordescClie"
+                android:textStyle="normal|bold"/>
+
             <CheckBox
                 android:id="@+id/cbGravSenha"
                 android:layout_width="133dp"
