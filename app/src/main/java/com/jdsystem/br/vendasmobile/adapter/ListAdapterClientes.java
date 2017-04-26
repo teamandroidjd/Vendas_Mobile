@@ -3,6 +3,7 @@ package com.jdsystem.br.vendasmobile.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,12 +47,29 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
         Log.i("LOG", "onBindViewHolder()");
         String codclieint = mList.get(position).getCodClienteInt();
         String codclieext = mList.get(position).getCodClienteExt();
+        String estado = String.valueOf(mList.get(position).getEstado());
+        String cidade = String.valueOf(mList.get(position).getCidade());
+        String bairro = String.valueOf(mList.get(position).getBairro());
         //myViewHolder.razaoSocial.setText(mList.get(position).getNomeRazao());
         //myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
         //myViewHolder.documento.setText(mList.get(position).getDocumento());
-        myViewHolder.cidade.setText(mList.get(position).getCidade());
-        myViewHolder.estado.setText(mList.get(position).getEstado());
-        myViewHolder.bairro.setText(mList.get(position).getBairro());
+        //myViewHolder.cidade.setText(mList.get(position).getCidade());
+        if(!cidade.equals("NULL") && !cidade.equals("null")){
+            myViewHolder.cidade.setText(mList.get(position).getCidade());
+        }else {
+            myViewHolder.cidade.setText("");
+        }
+        if(!bairro.equals("NULL") && !bairro.equals("null")){
+            myViewHolder.bairro.setText(mList.get(position).getBairro());
+        }else {
+            myViewHolder.bairro.setText("");
+        }
+        if(!estado.equals("NULL") && !estado.equals("null")){
+            myViewHolder.estado.setText(mList.get(position).getEstado());
+        }else {
+            myViewHolder.estado.setText("");
+        }
+
         myViewHolder.telefone1.setText(mList.get(position).getTelefone1());
 
         if(codclieext != null){

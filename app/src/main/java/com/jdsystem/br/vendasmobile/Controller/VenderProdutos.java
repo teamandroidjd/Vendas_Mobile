@@ -67,7 +67,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
-public class VenderProdutos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
+public class                                                                                            VenderProdutos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
 
     private BigDecimal TOTAL_DA_VENDA;
     private Integer CLI_CODIGO, CLI_CODIGO_ANT, CLI_CODIGO_EXT;
@@ -1347,6 +1347,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             if (QUANTIDADE_DIGITADA > 0) {
                                                 if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
                                                     Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    return;
                                                 }
 
                                                 SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
@@ -1378,18 +1379,22 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                                         //finish();
                                                     } else {
                                                         Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                                        return;
                                                     }
                                                 } else {
                                                     Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                                                    return;
                                                 }
 
                                                 //}
                                             } else {
                                                 Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                                return;
                                             }
 
                                         } else {
                                             Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                            return;
                                         }
                                         VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
                                     }
@@ -1619,6 +1624,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             if (QUANTIDADE_DIGITADA > 0) {
                                                 if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
                                                     Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    return;
                                                 }
 
                                                 SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
@@ -1650,6 +1656,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                                     //finish();
                                                 } else {
                                                     Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                                    return;
                                                 }
                                                 /*} else {
                                                     Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
@@ -1658,10 +1665,12 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                                 //}
                                             } else {
                                                 Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                                return;
                                             }
 
                                         } else {
                                             Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                            return;
                                         }
                                         VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
                                     }

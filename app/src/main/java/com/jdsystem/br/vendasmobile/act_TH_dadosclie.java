@@ -23,7 +23,7 @@ import android.widget.Toast;
  */
 public class act_TH_dadosclie extends Fragment {
 
-    String CodCliente,codVendedor,URLPrincipal,usuario,senha;
+    String CodCliente, codVendedor, URLPrincipal, usuario, senha;
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -79,12 +79,12 @@ public class act_TH_dadosclie extends Fragment {
                     " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                     " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                     " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente) + " AND CODPERFIL ="+idPerfil+
+                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente) + " AND CODPERFIL =" + idPerfil +
                     " ORDER BY NOMEFAN, NOMERAZAO ", null);
 
             if (CursorClie.getCount() > 0) {
-                    CursorClie.moveToFirst();
-                    do {
+                CursorClie.moveToFirst();
+                do {
                     String Documento = CursorClie.getString(CursorClie.getColumnIndex("CNPJ_CPF"));
                     String CEP = CursorClie.getString(CursorClie.getColumnIndex("CEP"));
                     String Tel1 = CursorClie.getString(CursorClie.getColumnIndex("TEL1"));
@@ -129,16 +129,27 @@ public class act_TH_dadosclie extends Fragment {
                         TAG_RG.setVisibility(EditText.VISIBLE);
                         TAG_IE.setVisibility(EditText.GONE);
                     }
-                    TAG_CIDADE.setText("Cidade: " + CursorClie.getString(CursorClie.getColumnIndex("CIDADE")));
+                    String cidade = CursorClie.getString(CursorClie.getColumnIndex("CIDADE"));
+                    String bairro = CursorClie.getString(CursorClie.getColumnIndex("BAIRRO"));
+                    if(cidade != null && !cidade.equals("NULL")){
+                        TAG_CIDADE.setText("Cidade: "+cidade);
+                    }else {
+                        TAG_CIDADE.setText("Cidade:");
+                    }
+                    if(bairro != null){
+                        TAG_BAIRRO.setText("Bairro: "+bairro);
+                    } else {
+                        TAG_BAIRRO.setText("Bairro:");
+                    }
+
                     TAG_ESTADO.setText("Estado: " + CursorClie.getString(CursorClie.getColumnIndex("UF")));
-                    TAG_BAIRRO.setText("Bairro: " + CursorClie.getString(CursorClie.getColumnIndex("BAIRRO")));
                     TAG_ENDERECO.setText("Endereço: " + CursorClie.getString(CursorClie.getColumnIndex("ENDERECO")) + ", " + CursorClie.getString(CursorClie.getColumnIndex("NUMERO")));
                     String comp = CursorClie.getString(CursorClie.getColumnIndex("COMPLEMENT"));
-                      if (comp == null || comp.equals(""))  {
-                          TAG_COMPLEMENTO.setVisibility(EditText.GONE);
-                      } else {
-                          TAG_COMPLEMENTO.setText("Complemento: " + comp);
-                      }
+                    if (comp == null || comp.equals("")) {
+                        TAG_COMPLEMENTO.setVisibility(EditText.GONE);
+                    } else {
+                        TAG_COMPLEMENTO.setText("Complemento: " + comp);
+                    }
 
                     TAG_CEP.setText("CEP: " + Mask.addMask(CEP, "##.###-###"));
                     Tel1 = Tel1.replaceAll("[^0123456789]", "");
@@ -146,7 +157,7 @@ public class act_TH_dadosclie extends Fragment {
                         TAG_TELEFONE_1.setText("Telefone 1: " + Mask.addMask(Tel1, "(##)#####-####"));
                     } else if (Tel1.length() == 10) {
                         TAG_TELEFONE_1.setText("Telefone 1: " + Mask.addMask(Tel1, "(##)####-####"));
-                    }else  {
+                    } else {
                         TAG_TELEFONE_1.setText("Telefone 1: " + CursorClie.getString(CursorClie.getColumnIndex("TEL1")));
                     }
 
@@ -155,7 +166,7 @@ public class act_TH_dadosclie extends Fragment {
                         TAG_TELEFONE_2.setText("Telefone 2: " + Mask.addMask(Tel2, "(##)#####-####"));
                     } else if (Tel2.length() == 10) {
                         TAG_TELEFONE_2.setText("Telefone 2: " + Mask.addMask(Tel2, "(##)####-####"));
-                    }else  {
+                    } else {
                         TAG_TELEFONE_2.setText("Telefone 2: " + CursorClie.getString(CursorClie.getColumnIndex("TEL2")));
                     }
 

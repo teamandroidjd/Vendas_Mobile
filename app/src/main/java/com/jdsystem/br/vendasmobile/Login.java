@@ -66,7 +66,7 @@ public class Login extends AppCompatActivity implements Runnable {
     private Handler handler = new Handler();
     public String Retorno = "0";
     public SharedPreferences prefs;
-    public String usuario, senha, URLPrincipal, sCodVend, UFVendedor;
+    public String usuario, senha, URLPrincipal, sCodVend, UFVendedor,qtdperfil;
     private String codVendedor = "0";
     public TextView copyright, versao, empresa;
     Spinner spPerfilInput;
@@ -111,7 +111,8 @@ public class Login extends AppCompatActivity implements Runnable {
         copyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
     }
 
-    private void carregarperfil() {
+    private String carregarperfil() {
+        qtdperfil = null;
         try {
             Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL", null);
             cursorPerfil.moveToFirst();
@@ -169,13 +170,18 @@ public class Login extends AppCompatActivity implements Runnable {
                         });
                 Dialog dialog = alertBuilder.create();
                 dialog.show();
+                qtdperfil = "S";
+                return qtdperfil;
 
             }else {
                 empresa.setVisibility(View.GONE);
+                qtdperfil = "N";
+                return qtdperfil;
             }
         } catch (Exception E) {
             E.toString();
         }
+        return qtdperfil;
     }
 
     public void logar(View view) {
@@ -319,6 +325,7 @@ public class Login extends AppCompatActivity implements Runnable {
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Login.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
             Dialogo.dismiss();
+            Thread.interrupted();
             return;
         }
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -485,7 +492,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    //Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -661,6 +668,17 @@ public class Login extends AppCompatActivity implements Runnable {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem alteraperfil = menu.findItem(R.id.alteraperfil);
+        if(qtdperfil.equals("S")){
+            alteraperfil.setVisible(true);
+        }else{
+            alteraperfil.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.act_configweb) {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
@@ -674,9 +692,6 @@ public class Login extends AppCompatActivity implements Runnable {
 
     @Override
     protected void onResume() {
-        if (Dialogo != null) {
-            Dialogo.show();
-        }
         super.onResume();
         carregarpreferencias();
     }
