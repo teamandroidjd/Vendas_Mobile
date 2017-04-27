@@ -13,7 +13,8 @@
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:scrollbars="vertical">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -42,16 +43,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Razao Social:"
-                    android:textSize="22dp"
                     android:textColor="@color/colordescClie"
+                    android:textSize="22dp"
                     android:textStyle="normal|bold" />
 
                 <TextView
                     android:id="@+id/txtrazaocontato"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="22dp"
-                    android:text="nome do cliente que ira vincular o contato" />
+                    android:text="nome do cliente que ira vincular o contato"
+                    android:textSize="22dp" />
 
             </LinearLayout>
 
@@ -173,13 +174,13 @@
 
                     <ImageButton
                         android:id="@+id/btnBuscaCep"
-                        android:onClick="buscacep"
                         android:layout_width="50dp"
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/textInputLayout2"
                         android:layout_toRightOf="@+id/textInputLayout2"
-                        android:background="@drawable/busca_cep" />
+                        android:background="@drawable/busca_cep"
+                        android:onClick="buscacep" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -291,7 +292,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/txtdiassemana"
@@ -303,59 +304,38 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lnrcheckbox"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:layout_height="200dp"
+                android:orientation="horizontal">
 
-                <CheckBox
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5">
+
+                    <ListView
+                        android:id="@+id/list_view_agenda_contato"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    </ListView>
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Domingo" />
+                    android:layout_gravity="end"
+                    android:gravity="end">
 
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Segunda" />
 
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Terça" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Quarta" />
+                    <ImageButton
+                        android:id="@+id/btn_add_dias_contato"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/ic_add_prod" />
+                </LinearLayout>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lnrcheckbox2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Quinta" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sexta" />
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sábado" />
-
-            </LinearLayout>
-
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -377,7 +357,6 @@
                 android:background="@color/colorPrimary"
                 android:onClick="btnsalvarcontato"
                 android:text="Salvar"
-                android:textSize="25dp"
                 android:textColor="@color/common_google_signin_btn_text_dark_default" />
         </LinearLayout>
     </ScrollView>

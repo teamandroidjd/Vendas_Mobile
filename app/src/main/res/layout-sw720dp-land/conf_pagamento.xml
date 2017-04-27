@@ -132,12 +132,12 @@
 
         <HorizontalScrollView
             android:id="@+id/scrollViewh"
-            android:layout_width="780dp"
+            android:layout_width="1000dp"
             android:scrollbars="horizontal"
             android:layout_height="fill_parent">
 
             <RelativeLayout
-                android:layout_width="780dp"
+                android:layout_width="1000dp"
                 android:layout_height="match_parent"
                 android:weightSum="1">
 

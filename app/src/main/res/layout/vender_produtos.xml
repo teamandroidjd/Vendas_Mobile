@@ -69,7 +69,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.83"
+            android:layout_weight="0.70"
             android:gravity="center"
             android:text="Qtd."
             android:textColor="@color/colordescClie"
@@ -79,7 +79,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.07"
+            android:layout_weight="1.30"
             android:gravity="center"
             android:text="Vl.Unit."
             android:textColor="@color/colordescClie"

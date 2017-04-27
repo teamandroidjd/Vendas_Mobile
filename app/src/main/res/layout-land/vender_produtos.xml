@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="Cliente: 005 - PAULO ROBERTO DOS SANTOS COUITNHO PINHEIRO FERNANDES DA SILVA SAURO SANTOS DA ROCHA"
             android:textColor="#ffffff"
-            android:textSize="15dp"
+            android:textSize="18dp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="Empresa: Empresa 1"
                 android:textColor="#ffffff"
-                android:textSize="12dp" />
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/venda_txv_datavenda"
@@ -43,7 +43,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="Data/Hora Venda : 03/09/2015 19:32:00"
                 android:textColor="#ffffff"
-                android:textSize="12dp" />
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/venda_txv_dataentrega"
@@ -52,7 +52,7 @@
                 android:text="Data da Entrega: "
                 android:layout_marginLeft="20dp"
                 android:textColor="#ffffff"
-                android:textSize="12dp" />
+                android:textSize="15dp" />
 
         </LinearLayout>
 
@@ -68,32 +68,32 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.26"
+            android:layout_weight="2.00"
             android:gravity="center|left"
             android:paddingLeft="4dp"
             android:text="Descrição"
             android:textColor="@color/colordescClie"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.83"
+            android:layout_weight="0.70"
             android:gravity="center"
             android:text="Qtd."
             android:textColor="@color/colordescClie"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.07"
+            android:layout_weight="1.20"
             android:gravity="center"
             android:text="Vl.Unit."
             android:textColor="@color/colordescClie"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:textStyle="bold" />
 
         <TextView
@@ -104,7 +104,7 @@
             android:paddingRight="4dp"
             android:text="Vl.Total"
             android:textColor="@color/colordescClie"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -154,7 +154,7 @@
             android:layout_margin="10dp"
             android:text="Informar desconto na venda :"
             android:textColor="@color/colordescClie"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:textStyle="bold" />
 
         <EditText
@@ -167,7 +167,7 @@
             android:maxLength="3"
             android:text="0"
             android:textColor="@color/colordescClie"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:textStyle="bold"
             android:layout_weight="0.27" />
 
@@ -178,13 +178,13 @@
             android:layout_margin="10dp"
             android:text="%"
             android:textColor="@color/colordescClie"
-            android:textSize="12dp"
+            android:textSize="15dp"
             android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="22dp"
         android:background="#afd8de"
         android:orientation="horizontal">
 
@@ -196,7 +196,7 @@
             android:paddingRight="6dp"
             android:text="Total da venda = 9999,99"
             android:textColor="@color/ColorText"
-            android:textSize="14dp"
+            android:textSize="18dp"
             android:textStyle="bold" />
     </LinearLayout>
 

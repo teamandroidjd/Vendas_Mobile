@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,14 +37,16 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private EditText edtChave;
-    private Button btsalvhost;
+    private Button btsalvhost, excluir1,excluir2,excluir3;
     public SharedPreferences prefs;
-    public String ChaveAcesso, RetHost,host;
-    public int idPerfil;
+    public String ChaveAcesso, RetHost,host, chave;
+    public int idPerfil, codperfil;
     ProgressDialog DialogECB;
     private SQLiteDatabase DB;
     private Handler hd = new Handler();
-    TextView licenca1, licenca2, licenca3;
+    TextView licenca1, licenca2, licenca3, empresa1,empresa2,empresa3, txtexcluir;
+    View view0, view1, view2, view3, view4;
+    RelativeLayout tabela;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,219 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         } else {
             this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
+        carregarlicencas();
+
+        excluir1.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(ConfigWeb.this);
+                                            builder.setTitle(R.string.app_namesair);
+                                            builder.setIcon(R.drawable.logo_ico);
+                                            builder.setMessage("Deseja realmente excluir essa licença? Ao excluir essa licença você estará excluindo todas informações existente atualamente referente a esse perfil no aplicativo.")
+                                                    .setCancelable(false)
+                                                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int id) {
+                                                            chave = licenca1.getText().toString();
+                                                            excluirhost(chave);
+                                                        }
+                                                    })
+                                                    .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                                                        public void onClick(DialogInterface dialog, int id) {
+                                                            dialog.cancel();
+                                                        }
+                                                    });
+                                            AlertDialog alert = builder.create();
+                                            alert.show();
+                                        }
+                                    });
+        excluir2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ConfigWeb.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Deseja realmente excluir essa licença? Ao excluir essa licença você estará excluindo todas informações existente atualamente referente a esse perfil no aplicativo.")
+                        .setCancelable(false)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                chave = licenca2.getText().toString();
+                                excluirhost(chave);
+                            }
+                        })
+                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+
+            }
+        });
+
+        excluir3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ConfigWeb.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage("Deseja realmente excluir essa licença? Ao excluir essa licença você estará excluindo todas informações existente atualamente referente a esse perfil no aplicativo.")
+                        .setCancelable(false)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                chave = licenca3.getText().toString();
+                                excluirhost(chave);
+                            }
+                        })
+                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+
+            }
+        });
+    }
+
+    private void excluirhost(String chave) {
+        try {
+            //pegar o codigo do perfil filtrando pela chave
+            Cursor cursorexclicenca = DB.rawQuery("SELECT CODPERFIL FROM PERFIL WHERE LICENCA='" + chave + "'", null);
+            cursorexclicenca.moveToFirst();
+            if (cursorexclicenca.getCount() > 0) {
+                codperfil = cursorexclicenca.getInt(cursorexclicenca.getColumnIndex("CODPERFIL"));
+            }
+
+            try {
+                //apagando todos os clientes desse perfil
+                Cursor dbclientes = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL=" + codperfil, null);
+                dbclientes.moveToFirst();
+                if (dbclientes.getCount() > 0) {
+                    DB.execSQL("DELETE FROM CLIENTES WHERE CODPERFIL =" + codperfil);
+                }
+                dbclientes.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os clientes desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+                //apagando todos os parametros desse perfil
+                Cursor dbparamapp = DB.rawQuery("SELECT * FROM PARAMAPP WHERE CODPERFIL=" + codperfil, null);
+                dbparamapp.moveToFirst();
+                if (dbparamapp.getCount() > 0) {
+                    DB.execSQL("DELETE FROM PARAMAPP WHERE CODPERFIL =" + codperfil);
+                }
+                dbparamapp.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os parametros desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+            //apagando todos os contatos desse perfil
+            Cursor dbcontatos = DB.rawQuery("SELECT * FROM CONTATO WHERE CODPERFIL=" + codperfil, null);
+            dbcontatos.moveToFirst();
+            if (dbcontatos.getCount() > 0) {
+                DB.execSQL("DELETE FROM CONTATO WHERE CODPERFIL =" + codperfil);
+            }
+            dbcontatos.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os contatos desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+            //apagando todos os produtos desse perfil
+            Cursor dbitens = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL=" + codperfil, null);
+            dbitens.moveToFirst();
+            if (dbitens.getCount() > 0) {
+                DB.execSQL("DELETE FROM ITENS WHERE CODPERFIL =" + codperfil);
+            }
+            dbitens.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os produtos desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+            //apagando todos os itens dos pedidos desse perfil
+            Cursor dbpeditens = DB.rawQuery("SELECT * FROM PEDITENS WHERE CODPERFIL=" + codperfil, null);
+            dbpeditens.moveToFirst();
+            if (dbpeditens.getCount() > 0) {
+                DB.execSQL("DELETE FROM PEDITENS WHERE CODPERFIL =" + codperfil);
+            }
+            dbpeditens.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os itens dos pedidos desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+            //apagando todos os pedidos desse perfil
+            Cursor dbpedoper = DB.rawQuery("SELECT * FROM PEDOPER WHERE CODPERFIL=" + codperfil, null);
+            dbpedoper.moveToFirst();
+            if (dbpedoper.getCount() > 0) {
+                DB.execSQL("DELETE FROM PEDOPER WHERE CODPERFIL =" + codperfil);
+            }
+            dbpedoper.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os pedidos desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+            //apagando a empresa desse perfil
+            Cursor dbempresa = DB.rawQuery("SELECT * FROM EMPRESAS WHERE CODPERFIL=" + codperfil, null);
+            dbempresa.moveToFirst();
+            if (dbempresa.getCount() > 0) {
+                DB.execSQL("DELETE FROM EMPRESAS WHERE CODPERFIL =" + codperfil);
+            }
+            dbempresa.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir a empresa desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+            //apagando os usuarios desse perfil
+            Cursor dbusuario = DB.rawQuery("SELECT * FROM USUARIOS WHERE CODPERFIL=" + codperfil, null);
+            dbusuario.moveToFirst();
+            if (dbusuario.getCount() > 0) {
+                DB.execSQL("DELETE FROM USUARIOS WHERE CODPERFIL =" + codperfil);
+            }
+            dbusuario.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os usuários desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            try {
+            //apagando os bloqueios desse perfil
+            Cursor dbbloqueio = DB.rawQuery("SELECT * FROM BLOQCLIE WHERE CODPERFIL=" + codperfil, null);
+            dbbloqueio.moveToFirst();
+            if (dbbloqueio.getCount() > 0) {
+                DB.execSQL("DELETE FROM BLOQCLIE WHERE CODPERFIL =" + codperfil);
+            }
+            dbbloqueio.close();
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os bloqueios desse perfil", Toast.LENGTH_SHORT).show();
+            }
+
+            //após apagar todas as tabelas que tem esse perfil será apagado esse id de perfil
+            if (cursorexclicenca.getCount() > 0) {
+                DB.execSQL("DELETE FROM PERFIL WHERE CODPERFIL =" + codperfil);
+            }
+            cursorexclicenca.close();
+        } catch (Exception e) {
+            e.toString();
+            Toast.makeText(ConfigWeb.this, "Falha ao tentar deletar o perfil", Toast.LENGTH_SHORT).show();
+        }
+
         carregarlicencas();
     }
 
@@ -86,9 +302,22 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     }
 
     private void declaraobjetos() {
+        tabela = (RelativeLayout) findViewById(R.id.tabela);
+        view0 = (View) findViewById(R.id.view0);
+        view1 = (View) findViewById(R.id.view1);
+        view2 = (View) findViewById(R.id.view2);
+        view3 = (View) findViewById(R.id.view3);
+        view4 = (View) findViewById(R.id.view4);
+        excluir1 = (Button) findViewById(R.id.excluir1);
+        excluir2= (Button) findViewById(R.id.excluir2);
+        excluir3= (Button) findViewById(R.id.excluir3);
+        empresa1  = (TextView) findViewById(R.id.txtempresa1);
+        empresa2 = (TextView) findViewById(R.id.txtempresa2);
+        empresa3 = (TextView) findViewById(R.id.txtempresa3);
         licenca1 = (TextView) findViewById(R.id.txtlicenca1);
         licenca2 = (TextView) findViewById(R.id.txtlicenca2);
         licenca3 = (TextView) findViewById(R.id.txtlicenca3);
+        txtexcluir= (TextView) findViewById(R.id.txtexcluir);
         DB = new ConfigDB(this).getReadableDatabase();
         btsalvhost = (Button) findViewById(R.id.btsalvhost);
         edtChave = (EditText) findViewById(R.id.edthost);
@@ -276,39 +505,101 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         String nomeperfil2 = null;
         String nomeperfil3 = null;
         List<String> DadosListPerfil = new ArrayList<String>();
+
+        String licperfil1 = null;
+        String licperfil2 = null;
+        String licperfil3 = null;
+        List<String> DadosListLicPerfil = new ArrayList<String>();
+
         Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL", null);
+
         cursorPerfil.moveToFirst();
         if (cursorPerfil.getCount() > 0) {
-
+            tabela.setVisibility(View.VISIBLE);
             do {
-                DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL"))+" licença "+cursorPerfil.getString(cursorPerfil.getColumnIndex("LICENCA")));
+                DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL")));
+                DadosListLicPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("LICENCA")));
             } while (cursorPerfil.moveToNext());
             int i = DadosListPerfil.size();
             switch (i){
                 case 1:
                     nomeperfil1 = DadosListPerfil.get(0);
-                    licenca1.setText("Aplicativo registrado para a "+nomeperfil1);
+                    licperfil1 = DadosListLicPerfil.get(0);
+                    empresa1.setText(nomeperfil1);
+                    licenca1.setText(licperfil1);
+                    view0.setVisibility(View.VISIBLE);
+                    view1.setVisibility(View.VISIBLE);
+                    view2.setVisibility(View.VISIBLE);
+                    view3.setVisibility(View.GONE);
+                    view4.setVisibility(View.GONE);
+                    empresa1.setVisibility(View.VISIBLE);
+                    empresa2.setVisibility(View.GONE);
+                    empresa3.setVisibility(View.GONE);
+                    licenca1.setVisibility(View.VISIBLE);
                     licenca2.setVisibility(View.GONE);
                     licenca3.setVisibility(View.GONE);
-                    edtChave = null;
-
+                    excluir1.setVisibility(View.GONE);
+                    excluir2.setVisibility(View.GONE);
+                    excluir3.setVisibility(View.GONE);
+                    txtexcluir.setVisibility(View.GONE);
                     break;
                 case 2:
                     nomeperfil1 = DadosListPerfil.get(0);
-                    licenca1.setText("Aplicativo registrado para a "+nomeperfil1);
+                    licperfil1 = DadosListLicPerfil.get(0);
+                    empresa1.setText(nomeperfil1);
+                    licenca1.setText(licperfil1);
                     nomeperfil2 = DadosListPerfil.get(1);
-                    licenca2.setText("Aplicativo registrado para a "+nomeperfil2);
+                    licperfil2 = DadosListLicPerfil.get(1);
+                    empresa2.setText(nomeperfil2);
+                    licenca2.setText(licperfil2);
+                    view0.setVisibility(View.VISIBLE);
+                    view1.setVisibility(View.VISIBLE);
+                    view2.setVisibility(View.VISIBLE);
+                    view3.setVisibility(View.VISIBLE);
+                    view4.setVisibility(View.GONE);
+                    empresa1.setVisibility(View.VISIBLE);
+                    empresa2.setVisibility(View.VISIBLE);
+                    empresa3.setVisibility(View.GONE);
+                    licenca1.setVisibility(View.VISIBLE);
+                    licenca2.setVisibility(View.VISIBLE);
                     licenca3.setVisibility(View.GONE);
+                    excluir1.setVisibility(View.VISIBLE);
+                    excluir2.setVisibility(View.VISIBLE);
+                    excluir3.setVisibility(View.GONE);
+                    txtexcluir.setVisibility(View.VISIBLE);
                     break;
                 case 3:
                     nomeperfil1 = DadosListPerfil.get(0);
-                    licenca1.setText("Aplicativo registrado para a "+nomeperfil1);
+                    licperfil1 = DadosListLicPerfil.get(0);
+                    empresa1.setText(nomeperfil1);
+                    licenca1.setText(licperfil1);
                     nomeperfil2 = DadosListPerfil.get(1);
-                    licenca2.setText("Aplicativo registrado para a "+nomeperfil2);
+                    licperfil2 = DadosListLicPerfil.get(1);
+                    empresa2.setText(nomeperfil2);
+                    licenca2.setText(licperfil2);
                     nomeperfil3 = DadosListPerfil.get(2);
-                    licenca3.setText("Aplicativo registrado para a "+nomeperfil3);
+                    licperfil3 = DadosListLicPerfil.get(2);
+                    empresa3.setText(nomeperfil3);
+                    licenca3.setText(licperfil3);
+                    view0.setVisibility(View.VISIBLE);
+                    view1.setVisibility(View.VISIBLE);
+                    view2.setVisibility(View.VISIBLE);
+                    view3.setVisibility(View.VISIBLE);
+                    view4.setVisibility(View.VISIBLE);
+                    empresa1.setVisibility(View.VISIBLE);
+                    empresa2.setVisibility(View.VISIBLE);
+                    empresa3.setVisibility(View.VISIBLE);
+                    licenca1.setVisibility(View.VISIBLE);
+                    licenca2.setVisibility(View.VISIBLE);
+                    licenca3.setVisibility(View.VISIBLE);
+                    excluir1.setVisibility(View.VISIBLE);
+                    excluir2.setVisibility(View.VISIBLE);
+                    excluir3.setVisibility(View.VISIBLE);
+                    txtexcluir.setVisibility(View.VISIBLE);
             }
 
+        } else {
+            tabela.setVisibility(View.GONE);
         }
     }
 

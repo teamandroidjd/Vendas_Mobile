@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Total da venda: R$ 560,60 "
+            android:layout_marginTop="10dp"
             android:textAlignment="center"
             android:textColor="@color/colorAccent"
             android:textSize="25dp"
@@ -59,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="30dp"
                 android:orientation="horizontal">
 
                 <RadioButton
@@ -93,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Quantidade de parcelas: "
+                android:text="Quantidade de parcelas:  "
                 android:textColor="@color/colorAccent"
                 android:textSize="20dp"
                 android:textStyle="bold" />
@@ -120,22 +121,23 @@
                 android:textStyle="bold" />
 
 
-        <HorizontalScrollView
-            android:id="@+id/scrollViewh"
-            android:layout_width="wrap_content"
-            android:scrollbars="horizontal"
-            android:layout_weight="1"
-            android:layout_height="wrap_content">
-            <ScrollView
-                android:id="@+id/scrollView"
-                android:padding="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scrollbars="vertical">
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="fill_parent"
+            android:layout_height="170dp"
+            android:scrollbars="vertical"
+            android:layout_below="@+id/LnPai">
+
+            <HorizontalScrollView
+                android:id="@+id/scrollViewh"
+                android:layout_width="950dp"
+                android:scrollbars="horizontal"
+                android:layout_height="fill_parent">
 
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="950dp"
+                android:layout_height="match_parent"
+                android:weightSum="1">
 
                 <TextView
                     android:id="@+id/conf_valorparcela"
@@ -287,8 +289,9 @@
                     android:textSize="20dp"
                     android:textStyle="bold" />
             </RelativeLayout>
+            </HorizontalScrollView>
             </ScrollView>
-        </HorizontalScrollView>
+
 
     <TextView
         android:id="@+id/conf_txvlabelvalorrecebido"
