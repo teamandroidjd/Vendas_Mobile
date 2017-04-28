@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:fastScrollEnabled="true"
             android:fastScrollAlwaysVisible="true"
-            android:cacheColorHint="@color/colorAccent"></ListView>
+            android:cacheColorHint="@color/colorAccent"/>
     </LinearLayout>
 
 </LinearLayout>
