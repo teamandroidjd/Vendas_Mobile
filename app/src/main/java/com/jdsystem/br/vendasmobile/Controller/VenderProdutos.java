@@ -67,7 +67,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
-public class                                                                                            VenderProdutos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
+public class VenderProdutos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
 
     private BigDecimal TOTAL_DA_VENDA;
     private Integer CLI_CODIGO, CLI_CODIGO_ANT, CLI_CODIGO_EXT;
@@ -194,28 +194,28 @@ public class                                                                    
         FloatingActionButton incluirProduto = (FloatingActionButton) findViewById(R.id.fab_inclui_produto);
         incluirProduto.setOnClickListener(
                 new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (venda_txt_desconto.getText().toString().isEmpty()) {
-                    venda_txt_desconto.setText("0");
-                }
-                if (!verifica_limite_desconto()) {
-                    return;
-                }
-                Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
-                Bundle params = new Bundle();
-                params.putString(getString(R.string.intent_numpedido), NumPedido);
-                params.putString(getString(R.string.intent_chavepedido), Chave_Venda);
-                params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
-                params.putString(getString(R.string.intent_telainvocada),"VENDER_PRODUTOS");
-                params.putInt(getString(R.string.intent_flag), 2);
-                Lista_produtos.putExtras(params);
-                startActivity(Lista_produtos);
-            }
-        });
+                    @Override
+                    public void onClick(View v) {
+                        if (venda_txt_desconto.getText().toString().isEmpty()) {
+                            venda_txt_desconto.setText("0");
+                        }
+                        if (!verifica_limite_desconto()) {
+                            return;
+                        }
+                        Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
+                        Bundle params = new Bundle();
+                        params.putString(getString(R.string.intent_numpedido), NumPedido);
+                        params.putString(getString(R.string.intent_chavepedido), Chave_Venda);
+                        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_telainvocada), "VENDER_PRODUTOS");
+                        params.putInt(getString(R.string.intent_flag), 2);
+                        Lista_produtos.putExtras(params);
+                        startActivity(Lista_produtos);
+                    }
+                });
 
         // atualiza_listview_e_calcula_total();
 
@@ -230,7 +230,7 @@ public class                                                                    
                 if (!verifica_limite_desconto()) {
                     return;
                 }
-                finalzarvenda(true);
+                finalizarvenda(true);
             }
         });
 
@@ -283,6 +283,7 @@ public class                                                                    
 
         //obterConfiguracoesPagamento();
     }
+
     private void carregarpreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
@@ -475,6 +476,37 @@ public class                                                                    
             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).retornaItensOculto(Chave_Venda);
             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensTemp(Chave_Venda);
             Alterar_Pedido_listview_e_calcula_total();
+            //TODO: testar esse processo. Felipe esta testando
+            BigDecimal valor_recebido = null;
+            BigDecimal total_venda = null;
+            if (confBean.getConf_valor_recebido() == null) {
+                Util.msg_toast_personal(getBaseContext(), "Você deve refazer o pagamento!", Util.PADRAO);
+                Intent it = new Intent(getBaseContext(), ConfPagamento.class);
+                it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
+                it.putExtra("CLI_CODIGO", CLI_CODIGO);
+                startActivity(it);
+                return;
+            } else if (confBean.getConf_valor_recebido() != null) {
+                Double ValorVENDA = TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue();
+
+                valor_recebido = new BigDecimal(confBean.getConf_valor_recebido().toString().trim()).setScale(2, RoundingMode.HALF_EVEN);
+                //total_venda = new BigDecimal(TOTAL_DA_VENDA.setScale(2, RoundingMode.HALF_EVEN).subtract(calculaDesconto()).toString());
+                total_venda = new BigDecimal(ValorVENDA.toString()).setScale(2, RoundingMode.HALF_EVEN);
+                if ((total_venda.doubleValue()) != (valor_recebido.doubleValue())) {
+                    Util.msg_toast_personal(getBaseContext(), "Valor total do pedido diferente do valor total do pagamento", Util.PADRAO);
+
+                    if (!NumPedido.equals("0")) {
+                        Intent it = new Intent(getBaseContext(), ConfPagamento.class);
+                        it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
+                        it.putExtra("CLI_CODIGO", CLI_CODIGO);
+                        it.putExtra("ChavePedido", Chave_Venda);
+                        it.putExtra("AtuPedido", true);
+                        startActivity(it);
+                    }
+                    return;
+                }
+            }
+
             itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
             if (!itens_venda.isEmpty()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
@@ -580,7 +612,7 @@ public class                                                                    
         DB = new ConfigDB(this).getReadableDatabase();
         //TextView venda_txv_empresa = (TextView) findViewById(R.id.venda_txv_empresa);
         try {
-            Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa +" AND CODPERFIL = "+idPerfil, null);
+            Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa + " AND CODPERFIL = " + idPerfil, null);
             if (CursorEmpresa.getCount() > 0) {
                 CursorEmpresa.moveToFirst();
                 do {
@@ -607,7 +639,7 @@ public class                                                                    
             params.putInt(getString(R.string.intent_flag), 2);
             params.putString(getString(R.string.intent_senha), senha);
             params.putString(getString(R.string.intent_numpedido), NumPedido);
-            params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
@@ -621,7 +653,7 @@ public class                                                                    
             params.putInt(getString(R.string.intent_codcliente), CLI_CODIGO);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_numpedido), NumPedido);
-            params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putInt(getString(R.string.intent_flag), 2);
             params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
@@ -634,7 +666,7 @@ public class                                                                    
         if (!NumPedido.equals("0")) {
             nomeabrevemp = "0";
             try {
-                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = "+idPerfil, null);
+                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = " + idPerfil, null);
                 CursEmpr.moveToFirst();
                 if (CursEmpr.getCount() > 1) {
                     List<String> DadosListEmpresa = new ArrayList<String>();
@@ -683,7 +715,7 @@ public class                                                                    
         } else {
             nomeabrevemp = "0";
             try {
-                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = "+idPerfil, null);
+                Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = " + idPerfil, null);
                 CursEmpr.moveToFirst();
                 if (CursEmpr.getCount() > 1) {
                     List<String> DadosListEmpresa = new ArrayList<String>();
@@ -801,12 +833,7 @@ public class                                                                    
         return true;
     }
 
-    private void finalzarvenda(boolean sincpedido) {
-        if(!NumPedido.equals("0")) {
-            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensOculto(Chave_Venda);
-            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaItensTemp(Chave_Venda);
-            Alterar_Pedido_listview_e_calcula_total();
-        }
+    private void finalizarvenda(boolean sincpedido) {
 
         BigDecimal valor_recebido = null;
         BigDecimal total_venda = null;
@@ -841,6 +868,7 @@ public class                                                                    
             if (NumPedido.equals("0")) {
                 AtuPed = false;
             }
+
             itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
             if (!itens_temp.isEmpty()) {
                 Intent it = new Intent(getBaseContext(), ConfPagamento.class);
@@ -881,7 +909,13 @@ public class                                                                    
                     startActivity(it);
                 }
 
+
             } else {
+                if (!NumPedido.equals("0")) {
+                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensOculto(Chave_Venda);
+                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaItensTemp(Chave_Venda);
+                    Alterar_Pedido_listview_e_calcula_total();
+                }
                 // if (verifica_limite_desconto()) {
                 Gps gps = new Gps(getApplicationContext());
                 vendaCBean = new SqliteVendaCBean();
@@ -1004,7 +1038,7 @@ public class                                                                    
             }
 
         }
-        ListView_ItensVendidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        /*ListView_ItensVendidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> listview, View view, int posicao, long l) {
                 if (venda_txt_desconto.getText().toString().isEmpty()) {
@@ -1017,7 +1051,7 @@ public class                                                                    
 
                 return false;
             }
-        });
+        });*/
         ListView_ItensVendidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listview1, View v, int posicao, long m) {
@@ -1027,13 +1061,13 @@ public class                                                                    
                 if (!verifica_limite_desconto()) {
                     return;
                 }
-                alterarproduto(listview1, posicao);
+                //alterarproduto(listview1, posicao);
+                alteraexcluiitem(listview1, posicao);
 
 
             }
         });
     }
-
     public void Alterar_Pedido_listview_e_calcula_total() {
         declaraObjetos();
         obterConfiguracoesPagamento();
@@ -1051,7 +1085,7 @@ public class                                                                    
         } else {
             venda_txv_total_da_Venda.setText("Total da venda = R$ " + "0,00");
         }
-        ListView_ItensVendidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        /*ListView_ItensVendidos.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> listview, View view, int posicao, long l) {
                 if (venda_txt_desconto.getText().toString().isEmpty()) {
@@ -1063,7 +1097,7 @@ public class                                                                    
                 confirmar_exclusao_do_produto(listview, posicao);
                 return false;
             }
-        });
+        });*/
         ListView_ItensVendidos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listview1, View v, int posicao, long m) {
@@ -1073,10 +1107,608 @@ public class                                                                    
                 if (!verifica_limite_desconto()) {
                     return;
                 }
-                alterarproduto(listview1, posicao);
+                //alterarproduto(listview1, posicao);
+                alteraexcluiitem(listview1, posicao);
 
             }
         });
+    }
+
+    private void alteraexcluiitem(final AdapterView listview, final int posicao) {
+        //TODO: Testar esse processo. Felipe esta testando
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Atenção");
+        builder.setCancelable(true);
+        builder.setMessage("Deseja alterar ou excluir o produto ?");
+        builder.setPositiveButton("Alterar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        if (NumPedido.equals("0")) {
+                            SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
+                            new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
+                            if (item != null) {
+                                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                                View view = inflater.inflate(R.layout.info_produto_venda, null);
+                                alerta1 = new Builder(VenderProdutos.this);
+                                alerta1.setCancelable(false);
+                                alerta1.setView(view);
+
+                                final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
+                                final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
+                                final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
+                                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
+                                spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
+
+                                InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.showSoftInput(info_txt_quantidadecomprada, InputMethodManager.SHOW_IMPLICIT);
+                                VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+                                spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                        GravaPreferencias(spntabpreco.getSelectedItemPosition());
+
+                                        String spreco = spntabpreco.getSelectedItem().toString();
+
+                                        if (!tab1.equals("")) {
+                                            spreco = spreco.replace(tab1, "");
+                                        }
+                                        if (!tab2.equals("")) {
+                                            spreco = spreco.replace(tab2, "");
+                                        }
+                                        if (!tab3.equals("")) {
+                                            spreco = spreco.replace(tab3, "");
+                                        }
+                                        if (!tab4.equals("")) {
+                                            spreco = spreco.replace(tab4, "");
+                                        }
+                                        if (!tab5.equals("")) {
+                                            spreco = spreco.replace(tab5, "");
+                                        }
+                                        if (!tab6.equals("")) {
+                                            spreco = spreco.replace(tab6, "");
+                                        }
+                                        if (!tab7.equals("")) {
+                                            spreco = spreco.replace(tab7, "");
+                                        }
+                                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                                        info_txv_precoproduto.setText(spreco);
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parent) {
+                                    }
+                                });
+
+                                try {
+                                    String codprod = (item.getVendad_prd_codigoTEMP());
+                                    codprod = codprod.trim();
+                                    List<String> DadosListTabPreco = new ArrayList<String>();
+                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
+                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                                    CursorParametro.moveToFirst();
+                                    vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
+                                    tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                                    tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                                    tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                                    tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                                    tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                                    tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                                    tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+                                    CursorParametro.close();
+
+                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "'", null);
+                                    produto_cursor.moveToFirst();
+
+                                    qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
+
+                                    String tabelaPadrao = produto_cursor.getString(produto_cursor.getColumnIndex("TABELAPADRAO"));
+                                    /*vlvendapadrao = vlvendapadrao.trim();
+                                    if (!vlvendapadrao.equals("0,0000")) {
+                                        BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
+                                        String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                        Precopadrao = Precopadrao.replace('.', ',');
+                                        DadosListTabPreco.add(tab1 + " R$: " + Precopadrao);
+                                    }*/
+
+                                    if (!tab1.equals("")) {
+                                        String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
+                                        vlvenda1 = vlvenda1.trim();
+                                        if (!vlvenda1.equals("0,0000")) {
+                                            BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
+                                            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco1 = Preco1.replace('.', ',');
+                                            DadosListTabPreco.add(tab1 + " R$: " + Preco1);
+                                        }
+                                    }
+
+                                    if (!tab2.equals("")) {
+                                        String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
+                                        vlvenda2 = vlvenda2.trim();
+                                        if (!vlvenda2.equals("0,0000")) {
+                                            BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
+                                            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco2 = Preco2.replace('.', ',');
+                                            DadosListTabPreco.add(tab2 + " R$: " + Preco2);
+                                        }
+                                    }
+
+                                    if (!tab3.equals("")) {
+                                        String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
+                                        vlvenda3 = vlvenda3.trim();
+                                        if (!vlvenda3.equals("0,0000")) {
+                                            BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
+                                            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco3 = Preco3.replace('.', ',');
+                                            DadosListTabPreco.add(tab3 + " R$: " + Preco3);
+                                        }
+                                    }
+
+                                    if (!tab4.equals("")) {
+                                        String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
+                                        vlvenda4 = vlvenda4.trim();
+                                        if (!vlvenda4.equals("0,0000")) {
+                                            BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
+                                            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco4 = Preco4.replace('.', ',');
+                                            DadosListTabPreco.add(tab4 + " R$: " + Preco4);
+                                        }
+                                    }
+
+                                    if (!tab5.equals("")) {
+                                        String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
+                                        vlvenda5 = vlvenda5.trim();
+                                        if (!vlvenda5.equals("0,0000")) {
+                                            BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
+                                            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco5 = Preco5.replace('.', ',');
+                                            DadosListTabPreco.add(tab5 + " R$: " + Preco5);
+                                        }
+                                    }
+
+                                    if (!tab6.equals("")) {
+                                        String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
+                                        vlvendap1 = vlvendap1.trim();
+                                        if (!vlvendap1.equals("0,0000")) {
+                                            BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
+                                            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Precop1 = Precop1.replace('.', ',');
+                                            DadosListTabPreco.add(tab6 + " R$: " + Precop1);
+                                        }
+                                    }
+
+                                    if (!tab7.equals("")) {
+                                        String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
+                                        vlvendap2 = vlvendap2.trim();
+                                        if (!vlvendap2.equals("0,0000")) {
+                                            BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
+                                            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Precop2 = Precop2.replace('.', ',');
+                                            DadosListTabPreco.add(tab7 + " R$: " + Precop2);
+                                        }
+                                    }
+                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
+                                    arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    spntabpreco.setAdapter(arrayAdapterTabPreco);
+
+                                    produto_cursor.close();
+                                } catch (Exception E) {
+                                    E.toString();
+
+                                }
+                                info_txv_codproduto.setText(item.getVendad_prd_codigoTEMP());
+                                info_txv_descricaoproduto.setText(item.getVendad_prd_descricaoTEMP());
+                                info_txv_unmedida.setText(item.getVendad_prd_unidadeTEMP());
+
+                                String ValorItem = String.valueOf(item.getVendad_preco_vendaTEMP());
+                                ValorItem = ValorItem.trim();
+                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                Preco = Preco.replace('.', ',');
+                                info_txv_precoproduto.setText(Preco);
+
+                                String qtd = String.valueOf(item.getVendad_quantidadeTEMP());
+                                info_txt_quantidadecomprada.setText(qtd);
+                                info_txt_quantidadecomprada.requestFocus();
+                                //info_txt_quantidadecomprada.selectAll();
+
+
+                                alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
+
+                                        if (TAMANHO_TEXTO > 0) {
+                                            SqliteProdutoBean prdBean = new SqliteProdutoBean();
+                                            Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
+                                            String COD_PRODUTO = info_txv_codproduto.getText().toString();
+                                            String DESCRICAO = info_txv_descricaoproduto.getText().toString();
+                                            String UNIDADE = info_txv_unmedida.getText().toString();
+
+                                            if (QUANTIDADE_DIGITADA > 0) {
+                                                if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
+                                                    Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    return;
+                                                }
+
+                                                SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getApplicationContext());
+
+                                                itemBean2.setVendad_prd_codigoTEMP(COD_PRODUTO);
+                                                itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
+
+                                                if (itemBean3 != null) {
+                                                    itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
+                                                    itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
+                                                    itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
+                                                    itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
+
+                                                    //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
+                                                    String ValorItem = info_txv_precoproduto.getText().toString();
+                                                    ValorItem = ValorItem.trim();
+                                                    if (!ValorItem.equals("0,0000")) {
+                                                        BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                                        venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                                        itemBean1.setVendad_preco_vendaTEMP(venda);
+
+                                                        //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                                        itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
+                                                        itemDao.atualizar_item_na_venda(itemBean1);
+                                                        atualiza_listview_e_calcula_total();
+                                                        //finish();
+                                                    } else {
+                                                        Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                                        return;
+                                                    }
+                                                } else {
+                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                                                    return;
+                                                }
+
+                                                //}
+                                            } else {
+                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                                return;
+                                            }
+
+                                        } else {
+                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                            return;
+                                        }
+                                        VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
+                                    }
+
+                                });
+                                alerta1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                alerta1.show();
+                            } else {
+                                SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
+                                if (NumPedido.equals("0")) {
+                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
+                                } else {
+                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
+                                }
+                            }
+
+                        } else {
+
+                            SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
+                            //SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
+                            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
+                            //new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
+                            if (item != null) {
+                                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                                View view = inflater.inflate(R.layout.info_produto_venda, null);
+                                alerta1 = new Builder(VenderProdutos.this);
+                                alerta1.setCancelable(false);
+                                alerta1.setView(view);
+
+                                final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
+                                final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
+                                final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
+                                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
+                                spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
+
+                                spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                        GravaPreferencias(spntabpreco.getSelectedItemPosition());
+
+                                        String spreco = spntabpreco.getSelectedItem().toString();
+
+                                        if (!tab1.equals("")) {
+                                            spreco = spreco.replace(tab1, "");
+                                        }
+                                        if (!tab2.equals("")) {
+                                            spreco = spreco.replace(tab2, "");
+                                        }
+                                        if (!tab3.equals("")) {
+                                            spreco = spreco.replace(tab3, "");
+                                        }
+                                        if (!tab4.equals("")) {
+                                            spreco = spreco.replace(tab4, "");
+                                        }
+                                        if (!tab5.equals("")) {
+                                            spreco = spreco.replace(tab5, "");
+                                        }
+                                        if (!tab6.equals("")) {
+                                            spreco = spreco.replace(tab6, "");
+                                        }
+                                        if (!tab7.equals("")) {
+                                            spreco = spreco.replace(tab7, "");
+                                        }
+                                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
+                                        info_txv_precoproduto.setText(spreco);
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parent) {
+                                    }
+                                });
+
+                                try {
+                                    String codprod = (item.getVendad_prd_codigo());
+                                    codprod = codprod.trim();
+                                    List<String> DadosListTabPreco = new ArrayList<String>();
+                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
+                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                                    CursorParametro.moveToFirst();
+                                    vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
+                                    tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                                    tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                                    tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                                    tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                                    tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                                    tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                                    tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+                                    CursorParametro.close();
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "'", null);
+                                    produto_cursor.moveToFirst();
+
+                                    qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
+
+                                    String tabelaPadrao = produto_cursor.getString(produto_cursor.getColumnIndex("TABELAPADRAO"));
+                                    /*vlvendapadrao = vlvendapadrao.trim();
+                                    if (!vlvendapadrao.equals("0,0000")) {
+                                        BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
+                                        String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                        Precopadrao = Precopadrao.replace('.', ',');
+                                        DadosListTabPreco.add(tab1 + " R$: " + Precopadrao);
+                                    }*/
+
+                                    if (!tab1.equals("")) {
+                                        String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
+                                        vlvenda1 = vlvenda1.trim();
+                                        if (!vlvenda1.equals("0,0000")) {
+                                            BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
+                                            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco1 = Preco1.replace('.', ',');
+                                            DadosListTabPreco.add(tab1 + " R$: " + Preco1);
+                                        }
+                                    }
+
+                                    if (!tab2.equals("")) {
+                                        String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
+                                        vlvenda2 = vlvenda2.trim();
+                                        if (!vlvenda2.equals("0,0000")) {
+                                            BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
+                                            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco2 = Preco2.replace('.', ',');
+                                            DadosListTabPreco.add(tab2 + " R$: " + Preco2);
+                                        }
+                                    }
+
+                                    if (!tab3.equals("")) {
+                                        String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
+                                        vlvenda3 = vlvenda3.trim();
+                                        if (!vlvenda3.equals("0,0000")) {
+                                            BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
+                                            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco3 = Preco3.replace('.', ',');
+                                            DadosListTabPreco.add(tab3 + " R$: " + Preco3);
+                                        }
+                                    }
+
+                                    if (!tab4.equals("")) {
+                                        String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
+                                        vlvenda4 = vlvenda4.trim();
+                                        if (!vlvenda4.equals("0,0000")) {
+                                            BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
+                                            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco4 = Preco4.replace('.', ',');
+                                            DadosListTabPreco.add(tab4 + " R$: " + Preco4);
+                                        }
+                                    }
+
+                                    if (!tab5.equals("")) {
+                                        String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
+                                        vlvenda5 = vlvenda5.trim();
+                                        if (!vlvenda5.equals("0,0000")) {
+                                            BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
+                                            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco5 = Preco5.replace('.', ',');
+                                            DadosListTabPreco.add(tab5 + " R$: " + Preco5);
+                                        }
+                                    }
+
+                                    if (!tab6.equals("")) {
+                                        String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
+                                        vlvendap1 = vlvendap1.trim();
+                                        if (!vlvendap1.equals("0,0000")) {
+                                            BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
+                                            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Precop1 = Precop1.replace('.', ',');
+                                            DadosListTabPreco.add(tab6 + " R$: " + Precop1);
+                                        }
+                                    }
+
+                                    if (!tab7.equals("")) {
+                                        String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
+                                        vlvendap2 = vlvendap2.trim();
+                                        if (!vlvendap2.equals("0,0000")) {
+                                            BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
+                                            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Precop2 = Precop2.replace('.', ',');
+                                            DadosListTabPreco.add(tab7 + " R$: " + Precop2);
+                                        }
+                                    }
+                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
+                                    arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    spntabpreco.setAdapter(arrayAdapterTabPreco);
+
+                                    produto_cursor.close();
+                                } catch (Exception E) {
+                                    E.toString();
+
+                                }
+                                info_txv_codproduto.setText(item.getVendad_prd_codigo());
+                                info_txv_descricaoproduto.setText(item.getVendad_prd_descricao());
+                                info_txv_unmedida.setText(item.getVendad_prd_unidade());
+
+                                String ValorItem = String.valueOf(item.getVendad_preco_venda());
+                                ValorItem = ValorItem.trim();
+                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                Preco = Preco.replace('.', ',');
+                                info_txv_precoproduto.setText(Preco);
+
+                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "'", null);
+                                cursor.moveToFirst();
+                                String qtdpedido = cursor.getString(cursor.getColumnIndex("QTDMENORPED"));
+                                cursor.close();
+
+                                info_txt_quantidadecomprada.setText(qtdpedido);
+                                info_txt_quantidadecomprada.requestFocus();
+
+                                //info_txt_quantidadecomprada.selectAll();
+
+
+                                alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                        Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
+
+                                        if (TAMANHO_TEXTO > 0) {
+                                            SqliteProdutoBean prdBean = new SqliteProdutoBean();
+                                            Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
+                                            String COD_PRODUTO = info_txv_codproduto.getText().toString();
+                                            String DESCRICAO = info_txv_descricaoproduto.getText().toString();
+                                            String UNIDADE = info_txv_unmedida.getText().toString();
+
+                                            if (QUANTIDADE_DIGITADA > 0) {
+                                                if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
+                                                    Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    return;
+                                                }
+
+                                                SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
+                                                SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
+                                                SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
+                                                Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
+
+                                                itemBean2.setVendad_prd_codigo(COD_PRODUTO);
+                                                //itemBean3 = itemDao.altera_item_na_venda(itemBean2);
+
+                                                //if (itemBean3 != null) {
+                                                itemBean1.setVendad_prd_codigo(COD_PRODUTO);
+                                                itemBean1.setVendad_prd_descricao(DESCRICAO);
+                                                itemBean1.setVendad_prd_unidade(UNIDADE);
+                                                itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
+
+                                                //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
+                                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                                ValorItem = ValorItem.trim();
+                                                if (!ValorItem.equals("0,0000")) {
+                                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                                    venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                                    itemBean1.setVendad_preco_venda(venda);
+
+                                                    //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                                    itemBean1.setVendad_total(itemBean1.getSubTotal());
+                                                    itemDao.atualizar_alteracao_item_na_venda(itemBean1, Chave_Venda);
+                                                    Alterar_Pedido_listview_e_calcula_total();
+                                                    //finish();
+                                                } else {
+                                                    Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                                    return;
+                                                }
+                                                /*} else {
+                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                                                }*/
+
+                                                //}
+                                            } else {
+                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                                return;
+                                            }
+
+                                        } else {
+                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                            return;
+                                        }
+                                        VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
+                                    }
+
+                                });
+                                alerta1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                });
+                                SharedPreferences prefsHost = VenderProdutos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
+                                sprecoprincipal = prefsHost.getInt("spreco", 0);
+                                spntabpreco.setSelection(sprecoprincipal);
+                                alerta1.show();
+                            } else {
+                                SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
+                                if (NumPedido.equals("0")) {
+                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
+                                } else {
+                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
+                                }
+                            }
+
+                        }
+                    }
+                }
+        );
+        builder.setNegativeButton("Excluir", new DialogInterface.OnClickListener()
+
+                {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        if (!NumPedido.equals("0")) {
+                            SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
+                            String codprod = item.getVendad_prd_codigo();
+                            //String chaveitem = item.getVendac_chave();
+                            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod, Chave_Venda);
+
+                            //new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
+
+                            Alterar_Pedido_listview_e_calcula_total();
+                        } else {
+                            SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
+                            new SqliteVendaD_TempDao(getApplicationContext()).excluir_um_item_da_venda(item);
+
+                            atualiza_listview_e_calcula_total();
+                        }
+                    }
+                }
+
+        );
+
+        dlg = builder.create();
+        dlg.show();
+
     }
 
     private BigDecimal calculaDesconto() {
@@ -1099,7 +1731,7 @@ public class                                                                    
                     SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                     String codprod = item.getVendad_prd_codigo();
                     //String chaveitem = item.getVendac_chave();
-                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod);
+                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod,Chave_Venda);
 
                     //new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
 
@@ -1145,6 +1777,7 @@ public class                                                                    
         builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         if (NumPedido.equals("0")) {
+                            VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                             SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
                             new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
                             if (item != null) {
@@ -1417,6 +2050,7 @@ public class                                                                    
                             }
 
                         } else {
+                            VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                             SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                             //SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
                             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
@@ -1651,7 +2285,7 @@ public class                                                                    
 
                                                     //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
                                                     itemBean1.setVendad_total(itemBean1.getSubTotal());
-                                                    itemDao.atualizar_alteracao_item_na_venda(itemBean1);
+                                                    itemDao.atualizar_alteracao_item_na_venda(itemBean1,Chave_Venda);
                                                     Alterar_Pedido_listview_e_calcula_total();
                                                     //finish();
                                                 } else {

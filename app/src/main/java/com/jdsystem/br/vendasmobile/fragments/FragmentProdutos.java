@@ -124,7 +124,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             Cursor cursoritem = null;
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
-            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 
             if (numPedido.equals("0")) {
@@ -155,7 +154,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
                                 return;
                             }
-
                     }
                 } else {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"'", null);
@@ -178,6 +176,8 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
                 final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
+
+
 
                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
                 DB = new ConfigDB(getActivity()).getReadableDatabase();
@@ -466,7 +466,10 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 SharedPreferences prefsHost = getActivity().getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
                 sprecoprincipal = prefsHost.getInt("spreco", 0);
                 spntabpreco.setSelection(sprecoprincipal);
+                //EditText quantidadecomprada = (EditText) getActivity().findViewById(R.id.info_txt_quantidadecomprada);
+
                 alerta.show();
+
             } else {
 
                 DB = new ConfigDB(getActivity()).getReadableDatabase();
@@ -768,7 +771,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getActivity(), codVendedor, true);
 
                                 itemBean2.setVendad_prd_codigo(COD_PRODUTO);
-                                itemBean3 = itemDao.altera_item_na_venda(itemBean2);
+                                itemBean3 = itemDao.altera_item_na_venda(itemBean2, chavePedido);
 
                                 if (itemBean3 == null) {
                                     itemBean1.setVendad_prd_codigo(COD_PRODUTO);

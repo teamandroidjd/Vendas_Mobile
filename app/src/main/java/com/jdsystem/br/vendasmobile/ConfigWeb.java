@@ -332,40 +332,92 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         soap.addProperty("Chave", edtChave.getText().toString());
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSHOST);
+        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSHOST,10000);
         RetHost = null;
         Boolean ConexOk = Util.checarConexaoCelular(ConfigWeb.this);
         if (ConexOk == true) {
-            try {
-                Envio.call("", envelope);
-            } catch (Exception e) {
-                e.toString();
-                DialogECB.dismiss();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ConfigWeb.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+            int j = 0;
+            do {
+                try {
+                    if (j > 0) {
+                        Thread.sleep(500);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (j == 0) {
+
+                    try {
+                        Envio.call("", envelope);
+                    } catch (Exception e) {
+                        e.toString();
+                        DialogECB.dismiss();
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ConfigWeb.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        });
                         return;
                     }
-                });
-                return;
-            }
-            try {
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetHost = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            } catch (Exception e) {
-                e.toString();
-                DialogECB.dismiss();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ConfigWeb.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                    try {
+                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                        RetHost = (String) envelope.getResponse();
+                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                    } catch (Exception e) {
+                        e.toString();
+                        DialogECB.dismiss();
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ConfigWeb.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        });
                         return;
                     }
-                });
-                return;
-            }
+                } else {
+                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "CarregaHostCliente");
+                    newsoap.addProperty("Chave", edtChave.getText().toString());
+                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                    newenvelope.setOutputSoapObject(newsoap);
+                    HttpTransportSE newEnvio = new HttpTransportSE(ConfigConex.URLDADOSHOST);
+
+                    try {
+                        newEnvio.call("", newenvelope);
+                    } catch (Exception e) {
+                        e.toString();
+                        DialogECB.dismiss();
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ConfigWeb.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        });
+                        return;
+                    }
+                    try {
+                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                        RetHost = (String) newenvelope.getResponse();
+                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                    } catch (Exception e) {
+                        e.toString();
+                        DialogECB.dismiss();
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ConfigWeb.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        });
+                        return;
+                    }
+                }
+
+            } while (RetHost == null && j <= 6);
+
             if (RetHost.equals("{\"perfil\":[0]}")) {
                 DialogECB.dismiss();
                 hd.post(new Runnable() {
@@ -443,9 +495,9 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             String perfil = c.getString("nomeempresa");
             host = c.getString("host");
 
-         if ((gravarperfil(host, perfil, licenca)) == false){
-             return;
-         }
+            if ((gravarperfil(host, perfil, licenca)) == false) {
+                return;
+            }
         } catch (Exception e) {
             e.toString();
         }
@@ -456,6 +508,8 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 Toast.makeText(ConfigWeb.this, R.string.license_validated, Toast.LENGTH_SHORT).show();
             }
         });
+        Intent intent = new Intent(getApplicationContext(), Login.class);
+        startActivity(intent);
         finish();
     }
 
@@ -466,13 +520,13 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             if (idlicenca.getCount() > 0) {
                 idPerfil = idlicenca.getInt(idlicenca.getColumnIndex("CODPERFIL"));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.toString();
         }
         SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
         editorhost.putString("ChaveAcesso", edtChave.getText().toString());
         editorhost.putString("host", host);
-        editorhost.putInt("idperfil",idPerfil);
+        editorhost.putInt("idperfil", idPerfil);
         editorhost.apply();
     }
 
@@ -512,7 +566,6 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         List<String> DadosListLicPerfil = new ArrayList<String>();
 
         Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL", null);
-
         cursorPerfil.moveToFirst();
         if (cursorPerfil.getCount() > 0) {
             tabela.setVisibility(View.VISIBLE);
@@ -521,7 +574,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 DadosListLicPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("LICENCA")));
             } while (cursorPerfil.moveToNext());
             int i = DadosListPerfil.size();
-            switch (i){
+            switch (i) {
                 case 1:
                     nomeperfil1 = DadosListPerfil.get(0);
                     licperfil1 = DadosListLicPerfil.get(0);
@@ -603,4 +656,11 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), Login.class);
+        startActivity(intent);
+        finish();
+        super.onBackPressed();
+    }
 }

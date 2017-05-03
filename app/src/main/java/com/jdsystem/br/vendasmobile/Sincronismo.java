@@ -47,9 +47,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,13 +66,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     private static SQLiteDatabase DB;
     Handler hd;
-    ProgressBar PrgGeral;
     int idPerfil;
     private ProgressDialog Dialog, DialogECB;
-    //Handler progressHandler;
     Button btnSinc;
-    //TextView txtSinc;
-    //ProgressBar prgSinc;
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private static String usuario, senha, sCodVend, URLPrincipal, UsuarioLogado;
     private static Context ctx;
@@ -87,12 +85,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_sincronismo);
-        try {
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-        } catch (Exception e) {
 
-        }
+        carregarpreferencias();
+        carregausuariologado();
+        declaraobjetos();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -104,7 +100,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 senha = params.getString(getString(R.string.intent_senha));
             }
         }
-        carregarpreferencias();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -112,61 +107,62 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(Sincronismo.this);
-
-        carregausuariologado();
-
-        //DB = new ConfigDB(ctx).getReadableDatabase();
-
-        btnSinc = (Button) findViewById(R.id.btnSincronizar);
-
-        btnSinc.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View v) {
-
-                                           hd = new Handler();
-                                           Dialog = new ProgressDialog(Sincronismo.this);
-                                           Dialog.setTitle(R.string.wait);
-                                           Dialog.setMessage("");
-                                           Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                                           Dialog.setProgress(0);
-                                           Dialog.setIcon(R.drawable.icon_sync);
-                                           Dialog.setMax(0);
-                                           Dialog.setCancelable(false);
-                                           Dialog.show();
-                                           Boolean ConexOk = Util.checarConexaoCelular(Sincronismo.this);
-                                           if (ConexOk == true) {
-                                               Thread td = new Thread(Sincronismo.this);
-                                               td.start();
-                                           } else {
-                                               Dialog.cancel();
-                                               AlertDialog.Builder builder = new AlertDialog.Builder(Sincronismo.this);
-                                               builder.setTitle(R.string.app_namesair);
-                                               builder.setIcon(R.drawable.logo_ico);
-                                               builder.setMessage(R.string.msg_no_connection_sinc)
-                                                       .setCancelable(false)
-                                                       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                           public void onClick(DialogInterface dialog, int id) {
-                                                               Intent intent = (Sincronismo.this).getIntent();
-                                                               (Sincronismo.this).finish();
-                                                               startActivity(intent);
-                                                           }
-                                                       })
-                                                       .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
-                                                           public void onClick(DialogInterface dialog, int id) {
-                                                               Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                                                               startActivity(intent);
-                                                           }
-                                                       });
-                                               AlertDialog alert = builder.create();
-                                               alert.show();
-                                               return;
-                                           }
-                                       }
-                                   }
-        );
-
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
+
+    private void declaraobjetos() {
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        } catch (Exception e) {
+
+        }
+        DB = new ConfigDB(this).getReadableDatabase();
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        btnSinc = (Button) findViewById(R.id.btnSincronizar);
+    }
+
+    public void sincronizar(View view) {
+        hd = new Handler();
+        Dialog = new ProgressDialog(Sincronismo.this);
+        Dialog.setTitle(R.string.wait);
+        Dialog.setMessage("");
+        Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        Dialog.setProgress(0);
+        Dialog.setIcon(R.drawable.icon_sync);
+        Dialog.setMax(0);
+        Dialog.setCancelable(false);
+        Dialog.show();
+        Boolean ConexOk = Util.checarConexaoCelular(Sincronismo.this);
+        if (ConexOk == true) {
+            Thread td = new Thread(Sincronismo.this);
+            td.start();
+        } else {
+            Dialog.cancel();
+            AlertDialog.Builder builder = new AlertDialog.Builder(Sincronismo.this);
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage(R.string.msg_no_connection_sinc)
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = (Sincronismo.this).getIntent();
+                            (Sincronismo.this).finish();
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                            startActivity(intent);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            return;
+        }
+
+    }
+
     public void carregarpreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
@@ -268,7 +264,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     @Override
     public void run() {
-        DB = new ConfigDB(this).getReadableDatabase();
 
         try {
             SincronizarClientes(sCodVend, usuario, senha);
@@ -287,6 +282,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     Toast.makeText(Sincronismo.this, "Falha no processo de sincronização. Tente novamente!", Toast.LENGTH_SHORT).show();
                 }
             });
+
         }
         Intent i = new Intent(Sincronismo.this, ConsultaPedidos.class);
         Bundle params = new Bundle();
@@ -299,11 +295,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         finish();
     }
 
+
     // Métodos só podem ser invocados desta activity.
 
-    public void SincronizarClientes(String sCodVend, String nUsuario, String nSenha) {
-
-        DB = new ConfigDB(this).getReadableDatabase();
+    public void SincronizarClientes(String sCodVend, String nUsuario, String nSenha) throws JSONException {
 
         String METHOD_NAME = "Carregar";
         String TAG_CLIENTESINFO = "clientes";
@@ -330,6 +325,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         String TAG_LIMITECRED = "limitecredito";
 
         String CodVendedor = sCodVend;
+
 
         Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE,CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
         cursorparamapp.moveToFirst();
@@ -371,34 +367,224 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             DialogECB.show();
                         }
                     });
-
-                    try {
-                        Envio.call("", envelope);
-                    } catch (Exception e) {
-                        e.toString();
-                        hd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                    int i = 0;
+                    do {
+                        try {
+                            if (i > 0) {
+                                hd.post(new Runnable() {
+                                    public void run() {
+                                        DialogECB.setMessage(getString(R.string.primeira_sync_clientes));
+                                    }
+                                });
+                                Thread.sleep(500);
                             }
-                        });
-                    }
+                            final int y = i;
+                            switch (i) {
+                                case 1:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 2:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 3:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 4:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 5:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 6:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            if (ConexOk == true) {
+
+                                try {
+                                    if (i == 0) {
+                                        Envio.call("", envelope);
+
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                        RetClientes = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } else {
+                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                                        newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+                                        newsoap.addProperty("aUsuario", nUsuario);
+                                        newsoap.addProperty("aSenha", nSenha);
+                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                        envelope.setOutputSoapObject(soap);
+                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
+                                        newEnvio.call("", newenvelope);
+
+                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                        RetClientes = (String) newenvelope.getResponse();
+                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                    }
+                                } catch (Exception e) {
+                                    e.toString();
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                                cursorVerificaClie.close();
+                            } else {
+                                hd.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error na solicitação" + e);
+                        }
+                        i = i + 1;
+                    } while (RetClientes == null && i <= 6);
                     if (DialogECB.isShowing()) {
                         DialogECB.dismiss();
                     }
-                    cursorVerificaClie.close();
                 } else {
-                    try {
-                        Envio.call("", envelope);
-                    } catch (Exception e) {
-                        e.toString();
-                        hd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                    int i = 0;
+                    hd.post(new Runnable() {
+                        public void run() {
+                            Dialog.setMessage("Por favor aguarde, realizando conexão com o servidor...");
+                        }
+                    });
+                    do {
+                        try {
+                            if (i > 0) {
+                                Thread.sleep(500);
                             }
-                        });
-                    }
+                            final int y = i;
+                            switch (i) {
+                                case 1:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 2:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 3:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 4:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 5:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 6:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            if (ConexOk == true) {
+
+                                try {
+                                    if (i == 0) {
+                                        Envio.call("", envelope);
+
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                        RetClientes = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } else {
+                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                                        newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+                                        newsoap.addProperty("aUsuario", nUsuario);
+                                        newsoap.addProperty("aSenha", nSenha);
+                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                        newenvelope.setOutputSoapObject(newsoap);
+                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
+                                        newEnvio.call("", newenvelope);
+
+                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                        RetClientes = (String) newenvelope.getResponse();
+                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                    }
+                                } catch (Exception e) {
+                                    e.toString();
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+
+                                cursorVerificaClie.close();
+
+                            } else {
+                                hd.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error na solicitação" + e);
+                        }
+                        i = i + 1;
+                    } while (RetClientes == null && i <= 6);
                 }
             } catch (Exception e) {
                 e.toString();
@@ -409,21 +595,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     }
                 });
             }
-            try {
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetClientes = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
 
-            } catch (Exception e) {
-
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
         } else {
             hd.post(new Runnable() {
                 @Override
@@ -431,32 +603,34 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
                 }
             });
+            return;
         }
-        if (RetClientes.equals("0")) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.syn_clients_successfully, Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else if (RetClientes == null) {
+        if (RetClientes == null) {
             hd.post(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
                 }
             });
+            return;
+        } else if (RetClientes.equals("0")) {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Sincronismo.this, R.string.syn_clients_successfully, Toast.LENGTH_SHORT).show();
+                }
+            });
+            return;
+        }
+        JSONObject jsonObj = new JSONObject(RetClientes);
+        JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
+        try {
+            DtUlt = Util.DataHojeComHorasMinSecBR();
+            DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil);
+        } catch (Exception e) {
+            e.toString();
         }
         try {
-            JSONObject jsonObj = new JSONObject(RetClientes);
-            JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
-
-            try {
-                DtUlt = Util.DataHojeComHorasMinSecBR();
-                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil);
-            } catch (Exception e) {
-                e.toString();
-            }
 
             int jumpTime = 0;
             Dialog.setProgress(jumpTime);
@@ -750,14 +924,12 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     }
                 }
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             System.out.println("Sincronismo Clientes, falha no carregamento. Tente novamente");
         }
     }
 
     private void SincronizarProdutos(String nUsuario, String nSenha) {
-
-        DB = new ConfigDB(this).getReadableDatabase();
 
         String METHOD_NAME = "Carregar";
         String TAG_PRODUTOSINFO = "produtos";
@@ -819,36 +991,222 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             DialogECB.show();
                         }
                     });
-                    try {
-                        Envio.call("", envelope);
-
-                    } catch (Exception e) {
-                        e.toString();
-                        hd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                    int i = 0;
+                    do {
+                        try {
+                            if (i > 0) {
+                                hd.post(new Runnable() {
+                                    public void run() {
+                                        DialogECB.setMessage(getString(R.string.primeira_sync_itens));
+                                    }
+                                });
+                                Thread.sleep(500);
                             }
-                        });
-                    }
+                            final int y = i;
+                            switch (i) {
+                                case 1:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 2:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 3:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 4:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 5:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 6:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            if (ConexOk == true) {
+
+                                try {
+                                    if (i == 0) {
+                                        Envio.call("", envelope);
+
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                        RetProdutos = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } else {
+                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                                        newsoap.addProperty("aParam", "D" + DtUltItem);
+                                        newsoap.addProperty("aUsuario", nUsuario);
+                                        newsoap.addProperty("aSenha", nSenha);
+                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                        envelope.setOutputSoapObject(soap);
+                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
+                                        newEnvio.call("", newenvelope);
+
+                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                        RetProdutos = (String) newenvelope.getResponse();
+                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                    }
+                                } catch (Exception e) {
+                                    e.toString();
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                                cursorVerificaProd.close();
+                            } else {
+                                hd.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error na solicitação" + e);
+                        }
+                        i = i + 1;
+                    } while (RetProdutos == null && i <= 6);
                     if (DialogECB.isShowing()) {
                         DialogECB.dismiss();
                     }
-                    cursorVerificaProd.close();
                 } else {
-                    try {
-                        Envio.call("", envelope);
-
-                    } catch (Exception e) {
-                        e.toString();
-                        hd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                    int i = 0;
+                    do {
+                        try {
+                            if (i > 0) {
+                                Thread.sleep(500);
                             }
-                        });
-                    }
+                            final int y = i;
+                            switch (i) {
+                                case 1:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 2:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 3:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 4:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 5:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                                case 6:
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                        }
+                                    });
+                                    break;
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            if (ConexOk == true) {
+
+                                try {
+                                    if (i == 0) {
+                                        Envio.call("", envelope);
+
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                        RetProdutos = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } else {
+                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                                        newsoap.addProperty("aParam", "D" + DtUltItem);
+                                        newsoap.addProperty("aUsuario", nUsuario);
+                                        newsoap.addProperty("aSenha", nSenha);
+                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                        newenvelope.setOutputSoapObject(newsoap);
+                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
+                                        newEnvio.call("", newenvelope);
+
+                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                        RetProdutos = (String) newenvelope.getResponse();
+                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                    }
+                                } catch (Exception e) {
+                                    e.toString();
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+
+                                cursorVerificaProd.close();
+
+                            } else {
+                                hd.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error na solicitação" + e);
+                        }
+                        i = i + 1;
+                    } while (RetProdutos == null && i <= 6);
                 }
+
+
             } catch (Exception e) {
                 e.toString();
                 hd.post(new Runnable() {
@@ -859,20 +1217,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 });
             }
 
-            try {
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetProdutos = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            }
         } else {
             hd.post(new Runnable() {
                 @Override
@@ -881,28 +1225,24 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 }
             });
         }
-        if (RetProdutos.equals("0")) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.syn_clients_successfully, Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else if (RetProdutos == null) {
+        if (RetProdutos == null) {
             hd.post(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+
                 }
             });
-        } else if (RetProdutos.equals("Parâmetro inválido.")) {
+            return;
+        } else if (RetProdutos.equals("0")) {
             hd.post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(Sincronismo.this, "Falha na autenticação. Verifique!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Sincronismo.this, R.string.syn_clients_successfully, Toast.LENGTH_SHORT).show();
+
                 }
             });
-
+            return;
         }
         try {
             JSONObject jsonObj = new JSONObject(RetProdutos);
@@ -1025,11 +1365,590 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         }
     }
 
+    private void SincDescricaoTabelas() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
+        soap.addProperty("aUsuario", usuario);
+        soap.addProperty("aSenha", senha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
+        String RetDescTabelas = null;
+
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (ConexOk == true) {
+
+            int i = 0;
+            do {
+                try {
+                    if (i > 0) {
+                        Thread.sleep(500);
+                    }
+                    final int y = i;
+                    switch (i) {
+                        case 1:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 2:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 3:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 4:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 5:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 6:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (ConexOk == true) {
+                        try {
+                            if (i == 0) {
+                                Envio.call("", envelope);
+
+                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                RetDescTabelas = (String) envelope.getResponse();
+                                System.out.println("Response :" + resultsRequestSOAP.toString());
+                            } else {
+                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
+                                newsoap.addProperty("aUsuario", usuario);
+                                newsoap.addProperty("aSenha", senha);
+                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                newenvelope.setOutputSoapObject(newsoap);
+                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
+                                newEnvio.call("", newenvelope);
+
+                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                RetDescTabelas = (String) newenvelope.getResponse();
+                                System.out.println("Response :" + newresultsRequestSOAP.toString());
+                            }
+                        } catch (Exception e) {
+                            e.toString();
+                            hd.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+
+                    } else {
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error na solicitação" + e);
+                }
+                i = i + 1;
+            } while (RetDescTabelas == null && i <= 6);
+
+
+        } else {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        if (RetDescTabelas == null) {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                }
+            });
+            return;
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetDescTabelas);
+            JSONArray JParamApp = jsonObj.getJSONArray("tabelas");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JParamApp.length();
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
+
+            for (int i = 0; i < JParamApp.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JParamApp.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        Dialog.setProgress(jumpTime);
+                        hd.post(new Runnable() {
+                            public void run() {
+                                Dialog.setMessage(getString(R.string.updating_tables));
+                            }
+                        });
+                        String DescTab1 = c.getString("nometab1");
+                        String DescTab2 = c.getString("nometab2");
+                        String DescTab3 = c.getString("mometab3");
+                        String DescTab4 = c.getString("nometab4");
+                        String DescTab5 = c.getString("nometab5");
+                        String DescTab6 = c.getString("nometabp1");
+                        String DescTab7 = c.getString("nometabp2");
+
+                        Cursor CursorTabela = DB.rawQuery(" SELECT CODPERFIL, DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
+                        CursorTabela.moveToFirst();
+                        if (CursorTabela.getCount() > 0) {
+                            DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
+                                    "', DESCRICAOTAB2 = '" + DescTab2.trim() +
+                                    "', DESCRICAOTAB3 = '" + DescTab3.trim() +
+                                    "', DESCRICAOTAB4 = '" + DescTab4.trim() +
+                                    "', DESCRICAOTAB5 = '" + DescTab5.trim() +
+                                    "', DESCRICAOTAB6 = '" + DescTab6.trim() +
+                                    "', DESCRICAOTAB7 = '" + DescTab7.trim() +
+                                    "'");
+                        } else {
+
+                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,CODPERFIL)" +
+                                    " VALUES(" + "'" + DescTab1.trim() + "','" + DescTab2.trim() + "','" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "', " + idPerfil + " );");
+                        }
+                        CursorTabela.close();
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.toString();
+        }
+    }
+
+    private void SincBloqueios() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
+        soap.addProperty("aUsuario", usuario);
+        soap.addProperty("aSenha", senha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+        String RetBloqueios = null;
+
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (ConexOk == true) {
+
+            int i = 0;
+            do {
+                try {
+                    if (i > 0) {
+                        Thread.sleep(500);
+                    }
+                    final int y = i;
+                    switch (i) {
+                        case 1:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 2:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 3:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 4:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 5:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 6:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (ConexOk == true) {
+
+                        try {
+                            if (i == 0) {
+                                Envio.call("", envelope);
+
+                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                RetBloqueios = (String) envelope.getResponse();
+                                System.out.println("Response :" + resultsRequestSOAP.toString());
+                            } else {
+                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
+                                newsoap.addProperty("aUsuario", usuario);
+                                newsoap.addProperty("aSenha", senha);
+                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                newenvelope.setOutputSoapObject(newsoap);
+                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                                newEnvio.call("", newenvelope);
+
+                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                RetBloqueios = (String) newenvelope.getResponse();
+                                System.out.println("Response :" + newresultsRequestSOAP.toString());
+                            }
+                        } catch (Exception e) {
+                            e.toString();
+                            hd.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+
+                    } else {
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error na solicitação" + e);
+                }
+                i = i + 1;
+            } while (RetBloqueios == null && i <= 6);
+
+
+        } else {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        if (RetBloqueios == null) {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                }
+            });
+            return;
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetBloqueios);
+            JSONArray JBloqueios = jsonObj.getJSONArray("bloqueios");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JBloqueios.length();
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
+
+            for (int i = 0; i < JBloqueios.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JBloqueios.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        Dialog.setProgress(jumpTime);
+                        hd.post(new Runnable() {
+                            public void run() {
+                                Dialog.setMessage(getString(R.string.updating_locks));
+                            }
+                        });
+                        String codblq = c.getString("codblq");
+                        String descricao = c.getString("descricao");
+                        String bloquear = c.getString("bloquear");
+                        String liberar = c.getString("liberar");
+                        String fpavista = c.getString("fpavista");
+
+
+                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq, null);
+                        if (CursorBloqueio.getCount() > 0) {
+                            DB.execSQL(" UPDATE BLOQCLIE SET CODBLOQ = '" + codblq + "', DESCRICAO = '" + descricao + "', BLOQUEAR = '" + bloquear + "'," +
+                                    " LIBERAR = '" + liberar + "', FPAVISTA = '" + fpavista + "'" +
+                                    " WHERE CODBLOQ = " + codblq);
+                        } else {
+                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
+                                    " VALUES(" + codblq + ",'" + descricao + "', '" + bloquear + "','" + liberar + "','" + fpavista + "' );");
+                        }
+                        CursorBloqueio.close();
+
+                    } catch (Exception E) {
+
+                        E.toString();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.toString();
+        }
+    }
+
+    private void SincParametros() {
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
+        soap.addProperty("aUsuario", usuario);
+        soap.addProperty("aSenha", senha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 6000);
+        String RetParamApp = null;
+
+        Boolean ConexOk = Util.checarConexaoCelular(this);
+        if (ConexOk == true) {
+
+            int i = 0;
+            do {
+
+                try {
+                    if (i > 0) {
+                        Thread.sleep(1000);
+                    }
+                    final int y = i;
+                    switch (i) {
+                        case 1:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 2:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 3:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 4:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 5:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                        case 6:
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                }
+                            });
+                            break;
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (ConexOk == true) {
+
+                        try {
+                            if (i == 0) {
+                                Envio.call("", envelope);
+
+                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                RetParamApp = (String) envelope.getResponse();
+                                System.out.println("Response :" + resultsRequestSOAP.toString());
+                            } else {
+                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
+                                newsoap.addProperty("aUsuario", usuario);
+                                newsoap.addProperty("aSenha", senha);
+                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                newenvelope.setOutputSoapObject(newsoap);
+                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                                newEnvio.call("", newenvelope);
+
+                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                RetParamApp = (String) newenvelope.getResponse();
+                                System.out.println("Response :" + newresultsRequestSOAP.toString());
+                            }
+                        } catch (Exception e) {
+                            e.toString();
+                            hd.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+
+                    } else {
+                        hd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error na solicitação" + e);
+                }
+                i = i + 1;
+            } while (RetParamApp == null && i <= 6);
+
+
+        } else {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        if (RetParamApp == null) {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                }
+            });
+            return;
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetParamApp);
+            JSONArray JParamApp = jsonObj.getJSONArray("param_app");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JParamApp.length();
+            Dialog.setMax(totalProgressTime);
+            Dialog.setProgress(jumpTime);
+
+            for (int i = 0; i < JParamApp.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JParamApp.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        Dialog.setProgress(jumpTime);
+
+                        hd.post(new Runnable() {
+                            public void run() {
+                                Dialog.setMessage(getString(R.string.updating_parameters));
+                            }
+                        });
+                        Double PercDescMax = c.getDouble("percdescmaxped");
+                        String habitemnegativo = c.getString("habitemnegativo");
+                        String habcritsitclie = c.getString("habcritsitclie");
+                        String habcritqtditens = c.getString("habcritqtditens");
+
+                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL, PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
+                        CursorParam.moveToFirst();
+                        if (CursorParam.getCount() > 0) {
+                            DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
+                                    "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
+                                    "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
+                                    "', CODPERFIL = '" + idPerfil +
+                                    "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
+                                    "'");
+                        } else {
+
+                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
+                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
+                        }
+                        CursorParam.close();
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (Dialog.isShowing())
+            Dialog.dismiss();
+
+    }
+
     private void SincronizarClientesEnvio() {
 
         String Jcliente = null;
         String METHOD_NAMEENVIO = "Cadastrar";
-        DB = new ConfigDB(this).getReadableDatabase();
 
         try {
             Cursor CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
@@ -1119,39 +2038,113 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
                                 String RetClieEnvio = "0";
 
-
                                 Boolean ConexOk = Util.checarConexaoCelular(this);
                                 if (ConexOk == true) {
-                                    try {
 
-                                        Envio.call("", envelope);
-
-                                    } catch (Exception e) {
-                                        e.toString();
-                                        hd.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                                    int j = 0;
+                                    do {
+                                        try {
+                                            if (j > 0) {
+                                                Thread.sleep(500);
                                             }
-                                        });
-                                    }
-                                    try {
-
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                        RetClieEnvio = (String) envelope.getResponse();
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                        CodClie_ext = RetClieEnvio;
-
-                                    } catch (Exception e) {
-                                        e.toString();
-                                        hd.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Toast.makeText(Sincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                                            final int y = j;
+                                            switch (i) {
+                                                case 1:
+                                                    hd.post(new Runnable() {
+                                                        public void run() {
+                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                        }
+                                                    });
+                                                    break;
+                                                case 2:
+                                                    hd.post(new Runnable() {
+                                                        public void run() {
+                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                        }
+                                                    });
+                                                    break;
+                                                case 3:
+                                                    hd.post(new Runnable() {
+                                                        public void run() {
+                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                        }
+                                                    });
+                                                    break;
+                                                case 4:
+                                                    hd.post(new Runnable() {
+                                                        public void run() {
+                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                        }
+                                                    });
+                                                    break;
+                                                case 5:
+                                                    hd.post(new Runnable() {
+                                                        public void run() {
+                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                        }
+                                                    });
+                                                    break;
+                                                case 6:
+                                                    hd.post(new Runnable() {
+                                                        public void run() {
+                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                        }
+                                                    });
+                                                    break;
                                             }
-                                        });
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        try {
+                                            if (ConexOk == true) {
 
-                                    }
+                                                try {
+                                                    if (j == 0) {
+                                                        Envio.call("", envelope);
+
+                                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                                        RetClieEnvio = (String) envelope.getResponse();
+                                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                                    } else {
+                                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                                                        newsoap.addProperty("aJson", Jcliente);
+                                                        newsoap.addProperty("aUsuario", usuario);
+                                                        newsoap.addProperty("aSenha", senha);
+                                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                                        newenvelope.setOutputSoapObject(newsoap);
+                                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
+                                                        newEnvio.call("", newenvelope);
+
+                                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                                        RetClieEnvio = (String) newenvelope.getResponse();
+                                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                                    }
+                                                } catch (Exception e) {
+                                                    e.toString();
+                                                    hd.post(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+
+                                                }
+
+                                            } else {
+                                                hd.post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+
+                                            }
+                                        } catch (Exception e) {
+                                            System.out.println("Error na solicitação" + e);
+                                        }
+                                        j = j + 1;
+                                    } while (RetClieEnvio == null && j <= 6);
+
 
                                 } else {
                                     hd.post(new Runnable() {
@@ -1160,6 +2153,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                             Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
                                         }
                                     });
+                                }
+                                if (RetClieEnvio == null) {
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                    return;
                                 }
                             } catch (Exception E) {
                                 E.toString();
@@ -1206,7 +2208,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
         String JPedidos = null;
         String METHOD_NAMEENVIO = "CadastrarPedidos";
-        DB = new ConfigDB(this).getReadableDatabase();
         Cursor CursorPedido;
         String RetClieEnvio = null;
         try {
@@ -1320,34 +2321,113 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                             Boolean ConexOk = Util.checarConexaoCelular(this);
                             if (ConexOk == true) {
-                                try {
 
-                                    Envio.call("", envelope);
+                                int j = 0;
+                                do {
 
-                                } catch (Exception e) {
-                                    e.toString();
-                                    hd.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                                    try {
+                                        if (j > 0) {
+                                            Thread.sleep(500);
                                         }
-                                    });
-                                }
-                                try {
-
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                    RetClieEnvio = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-
-                                } catch (Exception e) {
-                                    e.toString();
-                                    hd.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Sincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
+                                        final int y = j;
+                                        switch (i) {
+                                            case 1:
+                                                hd.post(new Runnable() {
+                                                    public void run() {
+                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                    }
+                                                });
+                                                break;
+                                            case 2:
+                                                hd.post(new Runnable() {
+                                                    public void run() {
+                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                    }
+                                                });
+                                                break;
+                                            case 3:
+                                                hd.post(new Runnable() {
+                                                    public void run() {
+                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                    }
+                                                });
+                                                break;
+                                            case 4:
+                                                hd.post(new Runnable() {
+                                                    public void run() {
+                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                    }
+                                                });
+                                                break;
+                                            case 5:
+                                                hd.post(new Runnable() {
+                                                    public void run() {
+                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                    }
+                                                });
+                                                break;
+                                            case 6:
+                                                hd.post(new Runnable() {
+                                                    public void run() {
+                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                                    }
+                                                });
+                                                break;
                                         }
-                                    });
-                                }
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    try {
+                                        if (ConexOk == true) {
+
+                                            try {
+                                                if (j == 0) {
+                                                    Envio.call("", envelope);
+
+                                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                                    RetClieEnvio = (String) envelope.getResponse();
+                                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                                                } else {
+                                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                                                    newsoap.addProperty("aJson", JPedidos);
+                                                    newsoap.addProperty("aUsuario", usuario);
+                                                    newsoap.addProperty("aSenha", senha);
+                                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                                    newenvelope.setOutputSoapObject(newsoap);
+                                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
+                                                    newEnvio.call("", newenvelope);
+
+                                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                                    RetClieEnvio = (String) newenvelope.getResponse();
+                                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                                }
+                                            } catch (Exception e) {
+                                                e.toString();
+                                                hd.post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+
+                                            }
+
+                                        } else {
+                                            hd.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+
+                                        }
+                                    } catch (Exception e) {
+                                        System.out.println("Error na solicitação" + e);
+                                    }
+                                    j = j + 1;
+                                } while (RetClieEnvio == null && j <= 6);
+
+
                             } else {
                                 hd.post(new Runnable() {
                                     @Override
@@ -1356,9 +2436,17 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                 });
                             }
+                            if (RetClieEnvio == null) {
+                                hd.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                return;
+                            }
 
                             try {
-                                DB = new ConfigDB(this).getReadableDatabase();
                                 Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
                                 if (CursPedAtu.getCount() > 0) {
                                     CursPedAtu.moveToFirst();
@@ -1366,7 +2454,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 }
                                 CursPedAtu.close();
                             } catch (Exception E) {
-                                Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, E.toString(), Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception E) {
                             E.toString();
@@ -1396,334 +2484,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
-    }
-
-    private void SincDescricaoTabelas() {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
-        soap.addProperty("aUsuario", usuario);
-        soap.addProperty("aSenha", senha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
-        String RetDescTabelas = null;
-
-
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (ConexOk == true) {
-            try {
-
-                Envio.call("", envelope);
-
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-            try {
-
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetDescTabelas = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        } else {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetDescTabelas);
-            JSONArray JParamApp = jsonObj.getJSONArray("tabelas");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JParamApp.length();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            DB = new ConfigDB(this).getReadableDatabase();
-
-            for (int i = 0; i < JParamApp.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JParamApp.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-                        hd.post(new Runnable() {
-                            public void run() {
-                                Dialog.setMessage(getString(R.string.updating_tables));
-                            }
-                        });
-                        String DescTab1 = c.getString("nometab1");
-                        String DescTab2 = c.getString("nometab2");
-                        String DescTab3 = c.getString("mometab3");
-                        String DescTab4 = c.getString("nometab4");
-                        String DescTab5 = c.getString("nometab5");
-                        String DescTab6 = c.getString("nometabp1");
-                        String DescTab7 = c.getString("nometabp2");
-
-                        Cursor CursorTabela = DB.rawQuery(" SELECT CODPERFIL, DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
-                        CursorTabela.moveToFirst();
-                        if (CursorTabela.getCount() > 0) {
-                            DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
-                                    "', DESCRICAOTAB2 = '" + DescTab2.trim() +
-                                    "', DESCRICAOTAB3 = '" + DescTab3.trim() +
-                                    "', DESCRICAOTAB4 = '" + DescTab4.trim() +
-                                    "', DESCRICAOTAB5 = '" + DescTab5.trim() +
-                                    "', DESCRICAOTAB6 = '" + DescTab6.trim() +
-                                    "', DESCRICAOTAB7 = '" + DescTab7.trim() +
-                                    "'");
-                        } else {
-
-                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,CODPERFIL)" +
-                                    " VALUES(" + "'" + DescTab1.trim() + "','" + DescTab2.trim() + "','" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "', " + idPerfil + " );");
-                        }
-                        CursorTabela.close();
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-        }
-    }
-
-    private void SincBloqueios() {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
-        soap.addProperty("aUsuario", usuario);
-        soap.addProperty("aSenha", senha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-        String RetBloqueios = null;
-
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (ConexOk == true) {
-            try {
-
-                Envio.call("", envelope);
-
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-            try {
-
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetBloqueios = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        } else {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetBloqueios);
-            JSONArray JBloqueios = jsonObj.getJSONArray("bloqueios");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JBloqueios.length();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            DB = new ConfigDB(this).getReadableDatabase();
-
-            for (int i = 0; i < JBloqueios.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JBloqueios.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-                        hd.post(new Runnable() {
-                            public void run() {
-                                Dialog.setMessage(getString(R.string.updating_locks));
-                            }
-                        });
-                        String codblq = c.getString("codblq");
-                        String descricao = c.getString("descricao");
-                        String bloquear = c.getString("bloquear");
-                        String liberar = c.getString("liberar");
-                        String fpavista = c.getString("fpavista");
-
-
-                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq, null);
-                        if (CursorBloqueio.getCount() > 0) {
-                            DB.execSQL(" UPDATE BLOQCLIE SET CODBLOQ = '" + codblq + "', DESCRICAO = '" + descricao + "', BLOQUEAR = '" + bloquear + "'," +
-                                    " LIBERAR = '" + liberar + "', FPAVISTA = '" + fpavista + "'" +
-                                    " WHERE CODBLOQ = " + codblq);
-                        } else {
-                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
-                                    " VALUES(" + codblq + ",'" + descricao + "', '" + bloquear + "','" + liberar + "','" + fpavista + "' );");
-                        }
-                        CursorBloqueio.close();
-
-                    } catch (Exception E) {
-
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-        }
-    }
-
-    private void SincParametros() {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
-        soap.addProperty("aUsuario", usuario);
-        soap.addProperty("aSenha", senha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 6000);
-        String RetParamApp = null;
-
-
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (ConexOk == true) {
-            try {
-
-                Envio.call("", envelope);
-
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-            try {
-
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetParamApp = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-        } else {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetParamApp);
-            JSONArray JParamApp = jsonObj.getJSONArray("param_app");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JParamApp.length();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            DB = new ConfigDB(this).getReadableDatabase();
-
-            for (int i = 0; i < JParamApp.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JParamApp.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-
-                        hd.post(new Runnable() {
-                            public void run() {
-                                Dialog.setMessage(getString(R.string.updating_parameters));
-                            }
-                        });
-                        Double PercDescMax = c.getDouble("percdescmaxped");
-                        String habitemnegativo = c.getString("habitemnegativo");
-                        String habcritsitclie = c.getString("habcritsitclie");
-                        String habcritqtditens = c.getString("habcritqtditens");
-
-                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL, PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
-                        CursorParam.moveToFirst();
-                        if (CursorParam.getCount() > 0) {
-                            DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
-                                    "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
-                                    "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
-                                    "', CODPERFIL = '" + idPerfil +
-                                    "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
-                                    "'");
-                        } else {
-
-                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
-                        }
-                        CursorParam.close();
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (Dialog.isShowing())
-            Dialog.dismiss();
-
     }
 
     @Override
@@ -1955,29 +2715,49 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     envelope.setOutputSoapObject(soap);
                                     HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
 
-                                    try {
-                                        Boolean ConexOk = Util.checarConexaoCelular(ctxPedEnv);
-                                        if (ConexOk == true) {
-                                            Envio.call("", envelope);
-                                        } else {
-                                            sincpedenviostatic = ctxPedEnv.getString(R.string.no_connection);
-                                            return sincpedenviostatic;
+                                    int j = 0;
+                                    do {
+                                        try {
+                                            if (j > 0) {
+                                                Thread.sleep(1000);
+                                            }
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
                                         }
-                                    } catch (Exception e) {
-                                        e.toString();
-                                        sincpedenviostatic = ctxPedEnv.getString(R.string.failure_communicate);
-                                        return sincpedenviostatic;
+                                        try {
+                                            Boolean ConexOk = Util.checarConexaoCelular(ctxPedEnv);
+                                            if (ConexOk == true) {
+                                                if (j == 0) {
+                                                    Envio.call("", envelope);
 
-                                    }
-                                    try {
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                        RetClieEnvio = (String) envelope.getResponse();
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    } catch (Exception e) {
-                                        e.toString();
-                                        sincpedenviostatic = ctxPedEnv.getString(R.string.failed_return);
-                                        return sincpedenviostatic;
-                                    }
+                                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                                    RetClieEnvio = (String) envelope.getResponse();
+                                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                                                } else {
+                                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                                                    newsoap.addProperty("aJson", JPedidos);
+                                                    newsoap.addProperty("aUsuario", sUsuario);
+                                                    newsoap.addProperty("aSenha", sSenha);
+                                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                                    newenvelope.setOutputSoapObject(newsoap);
+                                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
+
+                                                    newEnvio.call("", newenvelope);
+
+                                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                                    RetClieEnvio = (String) envelope.getResponse();
+                                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                                }
+                                            } else {
+                                                sincpedenviostatic = ctxPedEnv.getString(R.string.no_connection);
+                                                return sincpedenviostatic;
+                                            }
+                                        } catch (Exception e) {
+                                            e.toString();
+                                            sincpedenviostatic = ctxPedEnv.getString(R.string.failure_communicate);
+
+                                        }
+                                    } while (RetClieEnvio == null && j <= 20);
                                     try {
                                         DB = new ConfigDB(ctxPedEnv).getReadableDatabase();
                                         Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "' AND CODPERFIL = " + idPerfil, null);
@@ -2125,34 +2905,52 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 envelope.setOutputSoapObject(soap);
                                 HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
 
-                                try {
-                                    Boolean ConexOk = Util.checarConexaoCelular(ctxPedEnv);
-                                    if (ConexOk == true) {
-                                        Envio.call("", envelope);
-                                    } else {
-                                        sincpedenviostatic = ctxPedEnv.getString(R.string.no_connection);
+                                int j = 0;
+                                do {
+                                    try {
+                                        if (j > 0) {
+                                            Thread.sleep(1000);
+                                        }
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    try {
+                                        Boolean ConexOk = Util.checarConexaoCelular(ctxPedEnv);
+                                        if (ConexOk == true) {
+                                            if (j == 0) {
+                                                Envio.call("", envelope);
+
+                                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                                RetClieEnvio = (String) envelope.getResponse();
+                                                System.out.println("Response :" + resultsRequestSOAP.toString());
+                                            } else {
+                                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                                                newsoap.addProperty("aJson", JPedidos);
+                                                newsoap.addProperty("aUsuario", usuario);
+                                                newsoap.addProperty("aSenha", senha);
+                                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                                newenvelope.setOutputSoapObject(newsoap);
+                                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
+
+                                                newEnvio.call("", newenvelope);
+
+                                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                                RetClieEnvio = (String) newenvelope.getResponse();
+                                                System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                            }
+                                        } else {
+                                            sincpedenviostatic = ctxPedEnv.getString(R.string.no_connection);
+                                            return sincpedenviostatic;
+                                        }
+                                    } catch (Exception e) {
+                                        e.toString();
+                                        sincpedenviostatic = ctxPedEnv.getString(R.string.failure_communicate);
                                         return sincpedenviostatic;
                                     }
-                                } catch (Exception e) {
-                                    e.toString();
-                                    sincpedenviostatic = ctxPedEnv.getString(R.string.failure_communicate);
-                                    return sincpedenviostatic;
-                                }
-                                try {
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                    RetClieEnvio = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                } catch (Exception e) {
-                                    e.toString();
-                                    sincpedenviostatic = ctxPedEnv.getString(R.string.failed_return);
-                                    return sincpedenviostatic;
-
-                                }
+                                } while (RetClieEnvio == null && j <= 20);
 
                             } catch (Exception E) {
                                 System.out.println("Error montar envio pedido" + E);
-
-
                             }
                             while (jumpTime < totalProgressTime);
                         }
@@ -2171,8 +2969,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             Toast.makeText(ctxPedEnv, E.toString(), Toast.LENGTH_SHORT).show();
                         }
                         JPedidos = "";
-                    }
-                    while (CursorPedido.moveToNext());
+                    } while (CursorPedido.moveToNext());
                     CursorPedido.close();
                 } else {
                     sincpedenviostatic = "Nenhum pedido a ser enviado.";
@@ -2914,33 +3711,54 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         soap.addProperty("aSenha", sSenha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 60000);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 10000);
         String RetEmpresa = null;
 
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-            } else {
-                sincempresastatic = ctxEnv.getString(R.string.no_connection);
-                return sincempresastatic;
+        int j = 0;
+        do {
+            try {
+                if (j > 0) {
+                    Thread.sleep(500);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            try {
+                Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+                if (ConexOk == true) {
+                    if (j == 0) {
 
-        } catch (Exception e) {
-            e.toString();
-            sincempresastatic = ctxEnv.getString(R.string.failure_communicate);
-            return sincempresastatic;
-        }
+                        Envio.call("", envelope);
 
-        try {
-            SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-            RetEmpresa = (String) envelope.getResponse();
-            System.out.println("Response :" + resultsRequestSOAP.toString());
-        } catch (Exception e) {
-            e.toString();
-            sincempresastatic = ctxEnv.getString(R.string.failed_return);
-            return sincempresastatic;
-        }
+                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                        RetEmpresa = (String) envelope.getResponse();
+                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                    } else {
+                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaEmpresas");
+                        newsoap.addProperty("aUsuario", sUsuario);
+                        newsoap.addProperty("aSenha", sSenha);
+                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                        newenvelope.setOutputSoapObject(newsoap);
+                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 60000);
+
+                        newEnvio.call("", newenvelope);
+
+                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                        RetEmpresa = (String) envelope.getResponse();
+                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                    }
+
+                } else {
+                    sincempresastatic = ctxEnv.getString(R.string.no_connection);
+                }
+
+            } catch (Exception e) {
+                e.toString();
+                sincempresastatic = ctxEnv.getString(R.string.failure_communicate);
+            }
+            j = j + 1;
+        } while (RetEmpresa == null && j <= 6);
+
         try {
             JSONObject jsonObj = new JSONObject(RetEmpresa);
             JSONArray JEmpresas = jsonObj.getJSONArray("empresas");
@@ -3037,15 +3855,62 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         soap.addProperty("aSenha", sSenha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 6000);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 10000);
         String RetParamApp = null;
 
         try {
             Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
             if (ConexOk == true) {
-                Envio.call("", envelope);
+
+                int i = 0;
+                do {
+
+                    try {
+                        if (i > 0) {
+                            Thread.sleep(500);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        if (ConexOk == true) {
+
+                            try {
+                                if (i == 0) {
+                                    Envio.call("", envelope);
+
+                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                    RetParamApp = (String) envelope.getResponse();
+                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                                } else {
+                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
+                                    newsoap.addProperty("aUsuario", usuario);
+                                    newsoap.addProperty("aSenha", senha);
+                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                    newenvelope.setOutputSoapObject(newsoap);
+                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                                    newEnvio.call("", newenvelope);
+
+                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                    RetParamApp = (String) newenvelope.getResponse();
+                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                }
+                            } catch (Exception e) {
+                                e.toString();
+                                sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+                    i = i + 1;
+                } while (RetParamApp == null && i <= 6);
             } else {
                 sincparaetrosstatic = ctxEnv.getString(R.string.no_connection);
+                return sincparaetrosstatic;
+            }
+            if (RetParamApp == null) {
+                sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
                 return sincparaetrosstatic;
             }
         } catch (Exception e) {
@@ -3110,7 +3975,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincparaetrosstatic;
     }
 
-    public static String SincDescricaoTabelasStatic(String sUsuario, String sSenha, Context ctxEnv) {
+    public static String SincDescricaoTabelasStatic(String sUsuario, String sSenha, Context
+            ctxEnv) {
         SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         int idPerfil = prefs.getInt("idperfil", 0);
@@ -3127,30 +3993,67 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         soap.addProperty("aSenha", sSenha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 10000);
         String RetDescTabelas = null;
 
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-            } else {
-                sinctabelasstatic = ctxEnv.getString(R.string.no_connection);
-                return sinctabelasstatic;
-            }
-        } catch (Exception e) {
-            e.toString();
+        Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+        if (ConexOk == true) {
+
+            int i = 0;
+            do {
+
+                try {
+                    if (i > 0) {
+                        Thread.sleep(500);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (ConexOk == true) {
+
+                        try {
+                            if (i == 0) {
+                                Envio.call("", envelope);
+
+                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                RetDescTabelas = (String) envelope.getResponse();
+                                System.out.println("Response :" + resultsRequestSOAP.toString());
+                            } else {
+                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
+                                newsoap.addProperty("aUsuario", usuario);
+                                newsoap.addProperty("aSenha", senha);
+                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                newenvelope.setOutputSoapObject(newsoap);
+                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
+                                newEnvio.call("", newenvelope);
+
+                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                RetDescTabelas = (String) newenvelope.getResponse();
+                                System.out.println("Response :" + newresultsRequestSOAP.toString());
+                            }
+                        } catch (Exception e) {
+                            e.toString();
+                            sinctabelasstatic = ctxEnv.getString(R.string.failure_communicate);
+                        }
+                    } else {
+                        sinctabelasstatic = ctxEnv.getString(R.string.no_connection);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error na solicitação" + e);
+                }
+                i = i + 1;
+            } while (RetDescTabelas == null && i <= 6);
+
+        } else {
+            sinctabelasstatic = ctxEnv.getString(R.string.no_connection);
+            return sinctabelasstatic;
+        }
+        if (RetDescTabelas == null) {
             sinctabelasstatic = ctxEnv.getString(R.string.failure_communicate);
             return sinctabelasstatic;
         }
-        try {
-            SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-            RetDescTabelas = (String) envelope.getResponse();
-            System.out.println("Response :" + resultsRequestSOAP.toString());
-        } catch (Exception e) {
-            e.toString();
-            sinctabelasstatic = ctxEnv.getString(R.string.failed_return);
-        }
+
         try {
             JSONObject jsonObj = new JSONObject(RetDescTabelas);
             JSONArray JParamApp = jsonObj.getJSONArray("tabelas");
@@ -3218,29 +4121,69 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         soap.addProperty("aSenha", sSenha);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 10000);
         String RetBloqueios = null;
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk == true) {
-                Envio.call("", envelope);
-            } else {
-                sincbloqstatic = ctxEnv.getString(R.string.no_connection);
-                return sincbloqstatic;
-            }
-        } catch (Exception e) {
-            e.toString();
-            sincbloqstatic = ctxEnv.getString(R.string.failure_communicate);
-        }
-        try {
-            SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-            RetBloqueios = (String) envelope.getResponse();
-            System.out.println("Response :" + resultsRequestSOAP.toString());
-        } catch (Exception e) {
-            e.toString();
-            sincbloqstatic = ctxEnv.getString(R.string.failed_return);
+
+        Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+        if (ConexOk == true) {
+
+            int i = 0;
+            do {
+
+                try {
+                    if (i > 0) {
+                        Thread.sleep(500);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (ConexOk == true) {
+
+                        try {
+                            if (i == 0) {
+                                Envio.call("", envelope);
+
+                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                RetBloqueios = (String) envelope.getResponse();
+                                System.out.println("Response :" + resultsRequestSOAP.toString());
+                            } else {
+                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
+                                newsoap.addProperty("aUsuario", usuario);
+                                newsoap.addProperty("aSenha", senha);
+                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                newenvelope.setOutputSoapObject(newsoap);
+                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                                newEnvio.call("", newenvelope);
+
+                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                RetBloqueios = (String) newenvelope.getResponse();
+                                System.out.println("Response :" + newresultsRequestSOAP.toString());
+                            }
+                        } catch (Exception e) {
+                            e.toString();
+                            sincbloqstatic = ctxEnv.getString(R.string.failure_communicate);
+                        }
+
+                    } else {
+                        sincbloqstatic = ctxEnv.getString(R.string.no_connection);
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error na solicitação" + e);
+                }
+                i = i + 1;
+            } while (RetBloqueios == null && i <= 6);
+
+
+        } else {
+            sincbloqstatic = ctxEnv.getString(R.string.no_connection);
             return sincbloqstatic;
         }
+        if (RetBloqueios == null) {
+            sincbloqstatic = ctxEnv.getString(R.string.failure_communicate);
+            return sincbloqstatic;
+        }
+
         try {
             JSONObject jsonObj = new JSONObject(RetBloqueios);
             JSONArray JBloqueios = jsonObj.getJSONArray("bloqueios");
@@ -3302,7 +4245,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         senha = prefs.getString("senha", null);
 
         String sincclieenvstatic = null;
-
         String Jcliente = null;
         String METHOD_NAMEENVIO = "Cadastrar";
         DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
@@ -3410,24 +4352,61 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 envelope.setOutputSoapObject(soap);
                                 HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
 
-                                try {
-                                    Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
-                                    if (ConexOk == true) {
-                                        Envio.call("", envelope);
-
-                                    } else {
-                                        sincclieenvstatic = ctxEnvClie.getString(R.string.no_connection);
-                                        return sincclieenvstatic;
+                                int j = 0;
+                                do {
+                                    try {
+                                        if (j > 0) {
+                                            Thread.sleep(1000);
+                                        }
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (Exception e) {
-                                    e.toString();
+                                    try {
+                                        Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
+                                        if (ConexOk == true) {
+                                            if (j == 0) {
+                                                Envio.call("", envelope);
+
+                                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                                RetClieEnvio = (String) envelope.getResponse();
+                                                System.out.println("Response :" + resultsRequestSOAP.toString());
+                                            } else {
+                                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
+                                                if (senha != null) {
+                                                    newsoap.addProperty("aJson", Jcliente);
+                                                    newsoap.addProperty("aUsuario", usuario);
+                                                    newsoap.addProperty("aSenha", senha);
+                                                } else {
+                                                    newsoap.addProperty("aJson", Jcliente);
+                                                    newsoap.addProperty("aUsuario", user);
+                                                    newsoap.addProperty("aSenha", pass);
+                                                }
+                                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                                newenvelope.setOutputSoapObject(newsoap);
+                                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
+
+                                                newEnvio.call("", newenvelope);
+
+                                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                                RetClieEnvio = (String) envelope.getResponse();
+                                                System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                            }
+
+                                        } else {
+                                            sincclieenvstatic = ctxEnvClie.getString(R.string.no_connection);
+                                            return sincclieenvstatic;
+                                        }
+                                    } catch (Exception e) {
+                                        e.toString();
+                                        sincclieenvstatic = ctxEnvClie.getString(R.string.failure_communicate);
+                                    }
+                                } while (RetClieEnvio == null && j <= 20);
+                                if (RetClieEnvio == null) {
                                     sincclieenvstatic = ctxEnvClie.getString(R.string.failure_communicate);
                                     return sincclieenvstatic;
                                 }
                                 try {
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                    RetClieEnvio = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+
                                 } catch (Exception e) {
                                     sincclieenvstatic = ctxEnvClie.getString(R.string.failed_return);
                                     return sincclieenvstatic;
@@ -3468,7 +4447,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincclieenvstatic;
     }
 
-    public static String SincronizarProdutosStatic(Context ctxSincProd, String user, String pass, int codItem) {
+    public static String SincronizarProdutosStatic(Context ctxSincProd, String user, String
+            pass, int codItem) {
         SharedPreferences prefsHost = ctxSincProd.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -3545,42 +4525,80 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
         String RetProdutos = null;
 
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxSincProd);
-            if (ConexOk == true) {
-                try {
-                    Envio.call("", envelope);
-                } catch (Exception e) {
-                    e.toString();
-                    sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
-                    return sincprodstatic;
-                }
-                try {
-                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                    RetProdutos = (String) envelope.getResponse();
-                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                } catch (Exception e) {
-                    e.toString();
-                    sincprodstatic = ctxSincProd.getString(R.string.failed_return);
-                    return sincprodstatic;
+        int i = 0;
+        do {
 
+            try {
+                if (i > 0) {
+                    Thread.sleep(1000);
                 }
-            } else {
-                sincprodstatic = ctxSincProd.getString(R.string.no_connection);
-                return sincprodstatic;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            if (RetProdutos.equals("0")) {
-                sincprodstatic = ctxSincProd.getString(R.string.sync_products_successfully);
-                return sincprodstatic;
-            } else if (RetProdutos == null) {
-                sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
-                return sincprodstatic;
-            } else if (RetProdutos.equals("Parâmetro inválido.")) {
-                sincprodstatic = "Falha na autenticação. Verifique!";
-                return sincprodstatic;
+            try {
+                Boolean ConexOk = Util.checarConexaoCelular(ctxSincProd);
+                if (ConexOk == true) {
+
+                    try {
+                        if (i == 0) {
+                            Envio.call("", envelope);
+
+                            SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                            RetProdutos = (String) envelope.getResponse();
+                            System.out.println("Response :" + resultsRequestSOAP.toString());
+                        } else {
+                            SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                            if (senha != null) {
+                                if (codItem == 0) {
+                                    newsoap.addProperty("aParam", "D" + DtUltItem);
+                                    newsoap.addProperty("aUsuario", usuario);
+                                    newsoap.addProperty("aSenha", senha);
+                                } else {
+                                    newsoap.addProperty("aParam", "I" + codItem);
+                                    newsoap.addProperty("aUsuario", usuario);
+                                    newsoap.addProperty("aSenha", senha);
+                                }
+                            } else {
+                                if (codItem == 0) {
+                                    newsoap.addProperty("aParam", "D" + DtUltItem);
+                                    newsoap.addProperty("aUsuario", user);
+                                    newsoap.addProperty("aSenha", pass);
+                                } else {
+                                    newsoap.addProperty("aParam", "I" + codItem);
+                                    newsoap.addProperty("aUsuario", user);
+                                    newsoap.addProperty("aSenha", pass);
+                                }
+                            }
+                            SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                            newenvelope.setOutputSoapObject(newsoap);
+                            HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
+                            newEnvio.call("", newenvelope);
+
+                            SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                            RetProdutos = (String) newenvelope.getResponse();
+                            System.out.println("Response :" + newresultsRequestSOAP.toString());
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                        sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
+                        return sincprodstatic;
+                    }
+                } else {
+                    sincprodstatic = ctxSincProd.getString(R.string.no_connection);
+                    return sincprodstatic;
+                }
+            } catch (Exception e) {
+                System.out.println("Error na solicitação" + e);
             }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
+            i = i + 1;
+        } while (RetProdutos == null && i <= 20);
+
+        if (RetProdutos.equals("0")) {
+            sincprodstatic = ctxSincProd.getString(R.string.sync_products_successfully);
+            return sincprodstatic;
+        } else if (RetProdutos == null) {
+            sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
+            return sincprodstatic;
         }
         try {
             JSONObject jsonObj = new JSONObject(RetProdutos);
@@ -3598,7 +4616,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             int jumpTime = 0;
 
             final int totalProgressTime = ProdItens.length();
-            for (int i = 0; i < ProdItens.length(); i++) {
+            for (int k = 0; k < ProdItens.length(); k++) {
                 while (jumpTime < totalProgressTime) {
                     try {
                         JSONObject CItens = ProdItens.getJSONObject(jumpTime);
@@ -3707,7 +4725,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincprodstatic;
     }
 
-    public static String SincronizarClientesStatic(String sCodVend, Context ctxEnvClie, String user, String pass, int Codclie) {
+    public static String SincronizarClientesStatic(String sCodVend, Context
+            ctxEnvClie, String
+                                                           user, String pass, int Codclie) {
         SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -3785,25 +4805,80 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
         String RetClientes = null;
 
-
         Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
         if (ConexOk == true) {
             try {
-                Envio.call("", envelope);
+                int i = 0;
+                do {
+
+                    try {
+                        if (i > 0) {
+                            Thread.sleep(1000);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        if (ConexOk == true) {
+
+                            try {
+                                if (i == 0) {
+                                    Envio.call("", envelope);
+
+                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                    RetClientes = (String) envelope.getResponse();
+                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                                } else {
+                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                                    if (senha != null) {
+                                        if (Codclie == 0) {
+                                            newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+                                            newsoap.addProperty("aUsuario", usuario);
+                                            newsoap.addProperty("aSenha", senha);
+                                        } else {
+                                            newsoap.addProperty("aParam", "C" + Codclie);
+                                            newsoap.addProperty("aUsuario", usuario);
+                                            newsoap.addProperty("aSenha", senha);
+                                        }
+                                    } else {
+                                        if (Codclie == 0) {
+                                            newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+                                            newsoap.addProperty("aUsuario", user);
+                                            newsoap.addProperty("aSenha", pass);
+                                        } else {
+                                            newsoap.addProperty("aParam", "C" + Codclie);
+                                            newsoap.addProperty("aUsuario", user);
+                                            newsoap.addProperty("aSenha", pass);
+                                        }
+                                    }
+                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                    newenvelope.setOutputSoapObject(newsoap);
+                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
+                                    newEnvio.call("", newenvelope);
+
+                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                    RetClientes = (String) newenvelope.getResponse();
+                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                }
+                            } catch (Exception e) {
+                                e.toString();
+                                sinccliestatic = ctxEnvClie.getString(R.string.failure_communicate);
+                            }
+
+                        } else {
+                            Toast.makeText(ctxEnvClie, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error na solicitação" + e);
+                    }
+                    i = i + 1;
+                } while (RetClientes == null && i <= 20);
+
             } catch (Exception e) {
                 e.toString();
-                sinccliestatic = ctxEnvClie.getString(R.string.failure_communicate);
-                return sinccliestatic;
+                Toast.makeText(ctxEnvClie, R.string.failure_communicate, Toast.LENGTH_LONG).show();
             }
-            try {
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetClientes = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            } catch (Exception e) {
-                e.toString();
-                sinccliestatic = ctxEnvClie.getString(R.string.failed_return);
-                return sinccliestatic;
-            }
+
         } else {
             sinccliestatic = ctxEnvClie.getString(R.string.no_connection);
             return sinccliestatic;
@@ -3816,10 +4891,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             return sinccliestatic;
         }
         try {
-            //String SHA1Ret = RetClientes.substring(0, 40);
-            //String ArrayClientes = RetClientes.substring(40, (RetClientes.length()));
-
-
             JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
 
@@ -4079,13 +5150,18 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     }
                 }
             }
-        } catch (JSONException e) {
+        } catch (
+                JSONException e)
+
+        {
             e.toString();
         }
         return sinccliestatic;
     }
 
-    public static String SituacaodoClientexPed(String vltotalped, Context ctxEnvClie, String user, String pass, int CodClie) {
+    public static String SituacaodoClientexPed(String vltotalped, Context
+            ctxEnvClie, String
+                                                       user, String pass, int CodClie) {
 
         String situacao = null;
 
@@ -4411,7 +5487,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         cb.endText();
     }
 
-    private static void createContent(PdfContentByte cb, float x, float y, String text, int align) {
+    private static void createContent(PdfContentByte cb, float x, float y, String text,
+                                      int align) {
 
         cb.beginText();
         cb.setFontAndSize(bf, 8);
@@ -4420,7 +5497,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     }
 
-    private static void createTotal(PdfContentByte cb, float x, float y, String text, int align) {
+    private static void createTotal(PdfContentByte cb, float x, float y, String text,
+                                    int align) {
         cb.beginText();
         cb.setFontAndSize(bfBold, 14);
         cb.showTextAligned(align, text.trim(), x, y, 0);
@@ -4460,8 +5538,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Sincronismo Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
+                .setName("Sincronismo Page")
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)

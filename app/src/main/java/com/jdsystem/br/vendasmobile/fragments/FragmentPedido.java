@@ -286,6 +286,8 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                         ((ConsultaPedidos) getActivity()).finish();
                                         startActivityForResult(VendaProd, 1);
+                                    }else {
+                                        Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser alterado, o mesmo já foi transmitido. Verifique!", Util.PADRAO);
                                     }
                                 }
                                 dialog.cancel();

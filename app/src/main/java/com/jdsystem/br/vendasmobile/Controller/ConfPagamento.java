@@ -1,13 +1,17 @@
 package com.jdsystem.br.vendasmobile.Controller;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -77,6 +81,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         setContentView(R.layout.conf_pagamento);
 
         declaraObjetosListeners();
+        //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
 
         INTENT_SOBTOTAL_VENDA = getIntent();
         SUBTOTAL_VENDA = INTENT_SOBTOTAL_VENDA.getDoubleExtra("SUBTOTAL_VENDA", 0);
@@ -274,6 +280,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
             if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_avista))) {
 
+
                 conf_txvlabelparcelas.setVisibility(View.GONE);
                 conf_txtqtdparcelas.setVisibility(View.GONE);
                 conf_valorparcela.setVisibility(View.GONE);
@@ -315,6 +322,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 }
 
 
+            }
+            if(TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))){
+                InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(conf_txtqtdparcelas, InputMethodManager.SHOW_IMPLICIT);
+            }else {
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(conf_txtqtdparcelas.getWindowToken(), 0);
             }
 
     }

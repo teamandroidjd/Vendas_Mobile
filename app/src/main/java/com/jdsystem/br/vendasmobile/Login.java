@@ -17,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -66,7 +67,7 @@ public class Login extends AppCompatActivity implements Runnable {
     private Handler handler = new Handler();
     public String Retorno = "0";
     public SharedPreferences prefs;
-    public String usuario, senha, URLPrincipal, sCodVend, UFVendedor,qtdperfil;
+    public String usuario, senha, URLPrincipal, sCodVend, UFVendedor, qtdperfil;
     private String codVendedor = "0";
     public TextView copyright, versao, empresa;
     Spinner spPerfilInput;
@@ -91,6 +92,7 @@ public class Login extends AppCompatActivity implements Runnable {
         if (URLPrincipal == null) {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
             startActivity(intent);
+            finish();
         }
         if (usuario != null) {
             edtUsuario.setText(usuario);
@@ -173,7 +175,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 qtdperfil = "S";
                 return qtdperfil;
 
-            }else {
+            } else {
                 empresa.setVisibility(View.GONE);
                 qtdperfil = "N";
                 return qtdperfil;
@@ -222,7 +224,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
-                builder.setMessage("Atenção! O Usuário ou a senha informada são inválidos; ou não existe esse usuário " + edtUsuario.getText().toString() + " cadastrado neste aparelho. Caso seja a primeira utilização, é necessário se conectar online" +
+                builder.setMessage("Atenção! O Usuário ou a senha informada são inválidos ou não existe esse usuário " + edtUsuario.getText().toString() + " cadastrado neste aparelho. Caso seja a primeira utilização, é necessário se conectar online" +
                         " para que o aparelho cadastre esse usuário e posteriormente seja possível se conectar offline.Verifique essas informações e tente novamente.")
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -274,7 +276,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
-        idPerfil = prefs.getInt("idperfil",0);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     private void declaraobjetos() {
@@ -320,7 +322,6 @@ public class Login extends AppCompatActivity implements Runnable {
     @Override
     public void run() {
 
-
         int permissionCheck = ContextCompat.checkSelfPermission(Login.this, Manifest.permission.READ_PHONE_STATE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Login.this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_READ_PHONE_STATE);
@@ -336,33 +337,119 @@ public class Login extends AppCompatActivity implements Runnable {
         soap.addProperty("aSenha", edtSenha.getText().toString());
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 10000);
 
 
         String CodEmpresa = null;
         final String usuario = edtUsuario.getText().toString();
         final String pass = edtSenha.getText().toString();
+        String sUsuario = null;
         Boolean ConexOk = Util.checarConexaoCelular(Login.this);
         if (ConexOk == true) {
-            try {
-                Envio.call("", envelope);
-            } catch (Exception e) {
-                e.toString();
-                Dialogo.dismiss();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Login.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-                        return;
+            int i = 0;
+            do {
+
+                try {
+                    if (i > 0) {
+                        Thread.sleep(500);
                     }
-                });
+                    if (i == 3) {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                Dialogo.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... " + getString(R.string.checking_user_password));
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    if (i == 0) {
+                        Envio.call("", envelope);
+
+                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                        sUsuario = (String) envelope.getResponse();
+                        System.out.println("Response::" + resultsRequestSOAP.toString());
+                    } else {
+                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                        newsoap.addProperty("aUsuario", edtUsuario.getText().toString());
+                        newsoap.addProperty("aSenha", edtSenha.getText().toString());
+                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                        newenvelope.setOutputSoapObject(newsoap);
+                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                        newEnvio.call("", newenvelope);
+
+                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                        sUsuario = (String) newenvelope.getResponse();
+                        System.out.println("Response::" + newresultsRequestSOAP.toString());
+                    }
+                } catch (Exception e) {
+                    e.toString();
+                }
+                i = i + 1;
+            } while (sUsuario == null && i <= 6);
+            if (sUsuario == null) {
+                Dialogo.dismiss();
+                Thread.interrupted();
+                sCodVend = ValidarLogin(edtUsuario.getText().toString(), edtSenha.getText().toString()); // verifica se o usuário e senha  existe na base local do dispositivo
+                if (sCodVend != null) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
+                    builder.setTitle(R.string.app_namesair);
+                    builder.setIcon(R.drawable.logo_ico);
+                    builder.setMessage("Atenção! Não foi possível obter resposta do servidor referente a validação das informações de atualização, neste caso o usuário será conectado porém até que seja restabelecida " +
+                            "a comunicação com o servidor, não será possivel realizar nenhuma atualização ou transmissão de informações.")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    Intent intent = new Intent(Login.this, ConsultaPedidos.class);
+                                    Bundle params = new Bundle();
+                                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                    params.putString(getString(R.string.intent_usuario), edtUsuario.getText().toString());
+                                    params.putString(getString(R.string.intent_senha), edtSenha.getText().toString());
+                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                }
+                            });
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        }
+                    });
+                }else {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
+                    builder.setTitle(R.string.app_namesair);
+                    builder.setIcon(R.drawable.logo_ico);
+                    builder.setMessage("Atenção! O Usuário ou a senha informada são inválidos ou não existe esse usuário " + edtUsuario.getText().toString() + " cadastrado neste aparelho. Caso seja a primeira utilização, é necessário se conectar online" +
+                            " para que o aparelho cadastre esse usuário e posteriormente seja possível se conectar offline.Verifique essas informações e tente novamente.")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                }
+                            });
+
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog alert = builder.create();
+                            alert.show();
+                        }
+                    });
+                }
                 return;
             }
-            try {
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                String sUsuario = (String) envelope.getResponse();
-                System.out.println("Response::" + resultsRequestSOAP.toString());
 
+            try {
                 JSONObject jsonObj = new JSONObject(sUsuario);
                 JSONArray JUsuario = jsonObj.getJSONArray("usuario");
                 JSONObject user = JUsuario.getJSONObject(0);
@@ -372,16 +459,8 @@ public class Login extends AppCompatActivity implements Runnable {
                 UFVendedor = user.getString("uf");
             } catch (Exception e) {
                 e.toString();
-                Dialogo.dismiss();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Login.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                });
-                return;
             }
+
             if (codVendedor.equals("0")) {
                 Dialogo.dismiss();
                 handler.post(new Runnable() {
@@ -428,37 +507,52 @@ public class Login extends AppCompatActivity implements Runnable {
                 envelopeValida.setOutputSoapObject(soapValida);
                 HttpTransportSE Envio2 = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
                 String HabUsuarioApp = "";
-                try {
-                    Envio2.call("", envelopeValida);
-                } catch (Exception e) {
-                    e.toString();
-                    Dialogo.dismiss();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(Login.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                            return;
+                int j = 0;
+                do {
+                    try {
+                        if (j > 0) {
+                            Thread.sleep(1000);
                         }
-                    });
-                    return;
-                }
-                try {
-                    SoapObject resultsRequestSOAP2 = (SoapObject) envelopeValida.bodyIn;
-                    HabUsuarioApp = (String) envelopeValida.getResponse();
-                    System.out.println("Response::" + resultsRequestSOAP2.toString());
-                } catch (Exception e) {
-                    e.toString();
-                    Dialogo.dismiss();
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(Login.this, R.string.failed_return, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    });
-                    return;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        if (j == 0) {
 
-                }
+                            Envio2.call("", envelopeValida);
+
+                            SoapObject resultsRequestSOAP2 = (SoapObject) envelopeValida.bodyIn;
+                            HabUsuarioApp = (String) envelopeValida.getResponse();
+                            System.out.println("Response::" + resultsRequestSOAP2.toString());
+                        } else {
+                            SoapObject newsoapValida = new SoapObject(ConfigConex.NAMESPACE, "VerificaUsuario");
+                            newsoapValida.addProperty("aUsuario", edtUsuario.getText().toString());
+                            newsoapValida.addProperty("aEndMac", IMEI);
+
+                            SoapSerializationEnvelope newenvelopeValida = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                            newenvelopeValida.setOutputSoapObject(newsoapValida);
+                            HttpTransportSE newEnvio2 = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+
+                            newEnvio2.call("", newenvelopeValida);
+
+                            SoapObject newresultsRequestSOAP2 = (SoapObject) newenvelopeValida.bodyIn;
+                            HabUsuarioApp = (String) newenvelopeValida.getResponse();
+                            System.out.println("Response::" + newresultsRequestSOAP2.toString());
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                        Dialogo.dismiss();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(Login.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        });
+                        return;
+                    }
+                } while (HabUsuarioApp == null && j <= 20);
+
                 Boolean ConexOkWifi = VerificaConexaoWifi();
                 if (HabUsuarioApp.equals("True") && ConexOkWifi == true) {
                     handler.post(new Runnable() {
@@ -492,7 +586,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    //Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString());
+                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString());
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -601,7 +695,9 @@ public class Login extends AppCompatActivity implements Runnable {
                 }
 
             }
-        } else {
+        } else
+
+        {
             Dialogo.dismiss();
             AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
             builder.setTitle(R.string.app_namesair);
@@ -622,17 +718,18 @@ public class Login extends AppCompatActivity implements Runnable {
             AlertDialog alert = builder.create();
             alert.show();
         }
+
     }
 
     private int CadastrarLogin(String NomeUsuario, String Senha, String CodVendedor, String CodEmpresa) {
         int CodVend;
         try {
-            Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODEMPRESA = " + CodEmpresa +" AND CODPERFIL = "+idPerfil, null);
+            Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODEMPRESA = " + CodEmpresa + " AND CODPERFIL = " + idPerfil, null);
             if (CursorLogin.getCount() > 0) {
                 CursorLogin.moveToFirst();
                 CodVend = CursorLogin.getInt(CursorLogin.getColumnIndex("CODVEND"));
             } else {
-                DB.execSQL("INSERT INTO USUARIOS VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + ","+idPerfil+");");
+                DB.execSQL("INSERT INTO USUARIOS VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + "," + idPerfil + ");");
                 Cursor cursor1 = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
                 cursor1.moveToFirst();
                 CodVend = cursor1.getInt(cursor1.getColumnIndex("CODVEND"));
@@ -649,7 +746,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
     private String ValidarLogin(String NomeUsuario, String Senha) {
 
-        Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODPERFIL = "+idPerfil+"", null);
+        Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODPERFIL = " + idPerfil + "", null);
         if (CursorLogin.getCount() > 0) {
             CursorLogin.moveToFirst();
             String sCodVend = CursorLogin.getString(CursorLogin.getColumnIndex("CODVEND"));
@@ -670,9 +767,9 @@ public class Login extends AppCompatActivity implements Runnable {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem alteraperfil = menu.findItem(R.id.alteraperfil);
-        if(qtdperfil.equals("S")){
+        if (qtdperfil.equals("S")) {
             alteraperfil.setVisible(true);
-        }else{
+        } else {
             alteraperfil.setVisible(false);
         }
         return super.onPrepareOptionsMenu(menu);
@@ -684,7 +781,7 @@ public class Login extends AppCompatActivity implements Runnable {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
             startActivity(intent);
             return true;
-        }else if(item.getItemId() == R.id.alteraperfil){
+        } else if (item.getItemId() == R.id.alteraperfil) {
             carregarperfil();
         }
         return super.onOptionsItemSelected(item);

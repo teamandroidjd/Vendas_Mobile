@@ -68,7 +68,6 @@
         <TextView
             android:id="@+id/info_txv_descricaoproduto"
             android:layout_width="match_parent"
-
             android:layout_height="wrap_content"
             android:text="Coca cola 600 ml 2 litros e 5000 mil reais de produtos com nome grande para acertar aqui"
             android:textStyle="bold"
@@ -158,8 +157,6 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:text="1"
-        android:textAlignment="center"
         android:textColor="@color/colorAccent"
         android:textSize="16dp"
         android:layout_below="@+id/info_txv_precoproduto"

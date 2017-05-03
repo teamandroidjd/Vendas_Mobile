@@ -39,6 +39,7 @@
         android:textColor="#fff"
         android:textSize="35sp"
         android:id="@+id/btnSincronizar"
+        android:onClick="sincronizar"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

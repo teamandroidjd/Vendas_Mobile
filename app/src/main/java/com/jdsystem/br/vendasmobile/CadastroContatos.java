@@ -714,7 +714,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                         }
                         CursosEstado.close();
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
                         E.printStackTrace();
                     }
 
@@ -742,7 +741,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                         }
                         CursorCidade.close();
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
                         E.printStackTrace();
                     }
 
@@ -763,7 +761,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                         }
                         CursorBairro.close();
                     } catch (Exception E) {
-                        // TODO Auto-generated catch block
                         E.printStackTrace();
                     }
                     String end = c.getString("logradouro");

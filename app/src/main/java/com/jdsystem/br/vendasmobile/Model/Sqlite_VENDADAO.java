@@ -354,7 +354,7 @@ public class Sqlite_VENDADAO {
                                     "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
                                     ",  VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
                                     ",  VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
-                                    " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "' AND CODPERFIL = "+idPerfil);
+                                    " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "' AND CODPERFIL = "+idPerfil);
                         } else {
                             db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, CODPERFIL, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
                                     " VALUES('" + vendaD_item.getVendac_chave() +
@@ -392,7 +392,7 @@ public class Sqlite_VENDADAO {
                                 ", QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
                                 ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
                                 ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_UP).doubleValue() +
-                                " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
+                                " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "' AND CHAVEPEDIDO = '" + vendaD_item.getVendac_chave() + "' AND CODPERFIL = "+idPerfil);
                     } else {
                         db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
                                 " VALUES('" + vendaD_item.getVendac_chave() +
@@ -533,15 +533,16 @@ public class Sqlite_VENDADAO {
         }
     }
 
-    public void oculta_item_da_venda(String item) {
+    public void oculta_item_da_venda(String item, String chave) {
         db = new ConfigDB(ctx).getWritableDatabase();
         try {
-            db.execSQL("update peditens set view = 'N' where CODITEMANUAL = '"+item+"' and codperfil = "+idPerfil);
+            db.execSQL("update peditens set view = 'N' where CODITEMANUAL = '"+item+"' and codperfil = "+idPerfil+" AND CHAVEPEDIDO = '"+chave+"'");
 
 
         } catch (SQLiteException e) {
             Util.log("SQLiteException excluir_um_item_da_venda" + e.getMessage());
         }
+        db.close();
     }
 
     public void reexibe_item_da_venda(String item, String chave) {
@@ -558,11 +559,12 @@ public class Sqlite_VENDADAO {
     public void retornaItensOculto(String Chave_Venda){
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N' AND CODPERFIL = "+idPerfil, null);
-            cursor.moveToFirst();
-            if (cursor.getCount() > 0) {
+            Cursor cursorRetornaItensOculto = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N' AND CODPERFIL = "+idPerfil, null);
+            cursorRetornaItensOculto.moveToFirst();
+            if (cursorRetornaItensOculto.getCount() > 0) {
                 db.execSQL("UPDATE PEDITENS SET VIEW = NULL WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N') AND (CODPERFIL = "+idPerfil+")");
             }
+            cursorRetornaItensOculto.close();
         }catch (Exception e){
             e.toString();
         }
@@ -572,11 +574,12 @@ public class Sqlite_VENDADAO {
     public void atualizaItensTemp(String Chave_Venda){
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T' AND CODPERFIL = "+idPerfil, null);
-            cursor.moveToFirst();
-            if (cursor.getCount() > 0) {
+            Cursor cursorAtualizaItensTemp = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T' AND CODPERFIL = "+idPerfil, null);
+            cursorAtualizaItensTemp.moveToFirst();
+            if (cursorAtualizaItensTemp.getCount() > 0) {
                 db.execSQL("UPDATE PEDITENS SET VIEW = NULL WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'T') AND (CODPERFIL = "+idPerfil+")");
             }
+            cursorAtualizaItensTemp.close();
         }catch (Exception e){
             e.toString();
         }
@@ -586,11 +589,12 @@ public class Sqlite_VENDADAO {
     public void excluiItensTemp(String Chave_Venda){
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T' AND CODPERFIL = "+idPerfil, null);
-            cursor.moveToFirst();
-            if (cursor.getCount() > 0) {
+            Cursor cursorExcluiItensTemp = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'T' AND CODPERFIL = "+idPerfil, null);
+            cursorExcluiItensTemp.moveToFirst();
+            if (cursorExcluiItensTemp.getCount() > 0) {
                 db.execSQL("DELETE FROM PEDITENS WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'T') AND (CODPERFIL = "+idPerfil+")");
             }
+            cursorExcluiItensTemp.close();
         }catch (Exception e){
             e.toString();
         }
@@ -600,11 +604,12 @@ public class Sqlite_VENDADAO {
     public void excluiItensOculto(String Chave_Venda){
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N' AND CODPERFIL = "+idPerfil, null);
-            cursor.moveToFirst();
-            if (cursor.getCount() > 0) {
-                db.execSQL("DELETE FROM PEDITENS WHERE (CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N') AND (CODPERFIL = "+idPerfil+")");
+            Cursor cursorItensOculto = db.rawQuery("SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" + Chave_Venda + "' AND VIEW = 'N' AND CODPERFIL = "+idPerfil, null);
+            cursorItensOculto.moveToFirst();
+            if (cursorItensOculto.getCount() > 0) {
+                db.execSQL("DELETE FROM PEDITENS WHERE ((CHAVEPEDIDO = '" + Chave_Venda + "') AND (VIEW = 'N') AND (CODPERFIL = "+idPerfil+"))");
             }
+            cursorItensOculto.close();
         }catch (Exception e){
             e.toString();
         }
@@ -655,11 +660,11 @@ public class Sqlite_VENDADAO {
 
 
 
-    public SqliteVendaDBean altera_item_na_venda(SqliteVendaDBean item) {
+    public SqliteVendaDBean altera_item_na_venda(SqliteVendaDBean item, String chave) {
         SqliteVendaDBean produto = null;
         db = new ConfigDB(ctx).getReadableDatabase();
         try {
-            sql = "select * from PEDITENS where CODITEMANUAL = ? and view <> 'N' AND CODPERFIL = "+idPerfil+" ";
+            sql = "select * from PEDITENS where (CODITEMANUAL = ?) and ((view <> 'N') or (view isnull)) AND (CHAVEPEDIDO = "+chave+") AND (CODPERFIL = "+idPerfil+")";
             cursor = db.rawQuery(sql, new String[]{item.getVendad_prd_codigo().toString()});
             if (cursor.moveToFirst()) {
                 produto = new SqliteVendaDBean();
@@ -712,13 +717,13 @@ public class Sqlite_VENDADAO {
         return gravacao;
     }
 
-    public boolean atualizar_alteracao_item_na_venda(SqliteVendaDBean item) { // função utilizada para pedidos já salvo que tem numero de pedido.
+    public boolean atualizar_alteracao_item_na_venda(SqliteVendaDBean item, String chave) { // função utilizada para pedidos já salvo que tem numero de pedido.
         gravacao = false;
         try {
             try {
                 db = new ConfigDB(ctx).getWritableDatabase();
                 sql = "UPDATE PEDITENS SET CODITEMANUAL = ?, DESCRICAO = ?,QTDMENORPED = ?, " +
-                        "VLUNIT = ?, VLTOTAL = ?, UNIDADE = ? where CODITEMANUAL =  " + item.getVendad_prd_codigo() +" AND CODPERFIL = "+idPerfil;
+                        "VLUNIT = ?, VLTOTAL = ?, UNIDADE = ? where CODITEMANUAL =  " + item.getVendad_prd_codigo() +" AND CODPERFIL = "+idPerfil+" AND CHAVEPEDIDO = "+chave;
                 stmt = db.compileStatement(sql);
                 //stmt.bindString(1, item.getVendad_eanTEMP());
                 stmt.bindString(1, item.getVendad_prd_codigo());

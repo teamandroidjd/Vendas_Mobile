@@ -1724,7 +1724,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
                             Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getApplicationContext(), sCodvend, true);
 
                             itemBean2.setVendad_prd_codigo(COD_PRODUTO);
-                            itemBean3 = itemDao.altera_item_na_venda(itemBean2);
+                            itemBean3 = itemDao.altera_item_na_venda(itemBean2,chavepedido);
 
                             if (itemBean3 == null) {
                                 itemBean1.setVendad_prd_codigo(COD_PRODUTO);
@@ -1853,8 +1853,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
      */
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Lista_produtos Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
+                .setName("Lista_produtos Page")
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)

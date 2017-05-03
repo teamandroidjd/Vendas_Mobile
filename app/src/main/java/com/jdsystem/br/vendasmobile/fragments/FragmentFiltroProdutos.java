@@ -1666,7 +1666,7 @@ public class FragmentFiltroProdutos extends Fragment implements RecyclerViewOnCl
                                 Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getActivity(),codVendedor, true);
 
                                 itemBean2.setVendad_prd_codigo(COD_PRODUTO);
-                                itemBean3 = itemDao.altera_item_na_venda(itemBean2);
+                                itemBean3 = itemDao.altera_item_na_venda(itemBean2,chavePedido);
 
                                 if (itemBean3 == null) {
                                     itemBean1.setVendad_prd_codigo(COD_PRODUTO);
