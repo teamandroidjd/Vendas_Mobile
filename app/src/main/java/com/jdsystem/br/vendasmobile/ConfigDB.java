@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 7;
+    public static int versao = 9;
 
     public ConfigDB(Context ctx) {
 
@@ -177,26 +177,26 @@ public class ConfigDB extends SQLiteOpenHelper {
 
 
     private static String SQL_PEDITENS = ("CREATE TABLE IF NOT EXISTS PEDITENS (" +
-            " NUMIDEOPE     INTEGER         PRIMARY KEY AUTOINCREMENT " +
-            "                               NOT NULL,                 " +
-            " CHAVEPEDIDO   VARCHAR(70),                              " +
-            " NUMPED        INTEGER,                                  " +
-            " CODITEMANUAL  VARCHAR (15)    NOT NULL,                 " +
-            " DESCRICAO     VARCHAR (60)    NOT NULL,                 " +
-            " CODIGOITEM    INTEGER,                                  " +
-            " NUMEROITEM    NUMERIC (5, 0),                           " +
-          //" QTDEMBAPED    NUMERIC (11, 3) NOT NULL,                 " +
-            " QTDMENORPED   FLOAT           NOT NULL,                 " +
-          //" QTDMAIORPED   FLOAT           NOT NULL,                 " +
-            " UNIDADE       VARCHAR (5),                              " +
-            " VLUNIT        DECIMAL(10,2)   NOT NULL,                 " +
-            " PERCACREDESC  DOUBLE,                                   " +
-            " VALORDESCONTO DECIMAL(10,2),                            " +
-            " VLTOTAL       DECIMAL(10,2)   NOT NULL,                 " +
-            " VLICMSST      FLOAT,                                    " +
-            " VLIPI         FLOAT,                                    " +
-            " VIEW          CHAR(1),                                  " +
-            " CODPERFIL     INTEGER                                   " +
+            " NUMIDEOPE       INTEGER         PRIMARY KEY AUTOINCREMENT   " +
+            "                                 NOT NULL,                 " +
+            " CHAVEPEDIDO     VARCHAR(70),                              " +
+            " NUMPED          INTEGER,                                  " +
+            " CODITEMANUAL    VARCHAR (15)    NOT NULL,                 " +
+            " DESCRICAO       VARCHAR (60)    NOT NULL,                 " +
+            " CODIGOITEM      INTEGER,                                  " +
+            " NUMEROITEM      NUMERIC (5, 0),                           " +
+            " VLUNITTEMP      DECIMAL(10,2),                            " +
+            " QTDMENORPED     FLOAT           NOT NULL,                 " +
+            " QTDMAIORPEDTEMP FLOAT,                                    " +
+            " UNIDADE         VARCHAR (5),                              " +
+            " VLUNIT          DECIMAL(10,2)   NOT NULL,                 " +
+            " PERCACREDESC    DOUBLE,                                   " +
+            " VALORDESCONTO   DECIMAL(10,2),                            " +
+            " VLTOTAL         DECIMAL(10,2)   NOT NULL,                 " +
+            " VLICMSST        FLOAT,                                    " +
+            " VLIPI           FLOAT,                                    " +
+            " VIEW            CHAR(1),                                  " +
+            " CODPERFIL       INTEGER                                   " +
             ");");
 
     private static String SQL_CONFPAGAMENTO = "CREATE TABLE IF NOT EXISTS [CONFPAGAMENTO] (" +
@@ -207,6 +207,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " conf_valor_recebido         DECIMAL(10,2),                     " +
             " conf_parcelas               INTEGER,                           " +
             " vendac_chave                VARCHAR DEFAULT 70 ,               " +
+            " conf_temp                   CHAR DEFAULT N,                    " +
             " conf_enviado                CHAR DEFAULT 1 )";
 
     private static String SQL_VENDA_D_TEMP = "CREATE TABLE [VENDAD_TEMP] (" +
@@ -601,6 +602,21 @@ public class ConfigDB extends SQLiteOpenHelper {
             }
             try{
                 db.execSQL("ALTER TABLE BLOQCLIE ADD CODPERFIL INTEGER");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE PEDITENS ADD QTDMAIORPEDTEMP DECIMAL(10,2) ");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE PEDITENS ADD VLUNITTEMP DECIMAL(10,2) ");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE CONFPAGAMENTO ADD conf_temp CHAR DEFAULT N");
             }catch (Exception e){
                 e.toString();
             }

@@ -58,7 +58,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
 
 
         if (ChaveAcesso != null) {
-            edtChave.setText(ChaveAcesso);
+            edtChave.setText("");
         } else {
             this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
@@ -492,7 +492,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             JSONArray infolicenca = jsonObj.getJSONArray("perfil");
             JSONObject c = infolicenca.getJSONObject(0);
             String licenca = c.getString("codlicenca");
-            String perfil = c.getString("nomeempresa");
+            String perfil = c.getString("nomeempresa").toUpperCase();
             host = c.getString("host");
 
             if ((gravarperfil(host, perfil, licenca)) == false) {
@@ -577,6 +577,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             switch (i) {
                 case 1:
                     nomeperfil1 = DadosListPerfil.get(0);
+                    //nomeperfil1 = nomeperfil1.toUpperCase();
                     licperfil1 = DadosListLicPerfil.get(0);
                     empresa1.setText(nomeperfil1);
                     licenca1.setText(licperfil1);
@@ -598,10 +599,12 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                     break;
                 case 2:
                     nomeperfil1 = DadosListPerfil.get(0);
+                    //nomeperfil1 = nomeperfil1.toUpperCase();
                     licperfil1 = DadosListLicPerfil.get(0);
                     empresa1.setText(nomeperfil1);
                     licenca1.setText(licperfil1);
                     nomeperfil2 = DadosListPerfil.get(1);
+                    //nomeperfil2 = nomeperfil2.toUpperCase();
                     licperfil2 = DadosListLicPerfil.get(1);
                     empresa2.setText(nomeperfil2);
                     licenca2.setText(licperfil2);
@@ -623,14 +626,17 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                     break;
                 case 3:
                     nomeperfil1 = DadosListPerfil.get(0);
+                    //nomeperfil1 = nomeperfil1.toUpperCase();
                     licperfil1 = DadosListLicPerfil.get(0);
                     empresa1.setText(nomeperfil1);
                     licenca1.setText(licperfil1);
                     nomeperfil2 = DadosListPerfil.get(1);
+                    //nomeperfil2 = nomeperfil2.toUpperCase();
                     licperfil2 = DadosListLicPerfil.get(1);
                     empresa2.setText(nomeperfil2);
                     licenca2.setText(licperfil2);
                     nomeperfil3 = DadosListPerfil.get(2);
+                    //nomeperfil3 = nomeperfil3.toUpperCase();
                     licperfil3 = DadosListLicPerfil.get(2);
                     empresa3.setText(nomeperfil3);
                     licenca3.setText(licperfil3);

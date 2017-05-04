@@ -1542,7 +1542,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     "', DESCRICAOTAB5 = '" + DescTab5.trim() +
                                     "', DESCRICAOTAB6 = '" + DescTab6.trim() +
                                     "', DESCRICAOTAB7 = '" + DescTab7.trim() +
-                                    "'");
+                                    "' WHERE CODPERFIL = " + idPerfil);
                         } else {
 
                             DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,CODPERFIL)" +
@@ -1727,14 +1727,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         String fpavista = c.getString("fpavista");
 
 
-                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq, null);
+                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq + " AND CODPERFIL = " + idPerfil, null);
                         if (CursorBloqueio.getCount() > 0) {
                             DB.execSQL(" UPDATE BLOQCLIE SET CODBLOQ = '" + codblq + "', DESCRICAO = '" + descricao + "', BLOQUEAR = '" + bloquear + "'," +
                                     " LIBERAR = '" + liberar + "', FPAVISTA = '" + fpavista + "'" +
-                                    " WHERE CODBLOQ = " + codblq);
+                                    " WHERE CODBLOQ = '" + codblq + "' AND CODPERFIL = " + idPerfil);
                         } else {
-                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
-                                    " VALUES(" + codblq + ",'" + descricao + "', '" + bloquear + "','" + liberar + "','" + fpavista + "' );");
+                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, CODPERFIL, FPAVISTA)" +
+                                    " VALUES('" + codblq + "','" + descricao + "', '" + bloquear + "','" + liberar + "', " + idPerfil + ", '" + fpavista + "' );");
                         }
                         CursorBloqueio.close();
 
@@ -1924,11 +1924,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
                                     "', CODPERFIL = '" + idPerfil +
                                     "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
-                                    "'");
+                                    "' WHERE CODPERFIL = " + idPerfil);
                         } else {
 
                             DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
+                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', " + idPerfil + ", '" + habcritqtditens.trim() + "');");
                         }
                         CursorParam.close();
 
@@ -3401,7 +3401,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return AtualizaEst;
     }
 
-    public static boolean AtualizaPedido(String numPedido, Context ctxAtu, String tipoAtu) {
+    public static String AtualizaPedido(String numPedido, Context ctxAtu, String tipoAtu) {
         SharedPreferences prefsHost = ctxAtu.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -3410,7 +3410,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
 
-        boolean sincAtuPedido = false;
+        String sincAtuPedido = null;
         DB = new ConfigDB(ctxAtu).getReadableDatabase();
         if (tipoAtu.equals("C")) {
             try {
@@ -3419,12 +3419,13 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 if (CursPedAtu.getCount() > 0) {
                     DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '4' WHERE NUMPED = '" + numPedido + "' AND CODPERFIL = " + idPerfil);
                 }
+                sincAtuPedido = "ok";
                 CursPedAtu.close();
             } catch (Exception E) {
                 E.toString();
-                return false;
+                return null;
             }
-            return true;
+            return sincAtuPedido;
 
         } else if (tipoAtu.equals("A")) {
             try {
@@ -3433,12 +3434,13 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 if (CursPedAtu.getCount() > 0) {
                     DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE NUMPED = '" + numPedido + "' AND CODPERFIL = " + idPerfil);
                 }
+                sincAtuPedido = "ok";
                 CursPedAtu.close();
             } catch (Exception E) {
                 E.toString();
-                return false;
+                return null;
             }
-            return true;
+            return sincAtuPedido;
 
         } else if (tipoAtu.equals("S")) {
             String JPedidos = null;
@@ -3511,7 +3513,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '3', NUMFISCAL = " + RetStatusPedido + " WHERE NUMPEDIDOERP = '" + numPedido + "' AND CODPERFIL = " + idPerfil);
                                 }
                             }
-                            sincAtuPedido = true;
+                            sincAtuPedido = RetStatusPedido;
                             CursPedAtu.close();
                         } catch (Exception E) {
                             Toast.makeText(ctxAtu, E.toString(), Toast.LENGTH_SHORT).show();
@@ -3953,7 +3955,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
                                     "', CODPERFIL = '" + idPerfil +
                                     "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
-                                    "'");
+                                    "' WHERE CODPERFIL = " + idPerfil);
                         } else {
 
                             DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
@@ -4085,7 +4087,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     "', DESCRICAOTAB5 = '" + DescTab5.trim() +
                                     "', DESCRICAOTAB6 = '" + DescTab6.trim() +
                                     "', DESCRICAOTAB7 = '" + DescTab7.trim() +
-                                    "'");
+                                    "' WHERE CODPERFIL = " + idPerfil);
                         } else {
 
                             DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,CODPERFIL)" +
@@ -4211,7 +4213,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     "', BLOQUEAR = '" + bloquear +
                                     "', LIBERAR = '" + liberar +
                                     "', FPAVISTA = '" + fpavista + "'" +
-                                    " WHERE CODBLOQ = " + codblq);
+                                    " WHERE CODBLOQ = " + codblq + " AND CODPERFIL = " + idPerfil);
                         } else {
                             DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, CODPERFIL, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
                                     " VALUES(" + codblq +
@@ -5159,9 +5161,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sinccliestatic;
     }
 
-    public static String SituacaodoClientexPed(String vltotalped, Context
-            ctxEnvClie, String
-                                                       user, String pass, int CodClie) {
+    public static String SituacaodoClientexPed(String vltotalped, Context ctxEnvClie, String user, String pass, int CodClie) {
 
         String situacao = null;
 

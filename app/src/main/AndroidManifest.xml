@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jdsystem.br.vendasmobile">
+    package="com.jdsystem.br.vendasmobile"
+    android:installLocation="auto">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,9 +10,11 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+
     <supports-screens android:normalScreens="true" />
 
     <application
+
         android:largeHeap="true"
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
@@ -93,7 +96,7 @@
             android:label="Catálogo de Clientes"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".Controller.VenderProdutos"
+            android:name=".CadastroPedidos"
             android:label="Cadastrar pedido"
             android:windowSoftInputMode="stateHidden" />
         <activity

@@ -27,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.CadastroClientes;
+import com.jdsystem.br.vendasmobile.CadastroPedidos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
@@ -223,7 +224,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
 
                         if (FlagIntegrado.equals("1")) {
                             if (NumPedido == null) {
-                                Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                Intent intent = new Intent(getBaseContext(), CadastroPedidos.class);
                                 Bundle params = new Bundle();
                                 params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
                                 params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
@@ -233,7 +234,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                 startActivity(intent);
                                 finish();
                             } else {
-                                Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                Intent intent = new Intent(getBaseContext(), CadastroPedidos.class);
                                 Bundle params = new Bundle();
                                 params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
                                 params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
@@ -253,7 +254,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                             }
                             if (bloqueio.equals("01") || bloqueio.equals("1")) {
                                 if (NumPedido == null) {
-                                    Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                    Intent intent = new Intent(getBaseContext(), CadastroPedidos.class);
                                     Bundle params = new Bundle();
                                     params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
                                     params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
@@ -264,7 +265,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                     startActivity(intent);
                                     finish();
                                 } else {
-                                    Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                    Intent intent = new Intent(getBaseContext(), CadastroPedidos.class);
                                     Bundle params = new Bundle();
                                     params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
                                     params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
@@ -281,7 +282,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                         }
                         if (BloqClie.equals("N")) {
                             if (NumPedido == null) {
-                                Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                Intent intent = new Intent(getBaseContext(), CadastroPedidos.class);
                                 Bundle params = new Bundle();
                                 params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
                                 params.putString((getString(R.string.intent_codvendedor)), CodVendedor);
@@ -291,7 +292,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                                 startActivity(intent);
                                 finish();
                             } else {
-                                Intent intent = new Intent(getBaseContext(), VenderProdutos.class);
+                                Intent intent = new Intent(getBaseContext(), CadastroPedidos.class);
                                 Bundle params = new Bundle();
                                 params.putInt("CLI_CODIGO", cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")));
                                 params.putString((getString(R.string.intent_codvendedor)), CodVendedor);

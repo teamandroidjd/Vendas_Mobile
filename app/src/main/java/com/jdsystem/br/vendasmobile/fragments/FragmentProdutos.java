@@ -15,8 +15,6 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -26,7 +24,6 @@ import android.widget.TextView;
 
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConsultaProdutos;
-import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
@@ -56,9 +53,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     SQLiteDatabase DB;
     private Spinner spntabpreco;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
-    private SharedPreferences prefs;
     private ListView prod_listview_itenstemp;
     public AlertDialog dlg;
+    public SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -78,6 +77,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 urlprincipal = params.getString(getString(R.string.intent_urlprincipal));
                 telaInvocada = params.getString(getString(R.string.intent_telainvocada));
             }
+            carregarpreferencias();
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_Prod);
             mRecyclerView.setHasFixedSize(true);
@@ -127,7 +127,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
 
             if (numPedido.equals("0")) {
-                Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
+                Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
                 Bloqueios.moveToFirst();
                 final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
                 Bloqueios.close();
@@ -136,7 +136,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 if (vendenegativo.equals("N") && ConexOk == true) {
                     String sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, Integer.parseInt(CodProd));
                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"'", null);
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"' AND CODPERFIL = "+idPerfil, null);
                         CursItens.moveToFirst();
                         qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                         CursItens.close();
@@ -145,7 +145,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             return;
                         }
                     } else {
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"'", null);
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"' AND CODPERFIL = "+idPerfil, null);
                         CursItens.moveToFirst();
 
                             qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
@@ -156,7 +156,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             }
                     }
                 } else {
-                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"'", null);
+                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='"+(CodProd)+"' AND CODPERFIL = "+idPerfil, null);
                     CursItens.moveToFirst();
                     qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                     CursItens.close();
@@ -221,7 +221,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 try {
                     List<String> DadosListTabPreco = new ArrayList<String>();
 
-                    Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                    Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
                     CursorParametro.moveToFirst();
                     tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
                     tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
@@ -232,7 +232,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                     CursorParametro.close();
 
-                    cursoritem = DB.rawQuery("SELECT DESCRICAO,UNIVENDA,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2,TABELAPADRAO,CODITEMANUAL FROM ITENS WHERE CODITEMANUAL = " + CodProd + "", null);
+                    cursoritem = DB.rawQuery("SELECT DESCRICAO,UNIVENDA,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2,TABELAPADRAO,CODITEMANUAL FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = "+idPerfil, null);
                     cursoritem.moveToFirst();
                     if (cursoritem.getCount() > 0) {
                         codItem = cursoritem.getString(cursoritem.getColumnIndex("CODITEMANUAL"));
@@ -474,7 +474,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                 DB = new ConfigDB(getActivity()).getReadableDatabase();
 
-                Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP", null);
+                Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
                 Bloqueios.moveToFirst();
                 final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
                 Bloqueios.close();
@@ -483,7 +483,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 if (vendenegativo.equals("N") && ConexOk == true) {
                     String sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, Integer.parseInt(CodProd));
                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = " + CodProd, null);
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = "+idPerfil, null);
                         CursItens.moveToFirst();
                         qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                         CursItens.close();
@@ -492,7 +492,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             return;
                         }
                     } else {
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = " + CodProd, null);
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = "+idPerfil, null);
                         CursItens.moveToFirst();
                         qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                         CursItens.close();
@@ -502,7 +502,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         }
                     }
                 } else {
-                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = " + CodProd, null);
+                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = "+idPerfil, null);
                     CursItens.moveToFirst();
                     qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
                     CursItens.close();
@@ -566,7 +566,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 try {
                     List<String> DadosListTabPreco = new ArrayList<String>();
 
-                    Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                    Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
                     CursorParametro.moveToFirst();
                     tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
                     tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
@@ -577,7 +577,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                     CursorParametro.close();
 
-                    cursoritem = DB.rawQuery("SELECT DESCRICAO,UNIVENDA,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2,TABELAPADRAO,CODITEMANUAL FROM ITENS WHERE CODITEMANUAL = " + CodProd + "", null);
+                    cursoritem = DB.rawQuery("SELECT DESCRICAO,UNIVENDA,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2,TABELAPADRAO,CODITEMANUAL FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = "+idPerfil, null);
                     cursoritem.moveToFirst();
                     if (cursoritem.getCount() > 0) {
                         codItem = cursoritem.getString(cursoritem.getColumnIndex("CODITEMANUAL"));
@@ -840,6 +840,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
         prefsPrivateEditor.putInt("spreco", preco);
         prefsPrivateEditor.commit();
 
+    }
+    private void carregarpreferencias() {
+        prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
+        urlprincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
 }

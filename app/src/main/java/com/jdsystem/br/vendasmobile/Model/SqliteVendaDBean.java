@@ -10,7 +10,7 @@ public class SqliteVendaDBean {
     public static final String CHAVE_DA_VENDA = "CHAVEPEDIDO";
     public static final String NUMPED = "NUMPED";
     public static final String NUMERO_ITEM = "NUMEROITEM";
-    //public static final String EAN = "vendad_ean";
+    public static final String PRECOPRODUTO_TEMP = "VLUNITTEMP";
     public static final String CODPRODUTO = "CODITEMANUAL";
     public static final String CODPROD_INT = "CODIGOITEM";
     public static final String DESCRICAOPROD = "DESCRICAO";
@@ -20,6 +20,7 @@ public class SqliteVendaDBean {
     public static final String TOTALPRODUTO = "VLTOTAL";
     public static final String VLMERCAD = "VLMERCAD";
     public static final String PRODVIEW = "VIEW";
+    public static final String QUANTVENDIDA_TEMP = "QTDMAIORPEDTEMP";
 
     private String vendac_chave;
     private Integer vendad_nro_item ;
@@ -30,6 +31,7 @@ public class SqliteVendaDBean {
     private Integer vendad_prd_codigoitem ;
     private Integer numped;
     private String vendad_prd_view;
+
 
     public String getVendad_prd_unidade() {
         return vendad_prd_unidade;
@@ -48,10 +50,29 @@ public class SqliteVendaDBean {
     }
 
     private String vendac_prd_numped;
-    private BigDecimal vendad_quantidade ;
-    private BigDecimal vendad_preco_venda ;
+    private BigDecimal vendad_quantidade;
+    private BigDecimal vendad_quantidade_temp;
+    private BigDecimal vendad_preco_venda;
+    private BigDecimal vendad_preco_venda_temp;
     private BigDecimal vendad_total ;
     private BigDecimal vendad_tmercad ;
+
+    public void setvendad_quantidade_temp (BigDecimal qtd_temp){
+        this.vendad_quantidade_temp = qtd_temp;
+
+    }
+
+    public BigDecimal getvendad_quantidade_temp(){
+        return vendad_quantidade_temp;
+    }
+
+    public void setvendad_preco_venda_temp (BigDecimal preco_temp){
+        this.vendad_preco_venda_temp = preco_temp;
+    }
+
+    public BigDecimal getvendad_preco_venda_temp(){
+        return vendad_preco_venda_temp;
+    }
 
     public BigDecimal getVendad_tmercad() {
         return vendad_tmercad;

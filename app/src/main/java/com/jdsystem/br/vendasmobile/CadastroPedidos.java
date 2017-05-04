@@ -1,4 +1,4 @@
-package com.jdsystem.br.vendasmobile.Controller;
+package com.jdsystem.br.vendasmobile;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,9 +32,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jdsystem.br.vendasmobile.ConfigDB;
-import com.jdsystem.br.vendasmobile.ConsultaClientes;
-import com.jdsystem.br.vendasmobile.ConsultaProdutos;
+import com.jdsystem.br.vendasmobile.Controller.ConfPagamento;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteClienteDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoBean;
@@ -48,11 +46,8 @@ import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
 import com.jdsystem.br.vendasmobile.Model.Sqlite_VENDADAO;
 import com.jdsystem.br.vendasmobile.Pagamento.Avista;
 import com.jdsystem.br.vendasmobile.Pagamento.Mensal;
-import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Gps;
 import com.jdsystem.br.vendasmobile.Util.Util;
-import com.jdsystem.br.vendasmobile.ConsultaPedidos;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterItensTemporarios;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterItensVenda;
 import com.jdsystem.br.vendasmobile.interfaces.iPagamento;
@@ -67,7 +62,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
-public class VenderProdutos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
+public class CadastroPedidos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
 
     private BigDecimal TOTAL_DA_VENDA;
     private Integer CLI_CODIGO, CLI_CODIGO_ANT, CLI_CODIGO_EXT;
@@ -113,6 +108,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
         declaraObjetos();
         carregarpreferencias();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         ObsPedido = "";
         setDateTimeField();
@@ -282,6 +278,10 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         });
 
         //obterConfiguracoesPagamento();
+        if(!NumPedido.equals("0")){
+            confDao.salva_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
+        }
+
     }
 
     private void carregarpreferencias() {
@@ -291,9 +291,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
     }
 
     private void incluirobs() {
-        View view = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_obs_pedido, null);
+        View view = (LayoutInflater.from(CadastroPedidos.this)).inflate(R.layout.input_obs_pedido, null);
         final EditText userInput = (EditText) view.findViewById(R.id.inputobspedido);
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CadastroPedidos.this);
         alertBuilder.setView(view);
 
         if (!ObsPedido.equals("")) {
@@ -414,7 +414,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
 
             if (!itens_temp.isEmpty()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Deseja realmente cancelar a venda?")
@@ -443,7 +443,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                 alert.show();
                 return;
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Deseja realmente cancelar a venda?")
@@ -473,9 +473,12 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             }
 
         } else if (!NumPedido.equals("0")) {
+            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).retornaquantidade_preco(Chave_Venda);
             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).retornaItensOculto(Chave_Venda);
             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensTemp(Chave_Venda);
+            confDao.recupera_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
             Alterar_Pedido_listview_e_calcula_total();
+
             //TODO: testar esse processo. Felipe esta testando
             BigDecimal valor_recebido = null;
             BigDecimal total_venda = null;
@@ -509,7 +512,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
             itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
             if (!itens_venda.isEmpty()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Deseja realmente cancelar a alteração do pedido?")
@@ -525,8 +528,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                 editor.commit();
 
                                 finish();
-                                Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                                Toast.makeText(CadastroPedidos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                                 Bundle params = new Bundle();
                                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -546,7 +549,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                 alert.show();
                 return;
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Não existe produto incluso neste pedido " + NumPedido + ". O mesmo será cancelado. Deseja continuar?")
@@ -561,8 +564,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                 finish();
                                 Boolean pedcancelado = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).atualizar_pedido_para_cancelado(Chave_Venda);
                                 if (pedcancelado == true) {
-                                    Toast.makeText(VenderProdutos.this, "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                                    Toast.makeText(CadastroPedidos.this, "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                                     Bundle params = new Bundle();
                                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -572,8 +575,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     startActivity(i);
                                     finish();
                                 } else {
-                                    Toast.makeText(VenderProdutos.this, " Houve um problema ao cancelar o pedido. Verifique!", Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                                    Toast.makeText(CadastroPedidos.this, " Houve um problema ao cancelar o pedido. Verifique!", Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                                     Bundle params = new Bundle();
                                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -674,13 +677,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                         DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
                     } while (CursEmpr.moveToNext());
 
-                    View viewEmp = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+                    View viewEmp = (LayoutInflater.from(CadastroPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
 
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CadastroPedidos.this);
                     alertBuilder.setView(viewEmp);
                     final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
 
-                    ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                    ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(CadastroPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
                     ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
                     spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
                     spEmpresaInput.setAdapter(spArrayEmpresa);
@@ -723,13 +726,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                         DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
                     } while (CursEmpr.moveToNext());
 
-                    View viewEmp = (LayoutInflater.from(VenderProdutos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+                    View viewEmp = (LayoutInflater.from(CadastroPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
 
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(VenderProdutos.this);
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CadastroPedidos.this);
                     alertBuilder.setView(viewEmp);
                     final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
 
-                    ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
+                    ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(CadastroPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
                     ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
                     spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
                     spEmpresaInput.setAdapter(spArrayEmpresa);
@@ -912,6 +915,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
             } else {
                 if (!NumPedido.equals("0")) {
+                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaquantidadeprecotemp(Chave_Venda);
                     new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensOculto(Chave_Venda);
                     new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaItensTemp(Chave_Venda);
                     Alterar_Pedido_listview_e_calcula_total();
@@ -972,7 +976,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     if (sincpedido == true) {
                         sincronizaPedidosAposSalvar();
                     } else {
-                        Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                        Intent i = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                         Bundle params = new Bundle();
                         params.putString(getString(R.string.intent_codvendedor), sCodVend);
                         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -1128,7 +1132,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                             if (item != null) {
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                                 View view = inflater.inflate(R.layout.info_produto_venda, null);
-                                alerta1 = new Builder(VenderProdutos.this);
+                                alerta1 = new Builder(CadastroPedidos.this);
                                 alerta1.setCancelable(false);
                                 alerta1.setView(view);
 
@@ -1141,7 +1145,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
                                 InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.showSoftInput(info_txt_quantidadecomprada, InputMethodManager.SHOW_IMPLICIT);
-                                VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                                CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
                                 spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -1183,8 +1187,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     String codprod = (item.getVendad_prd_codigoTEMP());
                                     codprod = codprod.trim();
                                     List<String> DadosListTabPreco = new ArrayList<String>();
-                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
-                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
+                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
                                     CursorParametro.moveToFirst();
                                     vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
                                     tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
@@ -1196,8 +1200,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                                     CursorParametro.close();
 
-                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "'", null);
+                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "' AND CODPERFIL = "+idPerfil, null);
                                     produto_cursor.moveToFirst();
 
                                     qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
@@ -1287,7 +1291,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             DadosListTabPreco.add(tab7 + " R$: " + Precop2);
                                         }
                                     }
-                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
+                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(CadastroPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
                                     arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                     spntabpreco.setAdapter(arrayAdapterTabPreco);
 
@@ -1378,7 +1382,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
                                             return;
                                         }
-                                        VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
+                                        CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
                                     }
 
                                 });
@@ -1399,15 +1403,18 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                             }
 
                         } else {
+                            // TODO: continuar os testes deste processo em relação a salvar o preço e quantidade no temp.
+                            final SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
+                            //item.setvendad_preco_venda_temp(item.getVendad_preco_venda());
+                            //item.setvendad_quantidade_temp(item.getVendad_quantidade());
 
-                            SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                             //SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
                             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
                             //new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
                             if (item != null) {
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                                 View view = inflater.inflate(R.layout.info_produto_venda, null);
-                                alerta1 = new Builder(VenderProdutos.this);
+                                alerta1 = new Builder(CadastroPedidos.this);
                                 alerta1.setCancelable(false);
                                 alerta1.setView(view);
 
@@ -1458,8 +1465,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     String codprod = (item.getVendad_prd_codigo());
                                     codprod = codprod.trim();
                                     List<String> DadosListTabPreco = new ArrayList<String>();
-                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
-                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
+                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
+                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
                                     CursorParametro.moveToFirst();
                                     vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
                                     tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
@@ -1470,7 +1477,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
                                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                                     CursorParametro.close();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "'", null);
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "' AND CODPERFIL = "+   idPerfil, null);
                                     produto_cursor.moveToFirst();
 
                                     qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
@@ -1560,7 +1567,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             DadosListTabPreco.add(tab7 + " R$: " + Precop2);
                                         }
                                     }
-                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
+                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(CadastroPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
                                     arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                     spntabpreco.setAdapter(arrayAdapterTabPreco);
 
@@ -1580,7 +1587,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                 Preco = Preco.replace('.', ',');
                                 info_txv_precoproduto.setText(Preco);
 
-                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "'", null);
+                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "' AND CODITEMANUAL = '"+item.getVendad_prd_codigo()+"' AND CODPERFIL = "+idPerfil, null);
                                 cursor.moveToFirst();
                                 String qtdpedido = cursor.getString(cursor.getColumnIndex("QTDMENORPED"));
                                 cursor.close();
@@ -1615,6 +1622,9 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                                 SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
                                                 Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
 
+                                                itemBean1.setvendad_quantidade_temp(item.getVendad_quantidade());
+                                                itemBean1.setvendad_preco_venda_temp(item.getVendad_preco_venda());
+
                                                 itemBean2.setVendad_prd_codigo(COD_PRODUTO);
                                                 //itemBean3 = itemDao.altera_item_na_venda(itemBean2);
 
@@ -1623,6 +1633,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                                 itemBean1.setVendad_prd_descricao(DESCRICAO);
                                                 itemBean1.setVendad_prd_unidade(UNIDADE);
                                                 itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
+
 
                                                 //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
                                                 String ValorItem = info_txv_precoproduto.getText().toString();
@@ -1655,7 +1666,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
                                             return;
                                         }
-                                        VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
+                                        CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
                                     }
 
                                 });
@@ -1665,7 +1676,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
                                     }
                                 });
-                                SharedPreferences prefsHost = VenderProdutos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
+                                SharedPreferences prefsHost = CadastroPedidos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
                                 sprecoprincipal = prefsHost.getInt("spreco", 0);
                                 spntabpreco.setSelection(sprecoprincipal);
                                 alerta1.show();
@@ -1777,13 +1788,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         if (NumPedido.equals("0")) {
-                            VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                            CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                             SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
                             new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
                             if (item != null) {
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                                 View view = inflater.inflate(R.layout.info_produto_venda, null);
-                                alerta1 = new Builder(VenderProdutos.this);
+                                alerta1 = new Builder(CadastroPedidos.this);
                                 alerta1.setCancelable(false);
                                 alerta1.setView(view);
 
@@ -1834,7 +1845,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     String codprod = (item.getVendad_prd_codigoTEMP());
                                     codprod = codprod.trim();
                                     List<String> DadosListTabPreco = new ArrayList<String>();
-                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
+                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
                                     Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
                                     CursorParametro.moveToFirst();
                                     vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
@@ -1847,7 +1858,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                                     CursorParametro.close();
 
-                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
+                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
                                     Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "'", null);
                                     produto_cursor.moveToFirst();
 
@@ -1938,7 +1949,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             DadosListTabPreco.add(tab7 + " R$: " + Precop2);
                                         }
                                     }
-                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
+                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(CadastroPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
                                     arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                     spntabpreco.setAdapter(arrayAdapterTabPreco);
 
@@ -2029,7 +2040,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
                                             return;
                                         }
-                                        VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
+                                        CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
                                     }
 
                                 });
@@ -2050,7 +2061,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                             }
 
                         } else {
-                            VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                            CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                             SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                             //SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
                             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
@@ -2058,7 +2069,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                             if (item != null) {
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                                 View view = inflater.inflate(R.layout.info_produto_venda, null);
-                                alerta1 = new Builder(VenderProdutos.this);
+                                alerta1 = new Builder(CadastroPedidos.this);
                                 alerta1.setCancelable(false);
                                 alerta1.setView(view);
 
@@ -2109,7 +2120,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                     String codprod = (item.getVendad_prd_codigo());
                                     codprod = codprod.trim();
                                     List<String> DadosListTabPreco = new ArrayList<String>();
-                                    DB = new ConfigDB(VenderProdutos.this).getReadableDatabase();
+                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
                                     Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
                                     CursorParametro.moveToFirst();
                                     vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
@@ -2211,7 +2222,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             DadosListTabPreco.add(tab7 + " R$: " + Precop2);
                                         }
                                     }
-                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(VenderProdutos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
+                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(CadastroPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
                                     arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                     spntabpreco.setAdapter(arrayAdapterTabPreco);
 
@@ -2306,7 +2317,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                                             Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
                                             return;
                                         }
-                                        VenderProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
+                                        CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
                                     }
 
                                 });
@@ -2316,7 +2327,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
                                     }
                                 });
-                                SharedPreferences prefsHost = VenderProdutos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
+                                SharedPreferences prefsHost = CadastroPedidos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
                                 sprecoprincipal = prefsHost.getInt("spreco", 0);
                                 spntabpreco.setSelection(sprecoprincipal);
                                 alerta1.show();
@@ -2368,7 +2379,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         }
         itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
         if (!itens_temp.isEmpty()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
             builder.setMessage("Deseja realmente cancelar a venda?")
@@ -2418,13 +2429,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
             }
             if (!NumPedido.equals("0")) {
                 Alterar_Pedido_listview_e_calcula_total();
-                ((InputMethodManager) VenderProdutos.this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+                ((InputMethodManager) CadastroPedidos.this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
                         venda_txt_desconto.getWindowToken(), 0);
                 return true;
 
             } else {
                 atualiza_listview_e_calcula_total();
-                ((InputMethodManager) VenderProdutos.this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+                ((InputMethodManager) CadastroPedidos.this.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
                         venda_txt_desconto.getWindowToken(), 0);
                 return true;
             }
@@ -2451,21 +2462,21 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                 numpedido = Util.AcrescentaZeros(numpedido.toString(), 4);
 
                 DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE CHAVE_PEDIDO = '" + chavepedido + "'");
-                Boolean ConexOk = Util.checarConexaoCelular(VenderProdutos.this);
+                Boolean ConexOk = Util.checarConexaoCelular(CadastroPedidos.this);
                 if (ConexOk == true) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(VenderProdutos.this);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
                     builder.setTitle("Sincronizar");
                     builder.setMessage("Deseja Sincronizar o Pedido " + numpedido + " agora?");
                     builder.setCancelable(true);
                     builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
 
-                            dialog = new ProgressDialog(VenderProdutos.this);
+                            dialog = new ProgressDialog(CadastroPedidos.this);
                             dialog.setMessage("Sincronizando pedido nº " + numpedido);
                             dialog.setCancelable(false);
                             dialog.setTitle("Aguarde");
                             dialog.show();
-                            Thread thread = new Thread(VenderProdutos.this);
+                            Thread thread = new Thread(CadastroPedidos.this);
                             thread.start();
 
                         }
@@ -2474,8 +2485,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
 
                     builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
-                            Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                            Toast.makeText(CadastroPedidos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                             Bundle params = new Bundle();
                             params.putString(getString(R.string.intent_codvendedor), sCodVend);
                             params.putString(getString(R.string.intent_usuario), usuario);
@@ -2491,8 +2502,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     alerta = builder.create();
                     alerta.show();
                 } else {
-                    Toast.makeText(VenderProdutos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
-                    Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                    Toast.makeText(CadastroPedidos.this, "Sem conexão com a Internet. Verifique.", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                     params.putString(getString(R.string.intent_usuario), usuario);
@@ -2508,8 +2519,8 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
         });
         builderAut.setNegativeButton("Não", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                Toast.makeText(VenderProdutos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                Toast.makeText(CadastroPedidos.this, "Pedido não sincronizado com a base de dados.", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                 Bundle params = new Bundle();
                 params.putString(getString(R.string.intent_codvendedor), sCodVend);
                 params.putString(getString(R.string.intent_usuario), usuario);
@@ -2541,13 +2552,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(VenderProdutos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(CadastroPedidos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                     });
                     pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido);
                     if (pedidoendiado.equals("OK")) {
                         dialog.dismiss();
-                        Intent intent = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                        Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                         Bundle params = new Bundle();
                         params.putString(getString(R.string.intent_codvendedor), sCodVend);
                         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -2560,7 +2571,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(VenderProdutos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(CadastroPedidos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -2569,7 +2580,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                 pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido);
                 if (pedidoendiado.equals("OK")) {
                     dialog.dismiss();
-                    Intent intent = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                    Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -2582,13 +2593,13 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(VenderProdutos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(CadastroPedidos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                     });
 
                 } else {
                     dialog.dismiss();
-                    Intent intent = new Intent(VenderProdutos.this, ConsultaPedidos.class);
+                    Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codvendedor), sCodVend);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -2601,7 +2612,7 @@ public class VenderProdutos extends Activity implements View.OnKeyListener, View
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(VenderProdutos.this, "Houve uma falha ao enviar o pedido. Tente novamente!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(CadastroPedidos.this, "Houve uma falha ao enviar o pedido. Tente novamente!", Toast.LENGTH_LONG).show();
                         }
                     });
 

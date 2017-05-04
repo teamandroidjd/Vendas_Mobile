@@ -5,11 +5,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -21,12 +18,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -35,7 +30,6 @@ import android.widget.Toast;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterClientes;
 import com.jdsystem.br.vendasmobile.domain.Clientes;
-import com.jdsystem.br.vendasmobile.domain.FiltroClientes;
 import com.jdsystem.br.vendasmobile.fragments.FragmentCliente;
 
 import java.util.ArrayList;
@@ -48,7 +42,6 @@ public class ConsultaClientes extends AppCompatActivity
     private Handler handler = new Handler();
     public ListAdapterClientes adapter;
     Clientes lstclientes;
-    FiltroClientes lstFiltroClientes;
     String codVendedor, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, editQuery,
             UsuarioLogado, telaInvocada, chavepedido, numPedido;
     SQLiteDatabase DB;
@@ -419,18 +412,7 @@ public class ConsultaClientes extends AppCompatActivity
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
-                        builder.setTitle(R.string.app_namesair);
-                        builder.setIcon(R.drawable.logo_ico);
-                        builder.setMessage(R.string.alertsyncclients)
-                                .setCancelable(false)
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        return;
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
+                        Toast.makeText(this, "Nenhum cliente encontrando. Verifique!", Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -448,111 +430,6 @@ public class ConsultaClientes extends AppCompatActivity
         return DadosLisClientes;
     }
 
-    public List<FiltroClientes> CarregarClientesFiltrados() {
-
-        ArrayList<FiltroClientes> DadosLisClientes = new ArrayList<FiltroClientes>();
-        try {
-            Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
-            cursorparametro.moveToFirst();
-            String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
-            cursorparametro.close();
-            if (cliexvend.equals("S")) {
-                Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
-                        " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                        " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
-                cursorClientes.moveToFirst();
-                if (cursorClientes.getCount() > 0) {
-                    do {
-                        String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
-                        String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
-                        String nomeRazao = cursorClientes.getString(cursorClientes.getColumnIndex("NOMERAZAO"));
-                        String nomeFantasia = cursorClientes.getString(cursorClientes.getColumnIndex("NOMEFAN"));
-                        String documento = cursorClientes.getString(cursorClientes.getColumnIndex("CNPJ_CPF"));
-                        String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
-                        String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
-                        String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
-                        //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
-                        String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
-                        String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
-                        String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
-                        String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
-
-
-                        lstFiltroClientes = new FiltroClientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
-                        DadosLisClientes.add(lstFiltroClientes);
-                    } while (cursorClientes.moveToNext());
-                    cursorClientes.close();
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
-                    builder.setTitle(R.string.app_namesair);
-                    builder.setIcon(R.drawable.logo_ico);
-                    builder.setMessage(R.string.alertsyncclients)
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    return;
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                }
-            } else {
-                Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
-                        " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                        " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
-                cursorClientes.moveToFirst();
-                if (cursorClientes.getCount() > 0) {
-                    do {
-                        String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
-                        String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
-                        String nomeRazao = cursorClientes.getString(cursorClientes.getColumnIndex("NOMERAZAO"));
-                        String nomeFantasia = cursorClientes.getString(cursorClientes.getColumnIndex("NOMEFAN"));
-                        String documento = cursorClientes.getString(cursorClientes.getColumnIndex("CNPJ_CPF"));
-                        String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
-                        String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
-                        String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
-                        //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
-                        String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
-                        String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
-                        String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
-                        String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
-
-
-                        lstFiltroClientes = new FiltroClientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
-                        DadosLisClientes.add(lstFiltroClientes);
-                    } while (cursorClientes.moveToNext());
-                    cursorClientes.close();
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
-                    builder.setTitle(R.string.app_namesair);
-                    builder.setIcon(R.drawable.logo_ico);
-                    builder.setMessage(R.string.alertsyncclients)
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    return;
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                }
-
-            }
-        } catch (Exception e) {
-            e.toString();
-            if (dialog.isShowing())
-                dialog.dismiss();
-            Toast.makeText(this, "Falha no SQL. Tente novamente!", Toast.LENGTH_LONG).show();
-        }
-        if (dialog.isShowing())
-            dialog.dismiss();
-
-        return DadosLisClientes;
-    }
 
     @Override
     public void onBackPressed() {

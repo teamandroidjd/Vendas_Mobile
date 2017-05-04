@@ -14,6 +14,7 @@ public class SqliteConfPagamentoBean {
     public static final String CONF_VENDAC_CHAVE = "vendac_chave";
     public static final String CONF_ENVIADO = "conf_enviado";
 
+
     private Integer conf_codigo;
     private String conf_sementrada_comentrada;
     private String conf_tipo_pagamento;
@@ -23,6 +24,7 @@ public class SqliteConfPagamentoBean {
     private String vendac_chave;
     private String conf_enviado;
     private Boolean AtuPedido;
+    private String conf_temp;
 
 
     public SqliteConfPagamentoBean() {
@@ -37,6 +39,7 @@ public class SqliteConfPagamentoBean {
         this.conf_parcelas = conf_parcelas;
         this.vendac_chave = vendac_chave;
         this.conf_enviado = conf_enviado;
+
     }
 
     public boolean isComEntrada() {
@@ -132,5 +135,11 @@ public class SqliteConfPagamentoBean {
 
     public void setConf_enviado(String conf_enviado) {
         this.conf_enviado = conf_enviado;
+    }
+    public String getConf_temp(){
+        return conf_temp;
+    }
+    public void setConf_temp(String confTemp){
+        this.conf_temp = confTemp;
     }
 }

@@ -1,15 +1,10 @@
 package com.jdsystem.br.vendasmobile;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -21,18 +16,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.domain.Contatos;
-import com.jdsystem.br.vendasmobile.domain.FiltroContatos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentContatos;
 
 import java.util.ArrayList;
@@ -44,7 +36,6 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
     String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, editQuery;
     SQLiteDatabase DB;
     Contatos lstcontatos;
-    FiltroContatos lstfiltrocontatos;
     //Contatos lstfiltrocontatos;
     ProgressDialog pDialog;
     private EditText pesquisacliente;
@@ -505,66 +496,5 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
 
     }
 
-    public List<FiltroContatos> listarContatos() {
-
-        Cursor CursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
-                "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
-                "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
-                "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
-                "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
-                "FROM CONTATO " +
-                "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
-                "WHERE CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
-                "LIKE '%" + editQuery + "%'" +
-                " order by CONTATO.NOME ", null);
-
-        CursorContatos.moveToFirst();
-        ArrayList<FiltroContatos> DadosList = new ArrayList<FiltroContatos>();
-
-        if (CursorContatos.getCount() > 0) {
-            do {
-                String nome = CursorContatos.getString(CursorContatos.getColumnIndex("NOME"));
-                String cargo = CursorContatos.getString(CursorContatos.getColumnIndex("CARGO"));
-                String email = CursorContatos.getString(CursorContatos.getColumnIndex("EMAIL"));
-                String tel1 = CursorContatos.getString(CursorContatos.getColumnIndex("TEL1"));
-                String tel2 = CursorContatos.getString(CursorContatos.getColumnIndex("TEL2"));
-                String Doc = CursorContatos.getString(CursorContatos.getColumnIndex("DOCUMENTO"));
-                String Data = CursorContatos.getString(CursorContatos.getColumnIndex("DATA"));
-                String Cep = CursorContatos.getString(CursorContatos.getColumnIndex("CEP"));
-                String Endereco = CursorContatos.getString(CursorContatos.getColumnIndex("ENDERECO"));
-                String Num = CursorContatos.getString(CursorContatos.getColumnIndex("NUMERO"));
-                String Compl = CursorContatos.getString(CursorContatos.getColumnIndex("COMPLEMENTO"));
-                String uf = CursorContatos.getString(CursorContatos.getColumnIndex("UF"));
-                int codClieExt = CursorContatos.getInt(CursorContatos.getColumnIndex("CLIENTES.CODCLIE_EXT"));
-
-                String nomeCliente;
-                String tipoContato = CursorContatos.getString(CursorContatos.getColumnIndex("CONTATO.TIPO"));
-                if (tipoContato == null) {
-                    nomeCliente = CursorContatos.getString(CursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
-                } else if (tipoContato.equals("O")) {
-                    nomeCliente = "OUTROS";
-                } else {
-                    nomeCliente = CursorContatos.getString(CursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
-                }
-
-                int codContato = CursorContatos.getInt(CursorContatos.getColumnIndex("CONTATO.CODCONTATO_INT"));
-
-
-                lstfiltrocontatos = new FiltroContatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
-                        0, 0, codClieExt, nomeCliente, codContato);
-                DadosList.add(lstfiltrocontatos);
-            } while (CursorContatos.moveToNext());
-        } else {
-            Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT).show();
-        }
-        CursorContatos.close();
-        if (Dialogo.isShowing()) {
-            Dialogo.dismiss();
-        }
-
-        flag = 0;
-
-        return DadosList;
-    }
 }
 

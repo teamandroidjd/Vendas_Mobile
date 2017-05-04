@@ -89,7 +89,8 @@ public class Login extends AppCompatActivity implements Runnable {
         carregarpreferencias();
         carregarperfil();
 
-        if (URLPrincipal == null) {
+
+        if (URLPrincipal == null && qtdperfil.equals("N")) {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
             startActivity(intent);
             finish();
@@ -121,7 +122,7 @@ public class Login extends AppCompatActivity implements Runnable {
             if (cursorPerfil.getCount() > 1) {
                 List<String> DadosListPerfil = new ArrayList<String>();
                 do {
-                    DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL")));
+                    DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL")).toUpperCase());
                 } while (cursorPerfil.moveToNext());
 
                 View viewEmp = (LayoutInflater.from(Login.this)).inflate(R.layout.input_perfil, null);
@@ -141,19 +142,19 @@ public class Login extends AppCompatActivity implements Runnable {
                             public void onClick(DialogInterface dialog, int which) {
                                 String NomePerfil = spPerfilInput.getSelectedItem().toString();
                                 try {
-                                    Cursor cursorperfil = DB.rawQuery(" SELECT LICENCA,CODPERFIL,HOST,NOMEPERFIL FROM PERFIL WHERE NOMEPERFIL = '" + NomePerfil + "'", null);
-                                    cursorperfil.moveToFirst();
+                                    Cursor cursorperfil1 = DB.rawQuery(" SELECT LICENCA,CODPERFIL,HOST,NOMEPERFIL FROM PERFIL WHERE NOMEPERFIL = '" + NomePerfil + "'", null);
+                                    cursorperfil1.moveToFirst();
                                     int idPerfil = 0;
                                     String host = null;
                                     String chave = null;
                                     String nomePerfil = null;
-                                    if (cursorperfil.getCount() > 0) {
-                                        idPerfil = cursorperfil.getInt(cursorperfil.getColumnIndex("CODPERFIL"));
-                                        host = cursorperfil.getString(cursorperfil.getColumnIndex("HOST"));
-                                        chave = cursorperfil.getString(cursorperfil.getColumnIndex("LICENCA"));
-                                        nomePerfil = cursorperfil.getString(cursorperfil.getColumnIndex("NOMEPERFIL"));
+                                    if (cursorperfil1.getCount() > 0) {
+                                        idPerfil = cursorperfil1.getInt(cursorperfil1.getColumnIndex("CODPERFIL"));
+                                        host = cursorperfil1.getString(cursorperfil1.getColumnIndex("HOST"));
+                                        chave = cursorperfil1.getString(cursorperfil1.getColumnIndex("LICENCA"));
+                                        nomePerfil = cursorperfil1.getString(cursorperfil1.getColumnIndex("NOMEPERFIL"));
                                     }
-                                    cursorperfil.close();
+                                    cursorperfil1.close();
 
                                     SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
                                     editorhost.putString("ChaveAcesso", chave);
@@ -187,6 +188,7 @@ public class Login extends AppCompatActivity implements Runnable {
     }
 
     public void logar(View view) {
+        carregarpreferencias();
         final String user = edtUsuario.getText().toString();
         final String pass = edtSenha.getText().toString();
         ConexOk = Util.checarConexaoCelular(Login.this);
@@ -790,6 +792,5 @@ public class Login extends AppCompatActivity implements Runnable {
     @Override
     protected void onResume() {
         super.onResume();
-        carregarpreferencias();
     }
 }

@@ -15,7 +15,7 @@ import com.jdsystem.br.vendasmobile.CadastroContatos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConsultaClientes;
 import com.jdsystem.br.vendasmobile.ConsultaPedidos;
-import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
+import com.jdsystem.br.vendasmobile.CadastroPedidos;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.DadosCliente;
 import com.jdsystem.br.vendasmobile.Sincronismo;
@@ -151,7 +151,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
 
             if (FlagIntegrado.equals("1")) {
                 if (numPedido == null) {
-                    Intent intent = new Intent(getActivity(), VenderProdutos.class);
+                    Intent intent = new Intent(getActivity(), CadastroPedidos.class);
                     Bundle params = new Bundle();
                     params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                     params.putString((getString(R.string.intent_codvendedor)), codVendedor);
@@ -164,7 +164,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     startActivity(intent);
                     getActivity().finish();
                 } else {
-                    Intent intent = new Intent(getActivity(), VenderProdutos.class);
+                    Intent intent = new Intent(getActivity(), CadastroPedidos.class);
                     Bundle params = new Bundle();
                     params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                     params.putString((getString(R.string.intent_codvendedor)), codVendedor);
@@ -187,7 +187,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                 }
                 if (bloqueio.equals("01") || bloqueio.equals("1")) {
                     if (numPedido == null) {
-                        Intent intent = new Intent(getActivity(), VenderProdutos.class);
+                        Intent intent = new Intent(getActivity(), CadastroPedidos.class);
                         Bundle params = new Bundle();
                         params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                         params.putString((getString(R.string.intent_codvendedor)), codVendedor);
@@ -201,7 +201,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                         startActivity(intent);
                         getActivity().finish();
                     } else {
-                        Intent intent = new Intent(getActivity(), VenderProdutos.class);
+                        Intent intent = new Intent(getActivity(), CadastroPedidos.class);
                         Bundle params = new Bundle();
                         params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                         params.putString((getString(R.string.intent_codvendedor)), codVendedor);
@@ -221,7 +221,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             }
             if (BloqClie.equals("N")) {
                 if (numPedido == null) {
-                    Intent intent = new Intent(getActivity(), VenderProdutos.class);
+                    Intent intent = new Intent(getActivity(), CadastroPedidos.class);
                     Bundle params = new Bundle();
                     params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                     params.putString((getString(R.string.intent_codvendedor)), codVendedor);
@@ -234,7 +234,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     startActivity(intent);
                     getActivity().finish();
                 } else {
-                    Intent intent = new Intent(getActivity(), VenderProdutos.class);
+                    Intent intent = new Intent(getActivity(), CadastroPedidos.class);
                     Bundle params = new Bundle();
                     params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                     params.putString((getString(R.string.intent_codvendedor)), codVendedor);
@@ -249,7 +249,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                 }
             }
 
-            /*Intent intentp = new Intent(getActivity(), VenderProdutos.class);
+            /*Intent intentp = new Intent(getActivity(), CadastroPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
             intentp.putExtras(params);
