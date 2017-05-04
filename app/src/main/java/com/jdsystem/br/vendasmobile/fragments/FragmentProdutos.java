@@ -21,9 +21,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jdsystem.br.vendasmobile.CadastroContatos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConsultaProdutos;
+import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
+import com.jdsystem.br.vendasmobile.DadosContato;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
@@ -52,10 +56,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     private String numPedido, chavePedido, usuario, senha, codVendedor, urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7,telaInvocada;
     SQLiteDatabase DB;
     private Spinner spntabpreco;
-    private String PREFS_PRIVATE = "PREFS_PRIVATE";
+    private String PREFS_PRIVATE = "PREFS_PRIVATE", NomeCliente;
+    private SharedPreferences prefs;
     private ListView prod_listview_itenstemp;
     public AlertDialog dlg;
-    public SharedPreferences prefs;
+    public int actCadastraContato, CodCliente, CodContato;
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
 
@@ -76,6 +81,10 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 urlprincipal = params.getString(getString(R.string.intent_urlprincipal));
                 telaInvocada = params.getString(getString(R.string.intent_telainvocada));
+                actCadastraContato = params.getInt(getString(R.string.intent_cad_contato));
+                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                CodContato = params.getInt(getString(R.string.intent_codcontato));
+                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
             carregarpreferencias();
 
@@ -99,7 +108,66 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void onClickListener(View v, int position) {
-        if (flag == 0 && numPedido == null) {
+
+        if(flag == 0 && actCadastraContato == 1) {
+            ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
+
+            String CodProd = adapterProdutos.ChamaDados(position);
+            Intent intentp = new Intent(getActivity(), CadastroContatos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codproduto), CodProd);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+            params.putString(getString(R.string.intent_cad_contato), CodProd);
+            params.putInt(getString(R.string.intent_codcliente), CodCliente);
+            params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+            intentp.putExtras(params);
+            startActivity(intentp);
+            getActivity().finish();
+        }else if (flag == 0 && actCadastraContato == 2) {
+            ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
+
+            String CodProd = adapterProdutos.ChamaDados(position);
+
+                SQLiteDatabase db = new ConfigDB(getContext()).getReadableDatabase();
+
+                try {
+                    Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato " +
+                            "from produtos_contatos " +
+                            "where cod_produto_manual = '" + CodProd + "' and cod_interno_contato = " + CodContato, null);
+                    cursor.moveToFirst();
+
+                    if (cursor.getCount() > 0){
+                        Util.msg_toast_personal(getContext(), "Este produto já está relacionado à este cliente. " +
+                                "Verifique.", Toast.LENGTH_SHORT);
+                        cursor.close();
+                    }else{
+                        Util.gravarItensContato(CodProd, CodContato, getContext());
+
+                        Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
+                        cursor.close();
+
+                        Intent intentp = new Intent(getActivity(), DadosContato.class);
+                        Bundle params = new Bundle();
+                        params.putString(getString(R.string.intent_codproduto), CodProd);
+                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+                        // params.putString(getString(R.string.intent_cad_contato), CodProd);
+                        params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                        params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                        params.putInt(getString(R.string.intent_codcontato),CodContato);
+                        intentp.putExtras(params);
+                        startActivity(intentp);
+                        getActivity().finish();
+                    }
+                }catch (Exception E){
+                    E.toString();
+                }
+        }else if (flag == 0 && numPedido == null) {
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             String CodProd = adapter.ChamaDados(position);
@@ -176,8 +244,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
                 final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
-
-
 
                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
                 DB = new ConfigDB(getActivity()).getReadableDatabase();

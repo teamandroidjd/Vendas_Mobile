@@ -74,6 +74,9 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
         CadContatos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CadastroContatos.excluiBaseTempCadastroContatos(ConsultaContatos.this);
+                CadastroContatos.excluiBaseTempContatos(ConsultaContatos.this);
+                CadastroContatos.excluiProdutosContatosTemp(ConsultaContatos.this);
                 Intent i = new Intent(ConsultaContatos.this, CadastroContatos.class);
                 Bundle params = new Bundle();
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);

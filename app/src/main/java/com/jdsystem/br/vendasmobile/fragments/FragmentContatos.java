@@ -70,7 +70,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
             Intent intentp = new Intent(getActivity(), DadosContato.class);
             Bundle params = new Bundle();
             params.putInt("codCliente", CodigoCliente);
-            params.putInt("codContato", CodigoContato);
+            params.putInt(getString(R.string.intent_codcontato), CodigoContato);
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);

@@ -2488,10 +2488,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     @Override
     protected void onResume() {
-        if (Dialog != null) {
-            Dialog.show();
-
-        }
         super.onResume();
     }
 

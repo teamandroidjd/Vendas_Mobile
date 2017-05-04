@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile.Util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.R;
 
 import java.security.MessageDigest;
@@ -383,6 +385,16 @@ public class Util extends Activity {
                 break;
         }
         return mDiaSemana;
+    }
+
+    public static void gravarItensContato(String codProduto, int codContato, Context context){
+        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
+        try{
+            db.execSQL("insert into produtos_contatos (cod_produto_manual, cod_interno_contato) values " +
+                    "('" + codProduto + "', " + codContato + ");");
+        }catch (Exception E){
+            E.toString();
+        }
     }
 }
 

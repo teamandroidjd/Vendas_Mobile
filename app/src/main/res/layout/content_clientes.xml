@@ -84,7 +84,6 @@
         android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:orientation="vertical">
-    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -100,5 +99,6 @@
             android:fastScrollAlwaysVisible="true"
             android:cacheColorHint="@color/colorAccent"/>
     </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

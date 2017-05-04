@@ -22,7 +22,7 @@ public class DadosContato extends ActionBarActivity {
 
     private String DocClie,sCodVend,URLPrincipal,usuario,senha,NomeCliente;
     int CodCliente;
-    String CodContato;
+    int CodContato;
     Toolbar toolbar;
     ViewPager pager;
     DadosContatosAdapter adapter;
@@ -44,6 +44,7 @@ public class DadosContato extends ActionBarActivity {
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager_cont);
         pager.setAdapter(adapter);
+
 
         // Assiging the Sliding Tab Layout View
         tabs = (SlidingTabLayout) findViewById(R.id.tabs_cont);
@@ -71,7 +72,7 @@ public class DadosContato extends ActionBarActivity {
                 senha = params.getString(getString(R.string.intent_senha));
                 CodCliente = params.getInt(getString(R.string.intent_codcliente));
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
-                CodContato = params.getString("codContato");
+                CodContato = params.getInt(getString(R.string.intent_codcontato));
             }
         }
     }
@@ -106,7 +107,7 @@ public class DadosContato extends ActionBarActivity {
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
         params.putInt("codCliente", CodCliente);
-        params.putString("codContato", CodContato);
+        params.putInt(getString(R.string.intent_codcontato), CodContato);
         intent.putExtras(params);
         startActivity(intent);
         finish();

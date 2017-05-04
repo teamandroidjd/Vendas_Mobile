@@ -206,6 +206,9 @@
     <string name="remove_hour">Remover horário</string>
     <string name="remove_schedule">Deseja remover o horário agendado?</string>
     <string name="sched_already_exist">Este horário já foi agendado anteriormente. Verifique!</string>
+    <string name="cancel_add_contact">Deseja cancelar a inclusão deste contato?</string>
+    <string name="intent_codcontato">codContato</string>
+    <string name="remove_prod_cont">Remover produto relacionado à este contato?</string>
 
 
 </resources>

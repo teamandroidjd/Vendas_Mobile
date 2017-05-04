@@ -108,6 +108,11 @@ public class act_TH_horarios_contatos extends Fragment {
                                 String itemLista = listView.getItemAtPosition(position).toString();
                                 arrayAdapter.remove(diasContatos.get(position));
                                 arrayAdapter.notifyDataSetChanged();
+                                if(arrayAdapter.getCount() > 0){
+                                    TAG_HORARIOS_CONTATOS.setText("Horários agendados");
+                                }else {
+                                    TAG_HORARIOS_CONTATOS.setText("Nenhum contato agendado!");
+                                }
                                 try {
                                     excluiContatoAgendado(itemLista, sCodContato, ctx);
                                 } catch (Exception E) {
@@ -131,7 +136,7 @@ public class act_TH_horarios_contatos extends Fragment {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodContato = params.getInt("codContato");
+                sCodContato = params.getInt(getString(R.string.intent_codcontato));
                 sCodVend = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
@@ -250,6 +255,11 @@ public class act_TH_horarios_contatos extends Fragment {
                                         arrayAdapter = new ArrayAdapter<String>(ctx,
                                                 android.R.layout.simple_list_item_1, diasContatos);
                                         listView.setAdapter(arrayAdapter);
+                                        if(arrayAdapter.getCount() > 0){
+                                            TAG_HORARIOS_CONTATOS.setText("Horários agendados");
+                                        }else {
+                                            TAG_HORARIOS_CONTATOS.setText("Nenhum contato agendado!");
+                                        }
                                         mAlertDialog.dismiss();
                                         //}
                                     }

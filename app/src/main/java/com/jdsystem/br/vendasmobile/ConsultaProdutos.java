@@ -40,12 +40,13 @@ public class ConsultaProdutos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
 
-    String codVendedor, URLPrincipal, usuario, senha, dtUltAtu, usuarioLogado, sincprod, numPedido, chavePedido, editQuery,telaInvocada;
+    String codVendedor, URLPrincipal, usuario, senha, dtUltAtu, usuarioLogado, sincprod, numPedido, chavePedido,
+            NomeCliente, editQuery,telaInvocada;
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private EditText prod_txt_pesquisaproduto;
     private ProgressDialog dialog;
     SQLiteDatabase DB;
-    int Flag = 0;
+    int Flag = 0, CodCliente, codContato;
     Produtos lstprodutos;
     Handler handler = new Handler();
     MenuItem searchItem;
@@ -53,6 +54,7 @@ public class ConsultaProdutos extends AppCompatActivity
     public SharedPreferences prefs;
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
+    int CadastroContato;
 
 
     @Override
@@ -74,6 +76,10 @@ public class ConsultaProdutos extends AppCompatActivity
                 chavePedido = params.getString(getString(R.string.intent_chavepedido));
                 Flag = params.getInt(getString(R.string.intent_flag));
                 telaInvocada = params.getString(getString(R.string.intent_telainvocada));
+                CadastroContato = params.getInt(getString(R.string.intent_cad_contato), 0);
+                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                codContato = params.getInt(getString(R.string.intent_codcontato));
+                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
                 //Pedido = params.getBoolean("pedido");
             }
         }
@@ -229,6 +235,11 @@ public class ConsultaProdutos extends AppCompatActivity
                     params.putString(getString(R.string.intent_senha), senha);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                    params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                    params.putInt(getString(R.string.intent_codcontato), codContato);
+                    params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                    params.putInt(getString(R.string.intent_codcontato), codContato);
                     frag.setArguments(params);
                     ft.commit();
                 } else {
@@ -245,6 +256,8 @@ public class ConsultaProdutos extends AppCompatActivity
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                         newparams.putString(getString(R.string.intent_senha), senha);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        newparams.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                        newparams.putInt(getString(R.string.intent_codcontato), codContato);
                         newfrag.setArguments(newparams);
                         newft.commit();
                     }
@@ -372,7 +385,6 @@ public class ConsultaProdutos extends AppCompatActivity
         }*/
         if (dialog.isShowing())
             dialog.dismiss();
-
     }
 
     @Override

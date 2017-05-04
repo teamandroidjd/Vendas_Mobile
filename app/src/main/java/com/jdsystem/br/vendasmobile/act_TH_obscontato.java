@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,8 @@ public class act_TH_obscontato extends Fragment {
     public SharedPreferences prefs;
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
+    TextView TAG_OBSCONTATO;
+    LinearLayout linearLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -41,8 +44,8 @@ public class act_TH_obscontato extends Fragment {
 
         DB = new ConfigDB(ctx).getReadableDatabase();
 
-        TextView TAG_OBSCONTATO = (TextView) v.findViewById(R.id.txt_obs_contatos);
-
+        TAG_OBSCONTATO = (TextView) v.findViewById(R.id.txt_obs_contatos);
+        linearLayout = (LinearLayout) v.findViewById(R.id.ll_obs);
 
         //Intent intent = act.getIntent();
         Intent intent = ((DadosContato) getActivity()).getIntent();
@@ -54,9 +57,22 @@ public class act_TH_obscontato extends Fragment {
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
-
             }
         }
+
+        FloatingActionButton fabCadProdCont = (FloatingActionButton) v.findViewById(R.id.cad_produtos_contatos);
+        fabCadProdCont.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
+        carregaObsContato();
+
+        return v;
+    }
+
+    private void carregaObsContato(){
         try {
             Cursor CursorClie = DB.rawQuery(" SELECT CONTATO.OBS, CONTATO.CODPERFIL " +
                     "FROM CONTATO " +
@@ -69,8 +85,7 @@ public class act_TH_obscontato extends Fragment {
                 obsContato = CursorClie.getString(CursorClie.getColumnIndex("OBS"));
 
                 if ((obsContato == null) || obsContato.equals("")) {
-                    LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_obs);
-                    linearLayout.setVisibility(View.GONE);
+                    TAG_OBSCONTATO.setText("Nenhuma observação para este contato!");
                 } else {
                     TAG_OBSCONTATO.setText("Observações\n" + obsContato);
                 }
@@ -80,6 +95,6 @@ public class act_TH_obscontato extends Fragment {
         } catch (Exception E) {
             Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
         }
-        return v;
     }
+
 }

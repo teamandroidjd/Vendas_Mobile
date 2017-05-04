@@ -284,6 +284,45 @@ public class ConfigDB extends SQLiteOpenHelper {
             "minuto_inicio      integer, " +
             "hora_final         integer, " +
             "minuto_final       integer);");
+    private static String SQL_PRODUTOS_CONTATOS = ("create table if not exists produtos_contatos (" +
+            "cod_produto_contato        integer primary key autoincrement, " +
+            "cod_produto_manual         varchar(15), " +
+            "cod_interno_contato        integer);    ");
+
+
+    private static String SQL_PRODUTOS_CONTATOS_TEMP = ("create table if not exists produtos_contatos_temp (" +
+            "cod_produto_contato        integer primary key autoincrement, " +
+            "cod_produto_manual         varchar(15), " +
+            "cod_interno_contato        integer);    ");
+
+    private static String SQL_CONTATOS_TEMPORARIOS = (" CREATE TABLE IF NOT EXISTS CONTATO_TEMPORARIO (" +
+            "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
+            "    CODCLIENTE                   INTEGER,                  " +
+            "    CODCLIE_EXT                  INTEGER,                  " +
+            "    CODCONTATO_EXT               VARCHAR (7),              " +
+            "    NOME                         VARCHAR (60)  NOT NULL,   " +
+            "    CARGO                        VARCHAR (30),             " +
+            "    DOCUMENTO                    VARCHAR(15),              " +
+            "    DATA                         VARCHAR(10),              " +
+            "    CEP                          VARCHAR(10),              " +
+            "    ENDERECO                     VARCHAR(15),              " +
+            "    NUMERO                       VARCHAR(10),              " +
+            "    COMPLEMENTO                  VARCHAR(15),              " +
+            "    UF                           CHAR(2),                  " +
+            "    CODVENDEDOR                  INTEGER,                  " +
+            "    CODBAIRRO                    INTEGER,                  " +
+            "    BAIRRO                       VARCHAR (30),             " +
+            "    CODCIDADE                    INTEGER,                  " +
+            "    UFPOSITION                   INTEGER,                  " +
+            "    DESC_CIDADE                  VARCHAR (30),             " +
+            "    EMAIL                        VARCHAR (100),            " +
+            "    TEL1                         VARCHAR (15),             " +
+            "    TEL2                         VARCHAR (15),             " +
+            "    TIPO                         CHAR(1),                  " +
+            "    TIPO_POS                     INTEGER,                  " +
+            "    OBS                          TEXT,                     " +
+            "    CODPERFIL                    INTEGER)                  " +
+            ";");
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -305,7 +344,9 @@ public class ConfigDB extends SQLiteOpenHelper {
         db.execSQL(SQL_PERFIL);
         db.execSQL(SQL_DIAS_CONTATOS);
         db.execSQL(SQL_DIAS_CONTATOS_FINAL);
-
+        db.execSQL(SQL_PRODUTOS_CONTATOS);
+        db.execSQL(SQL_CONTATOS_TEMPORARIOS);
+        db.execSQL(SQL_PRODUTOS_CONTATOS_TEMP);
     }
 
 
@@ -619,6 +660,46 @@ public class ConfigDB extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE CONFPAGAMENTO ADD conf_temp CHAR DEFAULT N");
             }catch (Exception e){
                 e.toString();
+            }
+
+            try {
+                db.execSQL("create table if not exists produtos_contatos (" +
+                        "cod_produto_contato        integer primary key autoincrement, " +
+                        "cod_produto_manual         varchar(15), " +
+                        "cod_interno_contato        integer);    ");
+            }catch (Exception E){
+                System.out.println("ConfigDB, falha no INSERT PRODUTOS_CONTATOS");
+            }
+
+            try {
+                db.execSQL(" CREATE TABLE IF NOT EXISTS CONTATO_TEMPORARIO (" +
+                        "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
+                        "    CODCLIENTE                   INTEGER,                  " +
+                        "    CODCLIE_EXT                  INTEGER,                  " +
+                        "    CODCONTATO_EXT               VARCHAR (7),              " +
+                        "    NOME                         VARCHAR (60)  NOT NULL,   " +
+                        "    CARGO                        VARCHAR (30),             " +
+                        "    DOCUMENTO                    VARCHAR(15),              " +
+                        "    DATA                         VARCHAR(10),              " +
+                        "    CEP                          VARCHAR(10),              " +
+                        "    ENDERECO                     VARCHAR(15),              " +
+                        "    NUMERO                       VARCHAR(10),              " +
+                        "    COMPLEMENTO                  VARCHAR(15),              " +
+                        "    UF                           CHAR(2),                  " +
+                        "    CODVENDEDOR                  INTEGER,                  " +
+                        "    CODBAIRRO                    INTEGER,                  " +
+                        "    BAIRRO                       VARCHAR (30),             " +
+                        "    CODCIDADE                    INTEGER,                  " +
+                        "    DESC_CIDADE                  VARCHAR (30),             " +
+                        "    EMAIL                        VARCHAR (100),            " +
+                        "    TEL1                         VARCHAR (15),             " +
+                        "    TEL2                         VARCHAR (15),             " +
+                        "    TIPO                         CHAR(1),                  " +
+                        "    OBS                          TEXT,                     " +
+                        "    CODPERFIL                    INTEGER)                  " +
+                        ";");
+            }catch (Exception E){
+                System.out.println("Falha na criação da tabela CONTATO_TEMPORARIO");
             }
 
         }
