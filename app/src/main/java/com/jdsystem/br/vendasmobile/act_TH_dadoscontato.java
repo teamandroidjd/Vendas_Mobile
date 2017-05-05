@@ -133,6 +133,7 @@ public class act_TH_dadoscontato extends Fragment {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_endereco);
                 linearLayout.setVisibility(View.GONE);
             } else {
+
                 ENDERECOCONTATO.setText(enderecoContato);
             }
 

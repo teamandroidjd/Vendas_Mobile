@@ -837,6 +837,10 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
     }
 
     private void finalizarvenda(boolean sincpedido) {
+        if(!NumPedido.equals("0")){
+            confDao.atualiza_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
+
+        }
 
         BigDecimal valor_recebido = null;
         BigDecimal total_venda = null;
