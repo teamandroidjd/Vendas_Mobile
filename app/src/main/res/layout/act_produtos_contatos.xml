@@ -55,7 +55,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:onClick="CadastroContatos"
         android:src="@drawable/ic_adicionar"
         app:backgroundTint="@color/colorPrimary" />
+        <!--android:onClick="CadastroContatos"-->
+
 </android.support.design.widget.CoordinatorLayout>

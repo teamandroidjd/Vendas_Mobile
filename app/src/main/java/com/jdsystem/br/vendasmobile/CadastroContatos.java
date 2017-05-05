@@ -681,7 +681,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         } catch (Exception E) {
             E.toString();
         }
-        if(sTipoContato.equals("C")) {
+
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroContatos.this);
         builder.setTitle(R.string.title_novocontato);
         builder.setIcon(R.drawable.logo_ico);
@@ -726,7 +726,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 });
         android.app.AlertDialog alert = builder.create();
         alert.show();
-        }
 
         Toast.makeText(this, "Contato Salvo com sucesso!", Toast.LENGTH_SHORT).show();
     }

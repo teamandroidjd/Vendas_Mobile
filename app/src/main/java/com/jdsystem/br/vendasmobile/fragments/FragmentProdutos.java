@@ -26,7 +26,6 @@ import android.widget.Toast;
 import com.jdsystem.br.vendasmobile.CadastroContatos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConsultaProdutos;
-import com.jdsystem.br.vendasmobile.Controller.VenderProdutos;
 import com.jdsystem.br.vendasmobile.DadosContato;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
