@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -266,6 +268,14 @@ public class ConsultaProdutos extends AppCompatActivity
                 e.toString();
             }
         } else if (Flag == 1) {
+            Configuration configuration = getResources().getConfiguration();
+
+            if (dialog.isShowing() && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+            }else{
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
             try {
                 sincprod = Sincronismo.SincronizarProdutosStatic(ConsultaProdutos.this, usuario, senha, 0);
                 handler.post(new Runnable() {

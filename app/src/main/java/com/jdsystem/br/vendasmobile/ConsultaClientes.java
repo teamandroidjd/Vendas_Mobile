@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -723,6 +725,14 @@ public class ConsultaClientes extends AppCompatActivity
             }
 
         } else if (flag == 1) {
+            Configuration configuration = getResources().getConfiguration();
+
+            if (dialog.isShowing() && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+            }else{
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
             try {
                 sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
                 handler.post(new Runnable() {

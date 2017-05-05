@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -264,6 +266,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     @Override
     public void run() {
+        Configuration configuration = getResources().getConfiguration();
+
+        if (Dialog.isShowing() && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
         try {
             SincronizarClientes(sCodVend, usuario, senha);
@@ -5375,14 +5385,20 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             CursorItensEnv.moveToFirst();
             DecimalFormat dfunit = new DecimalFormat("0.0000");
             DecimalFormat dftotal = new DecimalFormat("0.00");
+            Double vltotal = CursorItensEnv.getDouble(CursorItensEnv.getColumnIndex("VLTOTAL"));
+            String vlTotalitem = String.valueOf(vltotal);
+            java.math.BigDecimal totvendaitem = new java.math.BigDecimal(Double.parseDouble(vlTotalitem.replace(',', '.')));
+            String Totalitem = totvendaitem.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+            //Totalitem = Totalitem.replace('.', ',');
+
             do {
                 createContent(cb, 30, y, Util.AcrescentaZeros(String.valueOf(item), 3), PdfContentByte.ALIGN_CENTER);
                 createContent(cb, 52, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")), PdfContentByte.ALIGN_CENTER);
                 createContent(cb, 102, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")), PdfContentByte.ALIGN_LEFT);
                 createContent(cb, 430, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")), PdfContentByte.ALIGN_RIGHT);
                 createContent(cb, 460, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("UNIDADE")), PdfContentByte.ALIGN_LEFT);
-                createContent(cb, 540, y, dfunit.format(CursorItensEnv.getDouble(CursorItensEnv.getColumnIndex("VLUNIT"))).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
-                createContent(cb, 580, y, dftotal.format(CursorItensEnv.getDouble(CursorItensEnv.getColumnIndex("VLTOTAL"))).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
+                createContent(cb, 547, y, dfunit.format(CursorItensEnv.getDouble(CursorItensEnv.getColumnIndex("VLUNIT"))).replace(".", ","), PdfContentByte.ALIGN_RIGHT);
+                createContent(cb, 588, y, Totalitem.replace(".", ","), PdfContentByte.ALIGN_RIGHT);
                 y = y - 15;
                 item++;
             } while (CursorItensEnv.moveToNext());

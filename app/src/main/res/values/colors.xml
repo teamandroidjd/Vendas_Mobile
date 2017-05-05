@@ -12,4 +12,6 @@
     <color name="ColorFundoSplash">#d5fbff</color>
     <color name="colorItemAdd">#9dbdda</color>
     <color name="backgrounndpadrao">#c2c2c2</color>
+    <color name="fastScrollHandleColor">#FFF</color>
+    <color name="fastScrollBarColor">#ffcecece</color>
 </resources>

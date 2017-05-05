@@ -18,21 +18,21 @@ public class ConfigDB extends SQLiteOpenHelper {
 
 
     private static String SQL_CLIENTE = (" CREATE TABLE IF NOT EXISTS CLIENTES ( CNPJ_CPF VARCHAR (14)  NOT NULL, " +
-            " NOMERAZAO     VARCHAR (60) NOT NULL,            " +
-            " NOMEFAN       VARCHAR (50) NOT NULL,            " +
-            " INSCREST      VARCHAR (18),                     " +
-            " EMAIL         VARCHAR (100) NOT NULL,           " +
-            " TEL1          VARCHAR (15) NOT NULL,            " +
-            " TEL2          VARCHAR (15),                     " +
-            " TELFAX        VARCHAR (15),                     " +
-            " ENDERECO      VARCHAR (50) NOT NULL,            " +
-            " NUMERO        VARCHAR (10) NOT NULL,            " +
-            " COMPLEMENT    VARCHAR (15),                     " +
-            " CODBAIRRO     INTEGER NOT NULL,                 " +
-            " OBS           TEXT,                             " +
-            " CODCIDADE     INTEGER NOT NULL,                 " +
-            " UF            CHAR (2) NOT NULL,                " +
-            " CEP           CHAR (8),                         " +
+            " NOMERAZAO     VARCHAR (60) NOT NULL,             " +
+            " NOMEFAN       VARCHAR (50) NOT NULL,             " +
+            " INSCREST      VARCHAR (18),                      " +
+            " EMAIL         VARCHAR (100) NOT NULL,            " +
+            " TEL1          VARCHAR (15) NOT NULL,             " +
+            " TEL2          VARCHAR (15),                      " +
+            " TELFAX        VARCHAR (15),                      " +
+            " ENDERECO      VARCHAR (50) NOT NULL,             " +
+            " NUMERO        VARCHAR (10) NOT NULL,             " +
+            " COMPLEMENT    VARCHAR (15),                      " +
+            " CODBAIRRO     INTEGER NOT NULL,                  " +
+            " OBS           TEXT,                              " +
+            " CODCIDADE     INTEGER NOT NULL,                  " +
+            " UF            CHAR (2) NOT NULL,                 " +
+            " CEP           CHAR (8),                          " +
             " CODCLIE_INT   INTEGER PRIMARY KEY AUTOINCREMENT, " +
             " CODCLIE_EXT   INTEGER,                           " +
             " CODVENDEDOR   INTEGER,                           " +
@@ -177,7 +177,7 @@ public class ConfigDB extends SQLiteOpenHelper {
 
 
     private static String SQL_PEDITENS = ("CREATE TABLE IF NOT EXISTS PEDITENS (" +
-            " NUMIDEOPE       INTEGER         PRIMARY KEY AUTOINCREMENT   " +
+            " NUMIDEOPE       INTEGER         PRIMARY KEY AUTOINCREMENT " +
             "                                 NOT NULL,                 " +
             " CHAVEPEDIDO     VARCHAR(70),                              " +
             " NUMPED          INTEGER,                                  " +

@@ -28,6 +28,7 @@ import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.CadastroPedidos;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
 import com.jdsystem.br.vendasmobile.R;
+import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.ConsultaPedidos;
@@ -53,6 +54,10 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     int codclie_ext;
     String limitecred,bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte,URLPrincipal;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -70,6 +75,12 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list);
         mRecyclerView.setHasFixedSize(true);
 
+        //Utilizado para o fast Scroll
+        VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
+        fastScroller.setRecyclerView(mRecyclerView);
+        mRecyclerView.setOnScrollListener(fastScroller.getOnScrollListener());
+        setRecyclerViewLayoutManager(mRecyclerView);
+
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
@@ -80,6 +91,20 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
         mRecyclerView.setAdapter(adapter);
 
         return view;
+    }
+    public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
+        int scrollPosition = 0;
+
+        // If a layout manager has already been set, get current scroll position.
+        if (recyclerView.getLayoutManager() != null) {
+            scrollPosition =
+                    ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+        }
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.scrollToPosition(scrollPosition);
     }
 
     @Override

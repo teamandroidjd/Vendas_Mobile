@@ -2375,9 +2375,11 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
     @Override
     public void onBackPressed() {
         if (!NumPedido.equals("0")) {
-            new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+            //new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+            cancelarvenda();
+            return;
         }
-        itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
+        /*itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
         if (!itens_temp.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
             builder.setTitle(R.string.app_namesair);
@@ -2406,7 +2408,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
             AlertDialog alert = builder.create();
             alert.show();
             return;
-        } else {
+        }*/ else {
             Intent it = new Intent();
             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
             setResult(1, it);
@@ -2450,7 +2452,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
         final AlertDialog.Builder builderAut = new AlertDialog.Builder(this);
         builderAut.setTitle("Gerar Pedido?");
         builderAut.setMessage("Sim - Pedido | Não - Orçamento");
-        builderAut.setCancelable(true);
+        builderAut.setCancelable(false);
         builderAut.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 Chave_Venda = vendaCBean.getVendac_chave();
@@ -2467,7 +2469,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     final AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
                     builder.setTitle("Sincronizar");
                     builder.setMessage("Deseja Sincronizar o Pedido " + numpedido + " agora?");
-                    builder.setCancelable(true);
+                    builder.setCancelable(false);
                     builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
 

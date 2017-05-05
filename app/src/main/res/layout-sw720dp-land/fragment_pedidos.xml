@@ -1,15 +1,27 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:recyclerviewfastscroller="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_list"
         android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:fastScrollEnabled="true"
         android:fastScrollAlwaysVisible="true"
-        android:cacheColorHint="@color/colorAccent"/>
+        android:cacheColorHint="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-</FrameLayout>
+    <com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller
+        android:id="@+id/fast_scroller"
+        android:layout_width="24dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+
+        recyclerviewfastscroller:rfs_barColor="@color/fastScrollBarColor"
+        recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded"
+        />
+
+</RelativeLayout>

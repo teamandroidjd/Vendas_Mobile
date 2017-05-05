@@ -19,4 +19,11 @@
     <dimen name="textsize_sw720">40dp</dimen>
     <dimen name="textsize_sw600">35dp</dimen>
     <dimen name="textsize_sw720_45">45dp</dimen>
+    <dimen name="margin_tiny">4dp</dimen>
+    <dimen name="margin_small">3dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
+    <dimen name="margin_huge">64dp</dimen>
+
+    <dimen name="list_item_height">72dp</dimen>
 </resources>
