@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -156,6 +158,14 @@ public class ConsultaPedidos extends AppCompatActivity
     }
 
     public void novopedido(View view) {
+        Configuration configuration = getResources().getConfiguration();
+
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
 
         sCodEmpresa = "0";
         try {

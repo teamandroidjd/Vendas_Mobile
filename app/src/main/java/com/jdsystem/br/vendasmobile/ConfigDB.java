@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 9;
+    public static int versao = 1;
 
     public ConfigDB(Context ctx) {
 
@@ -354,7 +354,7 @@ public class ConfigDB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int VersaoAntiga, int VersaoNova) {
 
         if (VersaoNova > VersaoAntiga) {
-            try {
+            /*try {
                 db.execSQL("ALTER TABLE PARAMAPP ADD PERCACRESC DECIMAL (7, 4)");
             } catch (Exception E) {
                 System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD PERCACRESC DECIMAL (7, 4)");
@@ -700,7 +700,7 @@ public class ConfigDB extends SQLiteOpenHelper {
                         ";");
             }catch (Exception E){
                 System.out.println("Falha na criação da tabela CONTATO_TEMPORARIO");
-            }
+            }*/
 
         }
     }

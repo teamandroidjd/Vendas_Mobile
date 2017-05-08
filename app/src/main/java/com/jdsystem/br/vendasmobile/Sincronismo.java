@@ -4455,8 +4455,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincclieenvstatic;
     }
 
-    public static String SincronizarProdutosStatic(Context ctxSincProd, String user, String
-            pass, int codItem) {
+    public static String SincronizarProdutosStatic(Context ctxSincProd, String user, String pass, int codItem) {
         SharedPreferences prefsHost = ctxSincProd.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -4733,9 +4732,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincprodstatic;
     }
 
-    public static String SincronizarClientesStatic(String sCodVend, Context
-            ctxEnvClie, String
-                                                           user, String pass, int Codclie) {
+    public static String SincronizarClientesStatic(String sCodVend, Context ctxEnvClie, String user, String pass, int Codclie) {
         SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);

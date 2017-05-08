@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -16,6 +17,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -63,6 +65,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cad_clientes);
 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         declaraobjetos();
         carregarpreferencias();
 
@@ -958,6 +961,13 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         super.onStop();
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+
+    @Override
+    protected void onResume() {
+        declaraobjetos();
+        carregarpreferencias();
+        super.onResume();
     }
 
     private boolean validarclientes() {

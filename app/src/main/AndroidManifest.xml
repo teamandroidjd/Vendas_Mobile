@@ -98,7 +98,7 @@
         <activity
             android:name=".CadastroPedidos"
             android:label="Cadastrar pedido"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Controller.Lista_produtos"
             android:label="Cadastrar pedido"

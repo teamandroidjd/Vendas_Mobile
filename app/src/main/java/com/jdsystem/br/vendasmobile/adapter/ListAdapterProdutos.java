@@ -158,6 +158,9 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
     public String ChamaDados(int position) {
         return mList.get(position).getCodigoManual();
     }
+    public int ChamaCodItemExt(int position){
+        return mList.get(position).getCodigoItem();
+    }
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

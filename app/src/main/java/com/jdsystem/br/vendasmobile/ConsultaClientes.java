@@ -659,6 +659,7 @@ public class ConsultaClientes extends AppCompatActivity
                     params.putString(getString(R.string.intent_chavepedido), chavepedido);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                     frag.setArguments(params);
@@ -725,14 +726,6 @@ public class ConsultaClientes extends AppCompatActivity
             }
 
         } else if (flag == 1) {
-            Configuration configuration = getResources().getConfiguration();
-
-            if (dialog.isShowing() && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-            }else{
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
             try {
                 sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
                 handler.post(new Runnable() {

@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -55,18 +56,18 @@ import java.util.List;
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 
-public class FragmentProdutos extends Fragment implements RecyclerViewOnClickListenerHack {
+public class FragmentProdutos extends Fragment implements RecyclerViewOnClickListenerHack, Runnable {
 
     private RecyclerView mRecyclerView;
     private List<Produtos> mList;
-    private int flag, sprecoprincipal;
+    private int flag, sprecoprincipal, CodProdExt;
     private String numPedido, chavePedido, usuario, senha, codVendedor, urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7, telaInvocada, sincprod, CodProd;
     SQLiteDatabase DB;
     private Spinner spntabpreco;
     private String PREFS_PRIVATE = "PREFS_PRIVATE", NomeCliente;
     private SharedPreferences prefs;
     private ListView prod_listview_itenstemp;
-    public AlertDialog dlg;
+    public AlertDialog Dialog;
     public int actCadastraContato, CodCliente, CodContato;
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
@@ -247,6 +248,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
         } else {
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
             CodProd = adapter.ChamaDados(position).trim();
+            CodProdExt = adapter.ChamaCodItemExt(position);
             String codItem = null;
             String descricao = null;
             String unidadeMedida = null;
@@ -262,7 +264,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 Bloqueios.close();
                 boolean ConexOk = Util.checarConexaoCelular(getActivity());
                 if (vendenegativo.equals("N") && ConexOk == true) {
-                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, Integer.parseInt(CodProd));
+                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt);
 
                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='" + (CodProd) + "' AND CODPERFIL = " + idPerfil, null);
@@ -284,6 +286,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             return;
                         }
                     }
+
                 } else {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='" + (CodProd) + "' AND CODPERFIL = " + idPerfil, null);
                     CursItens.moveToFirst();
@@ -294,6 +297,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         return;
                     }
                 }
+
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                 View view = inflater.inflate(R.layout.info_produto_venda, null);
                 AlertDialog.Builder alerta = new AlertDialog.Builder(getActivity());
@@ -570,6 +574,16 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 SharedPreferences prefsHost = getActivity().getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
                 sprecoprincipal = prefsHost.getInt("spreco", 0);
                 spntabpreco.setSelection(sprecoprincipal);
+
+                Configuration configuration = getResources().getConfiguration();
+
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+                }else{
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+
                 alerta.show();
 
             } else {
@@ -580,25 +594,26 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 Bloqueios.close();
                 boolean ConexOk = Util.checarConexaoCelular(getActivity());
                 if (vendenegativo.equals("N") && ConexOk == true) {
-                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, Integer.parseInt(CodProd));
-                } else {
-                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = " + idPerfil, null);
-                    CursItens.moveToFirst();
-                    qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-                    CursItens.close();
-                    if (vendenegativo.equals("N") && qtdestoque <= 0) {
-                        Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
-                        return;
-                    }
-                }
-                if (sincprod.equals(getString(R.string.sync_products_successfully))) {
-                    Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = " + idPerfil, null);
-                    CursItens.moveToFirst();
-                    qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
-                    CursItens.close();
-                    if (vendenegativo.equals("N") && qtdestoque <= 0) {
-                        Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
-                        return;
+                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt);
+
+                    if (sincprod.equals(getString(R.string.sync_products_successfully))) {
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = " + idPerfil, null);
+                        CursItens.moveToFirst();
+                        qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                        CursItens.close();
+                        if (vendenegativo.equals("N") && qtdestoque <= 0) {
+                            Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                            return;
+                        }
+                    } else {
+                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = " + idPerfil, null);
+                        CursItens.moveToFirst();
+                        qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                        CursItens.close();
+                        if (vendenegativo.equals("N") && qtdestoque <= 0) {
+                            Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                            return;
+                        }
                     }
                 } else {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = " + idPerfil, null);
@@ -895,11 +910,20 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 SharedPreferences prefsHost = getActivity().getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
                 sprecoprincipal = prefsHost.getInt("spreco", 0);
                 spntabpreco.setSelection(sprecoprincipal);
+
+                Configuration configuration = getResources().getConfiguration();
+
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+                }else{
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+
                 alerta.show();
             }
         }
     }
-
 
     @Override
     public void onLongClickListener(View view, int position) {
@@ -920,4 +944,10 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
         idPerfil = prefs.getInt("idperfil", 0);
     }
 
+    @Override
+    public void run() {
+
+
+
+    }
 }

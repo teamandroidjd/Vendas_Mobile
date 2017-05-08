@@ -12,22 +12,6 @@
     tools:context=".act_TH_horarios_contatos">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp">
-
-
-        <TextView
-            android:id="@+id/txt_horarios_contatos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Horários"
-            android:textColor="@color/colordescClie"
-            android:textSize="40sp"
-            android:textStyle="normal|bold" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/linearLayoutCont2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,4 +42,20 @@
         android:onClick="cadcliente"
         android:src="@drawable/ic_adicionar"
         app:backgroundTint="@color/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp">
+
+
+        <TextView
+            android:id="@+id/txt_horarios_contatos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Horários"
+            android:textColor="@color/colordescClie"
+            android:textSize="20sp"
+            android:textStyle="normal|bold" />
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

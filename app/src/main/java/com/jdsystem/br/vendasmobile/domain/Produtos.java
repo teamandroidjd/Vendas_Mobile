@@ -12,6 +12,7 @@ public class Produtos extends ItensPedido {
 
     private String Descricao;
     private String CodigoManual;
+    private int CodigoItem;
     private String Status;
     private String UnidVenda;
     private String Apresentacao;
@@ -34,6 +35,13 @@ public class Produtos extends ItensPedido {
     private String TipoEstoque;
 
     public Produtos() {
+    }
+    public int getCodigoItem(){
+        return CodigoItem;
+
+    }
+    public void setCodigoExterno(int coditemext){
+        CodigoItem = coditemext;
     }
 
     public String getCodigoManual() {
@@ -213,10 +221,11 @@ public class Produtos extends ItensPedido {
     }
 
 
-    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1, BigDecimal Preco2, BigDecimal Preco3, BigDecimal Preco4, BigDecimal Preco5, BigDecimal PrecoP1, BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao/*BigDecimal PrecoPadrao*/) {
+    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1, BigDecimal Preco2, BigDecimal Preco3, BigDecimal Preco4, BigDecimal Preco5, BigDecimal PrecoP1, BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao, int CodigoExterno/*BigDecimal PrecoPadrao*/) {
 
         this.Descricao = Descricao;
         this.CodigoManual = CodigoManual;
+        this.CodigoItem = CodigoExterno;
         this.Status = Status;
         this.UnidVenda = UnidVenda;
         this.Apresentacao = Apresentacao;

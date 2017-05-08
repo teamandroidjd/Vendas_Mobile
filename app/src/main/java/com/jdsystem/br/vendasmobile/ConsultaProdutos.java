@@ -268,14 +268,6 @@ public class ConsultaProdutos extends AppCompatActivity
                 e.toString();
             }
         } else if (Flag == 1) {
-            Configuration configuration = getResources().getConfiguration();
-
-            if (dialog.isShowing() && configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-            }else{
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
             try {
                 sincprod = Sincronismo.SincronizarProdutosStatic(ConsultaProdutos.this, usuario, senha, 0);
                 handler.post(new Runnable() {
@@ -592,6 +584,7 @@ public class ConsultaProdutos extends AppCompatActivity
                 cursorProdutos.moveToFirst();
                 if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
                     do {
+                        int codigoexterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
                         String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
                         String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
                         String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
@@ -666,7 +659,7 @@ public class ConsultaProdutos extends AppCompatActivity
                         } else {
                             tabpromo2 = "";
                         }
-                        lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao);
+                        lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao,codigoexterno);
                         DadosLisProdutos.add(lstprodutos);
                     } while (cursorProdutos.moveToNext());
                     cursorProdutos.close();
@@ -719,6 +712,7 @@ public class ConsultaProdutos extends AppCompatActivity
                 cursorProdutos.moveToFirst();
                 if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
                     do {
+                        int codigoexterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
                         String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
                         String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
                         String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
@@ -780,7 +774,7 @@ public class ConsultaProdutos extends AppCompatActivity
                             }
                         }
 
-                        lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao);
+                        lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao,codigoexterno);
                         DadosLisProdutos.add(lstprodutos);
                     } while (cursorProdutos.moveToNext());
                     cursorProdutos.close();

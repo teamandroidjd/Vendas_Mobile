@@ -10,11 +10,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -105,6 +108,9 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vender_produtos);
+
+
+
 
         declaraObjetos();
         carregarpreferencias();
@@ -278,7 +284,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
         });
 
         //obterConfiguracoesPagamento();
-        if(!NumPedido.equals("0")){
+        if (!NumPedido.equals("0")) {
             confDao.salva_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
         }
 
@@ -837,7 +843,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
     }
 
     private void finalizarvenda(boolean sincpedido) {
-        if(!NumPedido.equals("0")){
+        if (!NumPedido.equals("0")) {
             confDao.atualiza_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
 
         }
@@ -1076,6 +1082,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
             }
         });
     }
+
     public void Alterar_Pedido_listview_e_calcula_total() {
         declaraObjetos();
         obterConfiguracoesPagamento();
@@ -1123,6 +1130,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
     }
 
     private void alteraexcluiitem(final AdapterView listview, final int posicao) {
+
         //TODO: Testar esse processo. Felipe esta testando
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Atenção");
@@ -1145,12 +1153,8 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
                                 final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
                                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
+
                                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
-
-                                InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                imm.showSoftInput(info_txt_quantidadecomprada, InputMethodManager.SHOW_IMPLICIT);
-                                CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-
                                 spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                         GravaPreferencias(spntabpreco.getSelectedItemPosition());
@@ -1192,7 +1196,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                     codprod = codprod.trim();
                                     List<String> DadosListTabPreco = new ArrayList<String>();
                                     DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
-                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
+                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
                                     CursorParametro.moveToFirst();
                                     vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
                                     tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
@@ -1205,7 +1209,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                     CursorParametro.close();
 
                                     DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "' AND CODPERFIL = "+idPerfil, null);
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "' AND CODPERFIL = " + idPerfil, null);
                                     produto_cursor.moveToFirst();
 
                                     qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
@@ -1320,7 +1324,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 info_txt_quantidadecomprada.requestFocus();
                                 //info_txt_quantidadecomprada.selectAll();
 
-
                                 alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -1393,9 +1396,19 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 alerta1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                                        CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                     }
                                 });
+
+                                Configuration configuration = getResources().getConfiguration();
+
+                                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+                                } else {
+                                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                                }
+
                                 alerta1.show();
                             } else {
                                 SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
@@ -1416,6 +1429,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
                             //new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
                             if (item != null) {
+
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                                 View view = inflater.inflate(R.layout.info_produto_venda, null);
                                 alerta1 = new Builder(CadastroPedidos.this);
@@ -1427,8 +1441,8 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
                                 final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
                                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
-                                spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
 
+                                spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
                                 spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                         GravaPreferencias(spntabpreco.getSelectedItemPosition());
@@ -1470,7 +1484,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                     codprod = codprod.trim();
                                     List<String> DadosListTabPreco = new ArrayList<String>();
                                     DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
-                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
+                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
                                     CursorParametro.moveToFirst();
                                     vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
                                     tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
@@ -1481,7 +1495,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                     tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
                                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                                     CursorParametro.close();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "' AND CODPERFIL = "+   idPerfil, null);
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "' AND CODPERFIL = " + idPerfil, null);
                                     produto_cursor.moveToFirst();
 
                                     qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
@@ -1591,15 +1605,13 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 Preco = Preco.replace('.', ',');
                                 info_txv_precoproduto.setText(Preco);
 
-                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "' AND CODITEMANUAL = '"+item.getVendad_prd_codigo()+"' AND CODPERFIL = "+idPerfil, null);
+                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "' AND CODITEMANUAL = '" + item.getVendad_prd_codigo() + "' AND CODPERFIL = " + idPerfil, null);
                                 cursor.moveToFirst();
                                 String qtdpedido = cursor.getString(cursor.getColumnIndex("QTDMENORPED"));
                                 cursor.close();
 
                                 info_txt_quantidadecomprada.setText(qtdpedido);
                                 info_txt_quantidadecomprada.requestFocus();
-
-                                //info_txt_quantidadecomprada.selectAll();
 
 
                                 alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
@@ -1677,12 +1689,22 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 alerta1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                                        CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                     }
                                 });
                                 SharedPreferences prefsHost = CadastroPedidos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
                                 sprecoprincipal = prefsHost.getInt("spreco", 0);
                                 spntabpreco.setSelection(sprecoprincipal);
+
+                                Configuration configuration = getResources().getConfiguration();
+
+                                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+                                } else {
+                                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                                }
+
                                 alerta1.show();
                             } else {
                                 SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
@@ -1720,7 +1742,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 }
 
         );
-
         dlg = builder.create();
         dlg.show();
 
@@ -1746,7 +1767,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                     String codprod = item.getVendad_prd_codigo();
                     //String chaveitem = item.getVendac_chave();
-                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod,Chave_Venda);
+                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod, Chave_Venda);
 
                     //new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
 
@@ -2300,7 +2321,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
                                                     //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
                                                     itemBean1.setVendad_total(itemBean1.getSubTotal());
-                                                    itemDao.atualizar_alteracao_item_na_venda(itemBean1,Chave_Venda);
+                                                    itemDao.atualizar_alteracao_item_na_venda(itemBean1, Chave_Venda);
                                                     Alterar_Pedido_listview_e_calcula_total();
                                                     //finish();
                                                 } else {
@@ -2412,7 +2433,8 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
             AlertDialog alert = builder.create();
             alert.show();
             return;
-        }*/ else {
+        }*/
+        else {
             Intent it = new Intent();
             it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
             setResult(1, it);

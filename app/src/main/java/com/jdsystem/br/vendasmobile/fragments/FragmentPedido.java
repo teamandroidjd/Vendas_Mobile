@@ -3,16 +3,21 @@ package com.jdsystem.br.vendasmobile.fragments;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -23,9 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.CadastroPedidos;
+import com.jdsystem.br.vendasmobile.Login;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
@@ -45,14 +52,14 @@ import java.util.List;
  * Created by WKS22 on 29/11/2016.
  */
 
-public class FragmentPedido extends Fragment implements RecyclerViewOnClickListenerHack {
+public class FragmentPedido extends Fragment implements RecyclerViewOnClickListenerHack, Runnable {
 
     private RecyclerView mRecyclerView;
     private List<Pedidos> mList;
     private Context context = this.getActivity();
     private SQLiteDatabase DB;
     int codclie_ext;
-    String limitecred,bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte,URLPrincipal;
+    String limitecred, bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte, URLPrincipal;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +99,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
         return view;
     }
+
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
         int scrollPosition = 0;
 
@@ -113,13 +121,51 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
         String Status = adapter.StatusPedido(position);
 
         if (Status.equals("Orçamento")) {
-            Util.msg_toast_personal(getActivity(), "Pressione o Pedido para escolher as opções!", Util.PADRAO);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage("Pressione o pedido para escolher uma das opções!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+            return;
         }
         if (Status.equals("#")) {
-            Util.msg_toast_personal(getActivity(), "Pressione o Pedido para verificar o seu status!", Util.PADRAO);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage("Pressione o pedido para verificar o seu status!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+            return;
         }
         if (Status.equals("Cancelado")) {
-            Util.msg_toast_personal(getActivity(), "Pedido Cancelado!", Util.PADRAO);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage("Pedido Cancelado!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            return;
         }
     }
 
@@ -187,7 +233,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             if (flagintegrado.equals("1")) {
                                                 sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), usuario, senha);
                                                 if (sitclieenvio.equals("OK")) {
-                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(),NumPedido);
+                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido);
                                                     if (pedidoendiado.equals("OK")) {
                                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                         ((ConsultaPedidos) getActivity()).finish();
@@ -202,19 +248,19 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                     return;
                                                 }
                                             } else {
-                                                sitcliexvend = Sincronismo.SituacaodoClientexPed(totalvenda,getActivity(),usuario,senha,codclie_ext);
-                                                if(sitcliexvend.equals("OK")) {
-                                                pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(),NumPedido);
-                                                if (pedidoendiado.equals("OK")) {
-                                                    Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                                    ((ConsultaPedidos) getActivity()).finish();
-                                                    startActivity(intent);
-                                                    Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                sitcliexvend = Sincronismo.SituacaodoClientexPed(totalvenda, getActivity(), usuario, senha, codclie_ext);
+                                                if (sitcliexvend.equals("OK")) {
+                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido);
+                                                    if (pedidoendiado.equals("OK")) {
+                                                        Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                                        ((ConsultaPedidos) getActivity()).finish();
+                                                        startActivity(intent);
+                                                        Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                    } else {
+                                                        Util.msg_toast_personal(getActivity(), "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
+                                                        return;
+                                                    }
                                                 } else {
-                                                    Util.msg_toast_personal(getActivity(), "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
-                                                    return;
-                                                }
-                                                }else {
                                                     Util.msg_toast_personal(getActivity(), sitcliexvend, Util.PADRAO);
                                                     return;
                                                 }
@@ -231,11 +277,11 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                         builder.setTitle(R.string.app_namesair);
                                         builder.setIcon(R.drawable.logo_ico);
-                                        builder.setMessage("Deseja realmente cancelar o pedido "+NumPedido+"?")
+                                        builder.setMessage("Deseja realmente cancelar o pedido " + NumPedido + "?")
                                                 .setCancelable(false)
                                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int id) {
-                                                        String Cancelado = Sincronismo.AtualizaPedido(NumPedido, getContext(),"C");
+                                                        String Cancelado = Sincronismo.AtualizaPedido(NumPedido, getContext(), "C");
 
                                                         if (Cancelado.equals("ok")) {
                                                             Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
@@ -289,24 +335,24 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     String statusatualizado;
                                     if (Status.equals("#")) {
                                         final String NumPedidoExt = adapter.PedidoExterno(position);
-                                        statusatualizado = Sincronismo.AtualizaPedido(NumPedidoExt, getContext(),"S");
+                                        statusatualizado = Sincronismo.AtualizaPedido(NumPedidoExt, getContext(), "S");
                                         if (statusatualizado != null) {
-                                        if(statusatualizado.equals("Orçamento")) {
-                                            Util.msg_toast_personal(getActivity(), "Seu Pedido "+NumPedidoExt+ " ainda não foi faturado. Encontra-se com o status de " + statusatualizado + ".", Util.PADRAO);
-                                            Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                            ((ConsultaPedidos) getActivity()).finish();
-                                            startActivity(intent);
-                                        }else if(statusatualizado.equals("Faturado")){
-                                            Util.msg_toast_personal(getActivity(), "Seu Pedido " +NumPedidoExt+" foi faturado!", Util.PADRAO);
-                                            Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                            ((ConsultaPedidos) getActivity()).finish();
-                                            startActivity(intent);
-                                        }else if(statusatualizado.equals("")){
-                                            Util.msg_toast_personal(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua empresa.", Util.PADRAO);
-                                            Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                            ((ConsultaPedidos) getActivity()).finish();
-                                            startActivity(intent);
-                                        }
+                                            if (statusatualizado.equals("Orçamento")) {
+                                                Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " ainda não foi faturado. Encontra-se com o status de " + statusatualizado + ".", Util.PADRAO);
+                                                Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                                ((ConsultaPedidos) getActivity()).finish();
+                                                startActivity(intent);
+                                            } else if (statusatualizado.equals("Faturado")) {
+                                                Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " foi faturado!", Util.PADRAO);
+                                                Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                                ((ConsultaPedidos) getActivity()).finish();
+                                                startActivity(intent);
+                                            } else if (statusatualizado.equals("")) {
+                                                Util.msg_toast_personal(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua empresa.", Util.PADRAO);
+                                                Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                                ((ConsultaPedidos) getActivity()).finish();
+                                                startActivity(intent);
+                                            }
                                         } else {
                                             Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                             ((ConsultaPedidos) getActivity()).finish();
@@ -337,14 +383,14 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         Bundle params = new Bundle();
                                         params.putString(getString(R.string.intent_numpedido), NumPedido);
                                         params.putString(getString(R.string.intent_codvendedor), Codvendedor);
-                                        params.putString(getString(R.string.intent_usuario),usuario);
-                                        params.putString(getString(R.string.intent_senha),senha);
-                                        params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
+                                        params.putString(getString(R.string.intent_usuario), usuario);
+                                        params.putString(getString(R.string.intent_senha), senha);
+                                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                                         VendaProd.putExtras(params);
                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                         ((ConsultaPedidos) getActivity()).finish();
                                         startActivityForResult(VendaProd, 1);
-                                    }else {
+                                    } else {
                                         Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser alterado, o mesmo já foi transmitido. Verifique!", Util.PADRAO);
                                     }
                                 }
@@ -360,11 +406,23 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                         }
                     }).
                     show();
-           /* } else {
-                Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
-            }*/
+
+            Configuration configuration = getResources().getConfiguration();
+
+            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+            }else{
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+
         } catch (Exception E) {
             E.toString();
         }
+    }
+
+    @Override
+    public void run() {
+
     }
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.icu.text.RelativeDateTimeFormatter;
@@ -98,6 +99,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cad_contatos);
 
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         declaraobjetos();
         carregarpreferencias();
 
