@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/produtoscontato"
+    android:id="@+id/horarioscontato"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,34 +11,52 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     tools:context=".act_TH_produtos_contatos">
 
-    <ScrollView
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp">
+
+
+        <TextView
+            android:id="@+id/txt_produtos_contatos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Produtos"
+            android:textColor="@color/colordescClie"
+            android:textSize="20sp"
+            android:textStyle="normal|bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutCont4"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/linearLayoutCont3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
 
-                <TextView
-                    android:id="@+id/txt_produtos_contatos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Produtos"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="20sp"
-                    android:textStyle="normal|bold" />
-            </LinearLayout>
+            <ListView
+                android:id="@+id/lv_produtos_contatos"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/colordescClie"
+                android:textSize="15sp"
+                android:textStyle="normal" />
         </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/cad_produtos_contatos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_adicionar"
+        app:backgroundTint="@color/colorPrimary" />
+    <!--android:onClick="CadastroContatos"-->
+
+</android.support.design.widget.CoordinatorLayout>
