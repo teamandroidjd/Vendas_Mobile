@@ -1,5 +1,7 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,6 +30,8 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
     private List<Contatos> mList;
     private String usuario,senha,codVendedor,urlprincipal;
     private int flag;
+    Context context = getActivity();
+    ProgressDialog pDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

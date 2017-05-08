@@ -145,7 +145,7 @@ public class act_TH_produtos_contatos extends Fragment {
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putInt(getString(R.string.intent_codcliente), CodCliente);
         params.putString(getString(R.string.intent_nomerazao), NomeCliente);
-        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+        params.putString(getString(R.string.intent_telainvocada), "TAB_PRODUTOS_CONTATOS");
         params.putInt(getString(R.string.intent_codcontato),sCodContato);
         i.putExtras(params);
         startActivity(i);

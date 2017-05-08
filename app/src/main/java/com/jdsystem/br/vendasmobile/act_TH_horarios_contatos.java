@@ -145,8 +145,7 @@ public class act_TH_horarios_contatos extends Fragment {
         }
         CadastroContatos.excluiBaseTempContatos(ctx);
         diasContatos = diasMarcadosContatos();
-        arrayAdapter = new ArrayAdapter<String>(ctx,
-                android.R.layout.simple_list_item_1, diasContatos);
+        arrayAdapter = new ArrayAdapter<String>(ctx,android.R.layout.simple_list_item_1, diasContatos);
         listView.setAdapter(arrayAdapter);
 
         FloatingActionButton horariosContatos = (FloatingActionButton) v.findViewById(R.id.cad_contato_horario);
@@ -270,16 +269,6 @@ public class act_TH_horarios_contatos extends Fragment {
                 });
                 mAlertDialog.show();
             }
-
-                /*Intent i = new Intent(ctx, CadastroContatos.class);
-                Bundle params = new Bundle();
-                params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                i.putExtras(params);
-                startActivity(i);*/
-
         });
         return v;
     }

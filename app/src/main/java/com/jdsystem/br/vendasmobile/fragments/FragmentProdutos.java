@@ -152,20 +152,44 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             String CodProd = adapterProdutos.ChamaDados(position);
-            Intent intentp = new Intent(getActivity(), CadastroContatos.class);
-            Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codproduto), CodProd);
-            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_usuario), usuario);
-            params.putString(getString(R.string.intent_senha), senha);
-            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-            params.putString(getString(R.string.intent_cad_contato), CodProd);
-            params.putInt(getString(R.string.intent_codcliente), CodCliente);
-            params.putString(getString(R.string.intent_nomerazao), NomeCliente);
-            intentp.putExtras(params);
-            startActivity(intentp);
-            getActivity().finish();
-        } else if (flag == 0 && actCadastraContato == 2) {
+
+            SQLiteDatabase db = new ConfigDB(getContext()).getReadableDatabase();
+
+            try {
+                Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato " +
+                        "from produtos_contatos " +
+                        "where cod_produto_manual = '" + CodProd + "' and cod_interno_contato = " + CodContato, null);
+                cursor.moveToFirst();
+
+                if (cursor.getCount() > 0) {
+                    Util.msg_toast_personal(getContext(), "Este produto já está relacionado à este cliente. " +
+                            "Verifique.", Toast.LENGTH_SHORT);
+                    cursor.close();
+                } else {
+                    Util.gravarItensContato(CodProd, CodContato, getContext());
+
+                    Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
+                    cursor.close();
+
+                    //String CodProd = adapterProdutos.ChamaDados(position);
+                    Intent intentp = new Intent(getActivity(), CadastroContatos.class);
+                    Bundle params = new Bundle();
+                    params.putString(getString(R.string.intent_codproduto), CodProd);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+                    params.putString(getString(R.string.intent_cad_contato), CodProd);
+                    params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                    params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                    intentp.putExtras(params);
+                    startActivity(intentp);
+                    getActivity().finish();
+                }
+            }catch (Exception E){
+                E.toString();
+            }
+        }else if (flag == 0 && actCadastraContato == 2) {
             ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             String CodProd = adapterProdutos.ChamaDados(position);

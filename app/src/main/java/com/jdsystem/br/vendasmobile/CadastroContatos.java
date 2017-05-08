@@ -991,17 +991,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     });
             android.app.AlertDialog alert = builder.create();
             alert.show();
-
-            /*Intent cadcont = new Intent(CadastroContatos.this, ConsultaContatos.class);
-            Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-            params.putString(getString(R.string.intent_usuario), usuario);
-            params.putString(getString(R.string.intent_senha), senha);
-            cadcont.putExtras(params);
-            startActivity(cadcont);
-            finish();
-            super.onBackPressed();*/
         }
     }
 
@@ -1352,7 +1341,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putInt(getString(R.string.intent_codcliente), CodCliente);
         params.putString(getString(R.string.intent_nomerazao), NomeCliente);
-        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+        params.putString(getString(R.string.intent_telainvocada), "CADASTRO_CONTATOS");
         i.putExtras(params);
         startActivity(i);
     }
@@ -1575,6 +1564,20 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             spCidade.setAdapter(spinnerArrayAdapterCidade);
         }catch (Exception E){
             E.toString();
+        }
+    }
+
+    public void montaStringHorario(){
+
+    }
+
+    public static void comparaHoraMinuto(int horaIn, int minutoIn, int horaFin, int minutoFin, Context context){
+        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
+
+        try{
+
+        }catch (Exception E){
+
         }
     }
 }

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,7 +35,7 @@ import static java.lang.Integer.parseInt;
  */
 
 public class act_TH_obscontato extends Fragment {
-    String  obsContato,codVendedor,URLPrincipal,usuario,senha;
+    String obsContato, codVendedor, URLPrincipal, usuario, senha;
     int sCodContato;
     SQLiteDatabase DB;
     private Context ctx;
@@ -45,6 +46,7 @@ public class act_TH_obscontato extends Fragment {
     TextView TAG_OBSCONTATO, dlgObsContato;
     EditText obsDlgContato;
     LinearLayout linearLayout;
+    private AlertDialog alerta;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class act_TH_obscontato extends Fragment {
         DB = new ConfigDB(ctx).getReadableDatabase();
 
         TAG_OBSCONTATO = (TextView) v.findViewById(R.id.txt_obs_contatos);
+        TAG_OBSCONTATO.setMovementMethod(new ScrollingMovementMethod());
         linearLayout = (LinearLayout) v.findViewById(R.id.ll_obs);
 
         //Intent intent = act.getIntent();
@@ -74,29 +77,83 @@ public class act_TH_obscontato extends Fragment {
         }
 
         FloatingActionButton fabCadProdCont = (FloatingActionButton) v.findViewById(R.id.cad_obs_contato);
-        fabCadProdCont.setVisibility(View.GONE);
         fabCadProdCont.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alteraObsContato();
+                View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_obs_contato, null);
+                obsDlgContato = (EditText) fragView.findViewById(R.id.inputobscontato);
+                carregaObsContato();
+                obsDlgContato.setText(obsContato);
+
+                final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ctx);
+                alertBuilder.setView(fragView);
+                alertBuilder.setCancelable(false)
+                        .setPositiveButton("Ok", null)
+                        .setNegativeButton("Cancelar", null)
+                        .setView(fragView);
+
+                final AlertDialog mAlertDialog = alertBuilder.create();
+                mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                salvarObsAlterada();
+                                carregaObsContato();
+                                if (mAlertDialog.isShowing()) {
+                                    mAlertDialog.dismiss();
+                                }
+                            }
+                        });
+                        Button btnCancelar = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                        btnCancelar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+                                builder.setMessage("Deseja cancelar esta alteração?");
+                                builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if(alerta.isShowing()){
+                                            alerta.dismiss();
+                                        }
+                                        if(mAlertDialog.isShowing()){
+                                            mAlertDialog.dismiss();
+                                        }
+                                    }
+                                })
+                                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if(alerta.isShowing()){
+                                                    alerta.dismiss();
+                                                }
+                                            }
+                                        });
+                                alerta = builder.create();
+                                alerta.show();
+                            }
+                        });
+                        mAlertDialog.show();
+                    }
+                });
+                mAlertDialog.show();
             }
         });
-
         carregaObsContato();
-
-        obsDlgContato = (EditText) v.findViewById(R.id.inputobspedido);
-        dlgObsContato = (TextView) v.findViewById(R.id.lblNomeFanClie);
-
-
+        //dlgObsContato = (TextView) v.findViewById(R.id.lblNomeFanClie);
         return v;
     }
 
-    private void carregaObsContato(){
+    private void carregaObsContato() {
         try {
             Cursor CursorClie = DB.rawQuery(" SELECT CONTATO.OBS, CONTATO.CODPERFIL " +
                     "FROM CONTATO " +
                     "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
-                    "WHERE CODCONTATO_INT = '" + sCodContato + "' AND CONTATO.CODPERFIL = "+idPerfil, null);
+                    "WHERE CODCONTATO_INT = '" + sCodContato + "' AND CONTATO.CODPERFIL = " + idPerfil, null);
 
             if (CursorClie.getCount() > 0) {
                 CursorClie.moveToFirst();
@@ -116,42 +173,57 @@ public class act_TH_obscontato extends Fragment {
         }
     }
 
-    private void alteraObsContato(){
-            View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_obs_pedido, null);
-            dlgObsContato.setText("Observação:");
+    private static AlertDialog alteraObsContato(View vi, Context ctx) {
 
-            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ctx);
-            alertBuilder.setView(fragView);
-            alertBuilder.setCancelable(true)
-                    .setPositiveButton("Ok", null)
-                    .setNegativeButton("Cancelar", null)
-                    .setView(fragView);
+        View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_obs_contato, null);
+        EditText obsDlgContato = (EditText) vi.findViewById(R.id.inputobscontato);
 
-            final AlertDialog mAlertDialog = alertBuilder.create();
-            mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ctx);
+        alertBuilder.setView(fragView);
+        alertBuilder.setCancelable(true)
+                .setPositiveButton("Ok", null)
+                .setNegativeButton("Cancelar", null)
+                .setView(fragView);
 
-                        }
-                    });
-                    mAlertDialog.show();
-                }
-            });
+        final AlertDialog mAlertDialog = alertBuilder.create();
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+                mAlertDialog.show();
+            }
+        });
+        return mAlertDialog;
     }
 
-    private void recuperaObs(){
+    private void recuperaObs() {
         Cursor cursor = DB.rawQuery("select contato.obs, contato.codcontato_int, contato.codperfil " +
                 "from contato " +
                 "where contato.codinterno = " + sCodContato, null);
         cursor.moveToFirst();
-        if (cursor.getCount() > 0){
+        if (cursor.getCount() > 0) {
             String obs = cursor.getString(cursor.getColumnIndex("contato.obs"));
             obsContato = obs;
         }
+    }
+
+    private void salvarObsAlterada() {
+        try {
+            DB.execSQL("update contato set obs = '" + obsDlgContato.getText().toString() + "' " +
+                    "where contato.codcontato_int = " + sCodContato + " and contato.codperfil = " + idPerfil);
+        } catch (Exception E) {
+            Util.msg_toast_personal(getContext(), "Houve um problema ao alterar a observação do cliente. " +
+                    "Entre em contato com a JD System", Toast.LENGTH_SHORT);
+            E.toString();
+        }
+
+
     }
 
 }

@@ -399,53 +399,95 @@ public class ConsultaProdutos extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if(telaInvocada != null){
-            if(telaInvocada.equals("VENDER_PRODUTOS")){
+        if (telaInvocada != null) {
+            if (telaInvocada.equals("VENDER_PRODUTOS")) {
                 finish();
                 return;
-            }
-        }
-        switch (Flag) {
-            case 0:
-                Intent intent = new Intent(ConsultaProdutos.this, ConsultaPedidos.class);
+            } else if (telaInvocada.equals("CADASTRO_CONTATOS")) {
+                Intent intentp = new Intent(ConsultaProdutos.this, CadastroContatos.class);
                 Bundle params = new Bundle();
+                //params.putString(getString(R.string.intent_codproduto), CodProd);
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
-                intent.putExtras(params);
-                startActivity(intent);
-                finish();
-                break;
-            case 1:
-                Intent intent1 = new Intent(ConsultaProdutos.this, ConsultaProdutos.class);
-                Bundle params1 = new Bundle();
-                params1.putString(getString(R.string.intent_codvendedor), codVendedor);
-                params1.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params1.putString(getString(R.string.intent_usuario), usuario);
-                params1.putString(getString(R.string.intent_senha), senha);
-                intent1.putExtras(params1);
-                startActivity(intent1);
-                finish();
-                break;
-            case 2:
-                Intent intent2 = new Intent(ConsultaProdutos.this, ConsultaProdutos.class);
-                Bundle params2 = new Bundle();
-                params2.putString(getString(R.string.intent_codvendedor), codVendedor);
-                params2.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params2.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params2.putString(getString(R.string.intent_usuario), usuario);
-                params2.putString(getString(R.string.intent_senha), senha);
-                params2.putString(getString(R.string.intent_numpedido), numPedido);
-                params2.putInt(getString(R.string.intent_flag), Flag);
-                intent2.putExtras(params2);
-                startActivity(intent2);
-                finish();
-                break;
-        }
-        if (numPedido != null) {
-            if (numPedido.equals("0")) {
-                finish();
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                //params.putString(getString(R.string.intent_cad_contato), CodProd);
+                params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                intentp.putExtras(params);
+                startActivity(intentp);
+                ConsultaProdutos.this.finish();
+            } else if (telaInvocada.equals("TAB_PRODUTOS_CONTATOS")) {
+                Intent intentp = new Intent(ConsultaProdutos.this, DadosContato.class);
+                Bundle params = new Bundle();
+                //params.putString(getString(R.string.intent_codproduto), CodProd);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                // params.putString(getString(R.string.intent_cad_contato), CodProd);
+                params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                params.putInt(getString(R.string.intent_codcontato), codContato);
+                intentp.putExtras(params);
+                startActivity(intentp);
+                ConsultaProdutos.this.finish();
+            }
+
+            switch (Flag) {
+                case 0:
+                    if (!telaInvocada.equals("CADASTRO_CONTATOS")) {
+                        if (!telaInvocada.equals("TAB_PRODUTOS_CONTATOS")) {
+                            Intent intent = new Intent(ConsultaProdutos.this, ConsultaPedidos.class);
+                            Bundle params = new Bundle();
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
+                            intent.putExtras(params);
+                            startActivity(intent);
+                            finish();
+                            break;
+                        }
+                    }
+                case 1:
+                    if (!telaInvocada.equals("CADASTRO_CONTATOS")) {
+                        if (!telaInvocada.equals("TAB_PRODUTOS_CONTATOS")) {
+                            Intent intent1 = new Intent(ConsultaProdutos.this, ConsultaProdutos.class);
+                            Bundle params1 = new Bundle();
+                            params1.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params1.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params1.putString(getString(R.string.intent_usuario), usuario);
+                            params1.putString(getString(R.string.intent_senha), senha);
+                            intent1.putExtras(params1);
+                            startActivity(intent1);
+                            finish();
+                            break;
+                        }
+                    }
+                case 2:
+                    if (!telaInvocada.equals("CADASTRO_CONTATOS")) {
+                        if (!telaInvocada.equals("TAB_PRODUTOS_CONTATOS")) {
+                            Intent intent2 = new Intent(ConsultaProdutos.this, ConsultaProdutos.class);
+                            Bundle params2 = new Bundle();
+                            params2.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params2.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params2.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params2.putString(getString(R.string.intent_usuario), usuario);
+                            params2.putString(getString(R.string.intent_senha), senha);
+                            params2.putString(getString(R.string.intent_numpedido), numPedido);
+                            params2.putInt(getString(R.string.intent_flag), Flag);
+                            intent2.putExtras(params2);
+                            startActivity(intent2);
+                            finish();
+                            break;
+                        }
+                    }
+            }
+            if (numPedido != null) {
+                if (numPedido.equals("0")) {
+                    finish();
+                }
             }
         }
     }
@@ -759,6 +801,4 @@ public class ConsultaProdutos extends AppCompatActivity
         return DadosLisProdutos;
 
     }
-
-
 }

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class act_TH_dadoscontato extends Fragment {
     int sCodCliente;
-    String codVendedor,URLPrincipal,usuario,senha;
+    String codVendedor,URLPrincipal,usuario,senha, numContato;
     SQLiteDatabase DB;
     private Context ctx;
     private Activity act;
@@ -91,6 +91,7 @@ public class act_TH_dadoscontato extends Fragment {
             String nomeFantasia = CursorClie.getString(CursorClie.getColumnIndex("CLIENTES.NOMERAZAO"));
             String cargoContato = CursorClie.getString(CursorClie.getColumnIndex("CONTATO.CARGO"));
             String enderecoContato = CursorClie.getString(CursorClie.getColumnIndex("CONTATO.ENDERECO"));
+            numContato = CursorClie.getString(CursorClie.getColumnIndex("CONTATO.NUMERO"));
             String bairroContato = CursorClie.getString(CursorClie.getColumnIndex("CONTATO.BAIRRO"));
             String cidadeContato = CursorClie.getString(CursorClie.getColumnIndex("CONTATO.DESC_CIDADE"));
             String ufContato = CursorClie.getString(CursorClie.getColumnIndex("CONTATO.UF"));
@@ -119,7 +120,7 @@ public class act_TH_dadoscontato extends Fragment {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_documento);
                 linearLayout.setVisibility(View.GONE);
             } else {
-                DOCUMENTOCONTATO.setText(nomeContato);
+                DOCUMENTOCONTATO.setText(documentoContato);
             }
 
             if ((cargoContato == null) || (cargoContato.equals(""))|| (cargoContato.equals("0")) || (cargoContato.equals("null"))) {
@@ -133,8 +134,13 @@ public class act_TH_dadoscontato extends Fragment {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_endereco);
                 linearLayout.setVisibility(View.GONE);
             } else {
-
-                ENDERECOCONTATO.setText(enderecoContato);
+                TextView textView = (TextView) v.findViewById(R.id.tv_end_contato);
+                textView.setVisibility(View.GONE);
+                if ((verificaNum(numContato).equals("null")) || (verificaNum(numContato).equals(""))){
+                    ENDERECOCONTATO.setText("Endereço: " + enderecoContato);
+                }else {
+                    ENDERECOCONTATO.setText("Endereço: " + enderecoContato + ", " + verificaNum(numContato));
+                }
             }
 
             if ((bairroContato == null) || (bairroContato.equals("") || (bairroContato.equals("0")) || (bairroContato.equals("null")))) {
@@ -205,5 +211,15 @@ public class act_TH_dadoscontato extends Fragment {
             Toast.makeText(ctx, R.string.no_contacts_found, Toast.LENGTH_SHORT).show();
         }
         return v;
+
     }
+
+    private static String verificaNum(String numeroCont){
+        if (numeroCont != null){
+            return numeroCont;
+        }else{
+            return "null";
+        }
+    }
+
 }

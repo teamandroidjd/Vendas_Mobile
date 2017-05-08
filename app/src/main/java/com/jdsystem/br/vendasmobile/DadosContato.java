@@ -27,7 +27,7 @@ public class DadosContato extends ActionBarActivity {
     ViewPager pager;
     DadosContatosAdapter adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[]={"Dados","Obs.","Produtos Oferecidos", "Horários"};
+    CharSequence Titles[]={"Dados","Obs.","Produtos", "Horários"};
     int Numboftabs = 4;
 
 

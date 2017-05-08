@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +17,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ConsultaContatos extends ActionBarActivity implements NavigationView.OnNavigationItemSelectedListener, Runnable {
+public class ConsultaContatos extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Runnable{
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, editQuery;
     SQLiteDatabase DB;
@@ -70,6 +73,15 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
                 senha = params.getString(getString(R.string.intent_senha));
             }
         }
+
+        pDialog = new ProgressDialog(ConsultaContatos.this);
+        pDialog.setTitle(getString(R.string.wait));
+        pDialog.setMessage(getString(R.string.loadingcontacts));
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        Thread thread = new Thread(ConsultaContatos.this);
+        thread.start();
         FloatingActionButton CadContatos = (FloatingActionButton) findViewById(R.id.cadcontato);
         CadContatos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +98,6 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
                 i.putExtras(params);
                 startActivity(i);
                 finish();
-
             }
         });
 
@@ -100,14 +111,7 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
         carregausuariologado();
         carregarpreferencias();
 
-        pDialog = new ProgressDialog(ConsultaContatos.this);
-        pDialog.setTitle(getString(R.string.wait));
-        pDialog.setMessage(getString(R.string.loadingcontacts));
-        pDialog.setCancelable(false);
-        pDialog.show();
 
-        Thread thread = new Thread(ConsultaContatos.this);
-        thread.start();
 
     }
 
@@ -498,6 +502,5 @@ public class ConsultaContatos extends ActionBarActivity implements NavigationVie
             pDialog.dismiss();
 
     }
-
 }
 
