@@ -362,7 +362,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                     CursorParametro.close();
 
-                    cursoritem = DB.rawQuery("SELECT DESCRICAO,UNIVENDA,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2,TABELAPADRAO,CODITEMANUAL FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = " + idPerfil, null);
+                    cursoritem = DB.rawQuery("SELECT DESCRICAO, CODIGOITEM,UNIVENDA,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2,TABELAPADRAO,CODITEMANUAL FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = " + idPerfil, null);
                     cursoritem.moveToFirst();
                     if (cursoritem.getCount() > 0) {
                         codItem = cursoritem.getString(cursoritem.getColumnIndex("CODITEMANUAL"));
@@ -530,6 +530,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
 
                                 if (itemBean3 == null) {
+                                    itemBean1.setVendad_prd_codigoItemTEMP(CodProdExt);
                                     itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
                                     itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
                                     itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
@@ -860,6 +861,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 itemBean3 = itemDao.altera_item_na_venda(itemBean2, chavePedido);
 
                                 if (itemBean3 == null) {
+                                    itemBean1.setVendad_prd_codigoitem(CodProdExt);
                                     itemBean1.setVendad_prd_codigo(COD_PRODUTO);
                                     itemBean1.setVendad_prd_descricao(DESCRICAO);
                                     itemBean1.setVendad_prd_unidade(UNIDADE);

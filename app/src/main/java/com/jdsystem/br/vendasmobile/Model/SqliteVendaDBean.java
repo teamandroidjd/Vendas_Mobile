@@ -26,6 +26,7 @@ public class SqliteVendaDBean {
     private Integer vendad_nro_item ;
     private String vendad_ean ;
     private String vendad_prd_codigo ;
+    private int vendad_prd_codigo_interno;
     private String vendad_prd_descricao ;
     private String vendad_prd_unidade ;
     private Integer vendad_prd_codigoitem ;
@@ -122,6 +123,14 @@ public class SqliteVendaDBean {
 
     public void setVendad_prd_codigo(String vendad_prd_codigo) {
         this.vendad_prd_codigo = vendad_prd_codigo;
+    }
+
+    public int getVendad_prd_codigoiteminterno() {
+        return vendad_prd_codigo_interno;
+    }
+
+    public void setVendad_prd_codigoiteminterno(int vendad_prd_codigointerno) {
+        this.vendad_prd_codigo_interno = vendad_prd_codigointerno;
     }
 
     public String getVendad_prd_descricao() {

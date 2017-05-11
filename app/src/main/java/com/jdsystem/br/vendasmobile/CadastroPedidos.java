@@ -2599,6 +2599,25 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 Toast.makeText(CadastroPedidos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                             }
                         });
+                    }else {
+                        dialog.dismiss();
+                        Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
+                        Bundle params = new Bundle();
+                        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        intent.putExtras(params);
+                        startActivityForResult(intent, 1);
+                        finish();
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Util.msg_toast_personal(CadastroPedidos.this, "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
+                            }
+                        });
+
                     }
                 }
             } else {

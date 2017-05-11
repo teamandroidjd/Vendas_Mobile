@@ -202,7 +202,7 @@ public class SqliteConfPagamentoDao {
         SqliteConfPagamentoBean conf = null;
         try {
             db = new ConfigDB(ctx).getReadableDatabase();
-            cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = " + Chave_pedido, null);
+            cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = " + Chave_pedido + " and conf_temp = 'N'", null);
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 do {

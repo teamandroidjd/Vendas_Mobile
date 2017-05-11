@@ -10,6 +10,7 @@ public class SqliteVendaD_TempBean {
 
     //public static final String TEMP_EAN = "vendad_eanTEMP";
     public static final String TEMP_CODPRODUTO = "vendad_prd_codigoTEMP";
+    public static final String TEMP_CODPRODUTOINTERNO = "vendad_prd_codigo_internoTEMP";
     public static final String TEMP_DESCRICAOPROD = "vendad_prd_descricaoTEMP";
     public static final String TEMP_QUANTVENDIDA = "vendad_quantidadeTEMP";
     public static final String TEMP_PRECOPRODUTO = "vendad_preco_vendaTEMP";
@@ -19,6 +20,7 @@ public class SqliteVendaD_TempBean {
 
     private String vendad_eanTEMP;
     private String vendad_prd_codigoTEMP;
+    private int vendad_prd_codigoitemTEMP;
     private String vendad_prd_descricaoTEMP;
     private String vendad_prd_unidadeTEMP;
     private BigDecimal vendad_quantidadeTEMP;
@@ -65,6 +67,12 @@ public class SqliteVendaD_TempBean {
 
     public void setVendad_prd_codigoTEMP(String vendad_prd_codigoTEMP) {
         this.vendad_prd_codigoTEMP = vendad_prd_codigoTEMP;
+    }
+    public int getVendad_prd_codigoItemTEMP(){
+        return vendad_prd_codigoitemTEMP;
+    }
+    public void setVendad_prd_codigoItemTEMP(int vendad_prd_codigoitemTEMP) {
+        this.vendad_prd_codigoitemTEMP = vendad_prd_codigoitemTEMP;
     }
 
     public String getVendad_prd_descricaoTEMP() {

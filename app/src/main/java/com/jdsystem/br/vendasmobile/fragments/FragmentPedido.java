@@ -240,7 +240,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                         startActivity(intent);
                                                         Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
                                                     } else {
-                                                        Util.msg_toast_personal(getActivity(), "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
+                                                        Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
                                                         return;
                                                     }
                                                 } else {
@@ -257,7 +257,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                         startActivity(intent);
                                                         Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
                                                     } else {
-                                                        Util.msg_toast_personal(getActivity(), "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
+                                                        Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
                                                         return;
                                                     }
                                                 } else {

@@ -38,16 +38,18 @@ public class SqliteVendaD_TempDao {
         try {
             try {
                 db = new ConfigDB(ctx).getWritableDatabase();
-                sql = "insert into VENDAD_TEMP (vendad_prd_codigoTEMP,vendad_prd_descricaoTEMP,vendad_quantidadeTEMP,vendad_preco_vendaTEMP,vendad_totalTEMP,vendad_prd_unidadeTEMP) values (?,?,?,?,?,?) ";
+                sql = "insert into VENDAD_TEMP (vendad_prd_codigoTEMP,vendad_prd_codigo_internoTEMP,vendad_prd_descricaoTEMP,vendad_quantidadeTEMP,vendad_preco_vendaTEMP,vendad_totalTEMP,vendad_prd_unidadeTEMP) values (?,?,?,?,?,?,?) ";
                 stmt = db.compileStatement(sql);
                 //stmt.bindString(1, item.getVendad_eanTEMP());
                 stmt.bindString(1, item.getVendad_prd_codigoTEMP());
-                stmt.bindString(2, item.getVendad_prd_descricaoTEMP());
-                stmt.bindDouble(3, item.getVendad_quantidadeTEMP().doubleValue());
-                stmt.bindDouble(4, item.getVendad_preco_vendaTEMP().setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue());
-                stmt.bindDouble(5, item.getVendad_totalTEMP().setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+                stmt.bindLong(2, item.getVendad_prd_codigoItemTEMP());
+                stmt.bindString(3, item.getVendad_prd_descricaoTEMP());
+                stmt.bindDouble(4, item.getVendad_quantidadeTEMP().doubleValue());
+                stmt.bindDouble(5, item.getVendad_preco_vendaTEMP().setScale(4,BigDecimal.ROUND_HALF_UP).doubleValue());
+                stmt.bindDouble(6, item.getVendad_totalTEMP().setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
                 String und = item.getVendad_prd_unidadeTEMP();
-                stmt.bindString(6, item.getVendad_prd_unidadeTEMP());
+                stmt.bindString(7, item.getVendad_prd_unidadeTEMP());
+
                 if (stmt.executeInsert() > 0) {
                     gravacao = true;
                 }
@@ -97,6 +99,7 @@ public class SqliteVendaD_TempDao {
                 produto = new SqliteVendaD_TempBean();
                 //produto.setVendad_eanTEMP(cursor.getString(cursor.getColumnIndex(produto.TEMP_EAN)));
                 produto.setVendad_prd_codigoTEMP(cursor.getString(cursor.getColumnIndex(produto.TEMP_CODPRODUTO)));
+                produto.setVendad_prd_codigoItemTEMP(cursor.getInt(cursor.getColumnIndex(produto.TEMP_CODPRODUTOINTERNO)));
                 produto.setVendad_prd_descricaoTEMP(cursor.getString(cursor.getColumnIndex(produto.TEMP_DESCRICAOPROD)));
                 produto.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex(produto.TEMP_UNIDADEPRODUTO)));
                 produto.setVendad_quantidadeTEMP(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.TEMP_QUANTVENDIDA))));
@@ -153,6 +156,7 @@ public class SqliteVendaD_TempDao {
                     SqliteVendaD_TempBean items = new SqliteVendaD_TempBean();
                     //items.setVendad_eanTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_EAN)));
                     items.setVendad_prd_codigoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_CODPRODUTO)));
+                    items.setVendad_prd_codigoItemTEMP(cursor.getInt(cursor.getColumnIndex(items.TEMP_CODPRODUTOINTERNO)));
                     items.setVendad_prd_descricaoTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_DESCRICAOPROD)));
                     String und = cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO));
                     items.setVendad_prd_unidadeTEMP(cursor.getString(cursor.getColumnIndex(items.TEMP_UNIDADEPRODUTO)));

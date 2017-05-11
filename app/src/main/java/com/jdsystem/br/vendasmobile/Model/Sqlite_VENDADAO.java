@@ -51,6 +51,7 @@ public class Sqlite_VENDADAO {
             vendaDBean.setVendad_nro_item(numero_item);
             vendaDBean.setVendad_ean(item_transf.getVendad_eanTEMP());
             vendaDBean.setVendad_prd_codigo(item_transf.getVendad_prd_codigoTEMP());
+            vendaDBean.setVendad_prd_codigoiteminterno(item_transf.getVendad_prd_codigoItemTEMP());
             vendaDBean.setVendad_prd_descricao(item_transf.getVendad_prd_descricaoTEMP());
             vendaDBean.setVendad_quantidade(item_transf.getVendad_quantidadeTEMP());
             vendaDBean.setVendad_prd_unidade(item_transf.getVendad_prd_unidadeTEMP());
@@ -212,18 +213,20 @@ public class Sqlite_VENDADAO {
                                 ",  NUMPED = " +numpedido+
                                 ",  NUMEROITEM = '" + vendaD_item.getVendad_nro_item().toString() +
                                 "', CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() +
-                                "', DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
+                                "', CODIGOITEM = " + vendaD_item.getVendad_prd_codigoiteminterno() +
+                                ", DESCRICAO = '" + vendaD_item.getVendad_prd_descricao().toString() +
                                 "', UNIDADE = '" + vendaD_item.getVendad_prd_unidade().toString() +
                                 "', QTDMENORPED = " + vendaD_item.getVendad_quantidade().toString() +
                                 ", VLUNIT = " + vendaD_item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() +
                                 ", VLTOTAL = " + vendaD_item.getSubTotal().setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() +
                                 " WHERE CODITEMANUAL = '" + vendaD_item.getVendad_prd_codigo().toString() + "'");
                     } else {
-                        db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODPERFIL, NUMPED, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
+                        db.execSQL(" INSERT INTO PEDITENS (CHAVEPEDIDO, NUMEROITEM, CODPERFIL, CODIGOITEM, NUMPED, CODITEMANUAL, DESCRICAO, UNIDADE, QTDMENORPED, VLUNIT, VLTOTAL)" +
                                 " VALUES('" + vendaD_item.getVendac_chave() +
                                 "','" + vendaD_item.getVendad_nro_item() +
                                 "',"  + idPerfil +
-                                ", " + numpedido +
+                                ", "  + vendaD_item.getVendad_prd_codigoiteminterno() +
+                                ", "  + numpedido +
                                 ",'"  + vendaD_item.getVendad_prd_codigo() +
                                 "','" + vendaD_item.getVendad_prd_descricao() +
                                 "','" + vendaD_item.getVendad_prd_unidade() +
@@ -732,6 +735,7 @@ public class Sqlite_VENDADAO {
                 produto = new SqliteVendaDBean();
                 //produto.setVendad_eanTEMP(cursor.getString(cursor.getColumnIndex(produto.TEMP_EAN)));
                 produto.setVendad_prd_codigo(cursor.getString(cursor.getColumnIndex(produto.CODPRODUTO)));
+                produto.setVendad_prd_codigoitem(cursor.getInt(cursor.getColumnIndex(produto.CODPROD_INT)));
                 produto.setVendad_prd_descricao(cursor.getString(cursor.getColumnIndex(produto.DESCRICAOPROD)));
                 produto.setVendad_prd_unidade(cursor.getString(cursor.getColumnIndex(produto.UNIDADEPROD)));
                 produto.setVendad_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(produto.QUANTVENDIDA))));
@@ -750,7 +754,7 @@ public class Sqlite_VENDADAO {
         try {
             try {
                 db = new ConfigDB(ctx).getWritableDatabase();
-                sql = "insert into PEDITENS (CODITEMANUAL,DESCRICAO,QTDMENORPED,VLUNIT,VLTOTAL,UNIDADE,CHAVEPEDIDO,VIEW,CODPERFIL) values (?,?,?,?,?,?,?,?,?) ";
+                sql = "insert into PEDITENS (CODITEMANUAL,DESCRICAO,QTDMENORPED,VLUNIT,VLTOTAL,UNIDADE,CHAVEPEDIDO,VIEW,CODPERFIL,CODIGOITEM) values (?,?,?,?,?,?,?,?,?,?) ";
                 stmt = db.compileStatement(sql);
                 //stmt.bindString(1, item.getVendad_eanTEMP());
                 stmt.bindString(1, item.getVendad_prd_codigo());
@@ -763,6 +767,7 @@ public class Sqlite_VENDADAO {
                 stmt.bindString(7, item.getVendac_chave());
                 stmt.bindString(8, item.getvendad_prd_view());
                 stmt.bindString(9, String.valueOf(idPerfil));
+                stmt.bindLong(10, item.getVendad_prd_codigoitem());
                 if (stmt.executeInsert() > 0) {
                     gravacao = true;
                 }
@@ -872,6 +877,7 @@ public class Sqlite_VENDADAO {
                 vendad.setVendad_nro_item(cursor.getInt(cursor.getColumnIndex(vendad.NUMERO_ITEM)));
                 vendad.setVendad_prd_unidade(cursor.getString(cursor.getColumnIndex(vendad.UNIDADEPROD)));
                 vendad.setVendad_prd_codigo(cursor.getString(cursor.getColumnIndex(vendad.CODPRODUTO)));
+                vendad.setVendad_prd_codigoitem(cursor.getInt(cursor.getColumnIndex(vendad.CODPROD_INT)));
                 vendad.setVendad_prd_descricao(cursor.getString(cursor.getColumnIndex(vendad.DESCRICAOPROD)));
                 vendad.setVendad_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendad.QUANTVENDIDA))));
                 vendad.setVendad_preco_venda(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(vendad.PRECOPRODUTO))).setScale(4, BigDecimal.ROUND_UP));

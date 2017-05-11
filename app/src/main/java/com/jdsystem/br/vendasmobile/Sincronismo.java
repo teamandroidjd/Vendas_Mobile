@@ -4330,7 +4330,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
 
-        String sincclieenvstatic = null;
+        String sincclieenvstatic = "0";
         String Jcliente = null;
         String METHOD_NAMEENVIO = "Cadastrar";
         DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
@@ -4554,7 +4554,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
 
-        String sincpedenviostatic = null;
+        String sincpedenviostatic = "0";
         if (NumPedido.equals("0")) {
 
             String JPedidos = null;
@@ -4643,7 +4643,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                                 CursorItensEnv.moveToFirst();
                                 do {
-                                    PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
+                                    PedItems = PedItems + "{codigoitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODIGOITEM")) + "'," +
                                             "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
                                             "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
                                             "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
@@ -4848,7 +4848,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                                 CursorItensEnv.moveToFirst();
                                 do {
-                                    PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
+                                    PedItems = PedItems + "{codigoitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODIGOITEM")) + "'," +
                                             "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
                                             "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
                                             "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
@@ -4955,9 +4955,13 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 }
                                 sincpedenviostatic = "OK";
                                 CursPedAtu.close();
+                            }else {
+                                sincpedenviostatic = "Nenhum pedido a ser enviado.";
+                                return sincpedenviostatic;
                             }
                         } catch (Exception E) {
                             Toast.makeText(ctxPedEnv, E.toString(), Toast.LENGTH_SHORT).show();
+                            return sincpedenviostatic;
                         }
                         JPedidos = "";
                     } while (CursorPedido.moveToNext());
@@ -5925,7 +5929,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     public static String SituacaodoClientexPed(String vltotalped, Context
             ctxEnvClie, String user, String pass, int CodClie) {
 
-        String situacao = null;
+        String situacao = "0";
 
         String METHOD_NAME = "RetornaSituacaoCliexVend";
         String TAG_SITUACAOCLIENTE = "sitclie";

@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 1;
+    public static int versao = 2;
 
     public ConfigDB(Context ctx) {
 
@@ -213,6 +213,7 @@ public class ConfigDB extends SQLiteOpenHelper {
     private static String SQL_VENDA_D_TEMP = "CREATE TABLE [VENDAD_TEMP] (" +
             " vendad_eanTEMP           VARCHAR DEFAULT 50, " +
             " vendad_prd_codigoTEMP    INTEGER,            " +
+            " vendad_prd_codigo_internoTEMP INTEGER, " +
             " vendad_prd_descricaoTEMP VARCHAR DEFAULT 50, " +
             " vendad_quantidadeTEMP    DECIMAL(10,2),      " +
             " vendad_preco_vendaTEMP   DECIMAL(10,2),      " +
@@ -354,6 +355,12 @@ public class ConfigDB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int VersaoAntiga, int VersaoNova) {
 
         if (VersaoNova > VersaoAntiga) {
+            try{
+                db.execSQL("ALTER TABLE VENDAD_TEMP ADD vendad_prd_codigo_internoTEMP INTEGER");
+            }catch (Exception e){
+                e.toString();
+
+            }
             /*try {
                 db.execSQL("ALTER TABLE PARAMAPP ADD PERCACRESC DECIMAL (7, 4)");
             } catch (Exception E) {
