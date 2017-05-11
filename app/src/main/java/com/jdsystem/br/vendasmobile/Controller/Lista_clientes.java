@@ -247,7 +247,7 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
                         } else if (BloqClie.equals("S")) {
                             Boolean ConexOk = Util.checarConexaoCelular(Lista_clientes.this);
                             if (ConexOk == true) {
-                                Sincronismo.SincronizarClientesStatic(CodVendedor, Lista_clientes.this, usuario, senha, cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT")));
+                                Sincronismo.SincronizarClientesStatic(CodVendedor, Lista_clientes.this, usuario, senha, cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT")),null,null,null);
                                 Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + cliente_cursor.getInt(cursor.getColumnIndex("CODCLIE_INT")) + "", null);
                                 cursorclie.moveToFirst();
                                 bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
@@ -364,14 +364,14 @@ public class Lista_clientes extends ActionBarActivity implements Runnable {
     public void run() {
         try {
             //Sincronismo.run(this);
-            sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
+            sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha,null,null,null);
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(getApplication(), sincclieenvio, Toast.LENGTH_SHORT).show();
                 }
             });
-            sincclie = Sincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha, 0);
+            sincclie = Sincronismo.SincronizarClientesStatic(CodVendedor, this, usuario, senha, 0,null,null,null);
             handler.post(new Runnable() {
                 @Override
                 public void run() {

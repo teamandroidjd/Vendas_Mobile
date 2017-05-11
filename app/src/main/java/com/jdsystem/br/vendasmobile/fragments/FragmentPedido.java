@@ -231,9 +231,9 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                         if (ConexOk == true) {
                                             if (flagintegrado.equals("1")) {
-                                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), usuario, senha);
+                                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), usuario, senha,null,null,null);
                                                 if (sitclieenvio.equals("OK")) {
-                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido);
+                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido,null,null,null);
                                                     if (pedidoendiado.equals("OK")) {
                                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                         ((ConsultaPedidos) getActivity()).finish();
@@ -250,7 +250,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             } else {
                                                 sitcliexvend = Sincronismo.SituacaodoClientexPed(totalvenda, getActivity(), usuario, senha, codclie_ext);
                                                 if (sitcliexvend.equals("OK")) {
-                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido);
+                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido,null,null,null);
                                                     if (pedidoendiado.equals("OK")) {
                                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                         ((ConsultaPedidos) getActivity()).finish();

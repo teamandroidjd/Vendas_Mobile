@@ -14,31 +14,20 @@
     tools:context="com.jdsystem.br.vendasmobile.ConsultaContatos"
     tools:showIn="@layout/app_bar_act__contatos">
 
-    <!--<LinearLayout
+    <RelativeLayout
+        android:id="@+id/LinearLayoutTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/adm_sp_filtrarcliente"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </Spinner>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/pesqcontato"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Pesquisa"
-            android:singleLine="true" />
-    </LinearLayout>-->
+            android:id="@+id/txvqtdregistrocont"
+            android:layout_alignParentRight="true"
+            android:text="registro"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl_fragment_container2"

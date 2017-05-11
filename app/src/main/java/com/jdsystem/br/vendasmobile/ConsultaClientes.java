@@ -43,8 +43,9 @@ public class ConsultaClientes extends AppCompatActivity
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private Handler handler = new Handler();
     public ListAdapterClientes adapter;
+    private TextView txvqtdregclie;
     Clientes lstclientes;
-    String codVendedor, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, editQuery,
+    String codVendedor, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, nomeEmpresa, editQuery,
             UsuarioLogado, telaInvocada, chavepedido, numPedido;
     SQLiteDatabase DB;
     MenuItem searchItem;
@@ -106,6 +107,7 @@ public class ConsultaClientes extends AppCompatActivity
     private void carregarpreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
+        nomeEmpresa = prefs.getString("nome",null);
         idPerfil = prefs.getInt("idperfil", 0);
     }
 
@@ -141,6 +143,7 @@ public class ConsultaClientes extends AppCompatActivity
 
     private void declaraobjetos() {
         DB = new ConfigDB(this).getReadableDatabase();
+        txvqtdregclie = (TextView) findViewById(R.id.txvqtdregistroclie);
         cadclie = (FloatingActionButton) findViewById(R.id.cadclie);
         imgStatus = (ImageView) findViewById(R.id.imgStatus);
 
@@ -255,6 +258,23 @@ public class ConsultaClientes extends AppCompatActivity
                 Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
                 cursorparametro.moveToFirst();
                 String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
+                if(cliexvend == null){
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.setCancelable(false);
+                    alert.setIcon(R.drawable.logo_ico);
+                    alert.setTitle("Atenção!");
+                    alert.setMessage("Não foi possível realizar a consulta de cliente, pois não foram configurado os parâmetros. Entre em contato com a "+nomeEmpresa+".");
+                    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+                    alert.show();
+                    return DadosLisClientes;
+
+                }
                 cursorparametro.close();
                 if (cliexvend.equals("S")) {
                     Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
@@ -264,6 +284,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " WHERE ATIVO = 'S' AND CODVENDEDOR = " + codVendedor + " AND CODPERFIL = "+idPerfil+" ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
+                        txvqtdregclie.setText("Quantidade de registro: "+cursorClientes.getCount());
                         do {
                             String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
                             String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
@@ -285,6 +306,7 @@ public class ConsultaClientes extends AppCompatActivity
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
+                        txvqtdregclie.setText("Quantidade de Registro: 0");
                         AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
                         builder.setTitle(R.string.app_namesair);
                         builder.setIcon(R.drawable.logo_ico);
@@ -306,6 +328,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " WHERE (ATIVO = 'S') AND (CODPERFIL = "+idPerfil+") ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
+                        txvqtdregclie.setText("Quantidade de registro: "+cursorClientes.getCount());
                         do {
                             String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
                             String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
@@ -327,6 +350,7 @@ public class ConsultaClientes extends AppCompatActivity
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
+                        txvqtdregclie.setText("Quantidade de Registro: 0");
                         AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
                         builder.setTitle(R.string.app_namesair);
                         builder.setIcon(R.drawable.logo_ico);
@@ -362,6 +386,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")AND (CODPERFIL = "+idPerfil+")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
+                        txvqtdregclie.setText("Quantidade de registro: "+cursorClientes.getCount());
                         do {
                             String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
                             String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
@@ -383,6 +408,7 @@ public class ConsultaClientes extends AppCompatActivity
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
+                        txvqtdregclie.setText("Quantidade de Registro: 0");
                         Toast.makeText(this, "Nenhum cliente encontrando. Verifique!", Toast.LENGTH_LONG).show();
                     }
                 } else {
@@ -393,6 +419,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
+                        txvqtdregclie.setText("Quantidade de registro: "+cursorClientes.getCount());
                         do {
                             String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
                             String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
@@ -414,6 +441,7 @@ public class ConsultaClientes extends AppCompatActivity
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
+                        txvqtdregclie.setText("Quantidade de Registro: 0");
                         Toast.makeText(this, "Nenhum cliente encontrando. Verifique!", Toast.LENGTH_LONG).show();
                     }
 
@@ -575,6 +603,7 @@ public class ConsultaClientes extends AppCompatActivity
                     params.putString(getString(R.string.intent_chavepedido), chavepedido);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                     if (telaInvocada != null) {
@@ -727,14 +756,14 @@ public class ConsultaClientes extends AppCompatActivity
 
         } else if (flag == 1) {
             try {
-                sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha);
+                sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha,null,null,null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplication(), sincclieenvio, Toast.LENGTH_SHORT).show();
                     }
                 });
-                sincclie = Sincronismo.SincronizarClientesStatic(codVendedor, this, usuario, senha, 0);
+                sincclie = Sincronismo.SincronizarClientesStatic(codVendedor, this, usuario, senha, 0,null,null,null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

@@ -109,9 +109,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vender_produtos);
 
-
-
-
         declaraObjetos();
         carregarpreferencias();
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -126,7 +123,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 sCodVend = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
-                CodEmpresa = params.getString("codempresa");
+                CodEmpresa = params.getString(getString(R.string.intent_codigoempresa));
                 senha = params.getString(getString(R.string.intent_senha));
                 DATA_DE_ENTREGA = params.getString("dataentrega");
             }
@@ -2575,7 +2572,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
             int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
             String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
             if (FlagIntegrado.equals("1")) {
-                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodClie_Int, this, usuario, senha);
+                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodClie_Int, this, usuario, senha,null,null,null);
                 if (sitclieenvio.equals("OK")) {
                     handler.post(new Runnable() {
                         @Override
@@ -2583,7 +2580,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                             Toast.makeText(CadastroPedidos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                     });
-                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido);
+                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido,null,null,null);
                     if (pedidoendiado.equals("OK")) {
                         dialog.dismiss();
                         Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
@@ -2605,7 +2602,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     }
                 }
             } else {
-                pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido);
+                pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido,null,null,null);
                 if (pedidoendiado.equals("OK")) {
                     dialog.dismiss();
                     Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);

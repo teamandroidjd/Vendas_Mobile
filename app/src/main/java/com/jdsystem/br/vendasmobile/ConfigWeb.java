@@ -39,7 +39,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     private EditText edtChave;
     private Button btsalvhost, excluir1,excluir2,excluir3;
     public SharedPreferences prefs;
-    public String ChaveAcesso, RetHost,host, chave;
+    public String ChaveAcesso, RetHost,host, perfil, chave;
     public int idPerfil, codperfil;
     ProgressDialog DialogECB;
     private SQLiteDatabase DB;
@@ -492,7 +492,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             JSONArray infolicenca = jsonObj.getJSONArray("perfil");
             JSONObject c = infolicenca.getJSONObject(0);
             String licenca = c.getString("codlicenca");
-            String perfil = c.getString("nomeempresa").toUpperCase();
+            perfil = c.getString("nomeempresa").toUpperCase();
             host = c.getString("host");
 
             if ((gravarperfil(host, perfil, licenca)) == false) {
@@ -526,6 +526,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
         editorhost.putString("ChaveAcesso", edtChave.getText().toString());
         editorhost.putString("host", host);
+        editorhost.putString("nome", perfil);
         editorhost.putInt("idperfil", idPerfil);
         editorhost.apply();
     }

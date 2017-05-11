@@ -208,7 +208,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             } else if (BloqClie.equals("S")) {
                 Boolean ConexOk = Util.checarConexaoCelular(getActivity());
                 if (ConexOk == true) {
-                    Sincronismo.SincronizarClientesStatic(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno));
+                    Sincronismo.SincronizarClientesStatic(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno),null,null,null);
                     Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + CodigoClienteInterno + "", null);
                     cursorclie.moveToFirst();
                     bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
@@ -223,7 +223,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                         params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
                         params.putString(getString(R.string.intent_usuario),usuario);
                         params.putString(getString(R.string.intent_senha),senha);
-                        params.putString("codempresa", CodEmpresa);
+                        params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
                         params.putString("dataentrega", dataEntrega);
                         intent.putExtras(params);
                         startActivity(intent);

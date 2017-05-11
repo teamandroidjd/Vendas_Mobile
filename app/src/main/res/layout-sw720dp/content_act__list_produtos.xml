@@ -14,22 +14,20 @@
     tools:context="com.jdsystem.br.vendasmobile.ConsultaProdutos"
     tools:showIn="@layout/app_bar_act__list_produtos">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/LinearLayoutTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/prod_txt_pesquisaproduto"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Pesquisa de Itens"
-            android:textSize="35sp"
-            android:textColor="@color/ColorText"/>
+            android:id="@+id/txvqtdregistroprod"
+            android:layout_alignParentRight="true"
+            android:text="registro"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl_fragment_container"

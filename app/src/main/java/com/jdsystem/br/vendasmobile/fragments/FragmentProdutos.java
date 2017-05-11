@@ -264,7 +264,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 Bloqueios.close();
                 boolean ConexOk = Util.checarConexaoCelular(getActivity());
                 if (vendenegativo.equals("N") && ConexOk == true) {
-                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt);
+                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt,null,null,null);
 
                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL ='" + (CodProd) + "' AND CODPERFIL = " + idPerfil, null);
@@ -594,7 +594,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 Bloqueios.close();
                 boolean ConexOk = Util.checarConexaoCelular(getActivity());
                 if (vendenegativo.equals("N") && ConexOk == true) {
-                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt);
+                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt,null,null,null);
 
                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODITEMANUAL = '" + CodProd + "' AND CODPERFIL = " + idPerfil, null);

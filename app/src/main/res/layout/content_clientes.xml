@@ -13,33 +13,21 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ConsultaClientes"
     tools:showIn="@layout/app_bar_clientes">
-    <LinearLayout
+
+    <RelativeLayout
+        android:id="@+id/LinearLayoutTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/adm_sp_filtrarcliente"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </Spinner>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/adm_txt_pesquisacliente"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:hint="Pesquisa" />
-    </LinearLayout>
+            android:id="@+id/txvqtdregistroclie"
+            android:layout_alignParentRight="true"
+            android:text="registro"/>
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/legendaslistclientes"

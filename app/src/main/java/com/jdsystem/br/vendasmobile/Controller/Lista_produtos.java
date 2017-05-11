@@ -322,7 +322,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
             ConexOk = Util.checarConexaoCelular(this);
             if (vendenegativo.equals("N") && ConexOk == true) {
-                sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, CodigoItem);
+                sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, CodigoItem,null,null,null);
                 if (sincprod.equals("0")) {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
                     CursItens.moveToFirst();
@@ -1052,7 +1052,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
             CodigoItem = produto_cursor.getInt(produto_cursor.getColumnIndex("CODIGOITEM"));
             ConexOk = Util.checarConexaoCelular(this);
             if (vendenegativo.equals("N") && ConexOk == true) {
-                sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, CodigoItem);
+                sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, CodigoItem,null,null,null);
                 if (sincprod.equals("0")) {
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodigoItem, null);
                     CursItens.moveToFirst();
@@ -1886,7 +1886,7 @@ public class Lista_produtos extends AppCompatActivity implements Runnable {
     public void run() {
         try {
             //Sincronismo.run(Lista_produtos.this);
-            sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, 0);
+            sincprod = Sincronismo.SincronizarProdutosStatic(Lista_produtos.this, usuario, senha, 0,null,null,null);
             handler.post(new Runnable() {
                 @Override
                 public void run() {

@@ -43,6 +43,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
     Contatos lstcontatos;
     //Contatos lstfiltrocontatos;
     ProgressDialog pDialog;
+    private TextView txvqtdregcont;
     private EditText pesquisacliente;
     Handler handler = new Handler();
     Toolbar toolbar;
@@ -112,9 +113,14 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
         carregausuariologado();
         carregarpreferencias();
+        carregarobjetos();
 
 
 
+    }
+
+    private void carregarobjetos() {
+        txvqtdregcont = (TextView) findViewById(R.id.txvqtdregistrocont);
     }
 
     private void carregarpreferencias() {
@@ -326,6 +332,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         "ORDER BY NOME ", null);
                 cursorContatos.moveToFirst();
                 if (cursorContatos.getCount() > 0) {
+                    txvqtdregcont.setText("Quantidade de registro: "+cursorContatos.getCount());
                     do {
                         String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
                         String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
@@ -359,6 +366,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     cursorContatos.close();
 
                 } else {
+                    txvqtdregcont.setText("Quantidade de Registro: 0");
                     Toast.makeText(this, R.string.no_contacts_found, Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception E) {
@@ -382,6 +390,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
             CursorContatos.moveToFirst();
             if (CursorContatos.getCount() > 0) {
+                txvqtdregcont.setText("Quantidade de registro: "+CursorContatos.getCount());
                 do {
                     String nome = CursorContatos.getString(CursorContatos.getColumnIndex("NOME"));
                     String cargo = CursorContatos.getString(CursorContatos.getColumnIndex("CARGO"));
@@ -415,6 +424,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     DadosListContatos.add(lstcontatos);
                 } while (CursorContatos.moveToNext());
             } else {
+                txvqtdregcont.setText("Quantidade de Registro: 0");
                 Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT).show();
             }
             CursorContatos.close();

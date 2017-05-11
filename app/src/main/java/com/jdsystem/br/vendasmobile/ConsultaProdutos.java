@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -43,9 +44,10 @@ public class ConsultaProdutos extends AppCompatActivity
 
 
     String codVendedor, URLPrincipal, usuario, senha, dtUltAtu, usuarioLogado, sincprod, numPedido, chavePedido,
-            NomeCliente, editQuery,telaInvocada;
+            NomeCliente, editQuery,telaInvocada, nomeEmpresa;
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     private EditText prod_txt_pesquisaproduto;
+    private TextView txvqtdregprod;
     private ProgressDialog dialog;
     SQLiteDatabase DB;
     int Flag = 0, CodCliente, codContato;
@@ -95,6 +97,7 @@ public class ConsultaProdutos extends AppCompatActivity
 
         carregausuariologado();
         carregarpreferencias();
+        carregarobjetos();
 
         dialog = new ProgressDialog(ConsultaProdutos.this);
         dialog.setTitle(getString(R.string.wait));
@@ -106,9 +109,14 @@ public class ConsultaProdutos extends AppCompatActivity
         thread.start();
     }
 
+    private void carregarobjetos() {
+        txvqtdregprod = (TextView) findViewById(R.id.txvqtdregistroprod);
+    }
+
     private void carregarpreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
+        nomeEmpresa = prefs.getString("nome",null);
         idPerfil = prefs.getInt("idperfil", 0);
     }
 
@@ -269,7 +277,7 @@ public class ConsultaProdutos extends AppCompatActivity
             }
         } else if (Flag == 1) {
             try {
-                sincprod = Sincronismo.SincronizarProdutosStatic(ConsultaProdutos.this, usuario, senha, 0);
+                sincprod = Sincronismo.SincronizarProdutosStatic(ConsultaProdutos.this, usuario, senha, 0,null,null,null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -579,10 +587,28 @@ public class ConsultaProdutos extends AppCompatActivity
                 String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
                 String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                 String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
+                if(tabela1.equals("") && tabela1.equals("") && tabela1.equals("") && tabela1.equals("") && tabela1.equals("") &&
+                        tabela1.equals("") && tabela1.equals("") && tipoEstoque == null){
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.setCancelable(false);
+                    alert.setIcon(R.drawable.logo_ico);
+                    alert.setTitle("Atenção!");
+                    alert.setMessage("Não foi possível realizar a consulta de produtos, pois não foram configurado os parâmetros. Entre em contato com a "+nomeEmpresa+".");
+                    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+                    alert.show();
+                    return DadosLisProdutos;
+                }
 
                 Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = "+idPerfil+")) ORDER BY DESCRICAO", null);
                 cursorProdutos.moveToFirst();
                 if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
+                    txvqtdregprod.setText("Quantidade de registro: "+cursorProdutos.getCount());
                     do {
                         int codigoexterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
                         String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
@@ -667,6 +693,7 @@ public class ConsultaProdutos extends AppCompatActivity
 
 
                 } else {
+                    txvqtdregprod.setText("Quantidade de Registro: 0");
                     AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaProdutos.this);
                     builder.setTitle(R.string.app_namesair);
                     builder.setIcon(R.drawable.logo_ico);
@@ -711,6 +738,7 @@ public class ConsultaProdutos extends AppCompatActivity
                         " OR (FABRICANTE LIKE '%" + editQuery + "%') OR (FORNECEDOR LIKE '%" + editQuery + "%') OR (MARCA LIKE '%" + editQuery + "%')) ORDER BY DESCRICAO", null);
                 cursorProdutos.moveToFirst();
                 if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
+                    txvqtdregprod.setText("Quantidade de registro: "+cursorProdutos.getCount());
                     do {
                         int codigoexterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
                         String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
@@ -781,6 +809,7 @@ public class ConsultaProdutos extends AppCompatActivity
                     CursorParametro.close();
 
                 } else {
+                    txvqtdregprod.setText("Quantidade de Registro: 0");
                     Toast.makeText(this, R.string.no_products_found, Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {

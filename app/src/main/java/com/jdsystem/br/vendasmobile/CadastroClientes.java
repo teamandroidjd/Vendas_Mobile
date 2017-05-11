@@ -52,7 +52,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
     int CodCidade, CodBairro, telaInvocada, codClieExt,idPerfil;
     Boolean PesqCEP;
-    ImageButton BtnPesqCep, BtnconsultaCNPJ;
+    ImageButton BtnPesqCep;
     private static ProgressDialog DialogECB;
     EditText nomerazao, nomefan, nomecompleto, cnpjcpf, Edtcpf, EdtRG, ie, endereco, numero, cep, tel1, tel2, email, edtOBS, Complemento;
     SQLiteDatabase DB;
@@ -65,7 +65,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cad_clientes);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         declaraobjetos();
         carregarpreferencias();
 
@@ -776,7 +776,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 String sitclieenvio;
-                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha);
+                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha,null,null,null);
                                 if (sitclieenvio.equals(getString(R.string.newcustomers_successfully))) {
                                     handler.post(new Runnable() {
                                         @Override
@@ -852,58 +852,6 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
     }
 
-    public void consultacnpj(View view) {
-
-        String CNPJ = cnpjcpf.getText().toString().replaceAll("[^0123456789]", "");
-        cadastraDadosCNPJ(CNPJ);
-    }
-
-    private void cadastraDadosCNPJ(String cnpj) {
-        /*HttpURLConnection  urlConnection = null;
-
-        try {
-            URL url = new URL("https://www.receitaws.com.br/v1/cnpj/" + cnpj);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setReadTimeout(15001);
-            urlConnection.setConnectTimeout(15001);
-            urlConnection.setDoInput(true);
-            urlConnection.setDoOutput(true);
-            urlConnection.connect();
-            InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
-
-
-
-        /*try {
-            //JSONObject jsonObj = new JSONObject(in);
-            //JSONArray JCNPJ = jsonObj.getJSONArray("" +
-                   // "");
-
-            DB = new ConfigDB(this).getReadableDatabase();
-
-            //JSONObject c = JCNPJ.getJSONObject(0);
-            String nome = c.getString("nome");
-            String uf = c.getString("uf");
-            String tel1 = c.getString("telefone");
-            String bairro = c.getString("bairro");
-            String endereco = c.getString("logradouro");
-            String numero = c.getString("numero");
-            String cep = c.getString("cep");
-            String cidade = c.getString("municipio");
-            String nomefan = c.getString("fantasia");
-            String complemento = c.getString("complemento");
-
-
-        } catch (Exception E) {
-            E.printStackTrace();
-        }*/
-
-    }
-
     @Override
     public void run() {
         handler.post(new Runnable() {
@@ -965,8 +913,8 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
     @Override
     protected void onResume() {
-        declaraobjetos();
-        carregarpreferencias();
+        //declaraobjetos();
+        //carregarpreferencias();
         super.onResume();
     }
 
