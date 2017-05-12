@@ -118,7 +118,7 @@ public class SqliteVendaD_TempDao {
             try {
                 db = new ConfigDB(ctx).getWritableDatabase();
                 sql = "UPDATE VENDAD_TEMP SET vendad_prd_codigoTEMP = ?, vendad_prd_descricaoTEMP = ?,vendad_quantidadeTEMP = ?, " +
-                       "vendad_preco_vendaTEMP = ?, vendad_totalTEMP = ?, vendad_prd_unidadeTEMP = ? where vendad_prd_codigoTEMP =  " + item.getVendad_prd_codigoTEMP();
+                       "vendad_preco_vendaTEMP = ?, vendad_totalTEMP = ?, vendad_prd_unidadeTEMP = ?, vendad_prd_codigo_internoTEMP = ? where vendad_prd_codigoTEMP =  " + item.getVendad_prd_codigoTEMP();
                 stmt = db.compileStatement(sql);
                 //stmt.bindString(1, item.getVendad_eanTEMP());
                 stmt.bindString(1, item.getVendad_prd_codigoTEMP());
@@ -128,6 +128,7 @@ public class SqliteVendaD_TempDao {
                 stmt.bindDouble(5, item.getVendad_totalTEMP().setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
                 String und = item.getVendad_prd_unidadeTEMP();
                 stmt.bindString(6, item.getVendad_prd_unidadeTEMP());
+                stmt.bindLong(7, item.getVendad_prd_codigoItemTEMP());
                 if (stmt.executeUpdateDelete() > 0) {
                     gravacao = true;
                 }

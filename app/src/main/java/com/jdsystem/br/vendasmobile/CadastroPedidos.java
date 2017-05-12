@@ -1136,7 +1136,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
         builder.setPositiveButton("Alterar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         if (NumPedido.equals("0")) {
-                            SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
+                            final SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
                             new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
                             if (item != null) {
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -1190,6 +1190,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
                                 try {
                                     String codprod = (item.getVendad_prd_codigoTEMP());
+                                    int codigoitem = item.getVendad_prd_codigoItemTEMP();
                                     codprod = codprod.trim();
                                     List<String> DadosListTabPreco = new ArrayList<String>();
                                     DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
@@ -1206,9 +1207,8 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                     CursorParametro.close();
 
                                     DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "' AND CODPERFIL = " + idPerfil, null);
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODIGOITEM ='" + item.getVendad_prd_codigoItemTEMP() + "' AND CODPERFIL = " + idPerfil, null);
                                     produto_cursor.moveToFirst();
-
                                     qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
 
                                     String tabelaPadrao = produto_cursor.getString(produto_cursor.getColumnIndex("TABELAPADRAO"));
@@ -1349,6 +1349,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                 itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
 
                                                 if (itemBean3 != null) {
+                                                    itemBean1.setVendad_prd_codigoItemTEMP(item.getVendad_prd_codigoItemTEMP());
                                                     itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
                                                     itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
                                                     itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
@@ -1492,7 +1493,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                     tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
                                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                                     CursorParametro.close();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "' AND CODPERFIL = " + idPerfil, null);
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + item.getVendad_prd_codigoitem() + "' AND CODPERFIL = " + idPerfil, null);
                                     produto_cursor.moveToFirst();
 
                                     qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
@@ -1602,9 +1603,10 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 Preco = Preco.replace('.', ',');
                                 info_txv_precoproduto.setText(Preco);
 
-                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "' AND CODITEMANUAL = '" + item.getVendad_prd_codigo() + "' AND CODPERFIL = " + idPerfil, null);
+                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CODIGOITEM, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "' AND CODIGOITEM = '" + item.getVendad_prd_codigoitem() + "' AND CODPERFIL = " + idPerfil, null);
                                 cursor.moveToFirst();
                                 String qtdpedido = cursor.getString(cursor.getColumnIndex("QTDMENORPED"));
+                                final int codigoitem = cursor.getInt(cursor.getColumnIndex("CODIGOITEM"));
                                 cursor.close();
 
                                 info_txt_quantidadecomprada.setText(qtdpedido);
@@ -1642,6 +1644,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                 //itemBean3 = itemDao.altera_item_na_venda(itemBean2);
 
                                                 //if (itemBean3 != null) {
+                                                itemBean1.setVendad_prd_codigoitem(codigoitem);
                                                 itemBean1.setVendad_prd_codigo(COD_PRODUTO);
                                                 itemBean1.setVendad_prd_descricao(DESCRICAO);
                                                 itemBean1.setVendad_prd_unidade(UNIDADE);
@@ -1658,7 +1661,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
                                                     //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
                                                     itemBean1.setVendad_total(itemBean1.getSubTotal());
-                                                    itemDao.atualizar_alteracao_item_na_venda(itemBean1, Chave_Venda);
+                                                    itemDao.atualizar_alteracao_item_na_venda(itemBean1, Chave_Venda,codigoitem);
                                                     Alterar_Pedido_listview_e_calcula_total();
                                                     //finish();
                                                 } else {
@@ -1722,7 +1725,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     public void onClick(DialogInterface arg0, int arg1) {
                         if (!NumPedido.equals("0")) {
                             SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
-                            String codprod = item.getVendad_prd_codigo();
+                            int codprod = item.getVendad_prd_codigoitem();
                             //String chaveitem = item.getVendac_chave();
                             new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod, Chave_Venda);
 
@@ -1762,7 +1765,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 public void onClick(DialogInterface arg0, int arg1) {
 
                     SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
-                    String codprod = item.getVendad_prd_codigo();
+                    int codprod = item.getVendad_prd_codigoitem();
                     //String chaveitem = item.getVendac_chave();
                     new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod, Chave_Venda);
 
@@ -2318,7 +2321,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
                                                     //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
                                                     itemBean1.setVendad_total(itemBean1.getSubTotal());
-                                                    itemDao.atualizar_alteracao_item_na_venda(itemBean1, Chave_Venda);
+                                                    //itemDao.atualizar_alteracao_item_na_venda(itemBean1, Chave_Venda);
                                                     Alterar_Pedido_listview_e_calcula_total();
                                                     //finish();
                                                 } else {

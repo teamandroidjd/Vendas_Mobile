@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
 
 public class DadosProduto extends AppCompatActivity {
 
-    String sCodProduto,codVendedor,URLPrincipal,usuario,senha;
+    String codVendedor,URLPrincipal,usuario,senha;
     SQLiteDatabase DB;
     private Context ctx;
     private TextView TAG_CODMANUAL, TAG_DESCRICAO, TAG_UNIVENDA, TAG_TAB1, TAG_VLVENDA1, TAG_TAB2, TAG_VLVENDA2, TAG_TAB3, TAG_VLVENDA3, TAG_TAB4, TAG_VLVENDA4,
@@ -37,7 +37,7 @@ public class DadosProduto extends AppCompatActivity {
     private LinearLayout TAG_LINEARESTOQUE;
     public SharedPreferences prefs;
     public static final String CONFIG_HOST = "CONFIG_HOST";
-    int idPerfil;
+    int idPerfil,sCodProduto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class DadosProduto extends AppCompatActivity {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodProduto = (String) params.getString(getString(R.string.intent_codproduto));
+                sCodProduto = params.getInt(getString(R.string.intent_codproduto));
                 codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
@@ -111,9 +111,9 @@ public class DadosProduto extends AppCompatActivity {
 
     public void carregarprodutos(){
         try {
-            Cursor CursorProd = DB.rawQuery("SELECT CODITEMANUAL,CODPERFIL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA," +
+            Cursor CursorProd = DB.rawQuery("SELECT CODITEMANUAL, CODIGOITEM, CODPERFIL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA," +
                     "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2,QTDESTPROD, " +
-                    "ATIVO, APRESENTACAO FROM ITENS WHERE CODITEMANUAL = '" + (sCodProduto) + "' AND CODPERFIL = "+idPerfil, null);
+                    "ATIVO, APRESENTACAO FROM ITENS WHERE CODIGOITEM = " + (sCodProduto) + " AND CODPERFIL = "+idPerfil, null);
 
             Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL ="+idPerfil, null);
             CursorParametro.moveToFirst();
