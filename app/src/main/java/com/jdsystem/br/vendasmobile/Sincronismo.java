@@ -84,6 +84,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //TODO: TESTE
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_sincronismo);
 
