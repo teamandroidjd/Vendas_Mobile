@@ -84,6 +84,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " DESCRICAOTAB6                    VARCHAR (20),       " +
             " DESCRICAOTAB7                    VARCHAR (20),       " +
             " HABITEMNEGATIVO                  CHAR (1),           " +
+            " HABCLIEXVEND                     CHAR (1),           " +
             " HABCRITSITCLIE                   CHAR (1),           " +
             " TIPOCRITICQTDITEM                CHAR(1),            " +
             " CODPERFIL                        INTEGER,            " +
@@ -114,6 +115,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    TEL2                         VARCHAR (15),             " +
             "    TIPO                         CHAR(1),                  " +
             "    OBS                          TEXT,                     " +
+            "    FLAGINTEGRADO                CHAR(1),                  " +
             "    CODPERFIL                    INTEGER)                  " +
             ";");
 
@@ -131,7 +133,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " VLVENDA5     DECIMAL (12, 4),          " +
             " VLVENDAP1    DECIMAL (12, 4),          " +
             " VLVENDAP2    DECIMAL (12, 4),          " +
-         // " VENDAPADRAO  DECIMAL (12, 4),          " +
+            // " VENDAPADRAO  DECIMAL (12, 4),          " +
             " TABELAPADRAO VARCHAR(20),              " +
             " QTDESTPROD   VARCHAR(10),              " +
             " CLASSE       VARCHAR(15),              " +
@@ -248,11 +250,12 @@ public class ConfigDB extends SQLiteOpenHelper {
             ");");
 
     private static String SQL_USUARIOS = (" CREATE TABLE IF NOT EXISTS USUARIOS (" +
-            " CODVEND    INTEGER,        " +
-            " USUARIO    VARCHAR (30),   " +
-            " SENHA      VARCHAR  (100), " +
-            " CODEMPRESA INTEGER,        " +
-            " CODPERFIL INTEGER ); ");
+            " CODVEND         INTEGER,        " +
+            " DT_ULT_ATU_CLIE DATETIME,       " +
+            " USUARIO         VARCHAR (30),   " +
+            " SENHA           VARCHAR  (100), " +
+            " CODEMPRESA      INTEGER,        " +
+            " CODPERFIL       INTEGER ); ");
 
     private static String SQL_BLOQUEIOS = (" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
             " CODBLOQ   VARCHAR (3),  " +
@@ -321,6 +324,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    TEL2                         VARCHAR (15),             " +
             "    TIPO                         CHAR(1),                  " +
             "    TIPO_POS                     INTEGER,                  " +
+            "    FLAGINTEGRADO                CHAR(1),                  " +
             "    OBS                          TEXT,                     " +
             "    CODPERFIL                    INTEGER)                  " +
             ";");
@@ -355,359 +359,33 @@ public class ConfigDB extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int VersaoAntiga, int VersaoNova) {
 
         if (VersaoNova > VersaoAntiga) {
-            try{
+            try {
                 db.execSQL("ALTER TABLE VENDAD_TEMP ADD vendad_prd_codigo_internoTEMP INTEGER");
+            } catch (Exception e) {
+                e.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABCLIEXVEND CHAR (1)");
+            } catch (Exception e) {
+                e.toString();
+            }
+            try {
+                db.execSQL("ALTER TABLE CONTATO_TEMPORARIO ADD FLAGINTEGRADO CHAR(1)");
+            } catch (Exception e) {
+                e.toString();
+            }
+
+            try {
+                db.execSQL("ALTER TABLE CONTATO ADD FLAGINTEGRADO CHAR(1)");
+            } catch (Exception e) {
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE USUARIOS ADD DT_ULT_ATU_CLIE DATETIME");
             }catch (Exception e){
                 e.toString();
 
             }
-            /*try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD PERCACRESC DECIMAL (7, 4)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD PERCACRESC DECIMAL (7, 4)");
-            }
-            try {
-                db.execSQL("ALTER TABLE EMPRESAS ADD ATIVO CHAR(1)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE EMPRESAS ADD ATIVO CHAR(1)");
-            }
-            try {
-                db.execSQL("ALTER TABLE ITENS ADD VENDAPADRAO DECIMAL(12,4) ");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE ITENS ADD VENDAPADRAO DECIMAL(12,4)");
-            }
-            try {
-                db.execSQL("ALTER TABLE VENDAD_TEMP ADD vendad_prd_unidadeTEMP  VARCHAR(5) ");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE VENDAD_TEMP ADD vendad_prd_unidadeTEMP  VARCHAR(5)");
-            }
-            try {
-                db.execSQL("DELETE FROM ITENS");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no DELETE FROM ITENS");
-            }
-            try {
-                db.execSQL("DELETE FROM CLIENTES ");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no DELETE FROM CLIENTES");
-            }
-            //MODIFICAÇÕES NA VERSÃO 4 DO BANCO DE DADOS
-            try {
-                db.execSQL("ALTER TABLE ITENS ADD QTDESTPROD VARCHAR(10) ");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE ITENS ADD QTDESTPROD VARCHAR(10)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB1 VARCHAR(20)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DESCRICAOTAB1 VARCHAR(20)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD HABCRITSITCLIE CHAR (1)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD HABCRITSITCLIE CHAR (1)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CLIENTES ADD LIMITECRED DOUBLE");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CLIENTES ADD LIMITECRED DOUBLE");
-            }
-            try {
-                db.execSQL("ALTER TABLE CLIENTES ADD BLOQUEIO VARCHAR(2)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CLIENTES ADD BLOQUEIO VARCHAR(2)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD TIPOCRITICQTDITEM CHAR(1)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD TIPOCRITICQTDITEM CHAR(1)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD DOCUMENTO VARCHAR(15)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD DOCUMENTO VARCHAR(15)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PEDITENS ADD NUMPED INTEGER");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PEDITENS ADD NUMPED INTEGER");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD DATA VARCHAR(10)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD DATA VARCHAR(10)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD CEP VARCHAR(10)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CEP VARCHAR(10)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD ENDERECO VARCHAR(15)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD ENDERECO VARCHAR(15)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD NUMERO VARCHAR(10) ");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD ENDERECO VARCHAR(15)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD COMPLEMENTO VARCHAR(15)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD COMPLEMENTO VARCHAR(15)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD UF CHAR(2) ");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD COMPLEMENTO VARCHAR(15)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD CODVENDEDOR INTEGER");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODVENDEDOR INTEGER");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD CODCLIE_EXT INTEGER");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODCLIE_EXT INTEGER");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD HABITEMNEGATIVO CHAR (1)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD HABITEMNEGATIVO CHAR (1)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB7 VARCHAR(20)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DESCRICAOTAB7 VARCHAR(20)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB6 VARCHAR(20)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DESCRICAOTAB6 VARCHAR(20)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB5 VARCHAR(20)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DESCRICAOTAB5 VARCHAR(20)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB4 VARCHAR(20)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DESCRICAOTAB4 VARCHAR(20)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB3 VARCHAR(20)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DESCRICAOTAB3 VARCHAR(20)");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DESCRICAOTAB2 VARCHAR(20) ");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DESCRICAOTAB2 VARCHAR(20)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD CODCIDADE INTEGER");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODCIDADE INTEGER");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONREC ADD rec_valorpago DECIMAL (10,2) ");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODCIDADE INTEGER");
-            }
-            try {
-                db.execSQL(" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
-                        " CODBLOQ   VARCHAR (3),  " +
-                        " DESCRICAO VARCHAR (30), " +
-                        " BLOQUEAR  CHAR    (1),  " +
-                        " LIBERAR   CHAR    (1),  " +
-                        " FPAVISTA  VARCHAR (3) ); ");
-
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no CREATE TABLE IF NOT EXISTS BLOQCLIE");
-            }
-
-            //MODIFICAÇÕES NA VERSÃO 6 DO BANCO DE DADOS versionCode 12
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD CODCLIENTE INTEGER");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODCLIENTE INTEGER");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DT_ULT_CLIE DATETIME");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DT_ULT_CLIE DATETIME");
-            }
-            try {
-                db.execSQL("ALTER TABLE PARAMAPP ADD DT_ULT_ITENS DATETIME");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE PARAMAPP ADD DT_ULT_CLIE DATETIME");
-            }
-            try{
-                db.execSQL("CREATE TABLE IF NOT EXISTS PERFIL (" +
-                        " CODPERFIL  INTEGER PRIMARY KEY AUTOINCREMENT,   " +
-                        " LICENCA    VARCHAR (20),                        " +
-                        " HOST       VARCHAR (50),                        " +
-                        " NOMEPERFIL VARCHAR (20) ); ");
-            }catch (Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE USUARIOS ADD CODPERFIL INTEGER");
-            }catch(Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE CLIENTES ADD CODPERFIL INTEGER");
-            }catch(Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE CONTATO ADD CODPERFIL INTEGER");
-            }catch(Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE ITENS ADD CODPERFIL INTEGER");
-            }catch(Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE PEDITENS ADD CODPERFIL INTEGER");
-            }catch(Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE ITENS ADD TABELAPADRAO VARCHAR(20)");
-            }catch (Exception e){
-                e.toString();
-            }
-
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD CODCONTATO_EXT VARCHAR(7)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD CODCONTATO_EXT VARCHAR(7)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD OBS TEXT");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD OBS TEXT");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD BAIRRO VARCHAR(30)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD BAIRRO (30)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD DESC_CIDADE VARCHAR(30)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD DESC_CIDADE (30)");
-            }
-
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD COMPLEMENTO VARCHAR(30)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD COMPLEMENTO (30)");
-            }
-            try {
-                db.execSQL("ALTER TABLE CONTATO ADD TIPO CHAR(1)");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no ALTER TABLE CONTATO ADD TIPO(1)");
-            }
-            try {
-                db.execSQL("create table if not exists diascontatotemporario (" +
-                        "coddiacontato integer primary key autoincrement, " +
-                        "dia_visita varchar(40), " +
-                        "cod_dia_semana);");
-            } catch (Exception E) {
-                System.out.println("ConfigDB, falha no INSERT DIASCONTATOTEMPORARIO");
-            }
-            try{
-                db.execSQL("ALTER TABLE EMPRESA ADD CODPERFIL INTEGER");
-            }catch (Exception E){
-                System.out.println("ConfigDB, ALTER TABLE EMPRESA ADD CODPERFIL INTEGER");
-            }
-
-            //MODIFICAÇÕES NA VERSÃO 7 DO BANCO DE DADOS versionCode 13
-
-            try{
-                db.execSQL("ALTER TABLE PEDITENS ADD VIEW CHAR(1)");
-            }catch (Exception e){
-                e.toString();
-
-            }
-
-            try {
-                db.execSQL("create table if not exists dias_contatos (" +
-                        "coddiacontato integer primary key autoincrement, " +
-                        "dia_visita varchar(40), " +
-                        "cod_dia_semana integer, " +
-                        "codcontatoint integer);");
-            } catch (Exception E){
-                System.out.println("ConfigDB, falha no INSERT DIAS_CONTATOS");
-            }
-            try{
-                db.execSQL("ALTER TABLE BLOQCLIE ADD CODPERFIL INTEGER");
-            }catch (Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE PEDITENS ADD QTDMAIORPEDTEMP DECIMAL(10,2) ");
-            }catch (Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE PEDITENS ADD VLUNITTEMP DECIMAL(10,2) ");
-            }catch (Exception e){
-                e.toString();
-            }
-            try{
-                db.execSQL("ALTER TABLE CONFPAGAMENTO ADD conf_temp CHAR DEFAULT N");
-            }catch (Exception e){
-                e.toString();
-            }
-
-            try {
-                db.execSQL("create table if not exists produtos_contatos (" +
-                        "cod_produto_contato        integer primary key autoincrement, " +
-                        "cod_produto_manual         varchar(15), " +
-                        "cod_interno_contato        integer);    ");
-            }catch (Exception E){
-                System.out.println("ConfigDB, falha no INSERT PRODUTOS_CONTATOS");
-            }
-
-            try {
-                db.execSQL(" CREATE TABLE IF NOT EXISTS CONTATO_TEMPORARIO (" +
-                        "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
-                        "    CODCLIENTE                   INTEGER,                  " +
-                        "    CODCLIE_EXT                  INTEGER,                  " +
-                        "    CODCONTATO_EXT               VARCHAR (7),              " +
-                        "    NOME                         VARCHAR (60)  NOT NULL,   " +
-                        "    CARGO                        VARCHAR (30),             " +
-                        "    DOCUMENTO                    VARCHAR(15),              " +
-                        "    DATA                         VARCHAR(10),              " +
-                        "    CEP                          VARCHAR(10),              " +
-                        "    ENDERECO                     VARCHAR(15),              " +
-                        "    NUMERO                       VARCHAR(10),              " +
-                        "    COMPLEMENTO                  VARCHAR(15),              " +
-                        "    UF                           CHAR(2),                  " +
-                        "    CODVENDEDOR                  INTEGER,                  " +
-                        "    CODBAIRRO                    INTEGER,                  " +
-                        "    BAIRRO                       VARCHAR (30),             " +
-                        "    CODCIDADE                    INTEGER,                  " +
-                        "    DESC_CIDADE                  VARCHAR (30),             " +
-                        "    EMAIL                        VARCHAR (100),            " +
-                        "    TEL1                         VARCHAR (15),             " +
-                        "    TEL2                         VARCHAR (15),             " +
-                        "    TIPO                         CHAR(1),                  " +
-                        "    OBS                          TEXT,                     " +
-                        "    CODPERFIL                    INTEGER)                  " +
-                        ";");
-            }catch (Exception E){
-                System.out.println("Falha na criação da tabela CONTATO_TEMPORARIO");
-            }*/
 
         }
     }

@@ -56,6 +56,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -263,6 +265,29 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return true;
     }
 
+    public static boolean verificaconexaoservidor(Context context) { // verifica se há conexão com o servidor de dados no clientes.
+        boolean ConexOK = Util.checarConexaoCelular(context);
+        if (ConexOK == true) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection) (new URL(URLPrincipal).openConnection());
+                urlc.setRequestProperty("User-Agent", "Test");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(1500);
+                urlc.connect();
+                if(urlc.getResponseCode() == 200){
+                    return true;
+                }else {
+                    return false;
+                }
+            } catch (IOException e) {
+                e.toString();
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
+
     @Override
     public void run() {
 
@@ -278,11 +303,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         try {
             SincronizarClientesStatic(sCodVend, this, usuario, senha, 0, Dialog, DialogECB, hd);
             SincronizarProdutosStatic(this, usuario, senha, 0, Dialog, DialogECB, hd);
-            SincDescricaoTabelasStatic(usuario, senha, this,Dialog, DialogECB, hd);
-            SincBloqueiosStatic(usuario, senha, this,Dialog, DialogECB, hd);
-            SincParametrosStatic(usuario, senha, this,Dialog, DialogECB, hd);
-            SincronizarClientesEnvioStatic("0", this, usuario, senha,Dialog, DialogECB, hd);
-            SincronizarPedidosEnvioStatic(usuario, senha, this, "0",Dialog, DialogECB, hd);
+            SincDescricaoTabelasStatic(usuario, senha, this, Dialog, DialogECB, hd);
+            SincBloqueiosStatic(usuario, senha, this, Dialog, DialogECB, hd);
+            SincParametrosStatic(usuario, senha, this, Dialog, DialogECB, hd);
+            SincronizarClientesEnvioStatic("0", this, usuario, senha, Dialog, DialogECB, hd);
+            SincronizarPedidosEnvioStatic(usuario, senha, this, "0", Dialog, DialogECB, hd);
         } catch (Exception e) {
             e.toString();
             Dialog.dismiss();
@@ -2504,15 +2529,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
         String sinccliestatic = null;
 
-        /*Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                final ProgressDialog DialogECB = new ProgressDialog(ctxEnvClie);
-            }
-        });*/
-
-
         String METHOD_NAME = "Carregar";
         String TAG_CLIENTESINFO = "clientes";
         String TAG_TELEFONESINFO = "telefones";
@@ -2539,16 +2555,19 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
         String CodVendedor = sCodVend;
         String DtUlt = null;
+        try {
+            if (Codclie == 0) {
+                Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ATU_CLIE FROM USUARIOS WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '"+ user +"' AND SENHA = '"+ pass +"'", null);
+                cursorparamapp.moveToFirst();
 
-        if (Codclie == 0) {
-            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-            cursorparamapp.moveToFirst();
-
-            DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_CLIE"));
-            if (DtUlt == null) {
-                DtUlt = "01/01/2000 10:00:00";
+                DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CLIE"));
+                if (DtUlt == null) {
+                    DtUlt = "01/01/2000 10:00:00";
+                }
+                cursorparamapp.close();
             }
-            cursorparamapp.close();
+        }catch (Exception e){
+            e.toString();
         }
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -2581,10 +2600,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         String RetClientes = null;
 
         Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
+        //Boolean ConexServerOK = verificaconexaoservidor(ctxEnvClie);
         if (ConexOk == true) {
             try {
                 Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL =" + idPerfil, null);
-                if (cursorVerificaClie.getCount() == 0 && DialogECB != null) {
+                if (cursorVerificaClie.getCount() == 0 && DialogECB != null && DtUlt.equals("01/01/2000 10:00:00")) {
                     hd.post(new Runnable() {
                         @Override
                         public void run() {
@@ -2600,7 +2620,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     do {
                         try {
                             if (i > 0) {
-                                if(hd != null) {
+                                if (hd != null) {
                                     hd.post(new Runnable() {
                                         public void run() {
                                             DialogECB.setMessage(ctxEnvClie.getString(R.string.primeira_sync_clientes));
@@ -2612,7 +2632,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             final int y = i;
                             switch (i) {
                                 case 1:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2621,7 +2641,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 2:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2630,7 +2650,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 3:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2639,7 +2659,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 4:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2648,7 +2668,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 5:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2657,7 +2677,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 6:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2695,7 +2715,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                 } catch (Exception e) {
                                     e.toString();
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -2706,7 +2726,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 }
                                 cursorVerificaClie.close();
                             } else {
-                                if(hd != null) {
+                                if (hd != null) {
                                     hd.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -2725,7 +2745,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     }
                 } else {
                     int i = 0;
-                    if(hd != null) {
+                    if (hd != null) {
                         hd.post(new Runnable() {
                             public void run() {
                                 dialog.setMessage("Por favor aguarde, realizando conexão com o servidor...");
@@ -2740,7 +2760,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             final int y = i;
                             switch (i) {
                                 case 1:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2749,7 +2769,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 2:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2758,7 +2778,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 3:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2767,7 +2787,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 4:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2776,7 +2796,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 5:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2785,7 +2805,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 6:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -2841,7 +2861,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                 } catch (Exception e) {
                                     e.toString();
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -2855,7 +2875,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 cursorVerificaClie.close();
 
                             } else {
-                                if(hd != null) {
+                                if (hd != null) {
                                     hd.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -2872,7 +2892,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 }
             } catch (Exception e) {
                 e.toString();
-                if(hd != null) {
+                if (hd != null) {
                     hd.post(new Runnable() {
                         @Override
                         public void run() {
@@ -2883,7 +2903,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             }
 
         } else {
-            if(hd != null) {
+            if (hd != null) {
                 hd.post(new Runnable() {
                     @Override
                     public void run() {
@@ -2893,85 +2913,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             }
         }
 
-
-        /*Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
-        if (ConexOk == true) {
-            try {
-                int h = 0;
-                do {
-
-                    try {
-                        if (h > 0) {
-                            Thread.sleep(1000);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        if (ConexOk == true) {
-
-                            try {
-                                if (h == 0) {
-                                    Envio.call("", envelope);
-
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                    RetClientes = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                } else {
-                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-                                    if (senha != null) {
-                                        if (Codclie == 0) {
-                                            newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
-                                            newsoap.addProperty("aUsuario", usuario);
-                                            newsoap.addProperty("aSenha", senha);
-                                        } else {
-                                            newsoap.addProperty("aParam", "C" + Codclie);
-                                            newsoap.addProperty("aUsuario", usuario);
-                                            newsoap.addProperty("aSenha", senha);
-                                        }
-                                    } else {
-                                        if (Codclie == 0) {
-                                            newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
-                                            newsoap.addProperty("aUsuario", user);
-                                            newsoap.addProperty("aSenha", pass);
-                                        } else {
-                                            newsoap.addProperty("aParam", "C" + Codclie);
-                                            newsoap.addProperty("aUsuario", user);
-                                            newsoap.addProperty("aSenha", pass);
-                                        }
-                                    }
-                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                    newenvelope.setOutputSoapObject(newsoap);
-                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
-                                    newEnvio.call("", newenvelope);
-
-                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                    RetClientes = (String) newenvelope.getResponse();
-                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                }
-                            } catch (Exception e) {
-                                e.toString();
-                                sinccliestatic = ctxEnvClie.getString(R.string.failure_communicate);
-                            }
-
-                        } else {
-                            Toast.makeText(ctxEnvClie, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Error na solicitação" + e);
-                    }
-                    h = h + 1;
-                } while (RetClientes == null && h <= 20);
-
-            } catch (Exception e) {
-                e.toString();
-                Toast.makeText(ctxEnvClie, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-            }
-
-        } else {
-            sinccliestatic = ctxEnvClie.getString(R.string.no_connection);
-            return sinccliestatic;
-        }*/
         if (RetClientes.equals("0")) {
             sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
             return sinccliestatic;
@@ -3251,7 +3192,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         if (Codclie == 0) {
             try {
                 DtUlt = Util.DataHojeComHorasMinSecBR();
-                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil);
+                DB.execSQL("UPDATE USUARIOS SET DT_ULT_ATU_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '"+ user +"' AND SENHA = '"+ pass +"'");
             } catch (Exception e) {
                 e.toString();
             }
@@ -3356,7 +3297,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     do {
                         try {
                             if (i > 0) {
-                                if(hd != null) {
+                                if (hd != null) {
                                     hd.post(new Runnable() {
                                         public void run() {
                                             DialogECB.setMessage(ctxSincProd.getString(R.string.primeira_sync_itens));
@@ -3368,7 +3309,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             final int y = i;
                             switch (i) {
                                 case 1:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3377,7 +3318,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 2:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3386,7 +3327,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 3:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3395,7 +3336,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 4:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3404,7 +3345,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 5:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3413,7 +3354,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 6:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3451,7 +3392,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                 } catch (Exception e) {
                                     e.toString();
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -3462,7 +3403,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 }
                                 cursorVerificaProd.close();
                             } else {
-                                if(hd != null) {
+                                if (hd != null) {
                                     hd.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -3489,7 +3430,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             final int y = i;
                             switch (i) {
                                 case 1:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3498,7 +3439,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 2:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3507,7 +3448,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 3:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3516,7 +3457,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 4:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3525,7 +3466,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 5:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3534,7 +3475,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                     break;
                                 case 6:
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             public void run() {
                                                 dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
@@ -3618,7 +3559,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                 } catch (Exception e) {
                                     e.toString();
-                                    if(hd != null) {
+                                    if (hd != null) {
                                         hd.post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -3631,7 +3572,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 cursorVerificaProd.close();
 
                             } else {
-                                if(hd != null) {
+                                if (hd != null) {
                                     hd.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -3659,7 +3600,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             }
 
         } else {
-            if(hd != null) {
+            if (hd != null) {
                 hd.post(new Runnable() {
                     @Override
                     public void run() {
@@ -3752,7 +3693,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             int jumpTime = 0;
             String teste = null;
             final int totalProgressTime = ProdItens.length();
-            if(dialog != null){
+            if (dialog != null) {
                 dialog.setMax(totalProgressTime);
                 dialog.setProgress(jumpTime);
             }
@@ -3787,38 +3728,38 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         try {
                             if (CursItens.getCount() > 0) {
                                 CursItens.moveToFirst();
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim().replace("'","''") +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).replace("'","''") +
+                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim().replace("'", "''") +
+                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).replace("'", "''") +
                                         "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "''") +
                                         "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "''") +
                                         "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim().replace("'", "''") +
                                         "', MARCA = '" + CItens.getString(TAG_MARCA).trim().replace("'", "''") +
-                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim().replace("'","''") +
+                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim().replace("'", "''") +
                                         "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
                                         "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
                                         "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
                                         "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
                                         "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
                                         "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim().replace("'","''") +
+                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim().replace("'", "''") +
                                         "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
                                         "', ATIVO = '" + Ativo +
                                         "', CODPERFIL = " + idPerfil +
                                         ", QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'","''") + "'" +
+                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "''") + "'" +
                                         "   WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
                                         "   AND CODPERFIL = " + idPerfil + "");
                             } else {
                                 DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
                                         "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, TABELAPADRAO, " +
                                         "ATIVO,CODPERFIL, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
-                                        "',' " + CItens.getString(TAG_CODMANUAL).trim().replace("'","''") +
-                                        "',' " + CItens.getString(TAG_DESCRICAO).replace("'","''") +
-                                        "',' " + CItens.getString(TAG_FABRICANTE).trim().replace("'","''") +
-                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim().replace("'","''") +
-                                        "',' " + CItens.getString(TAG_CLASSE).trim().replace("'","''") +
-                                        "',' " + CItens.getString(TAG_MARCA).trim().replace("'","''") +
-                                        "',' " + CItens.getString(TAG_UNIVENDA).trim().replace("'","''") +
+                                        "',' " + CItens.getString(TAG_CODMANUAL).trim().replace("'", "''") +
+                                        "',' " + CItens.getString(TAG_DESCRICAO).replace("'", "''") +
+                                        "',' " + CItens.getString(TAG_FABRICANTE).trim().replace("'", "''") +
+                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "''") +
+                                        "',' " + CItens.getString(TAG_CLASSE).trim().replace("'", "''") +
+                                        "',' " + CItens.getString(TAG_MARCA).trim().replace("'", "''") +
+                                        "',' " + CItens.getString(TAG_UNIVENDA).trim().replace("'", "''") +
                                         "',' " + CItens.getString(TAG_VLVENDA1).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA2).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDA3).trim() +
@@ -3826,15 +3767,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         "',' " + CItens.getString(TAG_VLVENDA5).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
                                         "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "',' " + CItens.getString(TAG_TABELAPADRAO).trim().replace("'","''") +
+                                        "',' " + CItens.getString(TAG_TABELAPADRAO).trim().replace("'", "''") +
                                         "',' " + Ativo +
                                         "',  " + idPerfil +
                                         " ,' " + CItens.getString(TAG_QTDESTOQUE) +
-                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim().replace("'","''") + "');");
+                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "''") + "');");
 
                                 //está tendo que atualizar cadas item que é incluso para tirar os espaçõs em alguns campos, pois somente na inserção não tira.
                                 DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'","''") +
+                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "''") +
                                         "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
                                         "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
                                         "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim().replace("'", "") +
@@ -3888,7 +3829,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincprodstatic;
     }
 
-    public static String SincDescricaoTabelasStatic(String sUsuario, String sSenha,final Context
+    public static String SincDescricaoTabelasStatic(String sUsuario, String sSenha, final Context
             ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
@@ -3974,7 +3915,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             int jumpTime = 0;
             final int totalProgressTime = JParamApp.length();
             DB = new ConfigDB(ctxEnv).getReadableDatabase();
-            if(dialog != null){
+            if (dialog != null) {
                 dialog.setProgress(jumpTime);
                 dialog.setMax(totalProgressTime);
             }
@@ -3984,7 +3925,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     try {
                         JSONObject c = JParamApp.getJSONObject(jumpTime);
                         jumpTime += 1;
-                        if(dialog != null){
+                        if (dialog != null) {
                             dialog.setProgress(jumpTime);
                             hd.post(new Runnable() {
                                 public void run() {
@@ -4115,7 +4056,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             int jumpTime = 0;
             final int totalProgressTime = JBloqueios.length();
-            if(dialog != null){
+            if (dialog != null) {
                 dialog.setProgress(jumpTime);
                 dialog.setMax(totalProgressTime);
             }
@@ -4126,7 +4067,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     try {
                         JSONObject c = JBloqueios.getJSONObject(jumpTime);
                         jumpTime += 1;
-                        if(dialog != null){
+                        if (dialog != null) {
                             dialog.setProgress(jumpTime);
                             hd.post(new Runnable() {
                                 public void run() {
@@ -4252,7 +4193,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
             return sincparaetrosstatic;
         }
-        try {
+        /*try {
             SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
             RetParamApp = (String) envelope.getResponse();
             System.out.println("Response :" + resultsRequestSOAP.toString());
@@ -4260,14 +4201,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             e.toString();
             sincparaetrosstatic = ctxEnv.getString(R.string.failed_return);
             return sincparaetrosstatic;
-        }
+        }*/
         try {
             JSONObject jsonObj = new JSONObject(RetParamApp);
             JSONArray JParamApp = jsonObj.getJSONArray("param_app");
 
             int jumpTime = 0;
             final int totalProgressTime = JParamApp.length();
-            if(dialog != null){
+            if (dialog != null) {
                 dialog.setProgress(jumpTime);
                 dialog.setMax(totalProgressTime);
             }
@@ -4278,7 +4219,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     try {
                         JSONObject c = JParamApp.getJSONObject(jumpTime);
                         jumpTime += 1;
-                        if(dialog != null){
+                        if (dialog != null) {
                             dialog.setProgress(jumpTime);
                             hd.post(new Runnable() {
                                 public void run() {
@@ -4290,20 +4231,22 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         String habitemnegativo = c.getString("habitemnegativo");
                         String habcritsitclie = c.getString("habcritsitclie");
                         String habcritqtditens = c.getString("habcritqtditens");
+                        String habcliexvend = c.getString("habcliexvend");
 
-                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL, PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
+                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL,HABCLIEXVEND, PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
                         CursorParam.moveToFirst();
                         if (CursorParam.getCount() > 0) {
                             DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
                                     "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
                                     "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
+                                    "', HABCLIEXVEND = '" + habcliexvend.trim() +
                                     "', CODPERFIL = '" + idPerfil +
                                     "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
                                     "' WHERE CODPERFIL = " + idPerfil);
                         } else {
 
-                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
+                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC,HABCLIEXVEND, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
+                                    " VALUES(" + "'" + PercDescMax + "', '" + habcliexvend.trim() + "', '" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
                         }
                         sincparaetrosstatic = "OK";
                         CursorParam.close();
@@ -4355,7 +4298,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             String CodClie_ext = null;
             String sexo = null;
             final int totalProgressTime = CursorClieEnv.getCount();
-            if(dialog != null){
+            if (dialog != null) {
                 dialog.setProgress(jumpTime);
                 dialog.setMax(totalProgressTime);
             }
@@ -4370,7 +4313,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         do {
                             try {
                                 jumpTime += 1;
-                                if(dialog != null){
+                                if (dialog != null) {
                                     dialog.setProgress(jumpTime);
                                     hd.post(new Runnable() {
                                         public void run() {
@@ -4569,7 +4512,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 int jumpTime = 0;
                 final int totalProgressTime = CursorPedido.getCount();
                 CursorPedido.moveToFirst();
-                if(dialog != null){
+                if (dialog != null) {
                     dialog.setProgress(jumpTime);
                     dialog.setMax(totalProgressTime);
                 }
@@ -4581,7 +4524,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                             try {
                                 jumpTime += 1;
-                                if(dialog != null){
+                                if (dialog != null) {
                                     dialog.setProgress(jumpTime);
                                     hd.post(new Runnable() {
                                         public void run() {
@@ -4749,6 +4692,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     } catch (Exception E) {
                                         E.toString();
                                     }
+                                }else {
+                                    sincpedenviostatic = sitcliexvend;
+                                    return sincpedenviostatic;
                                 }
                             } catch (Exception E) {
                                 E.printStackTrace();
@@ -4790,7 +4736,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                 int jumpTime = 0;
                 final int totalProgressTime = CursorPedido.getCount();
-                if(dialog != null){
+                if (dialog != null) {
                     dialog.setProgress(jumpTime);
                     dialog.setMax(totalProgressTime);
                 }
@@ -4801,7 +4747,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         for (int i = 0; i < CursorPedido.getCount(); i++) {
                             do try {
                                 jumpTime += 1;
-                                if(dialog != null){
+                                if (dialog != null) {
                                     dialog.setProgress(jumpTime);
                                     hd.post(new Runnable() {
                                         public void run() {
@@ -4955,7 +4901,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 }
                                 sincpedenviostatic = "OK";
                                 CursPedAtu.close();
-                            }else {
+                            } else {
                                 sincpedenviostatic = "Nenhum pedido a ser enviado.";
                                 return sincpedenviostatic;
                             }
@@ -5044,7 +4990,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             return null;
         }
     }
-
 
 
     public static String SincAtualizaCidade(String UF, final Context ctxEnv) {
@@ -5760,7 +5705,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return RetQtdClie;
     }
 
-    public static String SincEmpresas(String sUsuario, String sSenha, final Context ctxEnv,final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+    public static String SincEmpresas(String sUsuario, String sSenha, final Context ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         int idPerfil = prefs.getInt("idperfil", 0);
@@ -5831,7 +5776,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             int jumpTime = 0;
             final int totalProgressTime = JEmpresas.length();
-            if(dialog != null){
+            if (dialog != null) {
                 dialog.setProgress(jumpTime);
                 dialog.setMax(totalProgressTime);
             }
@@ -5842,7 +5787,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     try {
                         JSONObject c = JEmpresas.getJSONObject(jumpTime);
                         jumpTime += 1;
-                        if(dialog != null){
+                        if (dialog != null) {
                             dialog.setProgress(jumpTime);
                             hd.post(new Runnable() {
                                 public void run() {
@@ -5915,15 +5860,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         }
         return sincempresastatic;
     }
-
-
-
-
-
-
-
-
-
 
 
     public static String SituacaodoClientexPed(String vltotalped, Context

@@ -47,10 +47,10 @@ import static com.jdsystem.br.vendasmobile.Login.NOME_USUARIO;
 
 public class CadastroClientes extends AppCompatActivity implements Runnable, View.OnFocusChangeListener {
 
-    String sTipoPessoa, sUF, codVendedor, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada;
+    String sTipoPessoa, sUF, codVendedor, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada,codEmpresa,chavepedido,numPedido;
     private Handler handler = new Handler();
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
-    int CodCidade, CodBairro, telaInvocada, codClieExt,idPerfil;
+    int CodCidade, CodBairro, telaInvocada, codClieExt, idPerfil;
     Boolean PesqCEP;
     ImageButton BtnPesqCep;
     private static ProgressDialog DialogECB;
@@ -73,12 +73,16 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                TelaChamada = params.getString("TELA_QUE_CHAMOU");
+                TelaChamada = params.getString(getString(R.string.intent_telainvocada));
                 codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 telaInvocada = params.getInt(getString(R.string.intent_listaclie));
+                codEmpresa = params.getString(getString(R.string.intent_codigoempresa));
+                chavepedido = params.getString(getString(R.string.intent_chavepedido));
+                numPedido = params.getString(getString(R.string.intent_numpedido));
+
             }
         }
 
@@ -121,6 +125,9 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         spUF.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
+                    case 0:
+                        sUF = "0";
+                        break;
                     case 1:
                         sUF = "AC"; //Acre
                         break;
@@ -345,7 +352,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
-        idPerfil = prefs.getInt("idperfil",0);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 
     private void declaraobjetos() {
@@ -461,7 +468,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                     SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                     RetDadosEndereco = (String) envelope.getResponse();
                     System.out.println("Response :" + resultsRequestSOAP.toString());
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.toString();
 
                 }
@@ -699,7 +706,14 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             cep.setError(getString(R.string.enter_CEP));
             cep.requestFocus();
             return;
-        } /*else if (Util.validaEmail(email.getText().toString()) == false) {
+        }
+        sUF = spUF.getSelectedItem().toString();
+        if (sUF.equals("Selecione um estado") || sUF.equals("0")) {
+
+            Toast.makeText(this, "Informe o estado! Campo obrigatória", Toast.LENGTH_LONG).show();
+            return;
+
+        }/*else if (Util.validaEmail(email.getText().toString()) == false) {
             email.setError("E-mail inválido! Verifique.");
             email.requestFocus();
             return;
@@ -708,7 +722,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
         Cursor CursorClieCons = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                 " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                " CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, CODPERFIL, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "' AND CODPERFIL = "+idPerfil+"", null);
+                " CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA, ATIVO, CODPERFIL, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "' AND CODPERFIL = " + idPerfil + "", null);
         try {
             if (CursorClieCons.getCount() > 0) {
                 CursorClieCons.moveToFirst();
@@ -731,7 +745,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         "', ATIVO = 'S'" +
                         ", CODVENDEDOR = " + codVendedor +
                         " WHERE CNPJ_CPF = '" + CpfCnpj + "'" +
-                        " AND CODPERFIL = "+idPerfil+"");
+                        " AND CODPERFIL = " + idPerfil + "");
             } else {
                 DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                         "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
@@ -761,7 +775,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             }
             CursorClieCons.close();
 
-            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "' AND CODPERFIL = "+idPerfil+"", null);
+            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "' AND CODPERFIL = " + idPerfil + "", null);
             cursor1.moveToFirst();
             final String CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
 
@@ -776,7 +790,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 String sitclieenvio;
-                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha,null,null,null);
+                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha, null, null, null);
                                 if (sitclieenvio.equals(getString(R.string.newcustomers_successfully))) {
                                     handler.post(new Runnable() {
                                         @Override
@@ -786,11 +800,14 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                                     });
                                     Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
                                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                    params.getString("TELA_QUE_CHAMOU", TelaChamada);
+                                    params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
@@ -804,11 +821,14 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                                     });
                                     Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
                                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                    params.getString("TELA_QUE_CHAMOU", TelaChamada);
+                                    params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
@@ -817,17 +837,66 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         })
                         .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                                Bundle params = new Bundle();
-                                params.putString(getString(R.string.intent_usuario), usuario);
-                                params.putString(getString(R.string.intent_senha), senha);
-                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                params.putString("TELA_QUE_CHAMOU", TelaChamada);
-                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                                intent.putExtras(params);
-                                startActivity(intent);
-                                finish();
+                                if(TelaChamada.equals("CadastroPedidos")){
 
+                                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroClientes.this);
+                                    builder.setTitle(R.string.synchronization);
+                                    builder.setIcon(R.drawable.logo_ico);
+                                    builder.setMessage("Incluir este cliente no pedido?")
+                                            .setCancelable(false)
+                                            .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                                                    Bundle params = new Bundle();
+                                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                                    params.putString(getString(R.string.intent_senha), senha);
+                                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                                    params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                                                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                                                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                                    intent.putExtras(params);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            })
+                                            .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                                                    Bundle params = new Bundle();
+                                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                                    params.putString(getString(R.string.intent_senha), senha);
+                                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                                    params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                                                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                                                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                                    intent.putExtras(params);
+                                                    startActivity(intent);
+                                                    finish();
+
+                                                }
+                                            });
+                                    android.app.AlertDialog alert = builder.create();
+                                    alert.show();
+
+                                }else {
+                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                                    Bundle params = new Bundle();
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
+                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                    params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+                                }
                             }
                         });
                 android.app.AlertDialog alert = builder.create();
@@ -838,7 +907,10 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params.putString("TELA_QUE_CHAMOU", TelaChamada);
+                params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 intent.putExtras(params);
                 startActivity(intent);
@@ -846,10 +918,8 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             }
 
         } catch (Exception E) {
-            //Toast.makeText(this, "Não foi possivel salvar o CLiente!", Toast.LENGTH_SHORT).show();
             System.out.println("Error" + E);
         }
-
     }
 
     @Override
@@ -924,7 +994,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             String CNPJ = cnpjcpf.getText().toString().replaceAll("[^0123456789]", "");
             Cursor CursorClie = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                     " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + cnpjcpf.getText().toString().replaceAll("[^0123456789]", "") + "'AND CODPERFIL = "+idPerfil+"", null);
+                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + cnpjcpf.getText().toString().replaceAll("[^0123456789]", "") + "'AND CODPERFIL = " + idPerfil + "", null);
             CursorClie.moveToFirst();
             try {
                 if (CursorClie.getCount() > 0) {
@@ -942,7 +1012,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             String CPF = Edtcpf.getText().toString().replaceAll("[^0123456789]", "");
             Cursor CursorClie = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
                     " ENDERECO , NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + Edtcpf.getText().toString().replaceAll("[^0123456789]", "") + "'AND CODPERFIL = "+idPerfil+"", null);
+                    " CEP, CODCLIE_EXT, CODCLIE_INT, CODVENDEDOR, TIPOPESSOA, ATIVO, REGIDENT FROM CLIENTES WHERE CNPJ_CPF = '" + Edtcpf.getText().toString().replaceAll("[^0123456789]", "") + "'AND CODPERFIL = " + idPerfil + "", null);
             CursorClie.moveToFirst();
             try {
                 if (CursorClie.getCount() > 0) {

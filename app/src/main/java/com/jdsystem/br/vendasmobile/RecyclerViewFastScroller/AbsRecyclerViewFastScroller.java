@@ -30,10 +30,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
     /** The handle that signifies the user's progress in the list */
     protected final View mHandle;
 
-    /* TODO:
-     *      Consider making RecyclerView final and should be passed in using a custom attribute
-     *      This could allow for some type checking on the section indicator wrt the adapter of the RecyclerView
-    */
+
     private RecyclerView mRecyclerView;
     private SectionIndicator mSectionIndicator;
 

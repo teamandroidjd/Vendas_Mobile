@@ -3,17 +3,13 @@ package com.jdsystem.br.vendasmobile;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -22,13 +18,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -48,8 +42,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//import android.support.design.widget.FloatingActionButton;
-
 public class ConsultaPedidos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
@@ -62,12 +54,9 @@ public class ConsultaPedidos extends AppCompatActivity
     String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, sCodEmpresa, nomeCliente, NomeSitPed;
     public ListAdapterPedidos adapter;
     ProgressDialog pDialog;
-    //SearchView sv;
     Pedidos lstpedidos;
     LinearLayout lnenhum;
     SQLiteDatabase DB;
-    //private Context ctx;
-    //private AlertDialog dlg;
     private GoogleApiClient client;
     FloatingActionMenu mmPrinc_Pedido, mmPrincNovoPed;
     FloatingActionButton mmSitPedido, mmEmissaoPedido, mmCliePedido, mmNovoPedido;
@@ -131,8 +120,8 @@ public class ConsultaPedidos extends AppCompatActivity
 
     private void carregarpreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString("host", null);
-        idPerfil = prefs.getInt("idperfil", 0);
+        URLPrincipal = prefs.getString(getString(R.string.intent_prefs_host), null);
+        idPerfil = prefs.getInt(getString(R.string.intent_prefs_perfil), 0);
     }
 
     private void carregausuariologado() {
@@ -202,7 +191,7 @@ public class ConsultaPedidos extends AppCompatActivity
                                     CursEmpr2.close();
                                     Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
                                     Bundle params = new Bundle();
-                                    params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                                    params.putString(getString(R.string.intent_telainvocada), "CadastroPedidos");
                                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
                                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -223,7 +212,7 @@ public class ConsultaPedidos extends AppCompatActivity
                 sCodEmpresa = CursEmpr.getString(CursEmpr.getColumnIndex("CODEMPRESA"));
                 Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
                 Bundle params = new Bundle();
-                params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+                params.putString(getString(R.string.intent_telainvocada), "CadastroPedidos");
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_codigoempresa), sCodEmpresa);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -306,7 +295,7 @@ public class ConsultaPedidos extends AppCompatActivity
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
-        params.putString("TELA_QUE_CHAMOU", "ConsultaPedidos");
+        params.putString(getString(R.string.intent_telainvocada), "ConsultaPedidos");
         params.putBoolean(getString(R.string.intent_consultapedido), true);
         intent.putExtras(params);
         startActivity(intent);
@@ -438,7 +427,6 @@ public class ConsultaPedidos extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_clientes) {
@@ -448,7 +436,6 @@ public class ConsultaPedidos extends AppCompatActivity
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
-            //params.putBoolean("fazpedido", false);
             intent.putExtras(params);
             startActivityForResult(intent, 1);
             finish();
@@ -536,6 +523,9 @@ public class ConsultaPedidos extends AppCompatActivity
             ;
 
         });
+        if(pDialog.isShowing()){
+            pDialog.dismiss();
+        }
     }
 
     public List<Pedidos> CarregarPedidos() {
@@ -638,10 +628,7 @@ public class ConsultaPedidos extends AppCompatActivity
                 } else {
                     lnenhum.setVisibility(View.VISIBLE);
                 }
-
             }
-
-
         } catch (Exception E) {
             E.toString();
         }

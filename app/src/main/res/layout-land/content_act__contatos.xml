@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/txvqtdregistrocont"
             android:layout_alignParentRight="true"
-            android:text="registro"/>
+            android:text="Quantidade de registro:"/>
 
     </RelativeLayout>
 

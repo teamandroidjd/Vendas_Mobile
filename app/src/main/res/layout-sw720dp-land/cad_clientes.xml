@@ -204,6 +204,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Endereço"
                     android:textSize="30dp"
+                    android:inputType="textCapCharacters"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 

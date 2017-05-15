@@ -37,16 +37,16 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private EditText edtChave;
-    private Button btsalvhost, excluir1,excluir2,excluir3;
+    private Button btnsalvhost, btnexcluir1, btnexcluir2, btnexcluir3;
     public SharedPreferences prefs;
     public String ChaveAcesso, RetHost,host, perfil, chave;
     public int idPerfil, codperfil;
     ProgressDialog DialogECB;
     private SQLiteDatabase DB;
     private Handler hd = new Handler();
-    TextView licenca1, licenca2, licenca3, empresa1,empresa2,empresa3, txtexcluir;
+    TextView txvlicenca1, txvlicenca2, txvlicenca3, txvempresa1, txvempresa2, txvempresa3, txvexcluir;
     View view0, view1, view2, view3, view4;
-    RelativeLayout tabela;
+    RelativeLayout lyttabela;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,18 +64,18 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         }
         carregarlicencas();
 
-        excluir1.setOnClickListener(new View.OnClickListener() {
+        btnexcluir1.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
 
                                             AlertDialog.Builder builder = new AlertDialog.Builder(ConfigWeb.this);
                                             builder.setTitle(R.string.app_namesair);
                                             builder.setIcon(R.drawable.logo_ico);
-                                            builder.setMessage("Deseja realmente excluir essa licença? Ao excluir essa licença você estará excluindo todas informações existente atualamente referente a esse perfil no aplicativo.")
+                                            builder.setMessage(R.string.msg_delete_licença)
                                                     .setCancelable(false)
                                                     .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int id) {
-                                                            chave = licenca1.getText().toString();
+                                                            chave = txvlicenca1.getText().toString();
                                                             excluirhost(chave);
                                                         }
                                                     })
@@ -88,17 +88,17 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                                             alert.show();
                                         }
                                     });
-        excluir2.setOnClickListener(new View.OnClickListener() {
+        btnexcluir2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ConfigWeb.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
-                builder.setMessage("Deseja realmente excluir essa licença? Ao excluir essa licença você estará excluindo todas informações existente atualamente referente a esse perfil no aplicativo.")
+                builder.setMessage(R.string.msg_delete_licença)
                         .setCancelable(false)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                chave = licenca2.getText().toString();
+                                chave = txvlicenca2.getText().toString();
                                 excluirhost(chave);
                             }
                         })
@@ -113,17 +113,17 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             }
         });
 
-        excluir3.setOnClickListener(new View.OnClickListener() {
+        btnexcluir3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ConfigWeb.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
-                builder.setMessage("Deseja realmente excluir essa licença? Ao excluir essa licença você estará excluindo todas informações existente atualamente referente a esse perfil no aplicativo.")
+                builder.setMessage(R.string.msg_delete_licença)
                         .setCancelable(false)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                chave = licenca3.getText().toString();
+                                chave = txvlicenca3.getText().toString();
                                 excluirhost(chave);
                             }
                         })
@@ -227,7 +227,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             }
 
             try {
-            //apagando a empresa desse perfil
+            //apagando a txvempresa desse perfil
             Cursor dbempresa = DB.rawQuery("SELECT * FROM EMPRESAS WHERE CODPERFIL=" + codperfil, null);
             dbempresa.moveToFirst();
             if (dbempresa.getCount() > 0) {
@@ -236,7 +236,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             dbempresa.close();
             } catch (Exception e) {
                 e.toString();
-                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir a empresa desse perfil", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir a txvempresa desse perfil", Toast.LENGTH_SHORT).show();
             }
 
             try {
@@ -302,24 +302,24 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     }
 
     private void declaraobjetos() {
-        tabela = (RelativeLayout) findViewById(R.id.tabela);
+        lyttabela = (RelativeLayout) findViewById(R.id.tabela);
         view0 = (View) findViewById(R.id.view0);
         view1 = (View) findViewById(R.id.view1);
         view2 = (View) findViewById(R.id.view2);
         view3 = (View) findViewById(R.id.view3);
         view4 = (View) findViewById(R.id.view4);
-        excluir1 = (Button) findViewById(R.id.excluir1);
-        excluir2= (Button) findViewById(R.id.excluir2);
-        excluir3= (Button) findViewById(R.id.excluir3);
-        empresa1  = (TextView) findViewById(R.id.txtempresa1);
-        empresa2 = (TextView) findViewById(R.id.txtempresa2);
-        empresa3 = (TextView) findViewById(R.id.txtempresa3);
-        licenca1 = (TextView) findViewById(R.id.txtlicenca1);
-        licenca2 = (TextView) findViewById(R.id.txtlicenca2);
-        licenca3 = (TextView) findViewById(R.id.txtlicenca3);
-        txtexcluir= (TextView) findViewById(R.id.txtexcluir);
+        btnexcluir1 = (Button) findViewById(R.id.excluir1);
+        btnexcluir2 = (Button) findViewById(R.id.excluir2);
+        btnexcluir3 = (Button) findViewById(R.id.excluir3);
+        txvempresa1 = (TextView) findViewById(R.id.txtempresa1);
+        txvempresa2 = (TextView) findViewById(R.id.txtempresa2);
+        txvempresa3 = (TextView) findViewById(R.id.txtempresa3);
+        txvlicenca1 = (TextView) findViewById(R.id.txtlicenca1);
+        txvlicenca2 = (TextView) findViewById(R.id.txtlicenca2);
+        txvlicenca3 = (TextView) findViewById(R.id.txtlicenca3);
+        txvexcluir = (TextView) findViewById(R.id.txtexcluir);
         DB = new ConfigDB(this).getReadableDatabase();
-        btsalvhost = (Button) findViewById(R.id.btsalvhost);
+        btnsalvhost = (Button) findViewById(R.id.btsalvhost);
         edtChave = (EditText) findViewById(R.id.edthost);
     }
 
@@ -569,7 +569,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL", null);
         cursorPerfil.moveToFirst();
         if (cursorPerfil.getCount() > 0) {
-            tabela.setVisibility(View.VISIBLE);
+            lyttabela.setVisibility(View.VISIBLE);
             do {
                 DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL")));
                 DadosListLicPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("LICENCA")));
@@ -580,92 +580,92 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                     nomeperfil1 = DadosListPerfil.get(0);
                     //nomeperfil1 = nomeperfil1.toUpperCase();
                     licperfil1 = DadosListLicPerfil.get(0);
-                    empresa1.setText(nomeperfil1);
-                    licenca1.setText(licperfil1);
+                    txvempresa1.setText(nomeperfil1);
+                    txvlicenca1.setText(licperfil1);
                     view0.setVisibility(View.VISIBLE);
                     view1.setVisibility(View.VISIBLE);
                     view2.setVisibility(View.VISIBLE);
                     view3.setVisibility(View.GONE);
                     view4.setVisibility(View.GONE);
-                    empresa1.setVisibility(View.VISIBLE);
-                    empresa2.setVisibility(View.GONE);
-                    empresa3.setVisibility(View.GONE);
-                    licenca1.setVisibility(View.VISIBLE);
-                    licenca2.setVisibility(View.GONE);
-                    licenca3.setVisibility(View.GONE);
-                    excluir1.setVisibility(View.GONE);
-                    excluir2.setVisibility(View.GONE);
-                    excluir3.setVisibility(View.GONE);
-                    txtexcluir.setVisibility(View.GONE);
+                    txvempresa1.setVisibility(View.VISIBLE);
+                    txvempresa2.setVisibility(View.GONE);
+                    txvempresa3.setVisibility(View.GONE);
+                    txvlicenca1.setVisibility(View.VISIBLE);
+                    txvlicenca2.setVisibility(View.GONE);
+                    txvlicenca3.setVisibility(View.GONE);
+                    btnexcluir1.setVisibility(View.GONE);
+                    btnexcluir2.setVisibility(View.GONE);
+                    btnexcluir3.setVisibility(View.GONE);
+                    txvexcluir.setVisibility(View.GONE);
                     break;
                 case 2:
                     nomeperfil1 = DadosListPerfil.get(0);
                     //nomeperfil1 = nomeperfil1.toUpperCase();
                     licperfil1 = DadosListLicPerfil.get(0);
-                    empresa1.setText(nomeperfil1);
-                    licenca1.setText(licperfil1);
+                    txvempresa1.setText(nomeperfil1);
+                    txvlicenca1.setText(licperfil1);
                     nomeperfil2 = DadosListPerfil.get(1);
                     //nomeperfil2 = nomeperfil2.toUpperCase();
                     licperfil2 = DadosListLicPerfil.get(1);
-                    empresa2.setText(nomeperfil2);
-                    licenca2.setText(licperfil2);
+                    txvempresa2.setText(nomeperfil2);
+                    txvlicenca2.setText(licperfil2);
                     view0.setVisibility(View.VISIBLE);
                     view1.setVisibility(View.VISIBLE);
                     view2.setVisibility(View.VISIBLE);
                     view3.setVisibility(View.VISIBLE);
                     view4.setVisibility(View.GONE);
-                    empresa1.setVisibility(View.VISIBLE);
-                    empresa2.setVisibility(View.VISIBLE);
-                    empresa3.setVisibility(View.GONE);
-                    licenca1.setVisibility(View.VISIBLE);
-                    licenca2.setVisibility(View.VISIBLE);
-                    licenca3.setVisibility(View.GONE);
-                    excluir1.setVisibility(View.VISIBLE);
-                    excluir2.setVisibility(View.VISIBLE);
-                    excluir3.setVisibility(View.GONE);
-                    txtexcluir.setVisibility(View.VISIBLE);
+                    txvempresa1.setVisibility(View.VISIBLE);
+                    txvempresa2.setVisibility(View.VISIBLE);
+                    txvempresa3.setVisibility(View.GONE);
+                    txvlicenca1.setVisibility(View.VISIBLE);
+                    txvlicenca2.setVisibility(View.VISIBLE);
+                    txvlicenca3.setVisibility(View.GONE);
+                    btnexcluir1.setVisibility(View.VISIBLE);
+                    btnexcluir2.setVisibility(View.VISIBLE);
+                    btnexcluir3.setVisibility(View.GONE);
+                    txvexcluir.setVisibility(View.VISIBLE);
                     break;
                 case 3:
                     nomeperfil1 = DadosListPerfil.get(0);
                     //nomeperfil1 = nomeperfil1.toUpperCase();
                     licperfil1 = DadosListLicPerfil.get(0);
-                    empresa1.setText(nomeperfil1);
-                    licenca1.setText(licperfil1);
+                    txvempresa1.setText(nomeperfil1);
+                    txvlicenca1.setText(licperfil1);
                     nomeperfil2 = DadosListPerfil.get(1);
                     //nomeperfil2 = nomeperfil2.toUpperCase();
                     licperfil2 = DadosListLicPerfil.get(1);
-                    empresa2.setText(nomeperfil2);
-                    licenca2.setText(licperfil2);
+                    txvempresa2.setText(nomeperfil2);
+                    txvlicenca2.setText(licperfil2);
                     nomeperfil3 = DadosListPerfil.get(2);
                     //nomeperfil3 = nomeperfil3.toUpperCase();
                     licperfil3 = DadosListLicPerfil.get(2);
-                    empresa3.setText(nomeperfil3);
-                    licenca3.setText(licperfil3);
+                    txvempresa3.setText(nomeperfil3);
+                    txvlicenca3.setText(licperfil3);
                     view0.setVisibility(View.VISIBLE);
                     view1.setVisibility(View.VISIBLE);
                     view2.setVisibility(View.VISIBLE);
                     view3.setVisibility(View.VISIBLE);
                     view4.setVisibility(View.VISIBLE);
-                    empresa1.setVisibility(View.VISIBLE);
-                    empresa2.setVisibility(View.VISIBLE);
-                    empresa3.setVisibility(View.VISIBLE);
-                    licenca1.setVisibility(View.VISIBLE);
-                    licenca2.setVisibility(View.VISIBLE);
-                    licenca3.setVisibility(View.VISIBLE);
-                    excluir1.setVisibility(View.VISIBLE);
-                    excluir2.setVisibility(View.VISIBLE);
-                    excluir3.setVisibility(View.VISIBLE);
-                    txtexcluir.setVisibility(View.VISIBLE);
+                    txvempresa1.setVisibility(View.VISIBLE);
+                    txvempresa2.setVisibility(View.VISIBLE);
+                    txvempresa3.setVisibility(View.VISIBLE);
+                    txvlicenca1.setVisibility(View.VISIBLE);
+                    txvlicenca2.setVisibility(View.VISIBLE);
+                    txvlicenca3.setVisibility(View.VISIBLE);
+                    btnexcluir1.setVisibility(View.VISIBLE);
+                    btnexcluir2.setVisibility(View.VISIBLE);
+                    btnexcluir3.setVisibility(View.VISIBLE);
+                    txvexcluir.setVisibility(View.VISIBLE);
             }
 
         } else {
-            tabela.setVisibility(View.GONE);
+            lyttabela.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), Login.class);
+        Intent intent = new Intent(ConfigWeb.this, Login.class);
         startActivity(intent);
         finish();
         super.onBackPressed();

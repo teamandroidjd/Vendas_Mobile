@@ -198,6 +198,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:hint="Endereço"
+                    android:inputType="textCapCharacters"
                     android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 

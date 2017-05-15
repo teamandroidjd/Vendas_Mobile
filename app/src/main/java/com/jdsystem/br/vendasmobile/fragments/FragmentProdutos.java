@@ -86,6 +86,8 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
         try {
             View view = inflater.inflate(R.layout.fragment_produtos, container, false);
 
+
+
             Bundle params = getArguments();
             if (params != null) {
                 flag = params.getInt(getString(R.string.intent_flag));
@@ -499,7 +501,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     info_txv_precoproduto.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 }
-
                 cursoritem.close();
 
                 final Double finalQtdestoque = qtdestoque;
@@ -832,7 +833,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     info_txv_precoproduto.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 }
-                info_txt_quantidadecomprada.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                //info_txt_quantidadecomprada.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 cursoritem.close();
 
                 alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {

@@ -136,7 +136,7 @@ public class act_TH_dadosclie extends Fragment {
                     }else {
                         TAG_CIDADE.setText("Cidade:");
                     }
-                    if(bairro != null){
+                    if(bairro != null && !bairro.equals("NULL")){
                         TAG_BAIRRO.setText("Bairro: "+bairro);
                     } else {
                         TAG_BAIRRO.setText("Bairro:");

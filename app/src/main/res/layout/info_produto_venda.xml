@@ -8,7 +8,7 @@
     android:layout_margin="10dp"
     android:background="@color/colorCardClie"
     android:orientation="vertical"
-    tools:context=".Controller.Lista_produtos">
+    tools:context=".ConsultaProdutos">
 
     <TextView
         android:id="@+id/txv01"
@@ -153,6 +153,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
+        android:focusable="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txv07"

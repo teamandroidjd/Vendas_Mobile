@@ -1,6 +1,8 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -35,10 +37,13 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
 
     private RecyclerView mRecyclerView;
     private List<Clientes> mList;
-    int flag,cadContato;
+    int flag, cadContato;
     String numPedido, chavePedido, usuario, senha, codVendedor, CodEmpresa, dataEntrega, telaInvocada, urlPrincipal;
     boolean consultaPedido;
     SQLiteDatabase DB;
+    private SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             CodEmpresa = params.getString(getString(R.string.intent_codigoempresa));
             numPedido = params.getString(getString(R.string.intent_numpedido));
             chavePedido = params.getString(getString(R.string.intent_chavepedido));
-            telaInvocada = params.getString("TELA_QUE_CHAMOU");
+            telaInvocada = params.getString(getString(R.string.intent_telainvocada));
             dataEntrega = params.getString("dataentrega");
             urlPrincipal = params.getString(getString(R.string.intent_urlprincipal));
             usuario = params.getString(getString(R.string.intent_usuario));
@@ -65,6 +70,8 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             cadContato = params.getInt(getString(R.string.intent_cad_contato));
             consultaPedido = params.getBoolean("consultapedido");
         }
+
+        carregarpreferencias();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list);
         mRecyclerView.setHasFixedSize(true);
@@ -105,41 +112,41 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
 
     @Override
     public void onClickListener(View view, int position) {
-        if(consultaPedido == true){
+        if (consultaPedido == true) {
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             Intent intentp = new Intent(getActivity(), ConsultaPedidos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
-            params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
-            params.putString(getString(R.string.intent_codvendedor),codVendedor);
-            params.putString(getString(R.string.intent_usuario),usuario);
+            params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_senha),senha);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_senha), senha);
             params.putString(getString(R.string.intent_nomerazao), nomeRazao);
             intentp.putExtras(params);
             startActivity(intentp);
             getActivity().finish();
 
-        }else if (flag == 0 && cadContato == 0) {
+        } else if (flag == 0 && cadContato == 0) {
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             Intent intentp = new Intent(getActivity(), DadosCliente.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
-            params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
-            params.putString(getString(R.string.intent_codvendedor),codVendedor);
-            params.putString(getString(R.string.intent_usuario),usuario);
+            params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_senha),senha);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_senha), senha);
             params.putString(getString(R.string.intent_nomerazao), nomeRazao);
             intentp.putExtras(params);
             startActivity(intentp);
             getActivity().finish();
 
-        } else if(flag == 0 && cadContato == 1){
+        } else if (flag == 0 && cadContato == 1) {
             ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
@@ -167,7 +174,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             String FlagIntegrado = null;
             DB = new ConfigDB(getActivity()).getReadableDatabase();
             try {
-                Cursor cursorbloqclie = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP", null);
+                Cursor cursorbloqclie = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP where CODPERFIL = " + idPerfil, null);
                 cursorbloqclie.moveToFirst();
                 BloqClie = cursorbloqclie.getString(cursorbloqclie.getColumnIndex("HABCRITSITCLIE"));
                 cursorbloqclie.close();
@@ -183,11 +190,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     Bundle params = new Bundle();
                     params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                     params.putString((getString(R.string.intent_codvendedor)), codVendedor);
-                    params.putString("numpedido", "0");
-                    params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
-                    params.putString(getString(R.string.intent_usuario),usuario);
-                    params.putString(getString(R.string.intent_senha),senha);
-                    params.putString("codempresa", CodEmpresa);
+                    params.putString(getString(R.string.intent_numpedido), "0");
+                    params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
                     intent.putExtras(params);
                     startActivity(intent);
                     getActivity().finish();
@@ -196,11 +203,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     Bundle params = new Bundle();
                     params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                     params.putString((getString(R.string.intent_codvendedor)), codVendedor);
-                    params.putString("numpedido", numPedido);
-                    params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
-                    params.putString(getString(R.string.intent_usuario),usuario);
-                    params.putString(getString(R.string.intent_senha),senha);
-                    params.putString("codempresa", CodEmpresa);
+                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                    params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
                     intent.putExtras(params);
                     startActivity(intent);
                     getActivity().finish();
@@ -208,8 +215,8 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             } else if (BloqClie.equals("S")) {
                 Boolean ConexOk = Util.checarConexaoCelular(getActivity());
                 if (ConexOk == true) {
-                    Sincronismo.SincronizarClientesStatic(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno),null,null,null);
-                    Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + CodigoClienteInterno + "", null);
+                    Sincronismo.SincronizarClientesStatic(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno), null, null, null);
+                    Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + CodigoClienteInterno + " AND CODPERFIL = " + idPerfil, null);
                     cursorclie.moveToFirst();
                     bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
                 }
@@ -219,10 +226,10 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                         Bundle params = new Bundle();
                         params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                         params.putString((getString(R.string.intent_codvendedor)), codVendedor);
-                        params.putString("numpedido", "0");
-                        params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
-                        params.putString(getString(R.string.intent_usuario),usuario);
-                        params.putString(getString(R.string.intent_senha),senha);
+                        params.putString(getString(R.string.intent_numpedido), "0");
+                        params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
                         params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
                         params.putString("dataentrega", dataEntrega);
                         intent.putExtras(params);
@@ -233,11 +240,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                         Bundle params = new Bundle();
                         params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                         params.putString((getString(R.string.intent_codvendedor)), codVendedor);
-                        params.putString("numpedido", numPedido);
-                        params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
-                        params.putString(getString(R.string.intent_usuario),usuario);
-                        params.putString(getString(R.string.intent_senha),senha);
-                        params.putString("codempresa", CodEmpresa);
+                        params.putString(getString(R.string.intent_numpedido), numPedido);
+                        params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
                         intent.putExtras(params);
                         startActivity(intent);
                         getActivity().finish();
@@ -253,11 +260,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     Bundle params = new Bundle();
                     params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                     params.putString((getString(R.string.intent_codvendedor)), codVendedor);
-                    params.putString("numpedido", "0");
-                    params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
-                    params.putString(getString(R.string.intent_usuario),usuario);
-                    params.putString(getString(R.string.intent_senha),senha);
-                    params.putString("codempresa", CodEmpresa);
+                    params.putString(getString(R.string.intent_numpedido), "0");
+                    params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
                     intent.putExtras(params);
                     startActivity(intent);
                     getActivity().finish();
@@ -266,23 +273,16 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     Bundle params = new Bundle();
                     params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
                     params.putString((getString(R.string.intent_codvendedor)), codVendedor);
-                    params.putString("numpedido", numPedido);
-                    params.putString(getString(R.string.intent_urlprincipal),urlPrincipal);
-                    params.putString(getString(R.string.intent_usuario),usuario);
-                    params.putString(getString(R.string.intent_senha),senha);
-                    params.putString("codempresa", CodEmpresa);
+                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                    params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
                     intent.putExtras(params);
                     startActivity(intent);
                     getActivity().finish();
                 }
             }
-
-            /*Intent intentp = new Intent(getActivity(), CadastroPedidos.class);
-            Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
-            intentp.putExtras(params);
-            startActivity(intentp);*/
-
         }
     }
 
@@ -290,6 +290,12 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
     @Override
     public void onLongClickListener(View view, int position) {
 
+    }
+
+    private void carregarpreferencias() {
+        prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
+        urlPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 }
 

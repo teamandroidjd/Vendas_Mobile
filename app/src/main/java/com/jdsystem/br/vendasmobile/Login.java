@@ -25,7 +25,6 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -71,7 +70,7 @@ public class Login extends AppCompatActivity implements Runnable {
     public SharedPreferences prefs;
     public String usuario, senha, URLPrincipal, sCodVend, UFVendedor, qtdperfil;
     private String codVendedor = "0";
-    public TextView copyright, versao, empresa;
+    public TextView txvcopyright, txvversao, txvempresa;
     Spinner spPerfilInput;
     Boolean ConexOk;
     int idPerfil;
@@ -111,9 +110,9 @@ public class Login extends AppCompatActivity implements Runnable {
             e.printStackTrace();
         }
         String version = pInfo.versionName;
-        versao.setText("Versão " + version);
+        txvversao.setText("Versão " + version);
 
-        copyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
+        txvcopyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
     }
 
     private String carregarperfil() {
@@ -159,13 +158,13 @@ public class Login extends AppCompatActivity implements Runnable {
                                     cursorperfil1.close();
 
                                     SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
-                                    editorhost.putString("ChaveAcesso", chave);
-                                    editorhost.putString("host", host);
-                                    editorhost.putInt("idperfil", idPerfil);
+                                    editorhost.putString(getString(R.string.intent_prefs_chaveacesso), chave);
+                                    editorhost.putString(getString(R.string.intent_prefs_host), host);
+                                    editorhost.putInt(getString(R.string.intent_prefs_perfil), idPerfil);
                                     editorhost.apply();
 
                                     URLPrincipal = host;
-                                    empresa.setText(nomePerfil);
+                                    txvempresa.setText(nomePerfil);
 
 
                                 } catch (Exception E) {
@@ -179,7 +178,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 return qtdperfil;
 
             } else {
-                empresa.setVisibility(View.GONE);
+                txvempresa.setVisibility(View.GONE);
                 qtdperfil = "N";
                 return qtdperfil;
             }
@@ -228,8 +227,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
-                builder.setMessage("Atenção! O Usuário ou a senha informada são inválidos ou não existe esse usuário " + edtUsuario.getText().toString() + " cadastrado neste aparelho. Caso seja a primeira utilização, é necessário se conectar online" +
-                        " para que o aparelho cadastre esse usuário e posteriormente seja possível se conectar offline.Verifique essas informações e tente novamente.")
+                builder.setMessage(getString(R.string.msg_logininvalido_part_1) + edtUsuario.getText().toString() + getString(R.string.msg_logininvalido_part_2))
                         .setCancelable(false)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -275,25 +273,25 @@ public class Login extends AppCompatActivity implements Runnable {
 
     private void carregarpreferencias() {
         prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString("usuario", null);
-        senha = prefs.getString("senha", null);
+        usuario = prefs.getString(getString(R.string.intent_prefs_usuario), null);
+        senha = prefs.getString(getString(R.string.intent_prefs_senha), null);
 
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString("host", null);
-        idPerfil = prefs.getInt("idperfil", 0);
+        URLPrincipal = prefs.getString(getString(R.string.intent_prefs_host), null);
+        idPerfil = prefs.getInt(getString(R.string.intent_prefs_perfil), 0);
     }
 
     private void declaraobjetos() {
 
-        empresa = (TextView) findViewById(R.id.txtempresalogin);
-        versao = (TextView) findViewById(R.id.txtversaologin);
+        txvempresa = (TextView) findViewById(R.id.txtempresalogin);
+        txvversao = (TextView) findViewById(R.id.txtversaologin);
         DB = new ConfigDB(this).getReadableDatabase();
         btnEntrar = (Button) findViewById(R.id.btnEntrar);
         edtUsuario = (EditText) findViewById(R.id.edtUsuario);
         edtSenha = (EditText) findViewById(R.id.edtSenha);
         cbGravSenha = (CheckBox) findViewById(R.id.cbGravSenha);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        copyright = (TextView) findViewById(R.id.textView2);
+        txvcopyright = (TextView) findViewById(R.id.textView2);
     }
 
     public boolean VerificaConexaoWifi() {
@@ -368,7 +366,7 @@ public class Login extends AppCompatActivity implements Runnable {
                     if (i == 3) {
                         handler.post(new Runnable() {
                             public void run() {
-                                Dialogo.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... " + getString(R.string.checking_user_password));
+                                Dialogo.setMessage(getString(R.string.msg_comunicacaoservidor) + getString(R.string.checking_user_password));
                             }
                         });
                     }
@@ -408,8 +406,7 @@ public class Login extends AppCompatActivity implements Runnable {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                     builder.setTitle(R.string.app_namesair);
                     builder.setIcon(R.drawable.logo_ico);
-                    builder.setMessage("Atenção! Não foi possível obter resposta do servidor referente a validação das informações de atualização, neste caso o usuário será conectado porém até que seja restabelecida " +
-                            "a comunicação com o servidor, não será possivel realizar nenhuma atualização ou transmissão de informações.")
+                    builder.setMessage(R.string.msg_semcomunicacaoservidor)
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -441,8 +438,7 @@ public class Login extends AppCompatActivity implements Runnable {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                     builder.setTitle(R.string.app_namesair);
                     builder.setIcon(R.drawable.logo_ico);
-                    builder.setMessage("Atenção! O Usuário ou a senha informada são inválidos ou não existe esse usuário " + edtUsuario.getText().toString() + " cadastrado neste aparelho. Caso seja a primeira utilização, é necessário se conectar online" +
-                            " para que o aparelho cadastre esse usuário e posteriormente seja possível se conectar offline.Verifique essas informações e tente novamente.")
+                    builder.setMessage(getString(R.string.msg_logininvalido_part_1) + edtUsuario.getText().toString() + getString(R.string.msg_logininvalido_part_2))
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -499,7 +495,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 edtEmp.commit();
 
                 DB = new ConfigDB(Login.this).getReadableDatabase();
-                Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + codVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
+                Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + codVendedor + " AND CODEMPRESA = " + CodEmpresa + " AND CODPERFIL = "+idPerfil, null);
                 if (!(CursorUser.getCount() > 0)) {
                     DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + codVendedor + ", CODEMPRESA = " + CodEmpresa +
                             " WHERE CODVEND = " + codVendedor);
@@ -741,7 +737,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 CursorLogin.moveToFirst();
                 CodVend = CursorLogin.getInt(CursorLogin.getColumnIndex("CODVEND"));
             } else {
-                DB.execSQL("INSERT INTO USUARIOS VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + "," + idPerfil + ");");
+                DB.execSQL("INSERT INTO USUARIOS (CODVEND, USUARIO, SENHA, CODEMPRESA, CODPERFIL) VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + "," + idPerfil + ");");
                 Cursor cursor1 = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
                 cursor1.moveToFirst();
                 CodVend = cursor1.getInt(cursor1.getColumnIndex("CODVEND"));

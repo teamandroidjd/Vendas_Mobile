@@ -70,7 +70,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
     private BigDecimal TOTAL_DA_VENDA;
     private Integer CLI_CODIGO, CLI_CODIGO_ANT, CLI_CODIGO_EXT;
     private String CodEmpresa, vendenegativo, numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7, CodVendedor;
-    private String ObsPedido, NumPedido, CodClie_Int, DATA_DE_ENTREGA;
+    private String ObsPedido, NumPedido, CodClie_Int, DATA_DE_ENTREGA,totalvenda;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
     private int sprecoprincipal, tabanterior;
     private ListView ListView_ItensVendidos, prod_listview_produtotemp;
@@ -482,7 +482,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
             confDao.recupera_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
             Alterar_Pedido_listview_e_calcula_total();
 
-            //TODO: testar esse processo. Felipe esta testando
             BigDecimal valor_recebido = null;
             BigDecimal total_venda = null;
             if (confBean.getConf_valor_recebido() == null) {
@@ -1128,7 +1127,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     private void alteraexcluiitem(final AdapterView listview, final int posicao) {
 
-        //TODO: Testar esse processo. Felipe esta testando
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Atenção");
         builder.setCancelable(true);
@@ -1418,7 +1416,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                             }
 
                         } else {
-                            // TODO: continuar os testes deste processo em relação a salvar o preço e quantidade no temp.
                             final SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                             //item.setvendad_preco_venda_temp(item.getVendad_preco_venda());
                             //item.setvendad_quantidade_temp(item.getVendad_quantidade());
@@ -1493,7 +1490,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                     tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
                                     tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
                                     CursorParametro.close();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + item.getVendad_prd_codigoitem() + "' AND CODPERFIL = " + idPerfil, null);
+                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,CODIGOITEM,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODIGOITEM ='" + item.getVendad_prd_codigoitem() + "' AND CODPERFIL = " + idPerfil, null);
                                     produto_cursor.moveToFirst();
 
                                     qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
@@ -2482,12 +2479,16 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
         builderAut.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 Chave_Venda = vendaCBean.getVendac_chave();
-                Cursor CursorPedido = DB.rawQuery(" SELECT NUMPED,CHAVE_PEDIDO, CODCLIE_EXT, CODCLIE FROM PEDOPER WHERE CHAVE_PEDIDO = " + Chave_Venda, null);
+                Cursor CursorPedido = DB.rawQuery(" SELECT NUMPED,CHAVE_PEDIDO, VALORTOTAL, CODCLIE_EXT, CODCLIE FROM PEDOPER WHERE CHAVE_PEDIDO = " + Chave_Venda, null);
                 CursorPedido.moveToFirst();
                 numpedido = CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED"));
                 CodClie_Int = CursorPedido.getString(CursorPedido.getColumnIndex("CODCLIE"));
                 String chavepedido = CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO"));
                 numpedido = Util.AcrescentaZeros(numpedido.toString(), 4);
+                String vltotal = CursorPedido.getString(CursorPedido.getColumnIndex("VALORTOTAL")).replace(".", ",");
+                BigDecimal vendatotal = new BigDecimal(Double.parseDouble(vltotal.replace(',', '.')));
+                String vltotalvenda = vendatotal.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                totalvenda = vltotalvenda;
 
                 DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE CHAVE_PEDIDO = '" + chavepedido + "'");
                 Boolean ConexOk = Util.checarConexaoCelular(CadastroPedidos.this);
@@ -2569,8 +2570,8 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
     public void run() {
         try {
             String sitclieenvio;
-            String pedidoendiado;
-            Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "'", null);
+            final String pedidoendiado;
+            Cursor CursorClie = DB.rawQuery("SELECT CODCLIE_EXT, FLAGINTEGRADO FROM CLIENTES WHERE CODCLIE_INT = '" + CodClie_Int + "' AND CODPERFIL = "+idPerfil, null);
             CursorClie.moveToFirst();
             int CodClie_Ext = CursorClie.getInt(CursorClie.getColumnIndex("CODCLIE_EXT"));
             String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
@@ -2624,8 +2625,49 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     }
                 }
             } else {
-                pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido,null,null,null);
-                if (pedidoendiado.equals("OK")) {
+                final String sitcliexvend = Sincronismo.SituacaodoClientexPed(totalvenda, CadastroPedidos.this, usuario, senha, CodClie_Ext);
+                if(sitcliexvend.equals("OK")) {
+                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido, null, null, null);
+                    if (pedidoendiado.equals("OK")) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
+                        Bundle params = new Bundle();
+                        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        intent.putExtras(params);
+                        startActivityForResult(intent, 1);
+                        finish();
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(CadastroPedidos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                    } else {
+                        dialog.dismiss();
+                        Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
+                        Bundle params = new Bundle();
+                        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        intent.putExtras(params);
+                        startActivityForResult(intent, 1);
+                        finish();
+
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Util.msg_toast_personal(CadastroPedidos.this, pedidoendiado, Util.PADRAO);
+                            }
+                        });
+
+                    }
+                }else {
                     dialog.dismiss();
                     Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
                     Bundle params = new Bundle();
@@ -2640,29 +2682,9 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(CadastroPedidos.this, "Pedido sincronizado com sucesso!", Toast.LENGTH_LONG).show();
+                            Util.msg_toast_personal(CadastroPedidos.this, sitcliexvend, Util.PADRAO);
                         }
                     });
-
-                } else {
-                    dialog.dismiss();
-                    Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
-                    Bundle params = new Bundle();
-                    params.putString(getString(R.string.intent_codvendedor), sCodVend);
-                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                    params.putString(getString(R.string.intent_usuario), usuario);
-                    params.putString(getString(R.string.intent_senha), senha);
-                    intent.putExtras(params);
-                    startActivityForResult(intent, 1);
-                    finish();
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(CadastroPedidos.this, "Houve uma falha ao enviar o pedido. Tente novamente!", Toast.LENGTH_LONG).show();
-                        }
-                    });
-
                 }
 
             }

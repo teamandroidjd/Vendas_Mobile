@@ -60,6 +60,9 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     private SQLiteDatabase DB;
     int codclie_ext;
     String limitecred, bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte, URLPrincipal;
+    private SharedPreferences prefs;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    int idPerfil;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,8 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             Codvendedor = params.getString(getString(R.string.intent_codvendedor));
             URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
         }
+
+        carregarpreferencias();
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list);
         mRecyclerView.setHasFixedSize(true);
@@ -181,7 +186,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
 
-            final Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT,VALORTOTAL, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + "", null);
+            final Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT,VALORTOTAL, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + " AND CODPERFIL = "+idPerfil, null);
             cursorped.moveToFirst();
             codclie_ext = cursorped.getInt(cursorped.getColumnIndex("CODCLIE_EXT"));
             codclie_inte = cursorped.getString(cursorped.getColumnIndex("CODCLIE"));
@@ -192,7 +197,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             cursorped.close();
             try {
                 if (codclie_ext != 0) {
-                    Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, FLAGINTEGRADO, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = " + codclie_ext + "", null);
+                    Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, FLAGINTEGRADO, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = " + codclie_ext + " AND CODPERFIL = "+idPerfil, null);
                     cursorclie.moveToFirst();
                     limitecred = cursorclie.getString(cursorclie.getColumnIndex("LIMITECRED"));
                     bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
@@ -220,7 +225,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     String pedidoendiado;
                                     String sitcliexvend;
                                     try {
-                                        Cursor cursorclie = DB.rawQuery("SELECT FLAGINTEGRADO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = '" + codclie_inte + "'", null);
+                                        Cursor cursorclie = DB.rawQuery("SELECT FLAGINTEGRADO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = '" + codclie_inte + "' AND CODPERFIL = "+idPerfil, null);
                                         cursorclie.moveToFirst();
                                         flagintegrado = cursorclie.getString(cursorclie.getColumnIndex("FLAGINTEGRADO"));
 
@@ -348,7 +353,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                 ((ConsultaPedidos) getActivity()).finish();
                                                 startActivity(intent);
                                             } else if (statusatualizado.equals("")) {
-                                                Util.msg_toast_personal(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua empresa.", Util.PADRAO);
+                                                Util.msg_toast_personal(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua txvempresa.", Util.PADRAO);
                                                 Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                 ((ConsultaPedidos) getActivity()).finish();
                                                 startActivity(intent);
@@ -424,5 +429,11 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     @Override
     public void run() {
 
+    }
+
+    private void carregarpreferencias() {
+        prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
     }
 }

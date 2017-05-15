@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -41,6 +39,7 @@ public class ConsultaClientes extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
+    public static final String CONFIG_HOST = "CONFIG_HOST";
     private Handler handler = new Handler();
     public ListAdapterClientes adapter;
     private TextView txvqtdregclie;
@@ -51,13 +50,13 @@ public class ConsultaClientes extends AppCompatActivity
     MenuItem searchItem;
     SearchView searchView;
     private ImageView imgStatus;
-    FloatingActionButton cadclie;
+    FloatingActionButton fabcadclie;
     public ProgressDialog dialog;
     public Boolean ConsultaPedido;
-    public int CadastroContato, flag,idPerfil;
+    public int CadastroContato, flag, idPerfil;
     Toolbar toolbar;
     public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +81,7 @@ public class ConsultaClientes extends AppCompatActivity
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
                 CadastroContato = params.getInt(getString(R.string.intent_cad_contato), 0);
-                telaInvocada = params.getString("TELA_QUE_CHAMOU");
+                telaInvocada = params.getString(getString(R.string.intent_telainvocada));
                 flag = params.getInt(getString(R.string.intent_flag));
                 numPedido = params.getString(getString(R.string.intent_numpedido));
             }
@@ -106,9 +105,9 @@ public class ConsultaClientes extends AppCompatActivity
 
     private void carregarpreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString("host", null);
-        nomeEmpresa = prefs.getString("nome",null);
-        idPerfil = prefs.getInt("idperfil", 0);
+        URLPrincipal = prefs.getString(getString(R.string.intent_prefs_host), null);
+        nomeEmpresa = prefs.getString(getString(R.string.intent_prefs_nomeempresa), null);
+        idPerfil = prefs.getInt(getString(R.string.intent_prefs_perfil), 0);
     }
 
     public void cadcliente(View view) {
@@ -117,6 +116,10 @@ public class ConsultaClientes extends AppCompatActivity
         params.putString(getString(R.string.intent_codvendedor), codVendedor);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
+        params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+        params.putString(getString(R.string.intent_chavepedido), chavepedido);
+        params.putString(getString(R.string.intent_numpedido), numPedido);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putInt(getString(R.string.intent_listaclie), 1);
         intent.putExtras(params);
@@ -144,7 +147,7 @@ public class ConsultaClientes extends AppCompatActivity
     private void declaraobjetos() {
         DB = new ConfigDB(this).getReadableDatabase();
         txvqtdregclie = (TextView) findViewById(R.id.txvqtdregistroclie);
-        cadclie = (FloatingActionButton) findViewById(R.id.cadclie);
+        fabcadclie = (FloatingActionButton) findViewById(R.id.cadclie);
         imgStatus = (ImageView) findViewById(R.id.imgStatus);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -167,24 +170,59 @@ public class ConsultaClientes extends AppCompatActivity
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                if (telaInvocada == null) {
 
-                dialog = new ProgressDialog(ConsultaClientes.this);
-                dialog.setIndeterminate(true);
-                dialog.setTitle(getString(R.string.wait));
-                dialog.setMessage(getString(R.string.searchingclients));
-                dialog.setCancelable(false);
-                dialog.setProgress(0);
-                dialog.show();
+                    dialog = new ProgressDialog(ConsultaClientes.this);
+                    dialog.setIndeterminate(true);
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.setMessage(getString(R.string.searchingclients));
+                    dialog.setCancelable(false);
+                    dialog.setProgress(0);
+                    dialog.show();
 
-                query.toString();
-                editQuery = query;
-                searchView.setQuery("", false);
-                // searchView.clearFocus();
 
-                //flag = 3;
+                    query.toString();
+                    editQuery = query;
+                    searchView.setQuery("", false);
 
-                Thread thread = new Thread(ConsultaClientes.this);
-                thread.start();
+                    Thread thread = new Thread(ConsultaClientes.this);
+                    thread.start();
+                    return false;
+                } else if (telaInvocada.equals("CadastroPedidos")) {
+
+                    dialog = new ProgressDialog(ConsultaClientes.this);
+                    dialog.setIndeterminate(true);
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.setMessage(getString(R.string.searchingclients));
+                    dialog.setCancelable(false);
+                    dialog.setProgress(0);
+                    dialog.show();
+                    flag = 2;
+
+                    query.toString();
+                    editQuery = query;
+                    searchView.setQuery("", false);
+
+                    Thread thread = new Thread(ConsultaClientes.this);
+                    thread.start();
+                    return false;
+                } else if(telaInvocada.equals("ConsultaPedidos")){
+                    dialog = new ProgressDialog(ConsultaClientes.this);
+                    dialog.setIndeterminate(true);
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.setMessage(getString(R.string.searchingclients));
+                    dialog.setCancelable(false);
+                    dialog.setProgress(0);
+                    dialog.show();
+
+                    query.toString();
+                    editQuery = query;
+                    searchView.setQuery("", false);
+
+                    Thread thread = new Thread(ConsultaClientes.this);
+                    thread.start();
+                    return false;
+                }
                 return false;
             }
 
@@ -219,7 +257,7 @@ public class ConsultaClientes extends AppCompatActivity
             SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
             if (ConexOk == true) {
                 flag = 1;
-                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL = "+idPerfil, null);
+                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL = " + idPerfil, null);
                 if (cursorVerificaClie.getCount() == 0) {
                     dialog = new ProgressDialog(ConsultaClientes.this);
                     dialog.setTitle(R.string.wait);
@@ -255,17 +293,17 @@ public class ConsultaClientes extends AppCompatActivity
         ArrayList<Clientes> DadosLisClientes = new ArrayList<Clientes>();
         if (editQuery == null) {
             try {
-                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP WHERE CODPERFIL = "+idPerfil, null);
+                Cursor cursorparametro = DB.rawQuery("SELECT HABCLIEXVEND FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
                 cursorparametro.moveToFirst();
-                String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
-                if(cliexvend == null){
+                String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCLIEXVEND"));
+                if (cliexvend == null) {
                     if (dialog.isShowing())
                         dialog.dismiss();
                     AlertDialog.Builder alert = new AlertDialog.Builder(this);
                     alert.setCancelable(false);
                     alert.setIcon(R.drawable.logo_ico);
-                    alert.setTitle("Atenção!");
-                    alert.setMessage("Não foi possível realizar a consulta de cliente, pois não foram configurado os parâmetros. Entre em contato com a "+nomeEmpresa+".");
+                    alert.setTitle(R.string.msg_atention);
+                    alert.setMessage(getString(R.string.msg_errorconsultaclie) + nomeEmpresa + ".");
                     alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
 
@@ -281,10 +319,10 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ATIVO = 'S' AND CODVENDEDOR = " + codVendedor + " AND CODPERFIL = "+idPerfil+" ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE ATIVO = 'S' AND CODVENDEDOR = " + codVendedor + " AND CODPERFIL = " + idPerfil + " ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
-                        txvqtdregclie.setText("Quantidade de registro: "+cursorClientes.getCount());
+                        txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " " + cursorClientes.getCount());
                         do {
                             String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
                             String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
@@ -294,19 +332,17 @@ public class ConsultaClientes extends AppCompatActivity
                             String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
                             String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
                             String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
-                            //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
                             String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
                             String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
                             String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
                             String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
-
 
                             lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
                             DadosLisClientes.add(lstclientes);
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
-                        txvqtdregclie.setText("Quantidade de Registro: 0");
+                        txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " 0");
                         AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
                         builder.setTitle(R.string.app_namesair);
                         builder.setIcon(R.drawable.logo_ico);
@@ -325,10 +361,10 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE (ATIVO = 'S') AND (CODPERFIL = "+idPerfil+") ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE (ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ") ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
-                        txvqtdregclie.setText("Quantidade de registro: "+cursorClientes.getCount());
+                        txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " " + cursorClientes.getCount());
                         do {
                             String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
                             String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
@@ -338,19 +374,17 @@ public class ConsultaClientes extends AppCompatActivity
                             String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
                             String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
                             String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
-                            //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
                             String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
                             String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
                             String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
                             String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
-
 
                             lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
                             DadosLisClientes.add(lstclientes);
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
-                        txvqtdregclie.setText("Quantidade de Registro: 0");
+                        txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " 0");
                         AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaClientes.this);
                         builder.setTitle(R.string.app_namesair);
                         builder.setIcon(R.drawable.logo_ico);
@@ -364,7 +398,6 @@ public class ConsultaClientes extends AppCompatActivity
                         AlertDialog alert = builder.create();
                         alert.show();
                     }
-
                 }
             } catch (Exception e) {
                 e.toString();
@@ -374,7 +407,7 @@ public class ConsultaClientes extends AppCompatActivity
             }
         } else {
             try {
-                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP WHERE CODPERFIL ="+idPerfil, null);
+                Cursor cursorparametro = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP WHERE CODPERFIL =" + idPerfil, null);
                 cursorparametro.moveToFirst();
                 String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCRITSITCLIE"));
                 cursorparametro.close();
@@ -383,10 +416,10 @@ public class ConsultaClientes extends AppCompatActivity
                             " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
                             " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
                             " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")AND (CODPERFIL = "+idPerfil+")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")AND (CODPERFIL = " + idPerfil + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
-                        txvqtdregclie.setText("Quantidade de registro: "+cursorClientes.getCount());
+                        txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " " + cursorClientes.getCount());
                         do {
                             String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
                             String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
@@ -396,20 +429,18 @@ public class ConsultaClientes extends AppCompatActivity
                             String estado = cursorClientes.getString(cursorClientes.getColumnIndex("UF"));
                             String cidade = cursorClientes.getString(cursorClientes.getColumnIndex("CIDADE"));
                             String bairro = cursorClientes.getString(cursorClientes.getColumnIndex("BAIRRO"));
-                            //String CEP = cursorClientes.getString(cursorClientes.getColumnIndex("CEP"));
                             String Tel1 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL1"));
                             String Tel2 = cursorClientes.getString(cursorClientes.getColumnIndex("TEL2"));
                             String bloqueio = cursorClientes.getString(cursorClientes.getColumnIndex("BLOQUEIO"));
                             String flagintegrado = cursorClientes.getString(cursorClientes.getColumnIndex("FLAGINTEGRADO"));
-
 
                             lstclientes = new Clientes(codClieExt, codClieInt, nomeRazao, nomeFantasia, documento, estado, cidade, bairro, Tel1, Tel2, bloqueio, flagintegrado);
                             DadosLisClientes.add(lstclientes);
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
-                        txvqtdregclie.setText("Quantidade de Registro: 0");
-                        Toast.makeText(this, "Nenhum cliente encontrando. Verifique!", Toast.LENGTH_LONG).show();
+                        txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " 0");
+                        Toast.makeText(this, R.string.msg_noclient, Toast.LENGTH_LONG).show();
                     }
                 } else {
                     Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
@@ -419,7 +450,7 @@ public class ConsultaClientes extends AppCompatActivity
                             " WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
-                        txvqtdregclie.setText("Quantidade de registro: "+cursorClientes.getCount());
+                        txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " " + cursorClientes.getCount());
                         do {
                             String codClieExt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_EXT"));
                             String codClieInt = cursorClientes.getString(cursorClientes.getColumnIndex("CODCLIE_INT"));
@@ -441,8 +472,8 @@ public class ConsultaClientes extends AppCompatActivity
                         } while (cursorClientes.moveToNext());
                         cursorClientes.close();
                     } else {
-                        txvqtdregclie.setText("Quantidade de Registro: 0");
-                        Toast.makeText(this, "Nenhum cliente encontrando. Verifique!", Toast.LENGTH_LONG).show();
+                        txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " 0");
+                        Toast.makeText(this, R.string.msg_noclient, Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -516,18 +547,15 @@ public class ConsultaClientes extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_clientes) {
-            //
         } else if (id == R.id.nav_produtos) {
             Intent intent = new Intent(ConsultaClientes.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", codVendedor);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivity(intent);
             finish();
@@ -535,10 +563,10 @@ public class ConsultaClientes extends AppCompatActivity
         } else if (id == R.id.nav_pedidos) {
             Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", codVendedor);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             intent.putExtras(params);
             startActivity(intent);
             finish();
@@ -546,10 +574,10 @@ public class ConsultaClientes extends AppCompatActivity
         } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(ConsultaClientes.this, ConsultaContatos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", codVendedor);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -557,10 +585,10 @@ public class ConsultaClientes extends AppCompatActivity
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(ConsultaClientes.this, Sincronismo.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", codVendedor);
-            params.putString("urlPrincipal", URLPrincipal);
-            params.putString("usuario", usuario);
-            params.putString("senha", senha);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
             i.putExtras(params);
             startActivity(i);
             finish();
@@ -603,7 +631,7 @@ public class ConsultaClientes extends AppCompatActivity
                     params.putString(getString(R.string.intent_chavepedido), chavepedido);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
-                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                    params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                     if (telaInvocada != null) {
@@ -650,6 +678,7 @@ public class ConsultaClientes extends AppCompatActivity
                     params.putString(getString(R.string.intent_chavepedido), chavepedido);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                     params.putBoolean(getString(R.string.intent_consultapedido), ConsultaPedido);
@@ -668,6 +697,7 @@ public class ConsultaClientes extends AppCompatActivity
                         newparams.putString(getString(R.string.intent_chavepedido), chavepedido);
                         newparams.putString(getString(R.string.intent_usuario), usuario);
                         newparams.putString(getString(R.string.intent_senha), senha);
+                        newparams.putString(getString(R.string.intent_telainvocada), telaInvocada);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                         newparams.putBoolean(getString(R.string.intent_consultapedido), ConsultaPedido);
@@ -687,6 +717,7 @@ public class ConsultaClientes extends AppCompatActivity
                     params.putString(getString(R.string.intent_numpedido), numPedido);
                     params.putString(getString(R.string.intent_chavepedido), chavepedido);
                     params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                     params.putString(getString(R.string.intent_senha), senha);
                     params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
@@ -705,7 +736,9 @@ public class ConsultaClientes extends AppCompatActivity
                         newparams.putString(getString(R.string.intent_numpedido), numPedido);
                         newparams.putString(getString(R.string.intent_chavepedido), chavepedido);
                         newparams.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                         newparams.putString(getString(R.string.intent_senha), senha);
+                        newparams.putString(getString(R.string.intent_codigoempresa), codEmpresa);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                         newfrag.setArguments(newparams);
@@ -756,14 +789,14 @@ public class ConsultaClientes extends AppCompatActivity
 
         } else if (flag == 1) {
             try {
-                sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha,null,null,null);
+                sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha, null, null, null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplication(), sincclieenvio, Toast.LENGTH_SHORT).show();
                     }
                 });
-                sincclie = Sincronismo.SincronizarClientesStatic(codVendedor, this, usuario, senha, 0,null,null,null);
+                sincclie = Sincronismo.SincronizarClientesStatic(codVendedor, this, usuario, senha, 0, null, null, null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -792,7 +825,7 @@ public class ConsultaClientes extends AppCompatActivity
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
-                params.putString("TELA_QUE_CHAMOU", telaInvocada);
+                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 frag.setArguments(params);
                 ft.commit();
@@ -812,8 +845,7 @@ public class ConsultaClientes extends AppCompatActivity
                     newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                     newparams.putString(getString(R.string.intent_codigoempresa), codEmpresa);
                     newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                    newparams.putString("TELA_QUE_CHAMOU", telaInvocada);
-                    newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    newparams.putString(getString(R.string.intent_telainvocada), telaInvocada);
                     newfrag.setArguments(newparams);
                     newft.commit();
                 }
