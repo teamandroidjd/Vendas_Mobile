@@ -85,7 +85,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //TODO: TESTE
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_act_sincronismo);
 
@@ -3639,75 +3638,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             }
         }
 
-
-        /*int i = 0;
-        do {
-
-            try {
-                if (i > 0) {
-                    Thread.sleep(1000);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            try {
-                Boolean ConexOk = Util.checarConexaoCelular(ctxSincProd);
-                if (ConexOk == true) {
-
-                    try {
-                        if (i == 0) {
-                            Envio.call("", envelope);
-
-                            SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                            RetProdutos = (String) envelope.getResponse();
-                            System.out.println("Response :" + resultsRequestSOAP.toString());
-                        } else {
-                            SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-                            if (senha != null) {
-                                if (codItem == 0) {
-                                    newsoap.addProperty("aParam", "D" + DtUltItem);
-                                    newsoap.addProperty("aUsuario", usuario);
-                                    newsoap.addProperty("aSenha", senha);
-                                } else {
-                                    newsoap.addProperty("aParam", "I" + codItem);
-                                    newsoap.addProperty("aUsuario", usuario);
-                                    newsoap.addProperty("aSenha", senha);
-                                }
-                            } else {
-                                if (codItem == 0) {
-                                    newsoap.addProperty("aParam", "D" + DtUltItem);
-                                    newsoap.addProperty("aUsuario", user);
-                                    newsoap.addProperty("aSenha", pass);
-                                } else {
-                                    newsoap.addProperty("aParam", "I" + codItem);
-                                    newsoap.addProperty("aUsuario", user);
-                                    newsoap.addProperty("aSenha", pass);
-                                }
-                            }
-                            SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                            newenvelope.setOutputSoapObject(newsoap);
-                            HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
-                            newEnvio.call("", newenvelope);
-
-                            SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                            RetProdutos = (String) newenvelope.getResponse();
-                            System.out.println("Response :" + newresultsRequestSOAP.toString());
-                        }
-                    } catch (Exception e) {
-                        e.toString();
-                        sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
-                        return sincprodstatic;
-                    }
-                } else {
-                    sincprodstatic = ctxSincProd.getString(R.string.no_connection);
-                    return sincprodstatic;
-                }
-            } catch (Exception e) {
-                System.out.println("Error na solicitação" + e);
-            }
-            i = i + 1;
-        } while (RetProdutos == null && i <= 20);*/
-
         if (RetProdutos.equals("0")) {
             sincprodstatic = ctxSincProd.getString(R.string.sync_products_successfully);
             return sincprodstatic;
@@ -4222,15 +4152,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
             return sincparaetrosstatic;
         }
-        /*try {
-            SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-            RetParamApp = (String) envelope.getResponse();
-            System.out.println("Response :" + resultsRequestSOAP.toString());
-        } catch (Exception e) {
-            e.toString();
-            sincparaetrosstatic = ctxEnv.getString(R.string.failed_return);
-            return sincparaetrosstatic;
-        }*/
         try {
             JSONObject jsonObj = new JSONObject(RetParamApp);
             JSONArray JParamApp = jsonObj.getJSONArray("param_app");
@@ -4351,6 +4272,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         }
                                     });
                                 }
+                                String bairro = CursorClieEnv.getString(CursorClieEnv.getColumnIndex("BAIRRO"));
 
                                 Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")).trim() + "'," +
                                         "nome_fantasia: '" + (CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN"))).trim() + "'," +
@@ -4457,7 +4379,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 do {
                                     try {
                                         if (j > 0) {
-                                            Thread.sleep(1000);
+                                            Thread.sleep(500);
                                         }
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
@@ -4503,6 +4425,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         e.toString();
                                         sincclieenvstatic = ctxEnvClie.getString(R.string.failure_communicate);
                                     }
+                                    j += 1;
                                 } while (RetClieEnvio == null && j <= 20);
                                 if (RetClieEnvio == null) {
                                     sincclieenvstatic = ctxEnvClie.getString(R.string.failure_communicate);
@@ -5222,7 +5145,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
 
     public static String SincAtualizaCidade(String UF, final Context ctxEnv) {
-        String sincatucidade = null;
+        String sincatucidade = "0";
+        if (UF.equals("")) {
+            return sincatucidade;
+        }
         int CodCidadeExt = 0;
         int CodCidade = 0;
 

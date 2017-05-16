@@ -489,6 +489,16 @@ public class ConsultaProdutos extends AppCompatActivity
                     finish();
                 }
             }
+        }else {
+            Intent intent = new Intent(ConsultaProdutos.this, ConsultaPedidos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            intent.putExtras(params);
+            startActivity(intent);
+            finish();
         }
     }
 

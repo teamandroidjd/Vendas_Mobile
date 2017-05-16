@@ -1,4 +1,4 @@
-package com.jdsystem.br.vendasmobile.Controller;
+package com.jdsystem.br.vendasmobile.Pagamento;
 
 import android.app.DatePickerDialog;
 import android.content.Context;

@@ -89,23 +89,12 @@
             android:name=".DadosProduto"
             android:label="Dados do produto" />
         <activity
-            android:name=".act_ListClientesPedidos"
-            android:label="Consulta de clientes" />
-        <activity
-            android:name=".Controller.Lista_clientes"
-            android:label="Catálogo de Clientes"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
             android:name=".CadastroPedidos"
             android:label="Cadastrar pedido"
             android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".Controller.Lista_produtos"
-            android:label="Cadastrar pedido"
-            android:windowSoftInputMode="stateHidden" />
 
         <activity
-            android:name=".Controller.ConfPagamento"
+            android:name=".Pagamento.ConfPagamento"
             android:label="Formas de pagamento"
             android:windowSoftInputMode="stateHidden" />
         <activity
