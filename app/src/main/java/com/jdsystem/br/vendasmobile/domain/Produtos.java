@@ -33,6 +33,7 @@ public class Produtos extends ItensPedido {
     private String Tabpromo1;
     private String Tabpromo2;
     private String TipoEstoque;
+    private int codigoItem;
 
     public Produtos() {
     }
@@ -220,6 +221,9 @@ public class Produtos extends ItensPedido {
         TabelaPadrao = tabPadrao;
     }
 
+    public void setCodigoItem(int codItem){
+        codigoItem = codItem;
+    }
 
     public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1, BigDecimal Preco2, BigDecimal Preco3, BigDecimal Preco4, BigDecimal Preco5, BigDecimal PrecoP1, BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao, int CodigoExterno/*BigDecimal PrecoPadrao*/) {
 
@@ -239,6 +243,7 @@ public class Produtos extends ItensPedido {
         this.Tabpromo2 = Tabpromo2;
         this.TipoEstoque = TipoEstoque;
         this.TabelaPadrao = TabelaPdrao;
+        this.codigoItem = CodigoItem;
 
         if (!Tabela1.equals("")) {
             if (Preco1 != null) {

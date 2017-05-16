@@ -837,7 +837,21 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         })
                         .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                if(TelaChamada.equals("CadastroPedidos")){
+                                if(TelaChamada == null){
+                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                                    Bundle params = new Bundle();
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
+                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                    params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    finish();
+                                }else if(TelaChamada.equals("CadastroPedidos")){
 
                                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroClientes.this);
                                     builder.setTitle(R.string.synchronization);

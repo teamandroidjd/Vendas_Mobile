@@ -60,6 +60,7 @@ import java.util.List;
 import static com.jdsystem.br.vendasmobile.Login.NOME_USUARIO;
 import static java.lang.Integer.parseInt;
 import static java.lang.Integer.toString;
+import static java.lang.Integer.valueOf;
 
 public class CadastroContatos extends AppCompatActivity implements Runnable {
     String DOMINGO = "Domingo",
@@ -70,13 +71,13 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             SEXTA = "Sexta-feira",
             SABADO = "Sábado",
             codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade,
-            NomeCliente, descBairro, telaInvocada, codProd, sDiaSemana, horarioInicial, horarioFinal,
-            agendaContato;
+            NomeCliente, descBairro, telaInvocada, sDiaSemana, horarioInicial, horarioFinal,
+            agendaContato, codProdManual;
     Boolean PesqCEP;
     TimePicker timePicker;
     ImageButton BtnPesqCep, btnInformaDiasVisita, btnInformaprodutos;
     int CodCidade, CodBairro, CodCliente, hour, minute, codInternoUlt, tipoContatoPos, ufPosition, cidadePos, bairroPos,
-            idPerfil, hora1, minute1, hora2, minute2;
+            idPerfil, hora1, minute1, hora2, minute2, codProd, CodContato;
     EditText nome, setor, data, documento, endereco, numero, cep, tel1, tel2, email, OBS, Complemento, horaFinal, horaInicial, idEditText;
     Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF, horarioContato;
     Context ctx;
@@ -114,19 +115,21 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 CodCliente = params.getInt(getString(R.string.intent_codcliente));
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
                 telaInvocada = params.getString(getString(R.string.intent_telainvocada));
-                codProd = params.getString(getString(R.string.intent_cad_contato));
+                codProdManual = params.getString(getString(R.string.intent_codproduto));
+                codProd = params.getInt("codProdutoInt");
+                CodContato = params.getInt(getString(R.string.intent_codcontato));
                 //sTipoContato = params.getString("C");
                 //            }
             }
         }
 
-        carregaDadosContatoTemporario();
+
         exibeListaAgenda();
 
         try {
-            if (codProd != null) {
-                if (!codProd.isEmpty()) {
-                    insereProdutoListaTemp(codProd, CadastroContatos.this);
+            if (codProdManual != null) {
+                if (!codProdManual.isEmpty()) {
+                    insereProdutoListaTemp(CodContato, codProdManual, codProd, CadastroContatos.this);
                 }
             }
         } catch (Exception E) {
@@ -350,7 +353,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        //spCidade.setSelection(cidadePos);
+        spCidade.setSelection(cidadePos);
         spCidade.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 cidadePos = position;
@@ -429,7 +432,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             }
         });
 
-        //spBairro.setSelection(bairroPos);
+        spBairro.setSelection(bairroPos);
         spBairro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 bairroPos = position;
@@ -539,8 +542,22 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 return true;
             }
         });
-        if (sUF != null) {
+        /*if (sUF != null) {
             recuperaDadosEstado(sUF);
+        }
+
+        if(NomeCidade != null){
+            recuperaDadosCidade(NomeCidade);
+        }*/
+        if(NomeBairro != null) {
+            List<String> DadosListBairroUnic = new ArrayList<String>();
+            DadosListBairroUnic.add(NomeBairro);
+            ArrayAdapter<String> arrayAdapterBairroUnic = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairroUnic);
+            ArrayAdapter<String> spinnerArrayAdapterBairroUnic = arrayAdapterBairroUnic;
+            spinnerArrayAdapterBairroUnic.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+            spBairro.setAdapter(spinnerArrayAdapterBairroUnic);
+            //spBairro.setSelection();
+            //recuperaDadosBairro(NomeBairro);
         }
     }
 
@@ -647,7 +664,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             //SALVA DADOS NA TABELA DE CONTATOS FINAL
 
             DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
-                    "COMPLEMENTO, UF, CODVENDEDOR, CODPERFIL, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS) VALUES(" +
+                    "COMPLEMENTO, UF, CODVENDEDOR, CODPERFIL, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, FLAGINTEGRADO) VALUES(" +
                     "'" + nome.getText().toString() +
                     "', '" + setor.getText().toString() +
                     "', '" + email.getText().toString() +
@@ -666,7 +683,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     "', '" + NomeCidade +
                     "', " + CodCliente +
                     ", '" + sTipoContato +
-                    "', '" + OBS.getText().toString() + "');");
+                    "', '" + OBS.getText().toString() +
+                    "', 'N');");
 
             returnLastId(); //APÓS SALVAR, A FUNÇÃO ABAIXO PEGA A ÚLTIMA ID DO CONTATO SALVO PARA PREENCHER A TABELA DE AGENDA;
             salvarAgenda(); //ESTA FUNÇÃO SALVA AS INFORMAÇÕES DA TABELA TEMPORÁRIA DA AGENDA NA TABELA FINAL DE AGENDA
@@ -1312,16 +1330,17 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         //SALVA PRODUTOS APÓS CONFIRMAR O SALVAMENTO DO CADASTRO DO CONTATO.
         DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
         try {
-            Cursor cursor = DB.rawQuery("select cod_produto_manual, cod_interno_contato from produtos_contatos_temp", null);
+            Cursor cursor = DB.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item from produtos_contatos_temp", null);
             cursor.moveToFirst();
 
             if (cursor.getCount() > 0) {
                 do {
                     String codProdManual = cursor.getString(cursor.getColumnIndex("cod_produto_manual"));
-                    int codInternoContato = cursor.getInt(cursor.getColumnIndex("cod_interno_contato"));
+                    int codProd = cursor.getInt(cursor.getColumnIndex("cod_item"));
+                    int codInternoContato = codInternoUlt;
 
-                    DB.execSQL("insert into produtos_contatos (cod_produto_manual, produtos_contatos_temp) values " +
-                            "('" + codProdManual + "', " + codInternoContato + ");");
+                    DB.execSQL("insert into produtos_contatos (cod_produto_manual, cod_interno_contato, cod_item) values " +
+                            "('" + codProdManual + "', " + codInternoContato + ", " + codProd + ");");
                 } while (cursor.moveToNext());
                 cursor.close();
             }
@@ -1450,6 +1469,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 sUF = cursor.getString(cursor.getColumnIndex("UF"));
                 codVendedor = cursor.getString(cursor.getColumnIndex("CODVENDEDOR"));
                 descBairro = cursor.getString(cursor.getColumnIndex("BAIRRO"));
+                NomeBairro = descBairro;
 
                 NomeCidade = cursor.getString(cursor.getColumnIndex("DESC_CIDADE"));
 
@@ -1465,6 +1485,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 cidadePos = cursor.getInt(cursor.getColumnIndex("CODCIDADE"));
 
                 ufPosition = cursor.getInt(cursor.getColumnIndex("UFPOSITION"));
+
+                cursor.close();
             }
         } catch (Exception E) {
             System.out.println(E);
@@ -1486,10 +1508,11 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         lv_informa_produtos.setAdapter(arrayAdapterProdutos);
     }
 
-    private static void insereProdutoListaTemp(String codProd, Context ctx) {
+    private static void insereProdutoListaTemp(int CodContato, String codProdManual, int codProd, Context ctx) {
         SQLiteDatabase DB = new ConfigDB(ctx).getReadableDatabase();
         try {
-            DB.execSQL("insert into produtos_contatos_temp (cod_produto_manual) values ('" + codProd + "');");
+            DB.execSQL("insert into produtos_contatos_temp (cod_interno_contato, cod_produto_manual, cod_item) values ("+ CodContato + ", '" + codProdManual + "', " +
+                    codProd + ");");
         } catch (Exception E) {
             E.toString();
         }
@@ -1499,13 +1522,15 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         ArrayList<String> produtosRelacionados = new ArrayList<String>();
         DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
         try {
-            Cursor cursor = DB.rawQuery("select produtos_contatos_temp.cod_produto_manual, itens.descricao as desc " +
+            Cursor cursor = DB.rawQuery("select produtos_contatos_temp.cod_produto_manual, itens.descricao as desc, " +
+                    "produtos_contatos_temp.cod_item " +
                     "from produtos_contatos_temp " +
-                    "left outer join itens on produtos_contatos_temp.cod_produto_manual = itens.CODITEMANUAL ", null);
+                    "left outer join itens on produtos_contatos_temp.cod_item = itens.CODIGOITEM ", null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 do {
                     String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos_temp.cod_produto_manual"));
+                    int codProduto = cursor.getInt(cursor.getColumnIndex("produtos_contatos_temp.cod_item"));
                     String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
                     String itemLista = codProdutoCont + " - " + descProdCont.substring(0, 20);
 
@@ -1530,14 +1555,14 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         }
     }
 
-    public void recuperaDadosEstado( String nUf /*, String nCidade, String nBairro*/){
+    /*public void recuperaDadosEstado( String nUf /*, String nCidade, String nBairro){
         //SQLiteDatabase db = new ConfigDB(CadastroContatos.this).getReadableDatabase();
         try {
             /*Cursor cursor = DB.rawQuery("select UF from contato_temporario " +
                     "where uf = '" + nUf + "'", null);
             cursor.moveToFirst();
 
-            String Estado = cursor.getString(cursor.getColumnIndex("UF"));*/
+            String Estado = cursor.getString(cursor.getColumnIndex("UF"));*
             String Estado = nUf;
             List<String> DadosListEstado = new ArrayList<String>();
             DadosListEstado.add(Estado);
@@ -1545,29 +1570,63 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEstado);
             arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
             spUF.setAdapter(arrayAdapterUF);
+            spUF.setSelection(ufPosition);
+        }catch (Exception E){
+            E.toString();
+        }
+    }*/
+
+    public void recuperaDadosBairro(String nBairro){
+        DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
+        List<String> DadosListBairro = new ArrayList<String>();
+        String Bairro = null;
+        try{
+            Cursor cursor2 = DB.rawQuery("select * from contato_temporario " +
+                    "where BAIRRO = '"+nBairro+"'", null);
+            cursor2.moveToFirst();
+            if (cursor2.getCount() > 0) {
+                do {
+                    Bairro = cursor2.getString(cursor2.getColumnIndex("BAIRRO"));
+                    DadosListBairro.add(Bairro);
+                    NomeBairro = Bairro;
+                }while(cursor2.moveToNext());
+            }
+
+            ArrayAdapter<String> arrayAdapterBairro = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
+            //ArrayAdapter<String> spinnerArrayAdapterBairro = arrayAdapterBairro;
+            arrayAdapterBairro.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+            spBairro.setAdapter(arrayAdapterBairro);
+            int selectionPosition = arrayAdapterBairro.getPosition(NomeBairro);
+            spBairro.setSelection(valueOf(selectionPosition));
         }catch (Exception E){
             E.toString();
         }
     }
 
-    public void recuperaDadosCidade(String nCidade){
+    /*public void recuperaDadosCidade(String nCidade){
+        DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
+        List<String> DadosListCidade = new ArrayList<String>();
         try{
-            /*Cursor cursor = DB.rawQuery("select desc_cidade from contato_temporario " +
-                    "where cidade = '"+nCidade+"'", null);
-            cursor.moveToFirst();
-            String Cidade = cursor.getString(cursor.getColumnIndex("desc_cidade"));*/
+            Cursor cursor1 = DB.rawQuery("select * from contato_temporario " +
+                    "where DESC_CIDADE = '"+nCidade + "'", null);
+            cursor1.moveToFirst();
+            if (cursor1.getCount() > 0) {
+                do {
+                    String Cidade = cursor1.getString(cursor1.getColumnIndex("DESC_CIDADE"));
+                    DadosListCidade.add(Cidade);
+                    NomeCidade = Cidade;
+                }while(cursor1.moveToNext());
+            }
 
-            List<String> DadosListCidade = new ArrayList<String>();
-            DadosListCidade.add(nCidade);
-            NomeCidade = nCidade;
             ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(CadastroContatos.this, android.R.layout.simple_spinner_dropdown_item, DadosListCidade);
             ArrayAdapter<String> spinnerArrayAdapterCidade = arrayAdapterCidade;
             spinnerArrayAdapterCidade.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
             spCidade.setAdapter(spinnerArrayAdapterCidade);
+            //spCidade.setSelection(cidadePos);
         }catch (Exception E){
             E.toString();
         }
-    }
+    }*/
 
     public void montaStringHorario(){
 

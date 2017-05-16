@@ -155,13 +155,14 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             String CodProd = adapterProdutos.ChamaDados(position);
+            int codIntItem = adapterProdutos.codInternoItem(position);
 
             SQLiteDatabase db = new ConfigDB(getContext()).getReadableDatabase();
 
             try {
-                Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato " +
-                        "from produtos_contatos " +
-                        "where cod_produto_manual = '" + CodProd + "' and cod_interno_contato = " + CodContato, null);
+                Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
+                        "from produtos_contatos_temp " +
+                        "where cod_item = " + codIntItem + " and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd +"'", null);
                 cursor.moveToFirst();
 
                 if (cursor.getCount() > 0) {
@@ -169,7 +170,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             "Verifique.", Toast.LENGTH_SHORT);
                     cursor.close();
                 } else {
-                    Util.gravarItensContato(CodProd, CodContato, getContext());
+                    //Util.gravarItensContato(CodProd, codIntItem, CodContato, getContext());
 
                     Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
                     cursor.close();
@@ -178,13 +179,15 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Intent intentp = new Intent(getActivity(), CadastroContatos.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codproduto), CodProd);
+                    params.putInt("codProdutoInt", codIntItem);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
                     params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-                    params.putString(getString(R.string.intent_cad_contato), CodProd);
+                    //params.putString(getString(R.string.intent_cad_contato), CodProd);
                     params.putInt(getString(R.string.intent_codcliente), CodCliente);
                     params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                    params.getInt(getString(R.string.intent_codcontato), CodContato);
                     intentp.putExtras(params);
                     startActivity(intentp);
                     getActivity().finish();
@@ -196,13 +199,14 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             String CodProd = adapterProdutos.ChamaDados(position);
+            int codIntItem = adapterProdutos.codInternoItem(position);
 
             SQLiteDatabase db = new ConfigDB(getContext()).getReadableDatabase();
 
             try {
-                Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato " +
+                Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
                         "from produtos_contatos " +
-                        "where cod_produto_manual = '" + CodProd + "' and cod_interno_contato = " + CodContato, null);
+                        "where cod_item = '" + codIntItem + "' and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd +"'", null);
                 cursor.moveToFirst();
 
                 if (cursor.getCount() > 0) {
@@ -210,7 +214,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             "Verifique.", Toast.LENGTH_SHORT);
                     cursor.close();
                 } else {
-                    Util.gravarItensContato(CodProd, CodContato, getContext());
+                    Util.gravarItensContato(CodProd, codIntItem, CodContato, getContext());
 
                     Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
                     cursor.close();
@@ -218,6 +222,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Intent intentp = new Intent(getActivity(), DadosContato.class);
                     Bundle params = new Bundle();
                     params.putString(getString(R.string.intent_codproduto), CodProd);
+                    params.putInt("codProdutoInt", codIntItem);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);

@@ -162,6 +162,10 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
         return mList.get(position).getCodigoItem();
     }
 
+    public int codInternoItem(int position) {
+        return mList.get(position).getCodigoItem();
+    }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView lblCodItem;

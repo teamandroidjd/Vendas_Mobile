@@ -568,7 +568,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sync_companies));
                         }
                     });
-                    Sincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this,null,null,null);
+                    Sincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_parameters));
@@ -632,7 +632,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.sync_companies));
                         }
                     });
-                    Sincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this,null,null,null);
+                    Sincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_parameters));

@@ -605,6 +605,7 @@ public class ConsultaProdutos extends AppCompatActivity
                     return DadosLisProdutos;
                 }
 
+
                 Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = "+idPerfil+")) ORDER BY DESCRICAO", null);
                 cursorProdutos.moveToFirst();
                 if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
@@ -617,7 +618,7 @@ public class ConsultaProdutos extends AppCompatActivity
                         String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
                         String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
                         String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
-
+                        int codInterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
                         String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
                   /*ppadrao = ppadrao.trim();
                     BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
@@ -747,7 +748,7 @@ public class ConsultaProdutos extends AppCompatActivity
                         String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
                         String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
                         String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
-
+                        int codInterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
                         String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
                   /*ppadrao = ppadrao.trim();
                     BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/

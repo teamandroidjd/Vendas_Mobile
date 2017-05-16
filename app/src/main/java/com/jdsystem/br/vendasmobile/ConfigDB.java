@@ -291,13 +291,14 @@ public class ConfigDB extends SQLiteOpenHelper {
     private static String SQL_PRODUTOS_CONTATOS = ("create table if not exists produtos_contatos (" +
             "cod_produto_contato        integer primary key autoincrement, " +
             "cod_produto_manual         varchar(15), " +
-            "cod_interno_contato        integer);    ");
-
+            "cod_interno_contato        integer,  " +
+            "cod_item                   integer);");
 
     private static String SQL_PRODUTOS_CONTATOS_TEMP = ("create table if not exists produtos_contatos_temp (" +
             "cod_produto_contato        integer primary key autoincrement, " +
             "cod_produto_manual         varchar(15), " +
-            "cod_interno_contato        integer);    ");
+            "cod_interno_contato        integer, " +
+            "cod_item                   integer);");
 
     private static String SQL_CONTATOS_TEMPORARIOS = (" CREATE TABLE IF NOT EXISTS CONTATO_TEMPORARIO (" +
             "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
@@ -354,13 +355,12 @@ public class ConfigDB extends SQLiteOpenHelper {
         db.execSQL(SQL_PRODUTOS_CONTATOS_TEMP);
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int VersaoAntiga, int VersaoNova) {
 
         if (VersaoNova > VersaoAntiga) {
             try {
-                db.execSQL("ALTER TABLE VENDAD_TEMP ADD vendad_prd_codigo_internoTEMP INTEGER");
+                db.execSQL("ALTER TABLE VENDAD_TEMP ADD vendad_prd_codigo_interno TEMP INTEGER");
             } catch (Exception e) {
                 e.toString();
             }
@@ -385,6 +385,18 @@ public class ConfigDB extends SQLiteOpenHelper {
             }catch (Exception e){
                 e.toString();
 
+            }
+
+            try{
+                db.execSQL("alter table produtos_contatos_temp add cod_item integer");
+            }catch (Exception e){
+                e.toString();
+            }
+
+            try{
+                db.execSQL("alter table produtos_contatos add cod_item integer");
+            }catch (Exception e){
+                e.toString();
             }
 
         }

@@ -162,15 +162,16 @@ public class act_TH_produtos_contatos extends Fragment {
         produtosRelacionados = new ArrayList<String>();
         DB = new ConfigDB(ctx).getReadableDatabase();
         try {
-            Cursor cursor = DB.rawQuery("select produtos_contatos.cod_produto_manual, produtos_contatos.cod_interno_contato, " +
-                    "itens.descricao as desc " +
+            Cursor cursor = DB.rawQuery("select produtos_contatos.cod_produto_manual, produtos_contatos.cod_item, produtos_contatos.cod_interno_contato, " +
+                    "ITENS.DESCRICAO as desc " +
                     "from produtos_contatos " +
-                    "left outer join itens on produtos_contatos.cod_produto_manual = itens.CODITEMANUAL " +
+                    "left outer join ITENS on produtos_contatos.cod_item = ITENS.CODIGOITEM " +
                     "where produtos_contatos.cod_interno_contato = " + sCodContato, null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 do {
-                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos_temp.cod_produto_manual"));
+                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_produto_manual"));
+                    int codProd = cursor.getInt(cursor.getColumnIndex("produtos_contatos.cod_item"));
                     String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
                     String itemLista;
                     if (descProdCont.length() <= 26) {
@@ -195,14 +196,14 @@ public class act_TH_produtos_contatos extends Fragment {
         SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
         try {
             Cursor cursor = db.rawQuery("select produtos_contatos.cod_produto_manual, produtos_contatos.cod_interno_contato, " +
-                    "itens.descricao as desc " +
+                    "itens.descricao as desc, produtos_contatos.cod_item " +
                     "from produtos_contatos " +
                     "left outer join itens on produtos_contatos.cod_produto_manual = itens.CODITEMANUAL " +
                     "where produtos_contatos.cod_interno_contato = " + codContato, null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 do {
-                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos_temp.cod_produto_manual"));
+                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_produto_manual"));
                     String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
                     String itemLista;
                     if (descProdCont.length() <= 26) {

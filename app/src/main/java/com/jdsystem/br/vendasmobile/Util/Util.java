@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile.Util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -387,14 +388,116 @@ public class Util extends Activity {
         return mDiaSemana;
     }
 
-    public static void gravarItensContato(String codProduto, int codContato, Context context){
+    public static void gravarItensContato(String codProduto, int codProdInterno, int codContato, Context context) {
         SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
-        try{
-            db.execSQL("insert into produtos_contatos (cod_produto_manual, cod_interno_contato) values " +
-                    "('" + codProduto + "', " + codContato + ");");
-        }catch (Exception E){
+        try {
+            db.execSQL("insert into produtos_contatos (cod_produto_manual, cod_interno_contato, cod_item) values " +
+                    "('" + codProduto + "', " + codContato + ", " + codProdInterno +");");
+        } catch (Exception E) {
             E.toString();
         }
+    }
+
+    public static String converteUf(String uf) {
+
+        switch (uf) {
+            case ("AC"):
+                uf = "Acre";
+                break;
+            case ("AL"):
+                uf = "Alagoas";
+                break;
+            case ("AP"):
+                uf = "Amapá";
+                break;
+            case ("AM"):
+                uf = "Amazonas";
+                break;
+            case ("BA"):
+                uf = "Bahia";
+                break;
+            case ("CE"):
+                uf = "Ceará";
+                break;
+            case ("DF"):
+                uf = "Distrito Federal";
+                break;
+            case ("ES"):
+                uf = "Espírito Santo";
+                break;
+            case ("GO"):
+                uf = "Goiás";
+                break;
+            case ("MA"):
+                uf = "Maranhão";
+                break;
+            case ("MT"):
+                uf = "Mato Grosso";
+                break;
+            case ("MS"):
+                uf = "Mato Grosso do Sul";
+                break;
+            case ("MG"):
+                uf = "Minas Gerais";
+                break;
+            case ("PA"):
+                uf = "Pará";
+                break;
+            case ("PB"):
+                uf = "Paraíba";
+                break;
+            case ("PR"):
+                uf = "Paraná";
+                break;
+            case ("PE"):
+                uf = "Pernambuco";
+                break;
+            case ("PI"):
+                uf = "Piauí";
+                break;
+            case ("RJ"):
+                uf = "Rio de Janeiro";
+                break;
+            case("RN"):
+                uf = "Rio Grande do Norte";
+                break;
+            case("RS"):
+                uf = "Rio Grande do Sul";
+                break;
+            case("RO"):
+                uf = "Rondônia";
+                break;
+            case("RR"):
+                uf = "Roraima";
+                break;
+            case("SC"):
+                uf = "Santa Catarina";
+                break;
+            case("SP"):
+                uf = "São Paulo";
+                break;
+            case("SE"):
+                uf = "Sergipe";
+                break;
+            case("TO"):
+                uf = "Tocantins";
+                break;
+        }
+        return uf;
+    }
+
+    public static void gravaContatoSincronizado(Context ctx, String codContato, int codContatoInt){
+        SQLiteDatabase db = new ConfigDB(ctx).getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("select FLAGINTEGRADO, CODCONTATO_EXT from CONTATO " +
+                "where CODCONTATO_INT = " + codContatoInt, null);
+        cursor.moveToFirst();
+        if (cursor.getCount()>0){
+            do {
+                db.execSQL("update CONTATO set FLAGINTEGRADO = 'S', CODCONTATO_EXT = '" + codContato + "'");
+            }while (cursor.moveToNext());
+        }
+
     }
 }
 
