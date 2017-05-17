@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -98,10 +99,19 @@ public class Login extends AppCompatActivity implements Runnable {
         }
         if (usuario != null) {
             edtUsuario.setText(usuario);
+        }else{
+            edtUsuario.requestFocus();
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
         if (senha != null) {
             edtSenha.setText(senha);
             cbGravSenha.setChecked(true);
+        }else if (usuario.valueOf(usuario).equals("null") && senha.valueOf(senha).equals("null")) {
+            edtUsuario.requestFocus();
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }else {
+            edtSenha.requestFocus();
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
         PackageInfo pInfo = null;
         try {

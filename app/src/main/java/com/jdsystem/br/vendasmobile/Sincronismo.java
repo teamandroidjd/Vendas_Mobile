@@ -4583,7 +4583,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         RetClieEnvio = (String) envelope.getResponse();
                                         System.out.println("Response :" + resultsRequestSOAP.toString());
                                         Util.gravaContatoSincronizado(ctxEnvClie, RetClieEnvio, codContInt);
-                                        //TODO: implementar a gravação do código externo do contato;
 
                                     } else {
                                         SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_CONTATOENVIO);

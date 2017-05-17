@@ -17,7 +17,6 @@ import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -47,10 +46,11 @@ import static com.jdsystem.br.vendasmobile.Login.NOME_USUARIO;
 
 public class CadastroClientes extends AppCompatActivity implements Runnable, View.OnFocusChangeListener, AdapterView.OnItemSelectedListener {
 
-    String sTipoPessoa, sUF, codVendedor, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada, codEmpresa, chavepedido, numPedido;
+    String sTipoPessoa, sUF, codVendedor, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada, codEmpresa,
+            chavepedido, numPedido,atuok;
     private Handler handler = new Handler();
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
-    int CodCidade, CodBairro, telaInvocada, codClieExt, idPerfil, flag;
+    int CodCidade, CodBairro, telaInvocada, codClieExt, idPerfil, flag, posicao;
     Boolean PesqCEP;
     ImageButton BtnPesqCep;
     private static ProgressDialog DialogECB;
@@ -64,7 +64,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cad_clientes);
-
+        //TODO: RAFAEL - CORRIGIR O BUG AO SETAR O BAIRRO E TESTAR OFFLINE
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         declaraobjetos();
         carregarpreferencias();
@@ -174,12 +174,13 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         if (PesqCEP.equals(false)) {
                             CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
                         } else {
-                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "'", null);
+                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = '" + CodCidade + "'", null);
                         }
                     } catch (Exception e) {
                         e.toString();
                     }
                     List<String> DadosListBairro = new ArrayList<String>();
+                    DadosListBairro.clear();
                     if (CurBairro.getCount() > 0) {
                         CurBairro.moveToFirst();
                         do {
@@ -273,6 +274,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
         Edtcpf.setOnFocusChangeListener(this);
         cnpjcpf.setOnFocusChangeListener(this);
+        cep.setOnFocusChangeListener(this);
     }
 
     public boolean VerificaConexao() {
@@ -713,21 +715,21 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         })
                         .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                if(TelaChamada.valueOf(TelaChamada).equals("null")){
+                                if (TelaChamada.valueOf(TelaChamada).equals("null")) {
                                     Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
                                     params.putString(getString(R.string.intent_usuario), usuario);
                                     params.putString(getString(R.string.intent_senha), senha);
                                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                                     params.putString(getString(R.string.intent_telainvocada), TelaChamada);
-                                    params.putString(getString(R.string.intent_codigoempresa),codEmpresa);
+                                    params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
                                     params.putString(getString(R.string.intent_chavepedido), chavepedido);
                                     params.putString(getString(R.string.intent_numpedido), numPedido);
                                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                                     intent.putExtras(params);
                                     startActivity(intent);
                                     finish();
-                                }else if(TelaChamada.equals("CadastroPedidos")){
+                                } else if (TelaChamada.equals("CadastroPedidos")) {
 
                                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroClientes.this);
                                     builder.setTitle(R.string.synchronization);
@@ -820,10 +822,9 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         if (DialogECB != null && flag == 1) {
             flag = 0;
             DialogECB.dismiss();
+            onItemSelected(null, null, posicao, 0);
         }
-
     }
-
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
@@ -852,8 +853,6 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
     @Override
     protected void onResume() {
-        //declaraobjetos();
-        //carregarpreferencias();
         super.onResume();
     }
 
@@ -901,7 +900,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if (sTipoPessoa.equals("F") && hasFocus == false && Edtcpf.getText().toString().length() > 0) {
+        if (sTipoPessoa.equals("F") && hasFocus == false && Edtcpf.getText().toString().length() > 0 && v == Edtcpf) {
             if (Util.validaCPF(Edtcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
                 AlertDialog.Builder alerta = new AlertDialog.Builder(this);
                 alerta.setTitle(R.string.app_namesair);
@@ -914,6 +913,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                                 Edtcpf.selectAll();
                             }
                         });
+
 
                 AlertDialog alert = alerta.create();
                 alert.show();
@@ -938,7 +938,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
             }
 
-        } else if (sTipoPessoa.equals("J") && hasFocus == false && cnpjcpf.getText().toString().length() > 0) {
+        } else if (sTipoPessoa.equals("J") && hasFocus == false && cnpjcpf.getText().toString().length() > 0 && v == cnpjcpf) {
             if (Util.validaCNPJ(cnpjcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
                 AlertDialog.Builder alerta = new AlertDialog.Builder(this);
                 alerta.setTitle(R.string.app_namesair);
@@ -974,511 +974,139 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                 return;
 
             }
+        } else if (cep.getText().length() == 0 && hasFocus == false && v == cep) {
+            atuok = "N";
+            onItemSelected(null, null, 0, 0);
+
+
         }
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         boolean conexOK = Util.checarConexaoCelular(CadastroClientes.this);
+
         switch (position) {
             case 0:
                 sUF = "0";
                 break;
             case 1:
                 sUF = "AC"; //Acre
-                Cursor cursorEstadoAC = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoAC.moveToFirst();
-                if (!(cursorEstadoAC.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Acre... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-
-                }
-                cursorEstadoAC.close();
                 break;
             case 2:
                 sUF = "AL"; // Alagoas
-                Cursor cursorEstadoAL = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoAL.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoAL.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Alagoas... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoAL.close();
                 break;
             case 3:
                 sUF = "AP"; //Amapá
-                Cursor cursorEstadoAP = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoAP.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoAP.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Amapá... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoAP.close();
                 break;
             case 4:
                 sUF = "AM";//Amazonas
-                Cursor cursorEstadoAM = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoAM.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoAM.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Amazonas... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoAM.close();
                 break;
             case 5:
                 sUF = "BA";//Bahia
-                Cursor cursorEstadoBA = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoBA.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoBA.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros da Bahia... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoBA.close();
-
                 break;
             case 6:
                 sUF = "CE";//Ceará
-                Cursor cursorEstadoCE = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoCE.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoCE.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Ceará... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoCE.close();
                 break;
             case 7:
                 sUF = "DF";//Distrito Federal
-                Cursor cursorEstadoDF = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoDF.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoDF.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Distrito Federal... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoDF.close();
                 break;
             case 8:
                 sUF = "ES";//Espírito Santo
-                Cursor cursorEstadoES = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoES.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoES.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Espírito Santo... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoES.close();
                 break;
             case 9:
                 sUF = "GO";//Goiás
-                Cursor cursorEstadoGO = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoGO.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoGO.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Goiás... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoGO.close();
                 break;
             case 10:
                 sUF = "MA";//Maranhão
-                Cursor cursorEstadoMA = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoMA.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoMA.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Maranhão... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoMA.close();
                 break;
             case 11:
                 sUF = "MT";//Mato Grosso
-                Cursor cursorEstadoMT = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoMT.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoMT.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Mato Grosso... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoMT.close();
                 break;
             case 12:
                 sUF = "MS";//Mato Grosso do Sul
-                Cursor cursorEstadoMS = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoMS.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoMS.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Mato Grosso do Sul... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoMS.close();
                 break;
             case 13:
                 sUF = "MG";//Minas Gerais
-                Cursor cursorEstadoMG = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoMG.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoMG.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Minas Gerais... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoMG.close();
                 break;
             case 14:
                 sUF = "PA";//Pará
-                Cursor cursorEstadoPA = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoPA.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoPA.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Pará... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoPA.close();
                 break;
             case 15:
                 sUF = "PB";//Paraíba
-                Cursor cursorEstadoPB = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoPB.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoPB.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros da Paraíba... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoPB.close();
                 break;
             case 16:
                 sUF = "PR";//Paraná
-                Cursor cursorEstadoPR = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoPR.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoPR.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Paraná... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoPR.close();
                 break;
             case 17:
                 sUF = "PE";//Pernambuco
-                Cursor cursorEstadoPE = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoPE.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoPE.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Pernambuco... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoPE.close();
                 break;
             case 18:
                 sUF = "PI";//Piauí
-                Cursor cursorEstadoPI = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoPI.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoPI.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Pauí... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoPI.close();
                 break;
             case 19:
                 sUF = "RJ";//Rio de Janeiro
-                Cursor cursorEstadoRJ = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoRJ.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoRJ.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Rio de Janeiro... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoRJ.close();
                 break;
             case 20:
                 sUF = "RN"; //Rio Grande do Norte
-                Cursor cursorEstadoRN = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoRN.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoRN.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Rio Grande do Norte... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoRN.close();
                 break;
             case 21:
                 sUF = "RS";//Rio Grande do Sul
-                Cursor cursorEstadoRS = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoRS.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoRS.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros do Rio Grande do Sul... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoRS.close();
                 break;
             case 22:
                 sUF = "RO"; //Rondônia
-                Cursor cursorEstadoRO = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoRO.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoRO.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Rondônia... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoRO.close();
                 break;
             case 23:
                 sUF = "RR"; //Roraima
-                Cursor cursorEstadoRR = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoRR.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoRR.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Roraima... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoRR.close();
                 break;
             case 24:
                 sUF = "SC";//Santa Catarina
-                Cursor cursorEstadoSC = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoSC.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoSC.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Santa Catarina... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoSC.close();
                 break;
             case 25:
                 sUF = "SP";//São Paulo
-                Cursor cursorEstadoSP = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoSP.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoSP.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de São Paulo... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoSP.close();
                 break;
             case 26:
                 sUF = "SE";//Sergipe
-                Cursor cursorEstadoSE = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoSE.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoSE.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Sergipe... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoSE.close();
                 break;
             case 27:
                 sUF = "TO";//Tocantins
-                Cursor cursorEstadoTO = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
-                cursorEstadoTO.moveToFirst();
-                conexOK = Util.checarConexaoCelular(CadastroClientes.this);
-                if (!(cursorEstadoTO.getCount() > 0) && conexOK == true) {
-                    DialogECB = new ProgressDialog(CadastroClientes.this);
-                    DialogECB.setCancelable(false);
-                    DialogECB.setIcon(R.drawable.icon_sync);
-                    DialogECB.setTitle(getString(R.string.wait));
-                    DialogECB.setMessage("Consultando cidades e bairros de Tocantins... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
-                            " a esse estado.");
-                    DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    DialogECB.show();
-                    flag = 1;
-                }
-                cursorEstadoTO.close();
                 break;
         }
+        if (!sUF.equals("0")) {
+            String UF = Util.converteUf(sUF);
+            Cursor cursorEstadoAC = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
+            cursorEstadoAC.moveToFirst();
+            if (!(cursorEstadoAC.getCount() > 0) && conexOK == true) {
+                DialogECB = new ProgressDialog(CadastroClientes.this);
+                DialogECB.setCancelable(false);
+                DialogECB.setIcon(R.drawable.icon_sync);
+                DialogECB.setTitle(getString(R.string.wait));
+                DialogECB.setMessage("Consultando cidades e bairros do " + UF + "... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
+                        " a esse estado.");
+                DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                DialogECB.show();
+                flag = 1;
+                posicao = position;
+
+            }
+            cursorEstadoAC.close();
+        }
+
         int CodCidade = 0;
         Cursor cursor = null;
         try {
-            if (PesqCEP.equals(false)) {
+            //if (PesqCEP.equals(false)) {
                 cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
-            } else {
+            /*}else {
                 cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
+            }*/
+            if (PesqCEP.equals(true) && cep.getText().length() == 0 && sUF.equals("0")) {
+                if(atuok.valueOf(atuok).equals("null") || atuok.equals("N")){
+                    atualizaspinner();
+                    spCidade.setAdapter(null);
+                    spBairro.setAdapter(null);
+                    return;
+                }
             }
             List<String> DadosList = new ArrayList<String>();
             DadosList.clear();
@@ -1492,18 +1120,40 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                 cursor.close();
 
                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
-                ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                final ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                spCidade.setAdapter(spinnerArrayAdapter);
+                spinnerArrayAdapter.notifyDataSetChanged();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        spCidade.setAdapter(spinnerArrayAdapter);
+                    }
+                });
+
 
             }
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
 
+
         Thread thread = new Thread(CadastroClientes.this);
         thread.start();
 
+    }
+
+    private String atualizaspinner() {
+        atuok = "S";
+        try {
+            ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.uf));
+            arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+            spUF.setAdapter(arrayAdapterUF);
+        }catch (Exception e){
+            e.toString();
+            atuok = "N";
+            return atuok;
+        }
+        return atuok;
     }
 
     @Override
