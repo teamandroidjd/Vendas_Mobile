@@ -30,7 +30,7 @@
                     android:id="@+id/spnTipoContato"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:entries="@array/Tipo_contato"></Spinner>
+                    android:entries="@array/Tipo_contato" />
             </LinearLayout>
 
             <LinearLayout
@@ -121,15 +121,31 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp">
+                android:layout_height="60dp"
+                android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/spnCargoEspec"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:entries="@array/Cargo_espec">
+                    android:layout_height="60dp"
+                    android:layout_weight="4">
 
-                </Spinner>
+                    <Spinner
+                        android:id="@+id/spnCargoEspec"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="18dp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+                    <ImageButton
+                        android:id="@+id/btn_add_novo_cargo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/ic_add_prod" />
+                </LinearLayout>
             </LinearLayout>
 
 
@@ -234,7 +250,7 @@
                     android:id="@+id/spnUF"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:entries="@array/uf"></Spinner>
+                    android:entries="@array/uf"/>
             </LinearLayout>
 
             <LinearLayout
@@ -244,7 +260,7 @@
                 <Spinner
                     android:id="@+id/spnCidade"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></Spinner>
+                    android:layout_height="match_parent"/>
             </LinearLayout>
 
             <LinearLayout
@@ -254,7 +270,7 @@
                 <Spinner
                     android:id="@+id/spnBairro"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></Spinner>
+                    android:layout_height="match_parent"/>
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -313,11 +329,10 @@
                     android:layout_height="match_parent"
                     android:layout_weight="5">
 
-                        <ListView
-                            android:id="@+id/list_view_agenda_contato"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                        </ListView>
+                    <ListView
+                        android:id="@+id/list_view_agenda_contato"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -415,3 +430,5 @@
 
 
 </LinearLayout>
+
+    <!--android:entries="@array/Cargo_espec"-->

@@ -98,6 +98,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    CODCONTATO_EXT               VARCHAR (7),              " +
             "    NOME                         VARCHAR (60)  NOT NULL,   " +
             "    CARGO                        VARCHAR (30),             " +
+            "    SETOR                        VARCHAR (30),             " +
             "    DOCUMENTO                    VARCHAR(15),              " +
             "    DATA                         VARCHAR(10),              " +
             "    CEP                          VARCHAR(10),              " +
@@ -307,6 +308,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    CODCONTATO_EXT               VARCHAR (7),              " +
             "    NOME                         VARCHAR (60)  NOT NULL,   " +
             "    CARGO                        VARCHAR (30),             " +
+            "    SETOR                        VARCHAR (30),             " +
             "    DOCUMENTO                    VARCHAR(15),              " +
             "    DATA                         VARCHAR(10),              " +
             "    CEP                          VARCHAR(10),              " +
@@ -327,8 +329,14 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    TIPO_POS                     INTEGER,                  " +
             "    FLAGINTEGRADO                CHAR(1),                  " +
             "    OBS                          TEXT,                     " +
-            "    CODPERFIL                    INTEGER)                  " +
+            "    CODPERFIL                    INTEGER,                  " +
+            "    CARGO_POS                    INTEGER)                  " +
             ";");
+
+    private static String SQL_CARGOS = ("CREATE TABLE IF NOT EXISTS CARGOS (" +
+            "   DES_CARGO           VARCHAR(30),                         " +
+            "   CODCARGO_EXT        INTEGER,                    " +
+            "   CODCARGO            INTEGER PRIMAY KEY AAUTOINCREMENT); ");
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -353,6 +361,7 @@ public class ConfigDB extends SQLiteOpenHelper {
         db.execSQL(SQL_PRODUTOS_CONTATOS);
         db.execSQL(SQL_CONTATOS_TEMPORARIOS);
         db.execSQL(SQL_PRODUTOS_CONTATOS_TEMP);
+        db.execSQL(SQL_CARGOS);
     }
 
     @Override
@@ -395,6 +404,33 @@ public class ConfigDB extends SQLiteOpenHelper {
 
             try{
                 db.execSQL("alter table produtos_contatos add cod_item integer");
+            }catch (Exception e){
+                e.toString();
+            }
+
+            try{
+                db.execSQL("CREATE TABLE IF NOT EXISTS CARGOS (" +
+                        "   DES_CARGO           VARCHAR(30)                         " +
+                        "   CODCARGO_EXT        INTEGER NOT NULL                    " +
+                        "   CODCARGO            INTEGER PRIMAY KEY AAUTOINCREMENT); ");
+            }catch(Exception e){
+                e.toString();
+            }
+
+            try{
+                db.execSQL("alter table CONTATO_TEMPORARIO add SETOR VARCHAR(30)");
+            }catch (Exception e){
+                e.toString();
+            }
+
+            try{
+                db.execSQL("alter table CONTATO add SETOR VARCHAR(30)");
+            }catch (Exception e){
+                e.toString();
+            }
+
+            try{
+                db.execSQL("alter table CONTATO_TEMPORARIO add CARGO_POS INTEGER");
             }catch (Exception e){
                 e.toString();
             }

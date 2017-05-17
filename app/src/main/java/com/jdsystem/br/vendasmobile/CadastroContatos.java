@@ -72,12 +72,12 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             SABADO = "Sábado",
             codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade,
             NomeCliente, descBairro, telaInvocada, sDiaSemana, horarioInicial, horarioFinal,
-            agendaContato, codProdManual;
+            agendaContato, codProdManual, cargoContato;
     Boolean PesqCEP;
     TimePicker timePicker;
-    ImageButton BtnPesqCep, btnInformaDiasVisita, btnInformaprodutos;
+    ImageButton BtnPesqCep, btnInformaDiasVisita, btnInformaprodutos, btnInformaCargo;
     int CodCidade, CodBairro, CodCliente, hour, minute, codInternoUlt, tipoContatoPos, ufPosition, cidadePos, bairroPos,
-            idPerfil, hora1, minute1, hora2, minute2, codProd, CodContato;
+            idPerfil, hora1, minute1, hora2, minute2, codProd, CodContato, codCargo, posCargo;
     EditText nome, setor, data, documento, endereco, numero, cep, tel1, tel2, email, OBS, Complemento, horaFinal, horaInicial, idEditText;
     Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF, horarioContato;
     Context ctx;
@@ -94,6 +94,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
     TimePickerDialog timePickerDialog;
     public SharedPreferences prefs;
     public static final String CONFIG_HOST = "CONFIG_HOST";
+    private String descCargo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +142,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         NomeBairro = null;
         NomeCidade = null;
 
-        TipoContato.setSelection(tipoContatoPos);
+
         /*if (sTipoContato == "O") {
             CodCliente = 0;
             linearrazao.setVisibility(View.GONE);
@@ -203,6 +204,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             }
         });
         carregaDadosContatoTemporario();
+
+        TipoContato.setSelection(tipoContatoPos);
 
         spUF.setSelection(ufPosition);
 
@@ -507,7 +510,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 alert.show();
             }
         });
-
         btnInformaDiasVisita.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -559,6 +561,42 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             //spBairro.setSelection();
             //recuperaDadosBairro(NomeBairro);
         }
+        btnInformaCargo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                salvaNovoCargo();
+            }
+        });
+
+        selecionaCargoContato();
+
+        TipoCargoEspec.setSelection(posCargo);
+        TipoCargoEspec.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                posCargo = position;
+                try {
+                    ArrayList<String> listCargo = new ArrayList<String>();
+                    DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
+                    Cursor cursorCargo = DB.rawQuery(" SELECT CODCARGO_EXT, CODCARGO, DES_CARGO FROM CARGOS WHERE DES_CARGO = '"+ descCargo +"'", null);
+                    cursorCargo.moveToFirst();
+                    if (cursorCargo.getCount() > 0) {
+                            //codCargo = cursorCargo.getInt(cursorCargo.getColumnIndex("CODCARGO"));
+                            descCargo = cursorCargo.getString(cursorCargo.getColumnIndex("DES_CARGO"));
+
+                        cursorCargo.close();
+                    }
+
+                } catch (Exception E) {
+                    System.out.println("Error" + E);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void carregarpreferencias() {
@@ -599,6 +637,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         listView = (ListView) findViewById(R.id.list_view_agenda_contato);
         btnInformaprodutos = (ImageButton) findViewById(R.id.btn_add_produtos_contato);
         lv_informa_produtos = (ListView) findViewById(R.id.list_view_produtos_contato);
+        btnInformaCargo = (ImageButton)findViewById(R.id.btn_add_novo_cargo);
 
 
         final EditText etCEP = (EditText) findViewById(R.id.EdtCep);
@@ -664,9 +703,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             //SALVA DADOS NA TABELA DE CONTATOS FINAL
 
             DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
-                    "COMPLEMENTO, UF, CODVENDEDOR, CODPERFIL, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, FLAGINTEGRADO) VALUES(" +
+                    "COMPLEMENTO, UF, CODVENDEDOR, CODPERFIL, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, FLAGINTEGRADO, SETOR) VALUES(" +
                     "'" + nome.getText().toString() +
-                    "', '" + setor.getText().toString() +
+                    "', '" + descCargo +
                     "', '" + email.getText().toString() +
                     "', '" + tel1.getText().toString() +
                     "', '" + tel2.getText().toString() +
@@ -684,7 +723,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     "', " + CodCliente +
                     ", '" + sTipoContato +
                     "', '" + OBS.getText().toString() +
-                    "', 'N');");
+                    "', 'N', '" +
+                    setor.getText().toString() + "'");
 
             returnLastId(); //APÓS SALVAR, A FUNÇÃO ABAIXO PEGA A ÚLTIMA ID DO CONTATO SALVO PARA PREENCHER A TABELA DE AGENDA;
             salvarAgenda(); //ESTA FUNÇÃO SALVA AS INFORMAÇÕES DA TABELA TEMPORÁRIA DA AGENDA NA TABELA FINAL DE AGENDA
@@ -705,6 +745,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroContatos.this);
         builder.setTitle(R.string.title_novocontato);
         builder.setIcon(R.drawable.logo_ico);
+        if(sTipoContato.equals("O")){
+
+        }
         builder.setMessage(R.string.question_newcontact)
                 .setCancelable(false)
                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
@@ -1349,7 +1392,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         }
     }
 
-
     public void declaraProdutosContatos() {
         salvaDadosContatosTemporario();
 
@@ -1388,7 +1430,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             if (cursor.getCount() > 0) {
                 //returnLastId();
                 DB.execSQL("update contato_temporario set NOME = '" + nomeContato + "', " +
-                        "CARGO = '" + setorContato + "', EMAIL = '" + emailContato + "', " +
+                        "CARGO = '" + descCargo + "', EMAIL = '" + emailContato + "', " +
                         "TEL1 = '" + tel1Contato + "', TEL2 = '" + tel2Contato + "', " +
                         "DOCUMENTO = '" + docContato +"', DATA = '" + dataContato + "', " +
                         "CEP = '" + cepContato + "', ENDERECO = '" + endContato + "', " +
@@ -1397,20 +1439,22 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                         "UF = '" + sUF + "', CODVENDEDOR = " + codVendedor + ", BAIRRO = '" + descBairro + "', " +
                         "DESC_CIDADE = '" + NomeCidade + "', CODCLIENTE = " + CodCliente + ", TIPO = '" + sTipoContato + "', " +
                         "OBS = '" + obsContato + "', TIPO_POS = " + tipoContatoPos + ", CODBAIRRO = " + bairroPos + ", " +
-                        "CODCIDADE = " + cidadePos + ", UFPOSITION = " + ufPosition
+                        "CODCIDADE = " + cidadePos + ", UFPOSITION = " + ufPosition + ", SETOR = '" + setorContato +"', CARGO_POS = " +
+                        posCargo
                         /*"where CODCONTATO_INT = " + codInternoUlt*/);
             } else {
                 DB.execSQL("INSERT INTO CONTATO_TEMPORARIO (NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
-                        "COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, TIPO_POS, CODBAIRRO, CODCIDADE, UFPOSITION)" +
-                        " VALUES(" +
-                        "'" + nomeContato + "', '" + setorContato + "', '" +
+                        "COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, TIPO_POS, CODBAIRRO, CODCIDADE, UFPOSITION, " +
+                        "SETOR, CARGO_POS) VALUES(" +
+                        "'" + nomeContato + "', '" + descCargo + "', '" +
                         emailContato + "', '" + tel1Contato + "', '" + tel2Contato +
                         "', '" + docContato+ "', '" + dataContato+ "','" +
                         cepContato +
                         "', '" + endContato + "', '" + numEndContato + "', '" +
                         complContato + "', '" + sUF + "', " + codVendedor + ", '" + descBairro + "', '" +
                         NomeCidade + "', " + CodCliente + ", '" + sTipoContato + "', '" + obsContato + "', " +
-                        tipoContatoPos + ", " + bairroPos + ", " + cidadePos + ", " + ufPosition +");");
+                        tipoContatoPos + ", " + bairroPos + ", " + cidadePos + ", " + ufPosition + ", '" + setorContato + "', " +
+                        posCargo + ");");
             }
         } catch (Exception E) {
             System.out.println();
@@ -1423,7 +1467,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         try {
             Cursor cursor = DB.rawQuery("select NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
                     "COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, codcontato_int, TIPO_POS, " +
-                    "CODBAIRRO, CODCIDADE, UFPOSITION " +
+                    "CODBAIRRO, CODCIDADE, UFPOSITION, SETOR, CARGO_POS " +
                     "from contato_temporario ", null);
             //returnLastId();
             cursor.moveToFirst();
@@ -1431,7 +1475,11 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 String nomeRazao = cursor.getString(cursor.getColumnIndex("NOME"));
                 nome.setText(nomeRazao);
 
-                String setorContato = cursor.getString(cursor.getColumnIndex("CARGO"));
+                descCargo = cursor.getString(cursor.getColumnIndex("CARGO"));
+
+                posCargo = cursor.getInt(cursor.getColumnIndex("CARGO_POS"));
+
+                String setorContato = cursor.getString(cursor.getColumnIndex("SETOR"));
                 setor.setText(setorContato);
 
                 String emailContato = cursor.getString(cursor.getColumnIndex("EMAIL"));
@@ -1628,10 +1676,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         }
     }*/
 
-    public void montaStringHorario(){
-
-    }
-
     public static void comparaHoraMinuto(int horaIn, int minutoIn, int horaFin, int minutoFin, Context context){
         SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
 
@@ -1640,5 +1684,93 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         }catch (Exception E){
 
         }
+    }
+
+    public void salvaNovoCargo(){
+        View view = (LayoutInflater.from(CadastroContatos.this)).inflate(R.layout.input_cargo_contato, null);
+
+        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CadastroContatos.this);
+        alertBuilder.setView(view);
+        final EditText edtCargoContato = (EditText)view.findViewById(R.id.input_cargo_contato);
+
+        alertBuilder.setView(view);
+        alertBuilder.setCancelable(true)
+                .setPositiveButton("Ok", null)
+                .setNegativeButton("Cancelar", null)
+                .setView(view);
+        final AlertDialog mAlertDialog = alertBuilder.create();
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String nCargo = edtCargoContato.getText().toString();
+                        inserirNovoCargoTabela(nCargo);
+                        mAlertDialog.dismiss();
+                    }
+                });
+                Button cancelBtn = mAlertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                cancelBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mAlertDialog.cancel();
+                    }
+                });
+
+            }
+        });
+        mAlertDialog.show();
+    }
+
+    public void selecionaCargoContato() {
+        //cargoContato = TipoCargoEspec.getSelectedItem().toString();
+        try {
+            ArrayList<String> listCargo = new ArrayList<String>();
+            DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
+            Cursor cursorCargo = DB.rawQuery(" SELECT CODCARGO_EXT, CODCARGO, DES_CARGO FROM CARGOS ", null);
+            cursorCargo.moveToFirst();
+            if (cursorCargo.getCount() > 0) {
+                do {
+                    codCargo = cursorCargo.getInt(cursorCargo.getColumnIndex("CODCARGO"));
+                    descCargo = cursorCargo.getString(cursorCargo.getColumnIndex("DES_CARGO"));
+
+                    listCargo.add(descCargo);
+                }while (cursorCargo.moveToNext());
+                cursorCargo.close();
+
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroContatos.this,
+                        android.R.layout.simple_spinner_dropdown_item, listCargo);
+                ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                TipoCargoEspec.setAdapter(spinnerArrayAdapter);
+            }
+
+        } catch (Exception E) {
+            System.out.println("Error" + E);
+        }
+
+    }
+
+    public void inserirNovoCargoTabela(String descCargo){
+        Cursor cursor = null;
+        try {
+            DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
+             cursor = DB.rawQuery("select DES_CARGO from CARGOS " +
+                    "where DES_CARGO = '" + descCargo + "'", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+
+                Util.msg_toast_personal(CadastroContatos.this, "Este cargo já existe cadastrado. Verifique!", Toast.LENGTH_SHORT);
+                cursor.close();
+            } else {
+                DB.execSQL("insert into CARGOS(DES_CARGO) values ('" + descCargo + "');");
+                cursor.close();
+            }
+        }catch (Exception E){
+            E.toString();
+        }
+        selecionaCargoContato();
     }
 }
