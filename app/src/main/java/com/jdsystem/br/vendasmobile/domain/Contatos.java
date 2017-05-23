@@ -29,7 +29,7 @@ public class Contatos {
     public Contatos() {
     }
 
-    public Contatos(String nmcont, String cargo,  String email, String telefone1, String telefone2, String doc, String data, String cep, String endereco,
+    public Contatos(String nmcont, String cargo, String email, String telefone1, String telefone2, String doc, String data, String cep, String endereco,
                     String num, String compl, int cidade, int bairro, String uf, int codvend, int codclieint, int codClieExt, String nomeCliente,
                     int codContato) {
 
@@ -57,7 +57,6 @@ public class Contatos {
         CODCONTATO = codContato;
 
 
-
     }
 
     public String getNomeCont() {
@@ -68,11 +67,11 @@ public class Contatos {
         this.NOME = NomeCont;
     }
 
-    public String getCargo () {
+    public String getCargo() {
         return CARGO;
     }
 
-    public void setCargo (String cargo) {
+    public void setCargo(String cargo) {
         this.CARGO = cargo;
     }
 
@@ -148,47 +147,65 @@ public class Contatos {
         this.COMPLEMENTO = complemento;
     }
 
-    public int getCODCIDADE() {return CODCIDADE;}
+    public int getCODCIDADE() {
+        return CODCIDADE;
+    }
 
     public void setCODCIDADE(int codcidade) {
         this.CODCIDADE = codcidade;
     }
 
-    public int getCODBAIRRO() {return CODBAIRRO;}
+    public int getCODBAIRRO() {
+        return CODBAIRRO;
+    }
 
     public void setCODBAIRRO(int codbairro) {
         this.CODBAIRRO = codbairro;
     }
 
-    public String getUF() {return UF;}
+    public String getUF() {
+        return UF;
+    }
 
     public void setUF(String uf) {
         this.UF = uf;
     }
 
-    public int getCODVENDEDOR() {return CODVENDEDOR;}
+    public int getCODVENDEDOR() {
+        return CODVENDEDOR;
+    }
 
     public void setCODVENDEDOR(int codvend) {
         this.CODVENDEDOR = codvend;
     }
 
-    public int getCODCLIENTE() {return CODCLIENTE;}
+    public int getCODCLIENTE() {
+        return CODCLIENTE;
+    }
 
     public void setCODCLIENTE(int codclieint) {
         this.CODCLIENTE = codclieint;
     }
-    public int getCODCLIEEXT() {return CODCLIE_EXT;}
+
+    public int getCODCLIEEXT() {
+        return CODCLIE_EXT;
+    }
 
     public void setCODCLIEEXT(int codcliente) {
         this.CODCLIE_EXT = codcliente;
     }
-    public String getNOMECLIENTE() {return NOMERAZAO;}
+
+    public String getNOMECLIENTE() {
+        return NOMERAZAO;
+    }
 
     public void setNOMECLIENTE(String nomecliente) {
         this.NOMERAZAO = nomecliente;
     }
 
-    public int getCODCONTATO() {return CODCONTATO;}
+    public int getCODCONTATO() {
+        return CODCONTATO;
+    }
 
     public void setCODCONTATO(int codContato) {
         this.CODCONTATO = codContato;

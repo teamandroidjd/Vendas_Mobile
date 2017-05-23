@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,6 @@ import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.R;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 
 public class ListAdapterItensVenda extends BaseAdapter {
@@ -43,9 +43,9 @@ public class ListAdapterItensVenda extends BaseAdapter {
     @Override
     public View getView(int posicao, View view, ViewGroup viewGroup) {
 
-        SqliteVendaDBean item = (SqliteVendaDBean)getItem(posicao);
-        LayoutInflater layout = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = layout.inflate(R.layout.prod_listview_itenstemp_item,null);
+        SqliteVendaDBean item = (SqliteVendaDBean) getItem(posicao);
+        LayoutInflater layout = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        @SuppressLint("InflateParams") View v = layout.inflate(R.layout.prod_listview_itenstemp_item, null);
 
         TextView descriacao = (TextView) v.findViewById(R.id.prod_lisview_descricao);
         TextView quantidade = (TextView) v.findViewById(R.id.prod_lisview_quantidade);
@@ -55,8 +55,8 @@ public class ListAdapterItensVenda extends BaseAdapter {
         descriacao.setText(item.getVendad_prd_descricao().toString());
         quantidade.setText(item.getVendad_quantidade().toString());
 
-        preco.setText(item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
-        total.setText("R$ " + item.getVendad_total().setScale(2,BigDecimal.ROUND_HALF_UP).toString().replace('.',','));
+        preco.setText(item.getVendad_preco_venda().setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+        total.setText("R$ " + item.getVendad_total().setScale(2, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
         //total.setText(item.getVendad_total().setScale(2,RoundingMode.UP).toString().replace('.',','));
 
 

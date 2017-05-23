@@ -1,7 +1,6 @@
 package com.jdsystem.br.vendasmobile.Pagamento;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.jdsystem.br.vendasmobile.Model.SqliteConRecBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteConRecDao;
@@ -22,13 +21,12 @@ public class Mensal implements iPagamento {
 
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private String ChavePedido;
 
 
     public void gerar_parcela(SqliteConfPagamentoBean pagamento, SqliteVendaCBean vendaCBean, Context ctx) {
 
-        ChavePedido = vendaCBean.getVendac_chave();
-        new SqliteConRecDao(ctx).excluir_Parcela_Chave(ChavePedido);
+        String chavePedido = vendaCBean.getVendac_chave();
+        new SqliteConRecDao(ctx).excluir_Parcela_Chave(chavePedido);
 
         Calendar calendar_default = Calendar.getInstance(new Locale("pt", "BR"));
         calendar_default.set(Calendar.YEAR, 2000);
@@ -38,7 +36,7 @@ public class Mensal implements iPagamento {
 
 
         BigDecimal DIVISOR = new BigDecimal(pagamento.getConf_parcelas());
-        BigDecimal VALOR_PARCELA_DIVIDIDA = vendaCBean.getTotal().divide(DIVISOR,2, BigDecimal.ROUND_DOWN);
+        BigDecimal VALOR_PARCELA_DIVIDIDA = vendaCBean.getTotal().divide(DIVISOR, 2, BigDecimal.ROUND_DOWN);
 
         BigDecimal recalculo = VALOR_PARCELA_DIVIDIDA.multiply(DIVISOR);
         BigDecimal diferenca = vendaCBean.getTotal().subtract(recalculo);

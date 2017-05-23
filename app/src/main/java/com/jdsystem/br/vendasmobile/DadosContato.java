@@ -2,7 +2,6 @@ package com.jdsystem.br.vendasmobile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -12,24 +11,25 @@ import android.view.MenuItem;
 
 import com.jdsystem.br.vendasmobile.Util.SlidingTabLayout;
 import com.jdsystem.br.vendasmobile.adapter.DadosContatosAdapter;
-import com.jdsystem.br.vendasmobile.adapter.ListAdapterViewPager;
 
 /**
  * Created by WKS22 on 27/03/2017.
  */
 
-public class DadosContato extends ActionBarActivity {
+public class DadosContato extends AppCompatActivity {
 
-    private String DocClie,sCodVend,URLPrincipal,usuario,senha,NomeCliente;
     int CodCliente;
     int CodContato;
     Toolbar toolbar;
     ViewPager pager;
     DadosContatosAdapter adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[]={"Dados","Obs.","Produtos", "Horários"};
+    CharSequence Titles[] = {"Dados", "Obs.", "Produtos", "Horários"};
     int Numboftabs = 4;
-
+    private String sCodVend;
+    private String URLPrincipal;
+    private String usuario;
+    private String senha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class DadosContato extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new DadosContatosAdapter(getSupportFragmentManager(),Titles,Numboftabs);
+        adapter = new DadosContatosAdapter(getSupportFragmentManager(), Titles, Numboftabs);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager_cont);
@@ -65,13 +65,13 @@ public class DadosContato extends ActionBarActivity {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                DocClie = params.getString("documento");
+                String docClie = params.getString("documento");
                 sCodVend = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
                 CodCliente = params.getInt(getString(R.string.intent_codcliente));
-                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
+                String nomeCliente = params.getString(getString(R.string.intent_nomerazao));
                 CodContato = params.getInt(getString(R.string.intent_codcontato));
             }
         }
@@ -98,6 +98,7 @@ public class DadosContato extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(DadosContato.this, ConsultaContatos.class);

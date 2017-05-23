@@ -1,12 +1,10 @@
 package com.jdsystem.br.vendasmobile.Pagamento;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.jdsystem.br.vendasmobile.Model.SqliteConRecBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteConRecDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoBean;
-import com.jdsystem.br.vendasmobile.Model.SqliteParametroDao;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaCBean;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.interfaces.iPagamento;
@@ -15,14 +13,13 @@ import java.math.BigDecimal;
 
 
 public class Avista implements iPagamento {
-    private String ChavePedido;
 
 
     @Override
     public void gerar_parcela(SqliteConfPagamentoBean pagamento, SqliteVendaCBean vendaCBean, Context ctx) {
 
-        ChavePedido = vendaCBean.getVendac_chave();
-        new SqliteConRecDao(ctx).excluir_Parcela_Chave(ChavePedido);
+        String chavePedido = vendaCBean.getVendac_chave();
+        new SqliteConRecDao(ctx).excluir_Parcela_Chave(chavePedido);
 
         //BigDecimal PERCENTUAL_DESCONTO = new BigDecimal(new SqliteParametroDao(ctx).busca_parametros().getP_desconto_do_vendedor());
         //BigDecimal PERCENTUAL_DESCONTO = BigDecimal.valueOf(0);

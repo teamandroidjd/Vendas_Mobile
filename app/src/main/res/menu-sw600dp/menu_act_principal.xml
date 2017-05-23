@@ -4,9 +4,9 @@
 
     <item
         android:id="@+id/alteraperfil"
+        android:icon="@drawable/alteraperfil"
         android:orderInCategory="100"
         android:title="Alterar perfil"
-        android:icon="@drawable/alteraperfil"
         app:showAsAction="ifRoom" />
 
     <item

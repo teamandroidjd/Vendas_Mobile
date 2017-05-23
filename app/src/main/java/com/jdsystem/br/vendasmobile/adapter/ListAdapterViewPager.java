@@ -34,21 +34,15 @@ public class ListAdapterViewPager extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        if(position == 0) // if the position is 0 we are returning the First tab
+        if (position == 0) // if the position is 0 we are returning the First tab
         {
 
-            act_TH_dadosclie tab1 = new act_TH_dadosclie();
-            return tab1;
-        }
-        else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+            return new act_TH_dadosclie();
+        } else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
-            act_TH_contclie tab2 = new act_TH_contclie();
-            return tab2;
-        }
-        else
-        {
-            act_TH_obsclie tab3 = new act_TH_obsclie();
-            return tab3;
+            return new act_TH_contclie();
+        } else {
+            return new act_TH_obsclie();
         }
 
 

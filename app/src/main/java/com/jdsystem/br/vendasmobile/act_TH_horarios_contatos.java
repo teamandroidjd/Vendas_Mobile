@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -21,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -41,6 +42,8 @@ import static java.lang.Integer.parseInt;
  */
 
 public class act_TH_horarios_contatos extends Fragment {
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    public SharedPreferences prefs;
     int sCodContato;
     String sCodVend, URLPrincipal, usuario, senha, DOMINGO = "Domingo",
             SEGUNDA = "Segunda-feira",
@@ -52,24 +55,74 @@ public class act_TH_horarios_contatos extends Fragment {
             sDiaSemana, horarioInicial, horarioFinal, agendaContato;
     int hour, minute, hora1, minute1, hora2, minute2, codInternoUlt, codDiaSemana;
     SQLiteDatabase DB;
-    private Context ctx;
-    private Activity act;
     TextView TAG_HORARIOS_CONTATOS;
     TimePickerDialog timePickerDialog;
     EditText idEditText, horaFinal, horaInicial;
     ArrayList<String> diasContatos;
     ArrayAdapter<String> arrayAdapter;
     ListView listView;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
+    private Context ctx;
+    private Activity act;
+    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
+            hour = hourOfDay;
+            minute = minuteOfHour;
+
+            if (idEditText.equals(horaFinal)) {
+                hora2 = hour;
+                minute2 = minute;
+                //horarioFinal = converteZero(Integer.toString(hour)) + converteZero(Integer.toString(minute));
+                horaFinal.setText(converteZero(Integer.toString(hour)) + ":" + converteZero(Integer.toString(minute)));
+                idEditText = null;
+            } else if (idEditText.equals(horaInicial)) {
+                hora1 = hour;
+                minute1 = minute;
+                //horarioInicial = converteZero(Integer.toString(hour)) + converteZero(Integer.toString(minute));
+                horaInicial.setText(converteZero(Integer.toString(hour)) + ":" + converteZero(Integer.toString(minute)));
+                idEditText = null;
+            }
+            Calendar time = Calendar.getInstance();
+            time.set(Calendar.HOUR_OF_DAY, hour);
+            time.set(Calendar.MINUTE, minute);
+        }
+    };
+
+    public static void excluiContatoAgendado(String busca, int codContato, Context context) {
+        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
+        Cursor cursor = db.rawQuery("select coddiacontato, cod_dia_semana, codcontatoint, hora_inicio, minuto_inicio, hora_final, minuto_final " +
+                "from dias_contatos " +
+                "where codcontatoint = " + codContato, null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            do {
+                int codSemana = cursor.getInt(cursor.getColumnIndex("dias_contatos.cod_dia_semana"));
+                String mDiaSemana = Util.diaSemana(codSemana);
+                String horaInicio = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("hora_inicio"))));
+                String minutoInicio = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("minuto_inicio"))));
+                String horaFinal = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("hora_final"))));
+                String minutoFinal = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("minuto_final"))));
+                String indiceAgenda = Integer.toString(cursor.getInt(cursor.getColumnIndex("coddiacontato")));
+                String diaVisita = mDiaSemana + ", de " + horaInicio + ":" + minutoInicio + " às " + horaFinal + ":" + minutoFinal;
+
+                if (diaVisita.equals(busca)) {
+                    db.execSQL("delete from dias_contatos " +
+                            "where coddiacontato = " + indiceAgenda);
+                    cursor.moveToLast();
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.act_horarios_contato, container, false);
         ctx = getContext();
 
-        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
 
@@ -108,9 +161,9 @@ public class act_TH_horarios_contatos extends Fragment {
                                 String itemLista = listView.getItemAtPosition(position).toString();
                                 arrayAdapter.remove(diasContatos.get(position));
                                 arrayAdapter.notifyDataSetChanged();
-                                if(arrayAdapter.getCount() > 0){
+                                if (arrayAdapter.getCount() > 0) {
                                     TAG_HORARIOS_CONTATOS.setText("Horários agendados");
-                                }else {
+                                } else {
                                     TAG_HORARIOS_CONTATOS.setText("Nenhum contato agendado!");
                                 }
                                 try {
@@ -123,7 +176,6 @@ public class act_TH_horarios_contatos extends Fragment {
                         .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                return;
                             }
                         });
                 AlertDialog alert = confirmRemove.create();
@@ -145,7 +197,7 @@ public class act_TH_horarios_contatos extends Fragment {
         }
         CadastroContatos.excluiBaseTempContatos(ctx);
         diasContatos = diasMarcadosContatos();
-        arrayAdapter = new ArrayAdapter<String>(ctx,android.R.layout.simple_list_item_1, diasContatos);
+        arrayAdapter = new ArrayAdapter<String>(ctx, android.R.layout.simple_list_item_1, diasContatos);
         listView.setAdapter(arrayAdapter);
 
         FloatingActionButton horariosContatos = (FloatingActionButton) v.findViewById(R.id.cad_contato_horario);
@@ -153,7 +205,7 @@ public class act_TH_horarios_contatos extends Fragment {
             @Override
             public void onClick(View vi) {
 
-                View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_horario_contato, null);
+                @SuppressLint("InflateParams") View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_horario_contato, null);
 
                 final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ctx);
                 alertBuilder.setView(fragView);
@@ -229,9 +281,13 @@ public class act_TH_horarios_contatos extends Fragment {
 
                                 if ((horaFinal.getText().toString().equals("")) || (horaInicial.getText().toString().equals(""))) {
                                     if ((horaInicial.getText().toString().equals("")) || (horaInicial.getText().toString().equals(null))) {
-                                        Util.msg_toast_personal(ctx, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(ctx, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT);
+                                        }
                                     } else if ((horaFinal.getText().toString().equals("")) || (horaFinal.getText().toString().equals(null))) {
-                                        Util.msg_toast_personal(ctx, "Horário final de visita não informado!", Toast.LENGTH_SHORT);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(ctx, "Horário final de visita não informado!", Toast.LENGTH_SHORT);
+                                        }
                                     }
                                 } else {
                                     horarioInicial = horaInicial.getText().toString();
@@ -241,8 +297,10 @@ public class act_TH_horarios_contatos extends Fragment {
                                     int b = parseInt(horarioInicial.substring(0, 2));
 
                                     if (a < b) {
-                                        Util.msg_toast_personal(ctx, "Horário final " +
-                                                "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(ctx, "Horário final " +
+                                                    "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT);
+                                        }
                                     } else {
                                         salvarAgenda();
                                         /*agendaContato = sDiaSemana + ", de " + converteZero(Integer.toString(hora1)) +
@@ -254,9 +312,9 @@ public class act_TH_horarios_contatos extends Fragment {
                                         arrayAdapter = new ArrayAdapter<String>(ctx,
                                                 android.R.layout.simple_list_item_1, diasContatos);
                                         listView.setAdapter(arrayAdapter);
-                                        if(arrayAdapter.getCount() > 0){
+                                        if (arrayAdapter.getCount() > 0) {
                                             TAG_HORARIOS_CONTATOS.setText("Horários agendados");
-                                        }else {
+                                        } else {
                                             TAG_HORARIOS_CONTATOS.setText("Nenhum contato agendado!");
                                         }
                                         mAlertDialog.dismiss();
@@ -319,60 +377,6 @@ public class act_TH_horarios_contatos extends Fragment {
             Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
         }
         return diasMarcadosVisita;
-    }
-
-
-    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
-            hour = hourOfDay;
-            minute = minuteOfHour;
-
-            if (idEditText.equals(horaFinal)) {
-                hora2 = hour;
-                minute2 = minute;
-                //horarioFinal = converteZero(Integer.toString(hour)) + converteZero(Integer.toString(minute));
-                horaFinal.setText(converteZero(Integer.toString(hour)) + ":" + converteZero(Integer.toString(minute)));
-                idEditText = null;
-            } else if (idEditText.equals(horaInicial)) {
-                hora1 = hour;
-                minute1 = minute;
-                //horarioInicial = converteZero(Integer.toString(hour)) + converteZero(Integer.toString(minute));
-                horaInicial.setText(converteZero(Integer.toString(hour)) + ":" + converteZero(Integer.toString(minute)));
-                idEditText = null;
-            }
-            Calendar time = Calendar.getInstance();
-            time.set(Calendar.HOUR_OF_DAY, hour);
-            time.set(Calendar.MINUTE, minute);
-        }
-    };
-
-    public static void excluiContatoAgendado(String busca, int codContato, Context context) {
-        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
-        Cursor cursor = db.rawQuery("select coddiacontato, cod_dia_semana, codcontatoint, hora_inicio, minuto_inicio, hora_final, minuto_final " +
-                "from dias_contatos " +
-                "where codcontatoint = " + codContato, null);
-
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            do {
-                int codSemana = cursor.getInt(cursor.getColumnIndex("dias_contatos.cod_dia_semana"));
-                String mDiaSemana = Util.diaSemana(codSemana);
-                String horaInicio = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("hora_inicio"))));
-                String minutoInicio = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("minuto_inicio"))));
-                String horaFinal = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("hora_final"))));
-                String minutoFinal = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("minuto_final"))));
-                String indiceAgenda = Integer.toString(cursor.getInt(cursor.getColumnIndex("coddiacontato")));
-                String diaVisita = mDiaSemana + ", de " + horaInicio + ":" + minutoInicio + " às " + horaFinal + ":" + minutoFinal;
-
-                if (diaVisita.equals(busca)) {
-                    db.execSQL("delete from dias_contatos " +
-                            "where coddiacontato = " + indiceAgenda);
-                    cursor.moveToLast();
-                }
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
     }
 }
 

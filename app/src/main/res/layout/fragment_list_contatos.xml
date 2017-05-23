@@ -4,23 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_list_sinc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
-        <com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller
-            android:id="@+id/fast_scroller"
-            android:layout_width="24dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
+    <com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller
+        android:id="@+id/fast_scroller"
+        android:layout_width="24dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
 
-            recyclerviewfastscroller:rfs_barColor="@color/fastScrollBarColor"
-            recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded"
-            />
-
+        recyclerviewfastscroller:rfs_barColor="@color/fastScrollBarColor"
+        recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded" />
 
 
 </RelativeLayout>

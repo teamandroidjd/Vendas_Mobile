@@ -1,8 +1,14 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -12,14 +18,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
+import com.jdsystem.br.vendasmobile.CadastroClientes;
 import com.jdsystem.br.vendasmobile.CadastroContatos;
+import com.jdsystem.br.vendasmobile.CadastroPedidos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConsultaClientes;
 import com.jdsystem.br.vendasmobile.ConsultaPedidos;
-import com.jdsystem.br.vendasmobile.CadastroPedidos;
-import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.DadosCliente;
+import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Util;
@@ -35,15 +44,13 @@ import java.util.List;
 
 public class FragmentCliente extends Fragment implements RecyclerViewOnClickListenerHack {
 
-    private RecyclerView mRecyclerView;
-    private List<Clientes> mList;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
     int flag, cadContato;
     String numPedido, chavePedido, usuario, senha, codVendedor, CodEmpresa, dataEntrega, telaInvocada, urlPrincipal;
     boolean consultaPedido;
     SQLiteDatabase DB;
-    private SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
+    private RecyclerView mRecyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,7 +93,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        mList = ((ConsultaClientes) getActivity()).CarregarClientes();
+        List<Clientes> mList = ((ConsultaClientes) getActivity()).CarregarClientes();
         ListAdapterClientes adapter = new ListAdapterClientes(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);
@@ -112,8 +119,8 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
 
     @Override
     public void onClickListener(View view, int position) {
-        if (consultaPedido == true) {
-            ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
+        ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
+        if (consultaPedido) {
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             Intent intentp = new Intent(getActivity(), ConsultaPedidos.class);
@@ -130,7 +137,6 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             getActivity().finish();
 
         } else if (flag == 0 && cadContato == 0) {
-            ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             Intent intentp = new Intent(getActivity(), DadosCliente.class);
@@ -147,7 +153,6 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             getActivity().finish();
 
         } else if (flag == 0 && cadContato == 1) {
-            ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
 
@@ -165,7 +170,6 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             getActivity().finish();
 
         } else {
-            ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
             String CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(position);
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
 
@@ -214,11 +218,12 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                 }
             } else if (BloqClie.equals("S")) {
                 Boolean ConexOk = Util.checarConexaoCelular(getActivity());
-                if (ConexOk == true) {
+                if (ConexOk) {
                     Sincronismo.SincronizarClientesStatic(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno), null, null, null);
                     Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + CodigoClienteInterno + " AND CODPERFIL = " + idPerfil, null);
                     cursorclie.moveToFirst();
                     bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
+                    cursorclie.close();
                 }
                 if (bloqueio.equals("01") || bloqueio.equals("1")) {
                     if (numPedido == null) {
@@ -288,12 +293,110 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
 
 
     @Override
-    public void onLongClickListener(View view, int position) {
+    public void onLongClickListener(View view, final int position) {
+        final ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
+        final String CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(position);
+        final String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
+        String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
+        if (CodigoClienteExterno == null) {
 
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            @SuppressLint("InflateParams") final View formElementsView = inflater.inflate(R.layout.alterar_cliente, null, false);
+            final RadioGroup genderRadioGroup = (RadioGroup) formElementsView.findViewById(R.id.genderRadioGroup);
+            new AlertDialog.Builder(getActivity()).setView(formElementsView)
+                    .setTitle("Cliente: " + nomeRazao)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @TargetApi(11)
+                        public void onClick(DialogInterface dialog, int id) {
+                            int selectedId = genderRadioGroup.getCheckedRadioButtonId();
+                            if (selectedId > 0) {
+                                RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
+                                if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
+                                    if (CodigoClienteExterno == null) {
+                                        String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
+                                        Intent intentp = new Intent(getActivity(), CadastroClientes.class);
+                                        Bundle params = new Bundle();
+                                        params.putInt(getString(R.string.intent_codcliente), Integer.parseInt(CodigoClienteInterno));
+                                        params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                        params.putString(getString(R.string.intent_usuario), usuario);
+                                        params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+                                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                        params.putString(getString(R.string.intent_senha), senha);
+                                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                                        params.putInt(getString(R.string.intent_flag), flag);
+
+                                        intentp.putExtras(params);
+                                        startActivity(intentp);
+                                        getActivity().finish();
+                                    } else {
+                                        Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                                        return;
+                                    }
+
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Excluir")) {
+                                    DB = new ConfigDB(getActivity()).getReadableDatabase();
+                                    if (CodigoClienteExterno == null) {
+                                        try {
+                                            DB.execSQL("DELETE FROM CLIENTES WHERE CODCLIE_INT = '" + CodigoClienteInterno + "' AND CODPERFIL = " + idPerfil);
+                                            Intent intent = ((ConsultaClientes) getActivity()).getIntent();
+                                            ((ConsultaClientes) getActivity()).finish();
+                                            startActivity(intent);
+                                            Util.msg_toast_personal(getActivity(), "Cadastro excluído com sucesso!", Util.ALERTA);
+                                        } catch (Exception e) {
+                                            e.toString();
+                                        }
+                                    } else {
+                                        Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                                        return;
+                                    }
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
+                                    if (CodigoClienteExterno == null) {
+                                        String clieEnvio = Sincronismo.SincronizarClientesEnvioStatic(CodigoClienteInterno, getActivity(), usuario, senha, null, null, null);
+                                        if (!clieEnvio.equals("0")) {
+                                            Intent intent = ((ConsultaClientes) getActivity()).getIntent();
+                                            ((ConsultaClientes) getActivity()).finish();
+                                            startActivity(intent);
+                                            Util.msg_toast_personal(getActivity(), clieEnvio, Util.ALERTA);
+                                        } else {
+                                            Util.msg_toast_personal(getActivity(), "Não é possível enviar o clientes. " + clieEnvio + "", Util.ALERTA);
+                                            return;
+                                        }
+                                    } else {
+                                        Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                                        return;
+                                    }
+
+                                }
+
+                            }
+                        }
+                    })
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    }).
+                    show();
+
+            Configuration configuration = getResources().getConfiguration();
+
+            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+
+            } else {
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            }
+
+        }else {
+            Util.msg_toast_personal(getActivity(), "Opção disponível somente para clientes não sincronizados!", Util.ALERTA);
+            return;
+        }
     }
 
+
     private void carregarpreferencias() {
-        prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
+        SharedPreferences prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         urlPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
     }

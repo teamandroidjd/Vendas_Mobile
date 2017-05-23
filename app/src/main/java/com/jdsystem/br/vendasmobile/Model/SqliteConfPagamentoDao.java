@@ -22,7 +22,6 @@ public class SqliteConfPagamentoDao {
     private SQLiteStatement stmtDel;
     private SQLiteDatabase db;
     private Cursor cursor;
-    private boolean gravou;
 
     public SqliteConfPagamentoDao(Context ctx) {
         this.ctx = ctx;
@@ -30,7 +29,7 @@ public class SqliteConfPagamentoDao {
 
     public boolean gravar_CONFPAGAMENTO(SqliteConfPagamentoBean pagamento, Boolean AtuPedido, String ChavePedido) {
         db = new ConfigDB(ctx).getWritableDatabase();
-        gravou = false;
+        boolean gravou = false;
         try {
             if (AtuPedido.equals(true)) {
                 Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado)  VALUES (?,?,?,?,?,?,?)";
@@ -275,10 +274,10 @@ public class SqliteConfPagamentoDao {
                     conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
                     conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
                     conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
-                    db.execSQL("UPDATE CONFPAGAMENTO SET conf_sementrada_comentrada = '"+conf.getConf_codigo()+"', conf_tipo_pagamento = '"+conf.getConf_tipo_pagamento()+"', conf_recebeucom_din_chq_car = '"+conf.getConf_recebeucom_din_chq_car()+
-                            "', conf_valor_recebido = '"+conf.getConf_valor_recebido()+"', conf_parcelas = '"+conf.getConf_parcelas()+"', vendac_chave = '"+conf.getVendac_chave()+"', conf_enviado = '"+conf.getConf_enviado()+"', conf_temp = 'N' WHERE vendac_chave = '"+conf.getVendac_chave() +"' AND conf_temp = 'N' ");
+                    db.execSQL("UPDATE CONFPAGAMENTO SET conf_sementrada_comentrada = '" + conf.getConf_codigo() + "', conf_tipo_pagamento = '" + conf.getConf_tipo_pagamento() + "', conf_recebeucom_din_chq_car = '" + conf.getConf_recebeucom_din_chq_car() +
+                            "', conf_valor_recebido = '" + conf.getConf_valor_recebido() + "', conf_parcelas = '" + conf.getConf_parcelas() + "', vendac_chave = '" + conf.getVendac_chave() + "', conf_enviado = '" + conf.getConf_enviado() + "', conf_temp = 'N' WHERE vendac_chave = '" + conf.getVendac_chave() + "' AND conf_temp = 'N' ");
                 } while (cursor.moveToNext());
-                db.execSQL("DELETE FROM CONFPAGAMENTO WHERE vendac_chave = " + Chave_pedido +" AND CONF_TEMP = 'T' ");
+                db.execSQL("DELETE FROM CONFPAGAMENTO WHERE vendac_chave = " + Chave_pedido + " AND CONF_TEMP = 'T' ");
             }
         } catch (SQLiteException e) {
             Log.d("busca_CONFPAGAMENTO_sem", e.getMessage());
@@ -299,7 +298,7 @@ public class SqliteConfPagamentoDao {
             cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = " + Chave_pedido + " AND conf_temp = 'T'", null);
             Cursor cursor2 = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = " + Chave_pedido + " AND conf_temp = 'N'", null);
             cursor2.moveToFirst();
-            if(cursor2.getCount() > 0){
+            if (cursor2.getCount() > 0) {
                 tipopgtoN = cursor2.getString(cursor.getColumnIndex("conf_tipo_pagamento"));
                 vlrecebidoN = cursor2.getDouble(cursor.getColumnIndex("conf_valor_recebido"));
                 parcelaN = cursor2.getInt(cursor.getColumnIndex("conf_parcelas"));
@@ -343,7 +342,7 @@ public class SqliteConfPagamentoDao {
 
     public void excluir_FormaPgto_Chave(String ChavePedido) {
         db = new ConfigDB(ctx).getWritableDatabase();
-        String SqlDel = "DELETE FROM CONFPAGAMENTO WHERE vendac_chave =" + ChavePedido +" and conf_temp = 'N' ";
+        String SqlDel = "DELETE FROM CONFPAGAMENTO WHERE vendac_chave =" + ChavePedido + " and conf_temp = 'N' ";
         try {
             stmtDel = db.compileStatement(SqlDel);
             stmtDel.executeUpdateDelete();

@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array
-        name="tipo_pessoa">
+    <string-array name="tipo_pessoa">
         <item>Pessoa Física</item>
         <item>Pessoa Jurídica</item>
     </string-array>
-    <string-array
-        name="forma_pgto">
-        <item>Dinheiro</item>
-        <item>Crediário</item>
-        <item>Cartão de Crédito</item>
-    </string-array>
-    <string-array
-        name="situacao_pedido">
+    <string-array name="situacao_pedido">
         <item>Todos</item>
         <item>Orçamento</item>
         <item>Cancelado</item>
@@ -20,8 +12,7 @@
         <item>Sincronizado</item>
         <item>Gerar Venda</item>
     </string-array>
-    <string-array
-        name="uf">
+    <string-array name="uf">
         <item>Selecione um estado</item>
         <item>Acre</item>
         <item>Alagoas</item>
@@ -46,7 +37,8 @@
         <item>Rio Grande do Sul</item>
         <item>Rondônia</item>
         <item>Roraima</item>
-        <item>Santa Catarina</item>	SC
+        <item>Santa Catarina</item>
+        SC
         <item>São Paulo</item>
         <item>Sergipe</item>
         <item>Tocantins</item>
@@ -58,9 +50,6 @@
         <item>Selecione o tipo de contato</item>
         <item>Cliente</item>
         <item>Outros</item>
-    </string-array>
-    <string-array name="Cargo_espec">
-        <item>Selecione o Cargo/Especialidade</item>
     </string-array>
     <string-array name="horario_contato">
         <item>Domingo</item>

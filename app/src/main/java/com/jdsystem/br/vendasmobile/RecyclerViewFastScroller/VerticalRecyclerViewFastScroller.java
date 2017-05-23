@@ -14,7 +14,8 @@ public class VerticalRecyclerViewFastScroller extends AbsRecyclerViewFastScrolle
 
     @Nullable
     private VerticalScrollProgressCalculator mScrollProgressCalculator;
-    @Nullable private VerticalScreenPositionCalculator mScreenPositionCalculator;
+    @Nullable
+    private VerticalScreenPositionCalculator mScreenPositionCalculator;
 
     public VerticalRecyclerViewFastScroller(Context context) {
         this(context, null);

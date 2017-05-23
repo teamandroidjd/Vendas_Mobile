@@ -1,7 +1,5 @@
 package com.jdsystem.br.vendasmobile.domain;
 
-import android.widget.Button;
-
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
 
 import java.math.BigDecimal;
@@ -21,6 +19,13 @@ public class ItensPedido extends SqliteVendaD_TempBean {
     public ItensPedido() {
     }
 
+    public ItensPedido(String CodigoManual, String Descricao, String UnidVenda, String Preco) {
+        this.CodigoManual = CodigoManual;
+        this.Descricao = Descricao;
+        this.UnidVenda = UnidVenda;
+        this.Preco = Preco;
+    }
+
     public String getEdtqtdItem() {
 
         return edtqtdItem;
@@ -29,13 +34,6 @@ public class ItensPedido extends SqliteVendaD_TempBean {
     public void setEdtqtdItem(String edtqtdItem) {
 
         this.edtqtdItem = edtqtdItem;
-    }
-
-    public ItensPedido(String CodigoManual, String Descricao, String UnidVenda, String Preco) {
-        this.CodigoManual = CodigoManual;
-        this.Descricao = Descricao;
-        this.UnidVenda = UnidVenda;
-        this.Preco = Preco;
     }
 
     public String getCodigoManual() {

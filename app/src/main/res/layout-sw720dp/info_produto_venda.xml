@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
@@ -9,52 +8,52 @@
 
     <TextView
         android:id="@+id/txv01"
-        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
         android:text="Código do Produto:"
-        android:textStyle="bold"
         android:textColor="@color/colordescClie"
-        android:textSize="35sp"/>
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/info_txv_codproduto"
-        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
         android:layout_marginLeft="35dp"
         android:layout_marginStart="35dp"
         android:layout_toEndOf="@+id/txv01"
         android:layout_toRightOf="@+id/txv01"
         android:text="0125"
-        android:textStyle="bold"
         android:textColor="@color/colorAccent"
-        android:textSize="35sp"/>
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txv02"
-        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txv01"
+        android:layout_margin="10dp"
         android:layout_marginTop="10dp"
         android:text="Descrição Produto:"
-        android:textStyle="bold"
         android:textColor="@color/colordescClie"
-        android:textSize="35sp"/>
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/lnr_info_txv_descricaoproduto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lnr_info_txv_descricaoproduto"
-        android:layout_alignStart="@+id/txv01"
         android:layout_alignLeft="@+id/txv01"
+        android:layout_alignStart="@+id/txv01"
         android:layout_below="@+id/txv02">
 
         <TextView
@@ -62,25 +61,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Coca cola 600 ml 2 litros e 5000 mil reais de produtos com nome grande para acertar aqui"
-            android:textStyle="bold"
             android:textColor="@color/colorAccent"
-            android:textSize="35sp"/>
+            android:textSize="35sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/txv04"
-        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/lnr_info_txv_descricaoproduto"
+        android:layout_margin="10dp"
         android:layout_marginTop="10dp"
         android:text="Unidade de Medida:"
         android:textColor="@color/colordescClie"
-        android:textStyle="bold"
-        android:textSize="35sp"/>
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/info_txv_unmedida"
@@ -91,34 +90,33 @@
         android:layout_alignTop="@+id/txv04"
         android:text="LT"
         android:textColor="@color/colorAccent"
-        android:textSize="35sp"/>
+        android:textSize="35sp" />
 
     <Spinner
         android:id="@+id/spntabpreco"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:textColor="@color/colordescClie"
-        android:textSize="35sp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/txv04"
         android:entries="@array/tabela_preco"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-    </Spinner>
+        android:padding="20dp"
+        android:textColor="@color/colordescClie"
+        android:textSize="35sp"></Spinner>
 
     <TextView
         android:id="@+id/txv06"
-        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/spntabpreco"
+        android:layout_margin="10dp"
         android:layout_marginTop="10dp"
         android:text="Preço do Produto:"
         android:textColor="@color/colordescClie"
-        android:textStyle="bold"
-        android:textSize="35sp"/>
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/info_txv_precoproduto"
@@ -129,33 +127,33 @@
         android:layout_alignTop="@+id/txv06"
         android:text="3.50"
         android:textColor="@color/colorAccent"
-        android:textSize="35sp"/>
+        android:textSize="35sp" />
 
     <TextView
         android:id="@+id/txv07"
-        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txv06"
+        android:layout_margin="10dp"
         android:layout_marginTop="10dp"
         android:text="Informe a quantidade:"
-        android:textStyle="bold"
         android:textColor="@color/colordescClie"
-        android:textSize="35sp"/>
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/info_txt_quantidadecomprada"
-        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txv07"
+        android:layout_margin="10dp"
+        android:inputType="numberDecimal"
         android:textColor="@color/colorAccent"
-        android:textSize="35sp"/>
+        android:textSize="35sp" />
 </RelativeLayout>
 
 

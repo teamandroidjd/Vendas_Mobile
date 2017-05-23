@@ -34,8 +34,7 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = mLayoutInflater.inflate(R.layout.lstprodutos_card, viewGroup, false);
-        MyViewHolder mvh = new MyViewHolder(v);
-        return mvh;
+        return new MyViewHolder(v);
     }
 
     @Override
@@ -90,7 +89,7 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
             myViewHolder.lblStatus.setText("Inativo");
         }
 
-        if (!mList.get(position).getTabela1().equals("")){
+        if (!mList.get(position).getTabela1().equals("")) {
             myViewHolder.lblPreco.setText(mList.get(position).getPreco1());
             myViewHolder.tab1.setText(mList.get(position).getTabela1());
         } else {
@@ -158,7 +157,8 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
     public String ChamaDados(int position) {
         return mList.get(position).getCodigoManual();
     }
-    public int ChamaCodItemExt(int position){
+
+    public int ChamaCodItemExt(int position) {
         return mList.get(position).getCodigoItem();
     }
 

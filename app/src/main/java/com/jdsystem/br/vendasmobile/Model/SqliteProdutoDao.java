@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
 
-
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
@@ -24,8 +23,6 @@ public class SqliteProdutoDao {
     public static final int CATEGORIA_PRODUTO = 3;
 
 
-
-
     private Context ctx;
     private String sql;
     private boolean gravacao;
@@ -33,8 +30,7 @@ public class SqliteProdutoDao {
     private SQLiteDatabase db;
     private Cursor cursor;
 
-    public SqliteProdutoDao(Context ctx)
-    {
+    public SqliteProdutoDao(Context ctx) {
         this.ctx = ctx;
     }
 
@@ -133,8 +129,8 @@ public class SqliteProdutoDao {
         } catch (SQLiteException e) {
             Util.log("SQLiteException buscar_produto_pelo_codigo" + e.getMessage());
         } finally {
-           db.close();
-           cursor.close();
+            db.close();
+            cursor.close();
         }
         return produto;
     }
@@ -145,7 +141,7 @@ public class SqliteProdutoDao {
         if (Param == 1) {
             try {
                 cursor = db.rawQuery("select * from ITENS", null);
-                do{
+                do {
                     SqliteProdutoBean prd = new SqliteProdutoBean();
                     prd.setPrd_codigo(cursor.getString(cursor.getColumnIndex(prd.P_CODIGO_PRODUTO)));
                     //prd.setPrd_EAN13(cursor.getString(cursor.getColumnIndex(prd.P_CODIGO_BARRAS)));
@@ -153,12 +149,12 @@ public class SqliteProdutoDao {
                     prd.setPrd_unmedida(cursor.getString(cursor.getColumnIndex(prd.P_UNIDADE_MEDIDA)));
                     //prd.setPrd_custo(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_CUSTO_PRODUTO))));
                     //prd.setPrd_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_QUANTIDADE_PRODUTO))));
-                    prd.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_PRECO_PROD_PADRAO))).setScale(4,BigDecimal.ROUND_HALF_UP));
+                    prd.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_PRECO_PROD_PADRAO))).setScale(4, BigDecimal.ROUND_HALF_UP));
                     prd.setPrd_categoria(cursor.getString(cursor.getColumnIndex(prd.P_CATEGORIA_PRODUTO)));
                     prd.setPrd_status(cursor.getString(cursor.getColumnIndex(prd.P_STATUS_PRODUTO)));
                     prd.setPrd_apresentacao(cursor.getString(cursor.getColumnIndex(prd.P_APRESENTACAO_PRODUTO)));
                     lista_de_produtos.add(prd);
-                }while (cursor.moveToNext());
+                } while (cursor.moveToNext());
             } catch (SQLiteException e) {
                 Util.log("SQLiteException listar_todos_produtos" + e.getMessage());
             } finally {
@@ -169,7 +165,7 @@ public class SqliteProdutoDao {
         } else {
             try {
                 cursor = db.rawQuery("select * from ITENS where ATIVO = '1' ", null);
-                do{
+                do {
                     SqliteProdutoBean prd = new SqliteProdutoBean();
                     prd.setPrd_codigo(cursor.getString(cursor.getColumnIndex(prd.P_CODIGO_PRODUTO)));
                     //prd.setPrd_EAN13(cursor.getString(cursor.getColumnIndex(prd.P_CODIGO_BARRAS)));
@@ -177,12 +173,12 @@ public class SqliteProdutoDao {
                     prd.setPrd_unmedida(cursor.getString(cursor.getColumnIndex(prd.P_UNIDADE_MEDIDA)));
                     //prd.setPrd_custo(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_CUSTO_PRODUTO))));
                     //prd.setPrd_quantidade(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_QUANTIDADE_PRODUTO))));
-                    prd.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_PRECO_PROD_PADRAO))).setScale(4,BigDecimal.ROUND_HALF_UP));
+                    prd.setPrd_preco(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(prd.P_PRECO_PROD_PADRAO))).setScale(4, BigDecimal.ROUND_HALF_UP));
                     prd.setPrd_categoria(cursor.getString(cursor.getColumnIndex(prd.P_CATEGORIA_PRODUTO)));
                     prd.setPrd_status(cursor.getString(cursor.getColumnIndex(prd.P_STATUS_PRODUTO)));
                     prd.setPrd_apresentacao(cursor.getString(cursor.getColumnIndex(prd.P_APRESENTACAO_PRODUTO)));
                     lista_de_produtos.add(prd);
-                }while (cursor.moveToNext());
+                } while (cursor.moveToNext());
             } catch (SQLiteException e) {
                 Util.log("SQLiteException listar_todos_produtos" + e.getMessage());
             } finally {
@@ -225,7 +221,7 @@ public class SqliteProdutoDao {
             if (valor_campo == null || valor_campo.length() == 0) {
                 if (Param == 1) {
                     cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, ATIVO, CODIGOITEM, DESCRICAO, UNIVENDA, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
-                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS WHERE ATIVO = 'S' ORDER BY DESCRICAO " , null);
+                            "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS WHERE ATIVO = 'S' ORDER BY DESCRICAO ", null);
                 } else {
                     cursor = db.rawQuery("SELECT CODITEMANUAL as _id, CODITEMANUAL, ATIVO, CODIGOITEM, DESCRICAO, UNIVENDA, VLVENDA1,(select DESCRICAOTAB1 from PARAMAPP) as TAB1,VLVENDA2, (select DESCRICAOTAB2 from PARAMAPP) as TAB2, VLVENDA3, (select DESCRICAOTAB3 from PARAMAPP) as TAB3, VLVENDA4,(select DESCRICAOTAB4 from PARAMAPP) as TAB4, VLVENDA5,(select DESCRICAOTAB5 from PARAMAPP) as TAB5, VLVENDAP1,(select DESCRICAOTAB6 from PARAMAPP) as TAB6,VLVENDAP2,(select DESCRICAOTAB7 from PARAMAPP) as TAB7,QTDESTPROD, CLASSE, " +
                             "CASE ATIVO WHEN 1 THEN 'ATIVO' WHEN 2 THEN 'INATIVO' END AS ATIVO, APRESENTACAO FROM ITENS WHERE ATIVO = 'S' ORDER BY DESCRICAO", null);

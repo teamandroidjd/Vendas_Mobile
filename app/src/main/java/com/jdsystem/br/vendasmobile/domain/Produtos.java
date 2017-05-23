@@ -1,7 +1,5 @@
 package com.jdsystem.br.vendasmobile.domain;
 
-import android.widget.Button;
-
 import java.math.BigDecimal;
 
 /**
@@ -37,11 +35,74 @@ public class Produtos extends ItensPedido {
 
     public Produtos() {
     }
-    public int getCodigoItem(){
+
+    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1, BigDecimal Preco2, BigDecimal Preco3, BigDecimal Preco4, BigDecimal Preco5, BigDecimal PrecoP1, BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao, int CodigoExterno/*BigDecimal PrecoPadrao*/) {
+
+        this.Descricao = Descricao;
+        this.CodigoManual = CodigoManual;
+        this.CodigoItem = CodigoExterno;
+        this.Status = Status;
+        this.UnidVenda = UnidVenda;
+        this.Apresentacao = Apresentacao;
+        this.Quantidade = Quantidade;
+        this.Tabela1 = Tabela1;
+        this.Tabela2 = Tabela2;
+        this.Tabela3 = Tabela3;
+        this.Tabela4 = Tabela4;
+        this.Tabela5 = Tabela5;
+        this.Tabpromo1 = Tabpromo1;
+        this.Tabpromo2 = Tabpromo2;
+        this.TipoEstoque = TipoEstoque;
+        this.TabelaPadrao = TabelaPdrao;
+        this.codigoItem = CodigoItem;
+
+        if (!Tabela1.equals("")) {
+            if (Preco1 != null) {
+                this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela2.equals("")) {
+            if (Preco2 != null) {
+                this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela3.equals("")) {
+            if (Preco3 != null) {
+                this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela4.equals("")) {
+            if (Preco4 != null) {
+                this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabela5.equals("")) {
+            if (Preco5 != null) {
+                this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabpromo1.equals("")) {
+            if (PrecoP1 != null) {
+                this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+        if (!Tabpromo2.equals("")) {
+            if (PrecoP1 != null) {
+                this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+            }
+        }
+    }
+
+    public int getCodigoItem() {
         return CodigoItem;
 
     }
-    public void setCodigoExterno(int coditemext){
+
+    public void setCodigoItem(int codItem) {
+        codigoItem = codItem;
+    }
+
+    public void setCodigoExterno(int coditemext) {
         CodigoItem = coditemext;
     }
 
@@ -219,66 +280,5 @@ public class Produtos extends ItensPedido {
 
     public void setTabPadrao(String tabPadrao) {
         TabelaPadrao = tabPadrao;
-    }
-
-    public void setCodigoItem(int codItem){
-        codigoItem = codItem;
-    }
-
-    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1, BigDecimal Preco2, BigDecimal Preco3, BigDecimal Preco4, BigDecimal Preco5, BigDecimal PrecoP1, BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao, int CodigoExterno/*BigDecimal PrecoPadrao*/) {
-
-        this.Descricao = Descricao;
-        this.CodigoManual = CodigoManual;
-        this.CodigoItem = CodigoExterno;
-        this.Status = Status;
-        this.UnidVenda = UnidVenda;
-        this.Apresentacao = Apresentacao;
-        this.Quantidade = Quantidade;
-        this.Tabela1 = Tabela1;
-        this.Tabela2 = Tabela2;
-        this.Tabela3 = Tabela3;
-        this.Tabela4 = Tabela4;
-        this.Tabela5 = Tabela5;
-        this.Tabpromo1 = Tabpromo1;
-        this.Tabpromo2 = Tabpromo2;
-        this.TipoEstoque = TipoEstoque;
-        this.TabelaPadrao = TabelaPdrao;
-        this.codigoItem = CodigoItem;
-
-        if (!Tabela1.equals("")) {
-            if (Preco1 != null) {
-                this.Preco1 = Preco1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-            }
-        }
-        if (!Tabela2.equals("")) {
-            if (Preco2 != null) {
-                this.Preco2 = Preco2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-            }
-        }
-        if (!Tabela3.equals("")) {
-            if (Preco3 != null) {
-                this.Preco3 = Preco3.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-            }
-        }
-        if (!Tabela4.equals("")) {
-            if (Preco4 != null) {
-                this.Preco4 = Preco4.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-            }
-        }
-        if (!Tabela5.equals("")) {
-            if (Preco5 != null) {
-                this.Preco5 = Preco5.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-            }
-        }
-        if (!Tabpromo1.equals("")) {
-            if (PrecoP1 != null) {
-                this.PrecoP1 = PrecoP1.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-            }
-        }
-        if (!Tabpromo2.equals("")) {
-            if (PrecoP1 != null) {
-                this.PrecoP2 = PrecoP2.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-            }
-        }
     }
 }

@@ -4,11 +4,7 @@ package com.jdsystem.br.vendasmobile.Util;
  * Created by eduardo.costa on 18/01/2017.
  */
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.itextpdf.text.Document;

@@ -12,8 +12,6 @@ import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.domain.Contatos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 /**
@@ -35,8 +33,7 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Log.i("LOG", "onCreateViewHolder()");
         View v = mLayoutInflater.inflate(R.layout.lstclie_contatos_card, viewGroup, false);
-        MyViewHolder mvh = new MyViewHolder(v);
-        return mvh;
+        return new MyViewHolder(v);
     }
 
     @Override

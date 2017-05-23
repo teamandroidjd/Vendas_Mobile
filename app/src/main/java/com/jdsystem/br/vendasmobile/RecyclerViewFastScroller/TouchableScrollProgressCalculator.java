@@ -10,9 +10,10 @@ public interface TouchableScrollProgressCalculator extends ScrollProgressCalcula
 
     /**
      * Calculates the scroll progress of a RecyclerView based on a motion event from a scroller
+     *
      * @param event for which to calculate scroll progress
      * @return fraction from [0 to 1] representing the scroll progress
      */
-    public float calculateScrollProgress(MotionEvent event);
+    float calculateScrollProgress(MotionEvent event);
 
 }

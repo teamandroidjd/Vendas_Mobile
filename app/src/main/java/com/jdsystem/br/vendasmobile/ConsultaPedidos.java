@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -45,24 +46,23 @@ import java.util.List;
 public class ConsultaPedidos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
+    public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
-    private Handler handler = new Handler();
+    public ListAdapterPedidos adapter;
+    public SharedPreferences prefs;
     Integer SitPed = 0;
     String CodClie = "0";
     String DtInicio = "0";
     String DtFinal = "0";
     String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, sCodEmpresa, nomeCliente, NomeSitPed;
-    public ListAdapterPedidos adapter;
     ProgressDialog pDialog;
     Pedidos lstpedidos;
     LinearLayout lnenhum;
     SQLiteDatabase DB;
-    private GoogleApiClient client;
     FloatingActionMenu mmPrinc_Pedido, mmPrincNovoPed;
     FloatingActionButton mmSitPedido, mmEmissaoPedido, mmCliePedido, mmNovoPedido;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +102,7 @@ public class ConsultaPedidos extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        //drawer.setDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -135,7 +135,7 @@ public class ConsultaPedidos extends AppCompatActivity
     }
 
     private void declaraobjetos() {
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        GoogleApiClient client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
         lnenhum = (LinearLayout) findViewById(R.id.lnenhum);
         DB = new ConfigDB(this).getReadableDatabase();
         mmPrincNovoPed = (FloatingActionMenu) findViewById(R.id.mmPrincNovoPed);
@@ -149,33 +149,32 @@ public class ConsultaPedidos extends AppCompatActivity
     public void novopedido(View view) {
         Configuration configuration = getResources().getConfiguration();
 
-        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        }else{
+        } else {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
 
         sCodEmpresa = "0";
         try {
-            Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = "+idPerfil, null);
+            Cursor CursEmpr = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV  FROM EMPRESAS WHERE ATIVO = 'S' AND CODPERFIL = " + idPerfil, null);
             CursEmpr.moveToFirst();
             if (CursEmpr.getCount() > 1) {
                 List<String> DadosListEmpresa = new ArrayList<String>();
                 do {
                     DadosListEmpresa.add(CursEmpr.getString(CursEmpr.getColumnIndex("NOMEABREV")));
                 } while (CursEmpr.moveToNext());
+                CursEmpr.close();
 
-                View viewEmp = (LayoutInflater.from(ConsultaPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
+                @SuppressLint("InflateParams") View viewEmp = (LayoutInflater.from(ConsultaPedidos.this)).inflate(R.layout.input_empresa_corrente_pedido, null);
 
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ConsultaPedidos.this);
                 alertBuilder.setView(viewEmp);
                 final Spinner spEmpresaInput = (Spinner) viewEmp.findViewById(R.id.spnEmpresa);
 
-                ArrayAdapter<String> arrayEmpresa = new ArrayAdapter<String>(ConsultaPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa);
-                ArrayAdapter<String> spArrayEmpresa = arrayEmpresa;
-                spArrayEmpresa.setDropDownViewResource(android.R.layout.simple_list_item_1);
-                spEmpresaInput.setAdapter(spArrayEmpresa);
+                new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa).setDropDownViewResource(android.R.layout.simple_list_item_1);
+                spEmpresaInput.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, DadosListEmpresa));
 
                 alertBuilder.setCancelable(true)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -183,7 +182,7 @@ public class ConsultaPedidos extends AppCompatActivity
                             public void onClick(DialogInterface dialog, int which) {
                                 String NomeEmpresa = spEmpresaInput.getSelectedItem().toString();
                                 try {
-                                    Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV  FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "'", null);
+                                    Cursor CursEmpr2 = DB.rawQuery(" SELECT CODEMPRESA, NOMEABREV, CODPERFIL FROM EMPRESAS WHERE NOMEABREV = '" + NomeEmpresa + "' AND CODPERFIL = "+idPerfil, null);
                                     CursEmpr2.moveToFirst();
                                     if (CursEmpr2.getCount() > 0) {
                                         sCodEmpresa = CursEmpr2.getString(CursEmpr2.getColumnIndex("CODEMPRESA"));
@@ -229,7 +228,7 @@ public class ConsultaPedidos extends AppCompatActivity
 
     public void filtrositped(View view) {
 
-        View viewSitPed = (LayoutInflater.from(ConsultaPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
+        @SuppressLint("InflateParams") View viewSitPed = (LayoutInflater.from(ConsultaPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ConsultaPedidos.this);
         alertBuilder.setView(viewSitPed);
@@ -263,7 +262,7 @@ public class ConsultaPedidos extends AppCompatActivity
                             params.putString(getString(R.string.intent_senha), senha);
                             params.putInt(getString(R.string.intent_situacaopedido), SitPed);
                             params.putInt(getString(R.string.intent_codcliente), 0);
-                            params.putString("tipositped",NomeSitPed);
+                            params.putString("tipositped", NomeSitPed);
                             params.putString(getString(R.string.intent_datainicial), "0");
                             params.putString(getString(R.string.intent_datafinal), "0");
 
@@ -353,7 +352,7 @@ public class ConsultaPedidos extends AppCompatActivity
                 try {
                     //Resultado = data.getExtras().getBoolean("atualizalista");
                     Resultado = true;
-                    if (Resultado == true) {
+                    if (Resultado) {
                         SitPed = 0;
                         CodClie = "0";
                         DtInicio = "0";
@@ -520,10 +519,8 @@ public class ConsultaPedidos extends AppCompatActivity
                 }
             }
 
-            ;
-
         });
-        if(pDialog.isShowing()){
+        if (pDialog.isShowing()) {
             pDialog.dismiss();
         }
     }
@@ -536,26 +533,26 @@ public class ConsultaPedidos extends AppCompatActivity
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.CODPERFIL, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON (PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA) AND (PEDOPER.CODPERFIL = EMPRESAS.CODPERFIL)" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.FLAGINTEGRADO = '" + SitPed + "' AND PEDOPER.CODPERFIL = " +idPerfil+
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.FLAGINTEGRADO = '" + SitPed + "' AND PEDOPER.CODPERFIL = " + idPerfil +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             } else if (!CodClie.equals("0")) {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.CODPERFIL, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON (PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA) AND (PEDOPER.CODPERFIL = EMPRESAS.CODPERFIL)" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODCLIE = " + CodClie + " AND PEDOPER.CODPERFIL = " +idPerfil+
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODCLIE = " + CodClie + " AND PEDOPER.CODPERFIL = " + idPerfil +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             } else if (!DtInicio.equals("0")) {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.NUMPED, PEDOPER.CODPERFIL, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON (PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA) AND (PEDOPER.CODPERFIL = EMPRESAS.CODPERFIL)" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODPERFIL = "+idPerfil+" AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal + 1 + "')" +
+                        " WHERE PEDOPER.CODVENDEDOR = " + codVendedor + " AND PEDOPER.CODPERFIL = " + idPerfil + " AND (PEDOPER.DATAEMIS >= '" + DtInicio + "' AND DATAEMIS < '" + DtFinal + 1 + "')" +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
 
             } else {
                 CursorPed = DB.rawQuery(" SELECT EMPRESAS.NOMEABREV, PEDOPER.CODPERFIL, PEDOPER.NUMPED, PEDOPER.DATAEMIS, PEDOPER.NOMECLIE, PEDOPER.VALORTOTAL, PEDOPER.STATUS, " +
                         " PEDOPER.FLAGINTEGRADO, PEDOPER.NUMPEDIDOERP, PEDOPER.NUMFISCAL, PEDOPER.VLPERCACRES FROM PEDOPER LEFT OUTER JOIN" +
                         " EMPRESAS ON (PEDOPER.CODEMPRESA = EMPRESAS.CODEMPRESA) AND (PEDOPER.CODPERFIL = EMPRESAS.CODPERFIL)" +
-                        " WHERE PEDOPER.CODVENDEDOR = " + Integer.parseInt(codVendedor) +" AND PEDOPER.CODPERFIL = " +idPerfil+
+                        " WHERE PEDOPER.CODVENDEDOR = " + Integer.parseInt(codVendedor) + " AND PEDOPER.CODPERFIL = " + idPerfil +
                         " ORDER BY PEDOPER.DATAEMIS DESC ", null);
             }
 
@@ -600,12 +597,12 @@ public class ConsultaPedidos extends AppCompatActivity
                         String Vendedor = UsuarioLogado;
 
                         String dataEmUmFormato = CursorPed.getString(CursorPed.getColumnIndex("DATAEMIS"));
-                        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+                        /*SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
                         Date data = formato.parse(dataEmUmFormato);
                         formato.applyPattern("dd/MM/yyyy");
-                        String sDataVenda = formato.format(data);
+                        String sDataVenda = formato.format(data);*/
 
-                        lstpedidos = new Pedidos(Situacao, NomeCliente, ValorTotal, Vendedor, sDataVenda, NumPedido, NumPedidoExt, NumFiscal, Empresa);
+                        lstpedidos = new Pedidos(Situacao, NomeCliente, ValorTotal, Vendedor, dataEmUmFormato, NumPedido, NumPedidoExt, NumFiscal, Empresa);
                         DadosList.add(lstpedidos);
                     } catch (Exception E) {
                         Toast.makeText(this, E.toString(), Toast.LENGTH_SHORT).show();

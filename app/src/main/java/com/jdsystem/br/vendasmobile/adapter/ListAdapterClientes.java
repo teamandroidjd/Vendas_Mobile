@@ -1,14 +1,11 @@
 package com.jdsystem.br.vendasmobile.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,9 +14,7 @@ import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.domain.Clientes;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterClientes.MyViewHolder> {
     private List<Clientes> mList;
@@ -38,8 +33,7 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Log.i("LOG", "onCreateViewHolder()");
         View v = mLayoutInflater.inflate(R.layout.lstclientes_card, viewGroup, false);
-        MyViewHolder mvh = new MyViewHolder(v);
-        return mvh;
+        return new MyViewHolder(v);
     }
 
     @Override
@@ -54,40 +48,40 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
         //myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
         //myViewHolder.documento.setText(mList.get(position).getDocumento());
         //myViewHolder.cidade.setText(mList.get(position).getCidade());
-        if(!cidade.equals("NULL") && !cidade.equals("null")){
+        if (!cidade.equals("NULL") && !cidade.equals("null")) {
             myViewHolder.cidade.setText(mList.get(position).getCidade());
-        }else {
+        } else {
             myViewHolder.cidade.setText("");
         }
-        if(!bairro.equals("NULL") && !bairro.equals("null")){
+        if (!bairro.equals("NULL") && !bairro.equals("null")) {
             myViewHolder.bairro.setText(mList.get(position).getBairro());
-        }else {
+        } else {
             myViewHolder.bairro.setText("");
         }
-        if(!estado.equals("NULL") && !estado.equals("null")){
+        if (!estado.equals("NULL") && !estado.equals("null")) {
             myViewHolder.estado.setText(mList.get(position).getEstado());
-        }else {
+        } else {
             myViewHolder.estado.setText("");
         }
 
         myViewHolder.telefone1.setText(mList.get(position).getTelefone1());
 
-        if(codclieext != null){
-            myViewHolder.codClieExt.setText(mList.get(position).getCodClienteExt());
+        if (codclieext != null) {
+            myViewHolder.codClie.setText(mList.get(position).getCodClienteExt());
             myViewHolder.bolavermelha.setVisibility(View.GONE);
 
-        }else {
-            myViewHolder.codClieInt.setText("");
+        } else {
+            myViewHolder.codClie.setVisibility(View.GONE);
             myViewHolder.bolavermelha.setVisibility(View.VISIBLE);
 
         }
 
-        if (mList.get(position).getDocumento() == null || mList.get(position).getDocumento().equals("")){
+        if (mList.get(position).getDocumento() == null || mList.get(position).getDocumento().equals("")) {
             myViewHolder.documento.setText("CPF/CNPJ: ");
             myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
             myViewHolder.razaoSocial.setVisibility(View.GONE);
         } else if (mList.get(position).getDocumento().replaceAll("[^0123456789]", "").trim().length() == 14) {
-            myViewHolder.documento.setText("CNPJ: " +  Mask.addMask(mList.get(position).getDocumento(), "##.###.###/####-##"));
+            myViewHolder.documento.setText("CNPJ: " + Mask.addMask(mList.get(position).getDocumento(), "##.###.###/####-##"));
             myViewHolder.razaoSocial.setText(mList.get(position).getNomeRazao());
             myViewHolder.nomeFantasia.setText(mList.get(position).getNomeFan());
             myViewHolder.razaoSocial.setVisibility(View.VISIBLE);
@@ -101,7 +95,7 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
             myViewHolder.telefone1.setText("Celular: " + Mask.addMask(telefone, "(##)#####-####"));
         } else if (telefone.length() == 10) {
             myViewHolder.telefone1.setText("Telefone: " + Mask.addMask(telefone, "(##)####-####"));
-        }else{
+        } else {
             myViewHolder.telefone1.setText("Telefone: " + mList.get(position).getTelefone1());
         }
     }
@@ -142,19 +136,20 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
 
         return mList.get(position).getbloqueio();
     }
+
     public String ChamaFlagIntegradoCliente(int position) {
 
         return mList.get(position).getflagintegrado();
     }
+
     public String ChamaNomeRazaoCliente(int position) {
 
         return mList.get(position).getNomeRazao();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public ImageView bolavermelha;
-        public TextView codClieExt;
-        public TextView codClieInt;
+        public TextView codClie;
         public TextView razaoSocial;
         public TextView nomeFantasia;
         public TextView rg;
@@ -170,8 +165,7 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
             super(itemView);
 
             bolavermelha = (ImageView) itemView.findViewById(R.id.bola_vermelha);
-            codClieExt = (TextView) itemView.findViewById(R.id.lblCodClie);
-            codClieInt = (TextView) itemView.findViewById(R.id.lblCodClie);
+            codClie = (TextView) itemView.findViewById(R.id.lblCodClie);
             razaoSocial = (TextView) itemView.findViewById(R.id.lblNomerazao);
             nomeFantasia = (TextView) itemView.findViewById(R.id.lblNomeFanClie);
             documento = (TextView) itemView.findViewById(R.id.lblCNPJ);
@@ -181,6 +175,7 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
             telefone1 = (TextView) itemView.findViewById(R.id.lblTel);
 
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
@@ -188,6 +183,13 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
             if (mRecyclerViewOnClickListenerHack != null) {
                 mRecyclerViewOnClickListenerHack.onClickListener(v, getPosition());
             }
+        }
+        @Override
+        public boolean onLongClick(View v) {
+            if (mRecyclerViewOnClickListenerHack != null) {
+                mRecyclerViewOnClickListenerHack.onLongClickListener(v, getPosition());
+            }
+            return true;
         }
     }
 }

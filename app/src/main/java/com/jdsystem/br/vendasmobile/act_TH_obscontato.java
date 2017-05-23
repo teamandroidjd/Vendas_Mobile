@@ -1,52 +1,77 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.Util.Util;
-
-import static java.lang.Integer.parseInt;
 
 /**
  * Created by WKS22 on 28/03/2017.
  */
 
 public class act_TH_obscontato extends Fragment {
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    public SharedPreferences prefs;
     String obsContato, codVendedor, URLPrincipal, usuario, senha;
     int sCodContato;
     SQLiteDatabase DB;
-    private Context ctx;
-    private Activity act;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
     TextView TAG_OBSCONTATO, dlgObsContato;
     EditText obsDlgContato;
     LinearLayout linearLayout;
+    private Context ctx;
+    private Activity act;
     private AlertDialog alerta;
+
+    private static AlertDialog alteraObsContato(View vi, Context ctx) {
+
+        @SuppressLint("InflateParams") View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_obs_contato, null);
+        EditText obsDlgContato = (EditText) vi.findViewById(R.id.inputobscontato);
+
+        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ctx);
+        alertBuilder.setView(fragView);
+        alertBuilder.setCancelable(true)
+                .setPositiveButton("Ok", null)
+                .setNegativeButton("Cancelar", null)
+                .setView(fragView);
+
+        final AlertDialog mAlertDialog = alertBuilder.create();
+        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+                mAlertDialog.show();
+            }
+        });
+        return mAlertDialog;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,7 +105,7 @@ public class act_TH_obscontato extends Fragment {
         fabCadProdCont.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_obs_contato, null);
+                @SuppressLint("InflateParams") View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_obs_contato, null);
                 obsDlgContato = (EditText) fragView.findViewById(R.id.inputobscontato);
                 carregaObsContato();
                 obsDlgContato.setText(obsContato);
@@ -117,10 +142,10 @@ public class act_TH_obscontato extends Fragment {
                                 builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if(alerta.isShowing()){
+                                        if (alerta.isShowing()) {
                                             alerta.dismiss();
                                         }
-                                        if(mAlertDialog.isShowing()){
+                                        if (mAlertDialog.isShowing()) {
                                             mAlertDialog.dismiss();
                                         }
                                     }
@@ -128,7 +153,7 @@ public class act_TH_obscontato extends Fragment {
                                         .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                if(alerta.isShowing()){
+                                                if (alerta.isShowing()) {
                                                     alerta.dismiss();
                                                 }
                                             }
@@ -173,43 +198,14 @@ public class act_TH_obscontato extends Fragment {
         }
     }
 
-    private static AlertDialog alteraObsContato(View vi, Context ctx) {
-
-        View fragView = (LayoutInflater.from(ctx)).inflate(R.layout.input_obs_contato, null);
-        EditText obsDlgContato = (EditText) vi.findViewById(R.id.inputobscontato);
-
-        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(ctx);
-        alertBuilder.setView(fragView);
-        alertBuilder.setCancelable(true)
-                .setPositiveButton("Ok", null)
-                .setNegativeButton("Cancelar", null)
-                .setView(fragView);
-
-        final AlertDialog mAlertDialog = alertBuilder.create();
-        mAlertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                Button button = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
-                mAlertDialog.show();
-            }
-        });
-        return mAlertDialog;
-    }
-
     private void recuperaObs() {
         Cursor cursor = DB.rawQuery("select contato.obs, contato.codcontato_int, contato.codperfil " +
                 "from contato " +
                 "where contato.codinterno = " + sCodContato, null);
         cursor.moveToFirst();
         if (cursor.getCount() > 0) {
-            String obs = cursor.getString(cursor.getColumnIndex("contato.obs"));
-            obsContato = obs;
+            obsContato = cursor.getString(cursor.getColumnIndex("contato.obs"));
+            cursor.close();
         }
     }
 
@@ -218,8 +214,10 @@ public class act_TH_obscontato extends Fragment {
             DB.execSQL("update contato set obs = '" + obsDlgContato.getText().toString() + "' " +
                     "where contato.codcontato_int = " + sCodContato + " and contato.codperfil = " + idPerfil);
         } catch (Exception E) {
-            Util.msg_toast_personal(getContext(), "Houve um problema ao alterar a observação do cliente. " +
-                    "Entre em contato com a JD System", Toast.LENGTH_SHORT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Util.msg_toast_personal(getContext(), "Houve um problema ao alterar a observação do cliente. " +
+                        "Entre em contato com a JD System", Toast.LENGTH_SHORT);
+            }
             E.toString();
         }
 

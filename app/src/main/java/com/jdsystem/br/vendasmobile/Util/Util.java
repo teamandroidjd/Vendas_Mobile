@@ -1,13 +1,15 @@
 package com.jdsystem.br.vendasmobile.Util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,9 +30,7 @@ import java.util.InputMismatchException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static android.R.attr.breadCrumbShortTitle;
-import static android.R.attr.data;
-
+@SuppressLint("Registered")
 public class Util extends Activity {
 
 
@@ -50,7 +50,7 @@ public class Util extends Activity {
 
         try {
 
-            final ConnectivityManager connMgr = (ConnectivityManager) ctx.getSystemService(ctx.CONNECTIVITY_SERVICE);
+            final ConnectivityManager connMgr = (ConnectivityManager) ctx.getSystemService(CONNECTIVITY_SERVICE);
 
             final android.net.NetworkInfo wifi =
                     connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -116,11 +116,12 @@ public class Util extends Activity {
         Log.i("Script", texto);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static void msg_toast_personal(Context ctx, String mensagem, int Tipo_toast) {
 
 
         LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.toast, null);
+        @SuppressLint("InflateParams") View layout = inflater.inflate(R.layout.toast, null);
         TextView tv = (TextView) layout.findViewById(R.id.txvTexto);
         //tv.setTextColor(Color.BLACK);
         tv.setText(mensagem);
@@ -392,7 +393,7 @@ public class Util extends Activity {
         SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
         try {
             db.execSQL("insert into produtos_contatos (cod_produto_manual, cod_interno_contato, cod_item) values " +
-                    "('" + codProduto + "', " + codContato + ", " + codProdInterno +");");
+                    "('" + codProduto + "', " + codContato + ", " + codProdInterno + ");");
         } catch (Exception E) {
             E.toString();
         }
@@ -458,46 +459,57 @@ public class Util extends Activity {
             case ("RJ"):
                 uf = "Rio de Janeiro";
                 break;
-            case("RN"):
+            case ("RN"):
                 uf = "Rio Grande do Norte";
                 break;
-            case("RS"):
+            case ("RS"):
                 uf = "Rio Grande do Sul";
                 break;
-            case("RO"):
+            case ("RO"):
                 uf = "Rondônia";
                 break;
-            case("RR"):
+            case ("RR"):
                 uf = "Roraima";
                 break;
-            case("SC"):
+            case ("SC"):
                 uf = "Santa Catarina";
                 break;
-            case("SP"):
+            case ("SP"):
                 uf = "São Paulo";
                 break;
-            case("SE"):
+            case ("SE"):
                 uf = "Sergipe";
                 break;
-            case("TO"):
+            case ("TO"):
                 uf = "Tocantins";
                 break;
         }
         return uf;
     }
 
-    public static void gravaContatoSincronizado(Context ctx, String codContato, int codContatoInt){
+    public static void gravaContatoSincronizado(Context ctx, String codContato, int codContatoInt) {
         SQLiteDatabase db = new ConfigDB(ctx).getReadableDatabase();
 
         Cursor cursor = db.rawQuery("select FLAGINTEGRADO, CODCONTATO_EXT from CONTATO " +
                 "where CODCONTATO_INT = " + codContatoInt, null);
         cursor.moveToFirst();
-        if (cursor.getCount()>0){
+        if (cursor.getCount() > 0) {
             do {
                 db.execSQL("update CONTATO set FLAGINTEGRADO = 'S', CODCONTATO_EXT = '" + codContato + "'");
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
+        cursor.close();
 
+    }
+
+    public static String removeZerosEsquerda(String linha) {
+        String x = null;
+        if(linha.startsWith("0")){
+            x = linha.replaceAll("0", "");
+        } else {
+            x = linha;
+        }
+        return x;
     }
 }
 

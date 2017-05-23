@@ -101,10 +101,11 @@ public class Pedidos {
         NumFiscal = numFiscal;
     }
 
-    public String getEmpresa () {
+    public String getEmpresa() {
         return Empresa;
     }
-    public void setEmpresa (String empresa) {
+
+    public void setEmpresa(String empresa) {
         Empresa = empresa;
     }
 }

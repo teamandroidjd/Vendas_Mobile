@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_clientes"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -15,7 +14,6 @@
     tools:showIn="@layout/app_bar_clientes">
 
     <RelativeLayout
-        android:id="@+id/LinearLayoutTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -31,7 +29,6 @@
 
 
     <RelativeLayout
-        android:id="@+id/legendaslistclientes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center">
@@ -51,7 +48,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/bola_vermelha" />
+                    android:src="@drawable/bola_vermelha"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -59,7 +57,7 @@
                     android:layout_marginLeft="2dp"
                     android:text="Não sincronizado"
                     android:textColor="@color/ColorText"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -81,7 +79,6 @@
         android:visibility="gone">
 
         <ListView
-            android:id="@+id/adm_listview_cliente"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cacheColorHint="@color/colorAccent"

@@ -41,13 +41,17 @@ public class Clientes {
         return codClieExt;
     }
 
-    public void setCodClienteExt(String CodClie) { this.codClieExt = CodClie;  }
+    public void setCodClienteExt(String CodClie) {
+        this.codClieExt = CodClie;
+    }
 
     public String getNomeRazao() {
         return nomeRazao;
     }
 
-    public void setNomeRazao(String NomeRazao) { this.nomeRazao = NomeRazao; }
+    public void setNomeRazao(String NomeRazao) {
+        this.nomeRazao = NomeRazao;
+    }
 
     public String getNomeFan() {
         return NomeFan;
@@ -61,7 +65,9 @@ public class Clientes {
         return documento;
     }
 
-    public void setDocumento(String documento) {this.documento = documento; }
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
 
     public String getEstado() {
         return Estado;
@@ -103,11 +109,19 @@ public class Clientes {
         this.Tel2 = Telefone2;
     }
 
-    public String getCodClienteInt() { return codClienteInt; }
+    public String getCodClienteInt() {
+        return codClienteInt;
+    }
 
-    public void setCodClienteInt(String clieint){this.codClienteInt = clieint;}
+    public void setCodClienteInt(String clieint) {
+        this.codClienteInt = clieint;
+    }
 
-    public String getbloqueio() { return bloqueio; }
+    public String getbloqueio() {
+        return bloqueio;
+    }
 
-    public String getflagintegrado() { return integrado; }
+    public String getflagintegrado() {
+        return integrado;
+    }
 }

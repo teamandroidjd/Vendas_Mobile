@@ -14,17 +14,16 @@ import com.jdsystem.br.vendasmobile.Util.Util;
  */
 public class SqliteClienteDao {
 
+    public static final int NOME_DO_CLIENTE = 1;
+    public static final int NOME_FANTASIA = 2;
+    public static final int NOME_CIDADE = 3;
+    public static final int NOME_BAIRRO = 4;
     private Context ctx;
     private String sql;
     private boolean gravacao;
     private SQLiteStatement stmt;
     private SQLiteDatabase db;
     private Cursor cursor;
-
-    public static final int NOME_DO_CLIENTE = 1;
-    public static final int NOME_FANTASIA = 2;
-    public static final int NOME_CIDADE = 3;
-    public static final int NOME_BAIRRO = 4;
 
     public SqliteClienteDao(Context ctx) {
         this.ctx = ctx;

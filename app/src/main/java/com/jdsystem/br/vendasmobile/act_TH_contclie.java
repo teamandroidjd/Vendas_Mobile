@@ -28,34 +28,30 @@ import java.util.HashMap;
 /**
  * Created by hp1 on 21-01-2015.
  */
-public class act_TH_contclie extends Fragment{
+public class act_TH_contclie extends Fragment {
 
-    String sCodVend,usuario,senha,URLPrincipal,NomeCliente;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    public ArrayAdapter<String> adapter;
+    public SharedPreferences prefs;
+    String sCodVend, usuario, senha, URLPrincipal, NomeCliente;
     //int CodCliente;
     String CodCliente;
     SQLiteDatabase DB;
-    private Context ctx;
-    private Activity act;
-    public ArrayAdapter<String> adapter;
     ArrayList<HashMap<String, String>> ListaContatos;
     ListView lstContatos;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
-
+    private Activity act;
+    FloatingActionButton CadContatos;
+    View v;
+    Context ctx;
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.act_contato_clie,container,false);
-        ctx = getContext();
-
-        DB = new ConfigDB(ctx).getReadableDatabase();
-
-        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
-        URLPrincipal = prefs.getString("host", null);
-        idPerfil = prefs.getInt("idperfil", 0);
+        v = inflater.inflate(R.layout.act_contato_clie, container, false);
 
         TextView TAG_TELEFONE_1 = (TextView) v.findViewById(R.id.lblTel1Contato);
         TextView TAG_TELEFONE_2 = (TextView) v.findViewById(R.id.lblTel2Contato);
+
+
 
         Intent intent = ((DadosCliente) getActivity()).getIntent();
         if (intent != null) {
@@ -70,8 +66,12 @@ public class act_TH_contclie extends Fragment{
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
         }
+        declaraobjetos();
+        carregapreferencias();
+        carregarparametros();
 
-        FloatingActionButton CadContatos = (FloatingActionButton) v.findViewById(R.id.cadcontatoclie);
+
+
         CadContatos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,10 +81,10 @@ public class act_TH_contclie extends Fragment{
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_urlprincipal),URLPrincipal);
-                params.putInt(getString(R.string.intent_codcliente),Integer.parseInt(CodCliente));
-                params.putString(getString(R.string.intent_nomerazao),NomeCliente);
-                params.putString(getString(R.string.intent_telainvocada),"act_TH_contclie");
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putInt(getString(R.string.intent_codcliente), Integer.parseInt(CodCliente));
+                params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                params.putString(getString(R.string.intent_telainvocada), "act_TH_contclie");
                 i.putExtras(params);
                 startActivity(i);
                 getActivity().finish();
@@ -93,9 +93,8 @@ public class act_TH_contclie extends Fragment{
         });
 
 
-
         try {
-            Cursor CursorClie = DB.rawQuery(" SELECT CODCONTATO_INT AS _id, NOME, CODPERFIL, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO WHERE CODCLIENTE = " + Integer.parseInt(CodCliente) +" AND CODPERFIL ="+idPerfil, null);
+            Cursor CursorClie = DB.rawQuery(" SELECT CODCONTATO_INT AS _id, NOME, CODPERFIL, CARGO, EMAIL, TEL1, TEL2 FROM CONTATO WHERE CODCLIENTE = " + Integer.parseInt(CodCliente) + " AND CODPERFIL =" + idPerfil, null);
             if (CursorClie.getCount() > 0) {
                 /*CursorClie.moveToFirst();
                 String Tel1 =  CursorClie.getString(CursorClie.getColumnIndex("TEL1"));
@@ -119,22 +118,67 @@ public class act_TH_contclie extends Fragment{
                 }*/
 
 
-
                 String[] colunas = new String[]{"NOME", "CARGO", "EMAIL", "TEL1", "TEL2"};
                 int[] para = new int[]{R.id.lblNomeContato, R.id.lblCargoContato, R.id.lblEmailContato, R.id.lblTel1Contato, R.id.lblTel2Contato};
 
                 SimpleCursorAdapter Adapter = new SimpleCursorAdapter(ctx, R.layout.lstclie_contatos_card, CursorClie, colunas, para, 0);
                 lstContatos = (ListView) v.findViewById(R.id.lstcontatos);
                 lstContatos.setAdapter(Adapter);
+                CursorClie.close();
+
             }
-        }catch (Exception E){
+        } catch (Exception E) {
             E.toString();
         }
         return v;
     }
 
+    private void carregapreferencias() {
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        idPerfil = prefs.getInt("idperfil", 0);
+    }
 
+    private void declaraobjetos() {
+        ctx = getContext();
+        DB = new ConfigDB(ctx).getReadableDatabase();
+        CadContatos = (FloatingActionButton) v.findViewById(R.id.cadcontatoclie);
+    }
 
+    private void carregarparametros() {
+        try {
+            Cursor curosrparam = DB.rawQuery("SELECT HABCADASTRO_CLIE FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
+            curosrparam.moveToFirst();
+            if (curosrparam.getCount() > 0) {
+                int habcadclie = curosrparam.getInt(curosrparam.getColumnIndex("HABCADASTRO_CLIE"));
+                switch (habcadclie){
+                    case 1:// sem permissão para cadastrar clientes para todos os usuários
+                        CadContatos.setVisibility(View.GONE);
+                        break;
+                    case 2://permissão para cadastrar clientes para todos os usuários
+                        CadContatos.setVisibility(View.VISIBLE);
+                        break;
+                    case 3:
+                        curosrparam = DB.rawQuery("SELECT HABCADCLIE FROM USUARIOS WHERE USUARIO = '"+usuario+"' AND CODVEND = "+sCodVend+" AND CODPERFIL = "+idPerfil,null);
+                        curosrparam.moveToFirst();
+                        if(curosrparam.getCount() > 0){
+                            String habcadastroclie = curosrparam.getString(curosrparam.getColumnIndex("HABCADCLIE"));
+                            if(habcadastroclie.equals("1")){
+                                CadContatos.setVisibility(View.VISIBLE);
+                                return;
+                            } else {
+                                CadContatos.setVisibility(View.GONE);
+                                return;
+                            }
+                        }
+                }
+            } else {
+
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+    }
 
 
 }

@@ -6,38 +6,49 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public class DadosProduto extends AppCompatActivity {
 
-    String codVendedor,URLPrincipal,usuario,senha;
-    SQLiteDatabase DB;
-    private Context ctx;
-    private TextView TAG_CODMANUAL, TAG_DESCRICAO, TAG_UNIVENDA, TAG_TAB1, TAG_VLVENDA1, TAG_TAB2, TAG_VLVENDA2, TAG_TAB3, TAG_VLVENDA3, TAG_TAB4, TAG_VLVENDA4,
-            TAG_TAB5, TAG_VLVENDA5, TAG_TAB6, TAG_VLVENDAP1, TAG_TAB7, TAG_VLVENDAP2, TAG_MARCA, TAG_CLASSE, TAG_FABRICANTE, TAG_FORNECEDOR, TAG_APRESENTACAO,
-            TAG_ATIVO, TAG_QTDESTOQUE, TAG_VLVENDAPADRAO, TAG_TABPADRAO;
-    private RelativeLayout TAG_LINEAR1, TAG_LINEAR2, TAG_LINEAR3, TAG_LINEAR4, TAG_LINEAR5, TAG_LINEAR6, TAG_LINEAR7;
-    private LinearLayout TAG_LINEARESTOQUE;
-    public SharedPreferences prefs;
     public static final String CONFIG_HOST = "CONFIG_HOST";
-    int idPerfil,sCodProduto;
+    public SharedPreferences prefs;
+    String codVendedor, URLPrincipal, usuario, senha;
+    SQLiteDatabase DB;
+    int idPerfil, sCodProduto;
+    private Context ctx;
+    private TextView TAG_CODMANUAL;
+    private TextView TAG_DESCRICAO;
+    private TextView TAG_UNIVENDA;
+    private TextView TAG_TAB1;
+    private TextView TAG_VLVENDA1;
+    private TextView TAG_TAB2;
+    private TextView TAG_VLVENDA2;
+    private TextView TAG_TAB3;
+    private TextView TAG_VLVENDA3;
+    private TextView TAG_TAB4;
+    private TextView TAG_VLVENDA4;
+    private TextView TAG_TAB5;
+    private TextView TAG_VLVENDA5;
+    private TextView TAG_TAB6;
+    private TextView TAG_VLVENDAP1;
+    private TextView TAG_TAB7;
+    private TextView TAG_VLVENDAP2;
+    private TextView TAG_MARCA;
+    private TextView TAG_CLASSE;
+    private TextView TAG_FABRICANTE;
+    private TextView TAG_FORNECEDOR;
+    private TextView TAG_APRESENTACAO;
+    private TextView TAG_ATIVO;
+    private TextView TAG_QTDESTOQUE;
+    private TextView TAG_QTDMINVENDA;
+    private RelativeLayout TAG_LINEAR1, TAG_LINEAR2, TAG_LINEAR3, TAG_LINEAR4, TAG_LINEAR5, TAG_LINEAR6, TAG_LINEAR7;
+    private LinearLayout TAG_LINEARESTOQUE, TAG_LINEARQTDMINVEND;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,18 +115,21 @@ public class DadosProduto extends AppCompatActivity {
         TAG_ATIVO = (TextView) findViewById(R.id.txtStatus);
         TAG_LINEARESTOQUE = (LinearLayout) findViewById(R.id.lnrtaEstoque);
         TAG_QTDESTOQUE = (TextView) findViewById(R.id.txt_qtdestoque);
-        TAG_VLVENDAPADRAO = (TextView) findViewById(R.id.txtprecopadrao);
-        TAG_TABPADRAO = (TextView) findViewById(R.id.txttabpadrao);
+        TAG_QTDMINVENDA = (TextView) findViewById(R.id.txvqtdminvend);
+        TAG_LINEARQTDMINVEND = (LinearLayout) findViewById(R.id.layqtdminvend);
+
+        TextView TAG_VLVENDAPADRAO = (TextView) findViewById(R.id.txtprecopadrao);
+        TextView TAG_TABPADRAO = (TextView) findViewById(R.id.txttabpadrao);
 
     }
 
-    public void carregarprodutos(){
+    public void carregarprodutos() {
         try {
-            Cursor CursorProd = DB.rawQuery("SELECT CODITEMANUAL, CODIGOITEM, CODPERFIL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA," +
+            Cursor CursorProd = DB.rawQuery("SELECT CODITEMANUAL, CODIGOITEM, CODPERFIL,QTDMINVEND, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA," +
                     "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2,QTDESTPROD, " +
-                    "ATIVO, APRESENTACAO FROM ITENS WHERE CODIGOITEM = " + (sCodProduto) + " AND CODPERFIL = "+idPerfil, null);
+                    "ATIVO, APRESENTACAO FROM ITENS WHERE CODIGOITEM = " + (sCodProduto) + " AND CODPERFIL = " + idPerfil, null);
 
-            Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL ="+idPerfil, null);
+            Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL =" + idPerfil, null);
             CursorParametro.moveToFirst();
             String tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
             String tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
@@ -127,7 +141,7 @@ public class DadosProduto extends AppCompatActivity {
             String TipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
 
 
-            if (CursorProd.getCount() > 0 && CursorParametro.getCount() > 0 ) {
+            if (CursorProd.getCount() > 0 && CursorParametro.getCount() > 0) {
                 CursorProd.moveToFirst();
                 do {
 
@@ -239,6 +253,12 @@ public class DadosProduto extends AppCompatActivity {
                     }
                     if (TipoEstoque.equals("N")) {
                         TAG_LINEARESTOQUE.setVisibility(View.GONE);
+                    }
+                    Double qtdminvenda = CursorProd.getDouble(CursorProd.getColumnIndex("QTDMINVEND"));
+                    if(qtdminvenda > 0){
+                        TAG_QTDMINVENDA.setText(CursorProd.getString(CursorProd.getColumnIndex("QTDMINVEND")));
+                    }else {
+                        TAG_LINEARQTDMINVEND.setVisibility(View.GONE);
                     }
                 }
                 while (CursorProd.moveToNext());

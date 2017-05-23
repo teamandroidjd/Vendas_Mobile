@@ -1,8 +1,8 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.content.Context;
-import android.widget.*;
-import android.widget.ListAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.SectionIndexer;
 
 import java.util.ArrayList;
 import java.util.Collections;

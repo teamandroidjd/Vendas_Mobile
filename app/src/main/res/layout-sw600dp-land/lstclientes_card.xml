@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -25,7 +26,6 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -52,27 +52,27 @@
                         android:id="@+id/bola_vermelha"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
+                        android:layout_marginLeft="30dp"
                         android:src="@drawable/bola_vermelha"
                         android:textColor="@color/colordescClie"
-                        android:layout_marginLeft="30dp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal|bold"
+                        tools:ignore="ContentDescription" />
                 </LinearLayout>
 
 
-                    <LinearLayout
-                        android:id="@+id/lnome"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/lblNomeFanClie"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/lblNomeFanClie"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="CLIENTE COM NOME GRANDE QUE DA TRABALHO "
-                            android:textColor="@color/colorPrimary"
-                            android:textSize="20sp"
-                            android:textStyle="normal|bold" />
+                        android:text="CLIENTE COM NOME GRANDE QUE DA TRABALHO "
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="20sp"
+                        android:textStyle="normal|bold" />
 
                 </LinearLayout>
 
@@ -185,21 +185,7 @@
                 </RelativeLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="25dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp">
 
-                <ImageView
-                    android:id="@+id/imgStatus"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/bola_vermelha"
-                    android:visibility="invisible" />
-            </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

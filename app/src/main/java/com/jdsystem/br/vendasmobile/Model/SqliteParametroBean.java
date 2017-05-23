@@ -9,7 +9,7 @@ public class SqliteParametroBean {
     public static final String P_ENDERECO_IP_REMOTO = "p_end_ip_remoto";
     public static final String P_ESTOQUE_NEGATIVO = "p_trabalhar_com_estoque_negativo";
     public static final String P_DESCONTO_VENDEDOR = "PERCACRESC";
-   // public static final String P_DESCONTO_MAX = "PERCDESCO";
+    // public static final String P_DESCONTO_MAX = "PERCDESCO";
     public static final String P_USUARIO = "p_usuario";
     public static final String P_SENHA = "p_senha";
     public static final String P_QUAL_END_IP = "p_qual_endereco_ip";
@@ -24,7 +24,7 @@ public class SqliteParametroBean {
     private String p_senha;
     private String p_usuario;
     private String p_qual_endereco_ip;
-  //  private Integer PERCDESCO;
+    //  private Integer PERCDESCO;
 
     public SqliteParametroBean() {
     }

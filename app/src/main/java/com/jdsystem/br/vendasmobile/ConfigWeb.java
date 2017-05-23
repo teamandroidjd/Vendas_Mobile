@@ -36,17 +36,17 @@ import java.util.List;
 public class ConfigWeb extends AppCompatActivity implements Runnable {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
-    private EditText edtChave;
-    private Button btnsalvhost, btnexcluir1, btnexcluir2, btnexcluir3;
     public SharedPreferences prefs;
-    public String ChaveAcesso, RetHost,host, perfil, chave;
+    public String ChaveAcesso, RetHost, host, perfil, chave;
     public int idPerfil, codperfil;
     ProgressDialog DialogECB;
-    private SQLiteDatabase DB;
-    private Handler hd = new Handler();
     TextView txvlicenca1, txvlicenca2, txvlicenca3, txvempresa1, txvempresa2, txvempresa3, txvexcluir;
     View view0, view1, view2, view3, view4;
     RelativeLayout lyttabela;
+    private EditText edtChave;
+    private Button btnsalvhost, btnexcluir1, btnexcluir2, btnexcluir3;
+    private SQLiteDatabase DB;
+    private Handler hd = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,29 +65,29 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         carregarlicencas();
 
         btnexcluir1.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(ConfigWeb.this);
-                                            builder.setTitle(R.string.app_namesair);
-                                            builder.setIcon(R.drawable.logo_ico);
-                                            builder.setMessage(R.string.msg_delete_licença)
-                                                    .setCancelable(false)
-                                                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int id) {
-                                                            chave = txvlicenca1.getText().toString();
-                                                            excluirhost(chave);
-                                                        }
-                                                    })
-                                                    .setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int id) {
-                                                            dialog.cancel();
-                                                        }
-                                                    });
-                                            AlertDialog alert = builder.create();
-                                            alert.show();
-                                        }
-                                    });
+                AlertDialog.Builder builder = new AlertDialog.Builder(ConfigWeb.this);
+                builder.setTitle(R.string.app_namesair);
+                builder.setIcon(R.drawable.logo_ico);
+                builder.setMessage(R.string.msg_delete_licença)
+                        .setCancelable(false)
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                chave = txvlicenca1.getText().toString();
+                                excluirhost(chave);
+                            }
+                        })
+                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
         btnexcluir2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,91 +175,91 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             }
 
             try {
-            //apagando todos os contatos desse perfil
-            Cursor dbcontatos = DB.rawQuery("SELECT * FROM CONTATO WHERE CODPERFIL=" + codperfil, null);
-            dbcontatos.moveToFirst();
-            if (dbcontatos.getCount() > 0) {
-                DB.execSQL("DELETE FROM CONTATO WHERE CODPERFIL =" + codperfil);
-            }
-            dbcontatos.close();
+                //apagando todos os contatos desse perfil
+                Cursor dbcontatos = DB.rawQuery("SELECT * FROM CONTATO WHERE CODPERFIL=" + codperfil, null);
+                dbcontatos.moveToFirst();
+                if (dbcontatos.getCount() > 0) {
+                    DB.execSQL("DELETE FROM CONTATO WHERE CODPERFIL =" + codperfil);
+                }
+                dbcontatos.close();
             } catch (Exception e) {
                 e.toString();
                 Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os contatos desse perfil", Toast.LENGTH_SHORT).show();
             }
 
             try {
-            //apagando todos os produtos desse perfil
-            Cursor dbitens = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL=" + codperfil, null);
-            dbitens.moveToFirst();
-            if (dbitens.getCount() > 0) {
-                DB.execSQL("DELETE FROM ITENS WHERE CODPERFIL =" + codperfil);
-            }
-            dbitens.close();
+                //apagando todos os produtos desse perfil
+                Cursor dbitens = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL=" + codperfil, null);
+                dbitens.moveToFirst();
+                if (dbitens.getCount() > 0) {
+                    DB.execSQL("DELETE FROM ITENS WHERE CODPERFIL =" + codperfil);
+                }
+                dbitens.close();
             } catch (Exception e) {
                 e.toString();
                 Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os produtos desse perfil", Toast.LENGTH_SHORT).show();
             }
 
             try {
-            //apagando todos os itens dos pedidos desse perfil
-            Cursor dbpeditens = DB.rawQuery("SELECT * FROM PEDITENS WHERE CODPERFIL=" + codperfil, null);
-            dbpeditens.moveToFirst();
-            if (dbpeditens.getCount() > 0) {
-                DB.execSQL("DELETE FROM PEDITENS WHERE CODPERFIL =" + codperfil);
-            }
-            dbpeditens.close();
+                //apagando todos os itens dos pedidos desse perfil
+                Cursor dbpeditens = DB.rawQuery("SELECT * FROM PEDITENS WHERE CODPERFIL=" + codperfil, null);
+                dbpeditens.moveToFirst();
+                if (dbpeditens.getCount() > 0) {
+                    DB.execSQL("DELETE FROM PEDITENS WHERE CODPERFIL =" + codperfil);
+                }
+                dbpeditens.close();
             } catch (Exception e) {
                 e.toString();
                 Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os itens dos pedidos desse perfil", Toast.LENGTH_SHORT).show();
             }
 
             try {
-            //apagando todos os pedidos desse perfil
-            Cursor dbpedoper = DB.rawQuery("SELECT * FROM PEDOPER WHERE CODPERFIL=" + codperfil, null);
-            dbpedoper.moveToFirst();
-            if (dbpedoper.getCount() > 0) {
-                DB.execSQL("DELETE FROM PEDOPER WHERE CODPERFIL =" + codperfil);
-            }
-            dbpedoper.close();
+                //apagando todos os pedidos desse perfil
+                Cursor dbpedoper = DB.rawQuery("SELECT * FROM PEDOPER WHERE CODPERFIL=" + codperfil, null);
+                dbpedoper.moveToFirst();
+                if (dbpedoper.getCount() > 0) {
+                    DB.execSQL("DELETE FROM PEDOPER WHERE CODPERFIL =" + codperfil);
+                }
+                dbpedoper.close();
             } catch (Exception e) {
                 e.toString();
                 Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os pedidos desse perfil", Toast.LENGTH_SHORT).show();
             }
 
             try {
-            //apagando a txvempresa desse perfil
-            Cursor dbempresa = DB.rawQuery("SELECT * FROM EMPRESAS WHERE CODPERFIL=" + codperfil, null);
-            dbempresa.moveToFirst();
-            if (dbempresa.getCount() > 0) {
-                DB.execSQL("DELETE FROM EMPRESAS WHERE CODPERFIL =" + codperfil);
-            }
-            dbempresa.close();
+                //apagando a txvempresa desse perfil
+                Cursor dbempresa = DB.rawQuery("SELECT * FROM EMPRESAS WHERE CODPERFIL=" + codperfil, null);
+                dbempresa.moveToFirst();
+                if (dbempresa.getCount() > 0) {
+                    DB.execSQL("DELETE FROM EMPRESAS WHERE CODPERFIL =" + codperfil);
+                }
+                dbempresa.close();
             } catch (Exception e) {
                 e.toString();
                 Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir a txvempresa desse perfil", Toast.LENGTH_SHORT).show();
             }
 
             try {
-            //apagando os usuarios desse perfil
-            Cursor dbusuario = DB.rawQuery("SELECT * FROM USUARIOS WHERE CODPERFIL=" + codperfil, null);
-            dbusuario.moveToFirst();
-            if (dbusuario.getCount() > 0) {
-                DB.execSQL("DELETE FROM USUARIOS WHERE CODPERFIL =" + codperfil);
-            }
-            dbusuario.close();
+                //apagando os usuarios desse perfil
+                Cursor dbusuario = DB.rawQuery("SELECT * FROM USUARIOS WHERE CODPERFIL=" + codperfil, null);
+                dbusuario.moveToFirst();
+                if (dbusuario.getCount() > 0) {
+                    DB.execSQL("DELETE FROM USUARIOS WHERE CODPERFIL =" + codperfil);
+                }
+                dbusuario.close();
             } catch (Exception e) {
                 e.toString();
                 Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os usuários desse perfil", Toast.LENGTH_SHORT).show();
             }
 
             try {
-            //apagando os bloqueios desse perfil
-            Cursor dbbloqueio = DB.rawQuery("SELECT * FROM BLOQCLIE WHERE CODPERFIL=" + codperfil, null);
-            dbbloqueio.moveToFirst();
-            if (dbbloqueio.getCount() > 0) {
-                DB.execSQL("DELETE FROM BLOQCLIE WHERE CODPERFIL =" + codperfil);
-            }
-            dbbloqueio.close();
+                //apagando os bloqueios desse perfil
+                Cursor dbbloqueio = DB.rawQuery("SELECT * FROM BLOQCLIE WHERE CODPERFIL=" + codperfil, null);
+                dbbloqueio.moveToFirst();
+                if (dbbloqueio.getCount() > 0) {
+                    DB.execSQL("DELETE FROM BLOQCLIE WHERE CODPERFIL =" + codperfil);
+                }
+                dbbloqueio.close();
             } catch (Exception e) {
                 e.toString();
                 Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os bloqueios desse perfil", Toast.LENGTH_SHORT).show();
@@ -332,10 +332,10 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         soap.addProperty("Chave", edtChave.getText().toString());
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSHOST,10000);
+        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSHOST, 10000);
         RetHost = null;
         Boolean ConexOk = Util.checarConexaoCelular(ConfigWeb.this);
-        if (ConexOk == true) {
+        if (ConexOk) {
             int j = 0;
             do {
                 try {
@@ -430,7 +430,6 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        return;
                                     }
                                 });
                         AlertDialog alert = validuser.create();
@@ -450,7 +449,6 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        return;
                                     }
                                 });
                         AlertDialog alert = validuser.create();
@@ -471,7 +469,6 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    return;
                                 }
                             })
                             .setNegativeButton("Configurações", new DialogInterface.OnClickListener() {
@@ -495,7 +492,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             perfil = c.getString("nomeempresa").toUpperCase();
             host = c.getString("host");
 
-            if ((gravarperfil(host, perfil, licenca)) == false) {
+            if (!(gravarperfil(host, perfil, licenca))) {
                 return;
             }
         } catch (Exception e) {
@@ -519,6 +516,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             idlicenca.moveToFirst();
             if (idlicenca.getCount() > 0) {
                 idPerfil = idlicenca.getInt(idlicenca.getColumnIndex("CODPERFIL"));
+                idlicenca.close();
             }
         } catch (Exception e) {
             e.toString();
@@ -544,8 +542,10 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                         Toast.makeText(ConfigWeb.this, "Licença já registrada para " + nomePerfil + ". Verifique!", Toast.LENGTH_LONG).show();
                     }
                 });
+                cursorlicenca.close();
             } else {
                 DB.execSQL("INSERT INTO PERFIL(LICENCA,HOST,NOMEPERFIL) VALUES('" + edtChave.getText().toString() + "','" + host + "','" + perfil + "');");
+                cursorlicenca.close();
                 return true;
             }
 
@@ -555,7 +555,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         return false;
     }
 
-    private void carregarlicencas(){
+    private void carregarlicencas() {
         String nomeperfil1 = null;
         String nomeperfil2 = null;
         String nomeperfil3 = null;
@@ -657,9 +657,10 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                     btnexcluir3.setVisibility(View.VISIBLE);
                     txvexcluir.setVisibility(View.VISIBLE);
             }
-
+            cursorPerfil.close();
         } else {
             lyttabela.setVisibility(View.GONE);
+            cursorPerfil.close();
         }
     }
 

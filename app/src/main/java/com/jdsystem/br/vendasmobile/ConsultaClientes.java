@@ -38,25 +38,23 @@ import java.util.List;
 public class ConsultaClientes extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
 
-    private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public static final String CONFIG_HOST = "CONFIG_HOST";
-    private Handler handler = new Handler();
+    private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public ListAdapterClientes adapter;
-    private TextView txvqtdregclie;
+    public ProgressDialog dialog;
+    public Boolean ConsultaPedido;
+    public int CadastroContato, flag, idPerfil;
+    public SharedPreferences prefs;
     Clientes lstclientes;
     String codVendedor, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, nomeEmpresa, editQuery,
             UsuarioLogado, telaInvocada, chavepedido, numPedido;
     SQLiteDatabase DB;
     MenuItem searchItem;
     SearchView searchView;
-    private ImageView imgStatus;
     FloatingActionButton fabcadclie;
-    public ProgressDialog dialog;
-    public Boolean ConsultaPedido;
-    public int CadastroContato, flag, idPerfil;
     Toolbar toolbar;
-    public SharedPreferences prefs;
-
+    private Handler handler = new Handler();
+    private TextView txvqtdregclie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +87,7 @@ public class ConsultaClientes extends AppCompatActivity
         declaraobjetos();
         carregausuariologado();
         carregarpreferencias();
+        carregarparametros();
 
 
         dialog = new ProgressDialog(ConsultaClientes.this);
@@ -103,190 +102,39 @@ public class ConsultaClientes extends AppCompatActivity
 
     }
 
-    private void carregarpreferencias() {
-        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString(getString(R.string.intent_prefs_host), null);
-        nomeEmpresa = prefs.getString(getString(R.string.intent_prefs_nomeempresa), null);
-        idPerfil = prefs.getInt(getString(R.string.intent_prefs_perfil), 0);
-    }
-
-    public void cadcliente(View view) {
-        Intent intent = new Intent(ConsultaClientes.this, CadastroClientes.class);
-        Bundle params = new Bundle();
-        params.putString(getString(R.string.intent_codvendedor), codVendedor);
-        params.putString(getString(R.string.intent_usuario), usuario);
-        params.putString(getString(R.string.intent_senha), senha);
-        params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
-        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
-        params.putString(getString(R.string.intent_chavepedido), chavepedido);
-        params.putString(getString(R.string.intent_numpedido), numPedido);
-        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-        params.putInt(getString(R.string.intent_listaclie), 1);
-        intent.putExtras(params);
-        startActivity(intent);
-        finish();
-
-    }
-
-    private void carregausuariologado() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View header = navigationView.getHeaderView(0);
-        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
-        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
-        if (UsuarioLogado != null) {
-            UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
-            usuariologado.setText("Olá " + UsuarioLogado + "!");
-        } else {
-            usuariologado.setText("Olá " + usuario + "!");
-        }
-
-    }
-
-    private void declaraobjetos() {
-        DB = new ConfigDB(this).getReadableDatabase();
-        txvqtdregclie = (TextView) findViewById(R.id.txvqtdregistroclie);
-        fabcadclie = (FloatingActionButton) findViewById(R.id.cadclie);
-        imgStatus = (ImageView) findViewById(R.id.imgStatus);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_sincroniza_cliente, menu);
-        searchItem = menu.findItem(R.id.action_searchable_activity);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                if (telaInvocada == null) {
-
-                    dialog = new ProgressDialog(ConsultaClientes.this);
-                    dialog.setIndeterminate(true);
-                    dialog.setTitle(getString(R.string.wait));
-                    dialog.setMessage(getString(R.string.searchingclients));
-                    dialog.setCancelable(false);
-                    dialog.setProgress(0);
-                    dialog.show();
-
-
-                    query.toString();
-                    editQuery = query;
-                    searchView.setQuery("", false);
-
-                    Thread thread = new Thread(ConsultaClientes.this);
-                    thread.start();
-                    return false;
-                } else if (telaInvocada.equals("CadastroPedidos")) {
-
-                    dialog = new ProgressDialog(ConsultaClientes.this);
-                    dialog.setIndeterminate(true);
-                    dialog.setTitle(getString(R.string.wait));
-                    dialog.setMessage(getString(R.string.searchingclients));
-                    dialog.setCancelable(false);
-                    dialog.setProgress(0);
-                    dialog.show();
-                    flag = 2;
-
-                    query.toString();
-                    editQuery = query;
-                    searchView.setQuery("", false);
-
-                    Thread thread = new Thread(ConsultaClientes.this);
-                    thread.start();
-                    return false;
-                } else if(telaInvocada.equals("ConsultaPedidos")){
-                    dialog = new ProgressDialog(ConsultaClientes.this);
-                    dialog.setIndeterminate(true);
-                    dialog.setTitle(getString(R.string.wait));
-                    dialog.setMessage(getString(R.string.searchingclients));
-                    dialog.setCancelable(false);
-                    dialog.setProgress(0);
-                    dialog.show();
-
-                    query.toString();
-                    editQuery = query;
-                    searchView.setQuery("", false);
-
-                    Thread thread = new Thread(ConsultaClientes.this);
-                    thread.start();
-                    return false;
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-
-            @Override
-            public boolean onClose() {
-
-                flag = 0;
-                editQuery = null;
-                searchView.onActionViewCollapsed();
-                Thread thread = new Thread(ConsultaClientes.this);
-                thread.start();
-
-                return true;
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (item.getItemId() == R.id.menu_sinc_cliente) {
-            Boolean ConexOk = Util.checarConexaoCelular(this);
-            SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
-            if (ConexOk == true) {
-                flag = 1;
-                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL = " + idPerfil, null);
-                if (cursorVerificaClie.getCount() == 0) {
-                    dialog = new ProgressDialog(ConsultaClientes.this);
-                    dialog.setTitle(R.string.wait);
-                    dialog.setMessage(getString(R.string.primeira_sync_clientes));
-                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    dialog.setIcon(R.drawable.icon_sync);
-                    dialog.setCancelable(false);
-                    dialog.show();
-
-                    Thread thread = new Thread(this);
-                    thread.start();
-
-                } else {
-                    dialog = new ProgressDialog(ConsultaClientes.this);
-                    dialog.setCancelable(false);
-                    dialog.setTitle(getString(R.string.wait));
-                    dialog.setMessage(getString(R.string.sync_clients));
-                    dialog.show();
-
-                    Thread thread = new Thread(this);
-                    thread.start();
+    private void carregarparametros() {
+        try {
+            Cursor curosrparam = DB.rawQuery("SELECT HABCADASTRO_CLIE FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
+            curosrparam.moveToFirst();
+            if (curosrparam.getCount() > 0) {
+                int habcadclie = curosrparam.getInt(curosrparam.getColumnIndex("HABCADASTRO_CLIE"));
+                switch (habcadclie){
+                    case 1:// sem permissão para cadastrar clientes para todos os usuários
+                        fabcadclie.setVisibility(View.GONE);
+                        break;
+                    case 2://permissão para cadastrar clientes para todos os usuários
+                        fabcadclie.setVisibility(View.VISIBLE);
+                        break;
+                    case 3:
+                        curosrparam = DB.rawQuery("SELECT HABCADCLIE FROM USUARIOS WHERE USUARIO = '"+usuario+"' AND CODVEND = "+codVendedor+" AND CODPERFIL = "+idPerfil,null);
+                        curosrparam.moveToFirst();
+                        if(curosrparam.getCount() > 0){
+                            String habcadastroclie = curosrparam.getString(curosrparam.getColumnIndex("HABCADCLIE"));
+                            if(habcadastroclie.equals("1")){
+                                fabcadclie.setVisibility(View.VISIBLE);
+                                return;
+                            } else {
+                                fabcadclie.setVisibility(View.GONE);
+                                return;
+                            }
+                        }
                 }
             } else {
-                Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+
             }
-        } else if (item.getItemId() == R.id.action_searchable_activity) {
-            return true;
+        }catch (Exception e){
+            e.toString();
         }
-        return super.onOptionsItemSelected(item);
     }
 
     public List<Clientes> CarregarClientes() {
@@ -350,7 +198,6 @@ public class ConsultaClientes extends AppCompatActivity
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        return;
                                     }
                                 });
                         AlertDialog alert = builder.create();
@@ -392,7 +239,6 @@ public class ConsultaClientes extends AppCompatActivity
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        return;
                                     }
                                 });
                         AlertDialog alert = builder.create();
@@ -491,6 +337,154 @@ public class ConsultaClientes extends AppCompatActivity
         return DadosLisClientes;
     }
 
+    public void cadcliente(View view) {
+        Intent intent = new Intent(ConsultaClientes.this, CadastroClientes.class);
+        Bundle params = new Bundle();
+        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
+        params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+        params.putString(getString(R.string.intent_chavepedido), chavepedido);
+        params.putString(getString(R.string.intent_numpedido), numPedido);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putInt(getString(R.string.intent_listaclie), 1);
+        intent.putExtras(params);
+        startActivity(intent);
+        finish();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_sincroniza_cliente, menu);
+        searchItem = menu.findItem(R.id.action_searchable_activity);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (telaInvocada == null) {
+
+                    dialog = new ProgressDialog(ConsultaClientes.this);
+                    dialog.setIndeterminate(true);
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.setMessage(getString(R.string.searchingclients));
+                    dialog.setCancelable(false);
+                    dialog.setProgress(0);
+                    dialog.show();
+
+
+                    query.toString();
+                    editQuery = query;
+                    searchView.setQuery("", false);
+
+                    Thread thread = new Thread(ConsultaClientes.this);
+                    thread.start();
+                    return false;
+                } else if (telaInvocada.equals("CadastroPedidos")) {
+
+                    dialog = new ProgressDialog(ConsultaClientes.this);
+                    dialog.setIndeterminate(true);
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.setMessage(getString(R.string.searchingclients));
+                    dialog.setCancelable(false);
+                    dialog.setProgress(0);
+                    dialog.show();
+                    flag = 2;
+
+                    query.toString();
+                    editQuery = query;
+                    searchView.setQuery("", false);
+
+                    Thread thread = new Thread(ConsultaClientes.this);
+                    thread.start();
+                    return false;
+                } else if (telaInvocada.equals("ConsultaPedidos")) {
+                    dialog = new ProgressDialog(ConsultaClientes.this);
+                    dialog.setIndeterminate(true);
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.setMessage(getString(R.string.searchingclients));
+                    dialog.setCancelable(false);
+                    dialog.setProgress(0);
+                    dialog.show();
+
+                    query.toString();
+                    editQuery = query;
+                    searchView.setQuery("", false);
+
+                    Thread thread = new Thread(ConsultaClientes.this);
+                    thread.start();
+                    return false;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+
+            @Override
+            public boolean onClose() {
+
+                flag = 0;
+                editQuery = null;
+                searchView.onActionViewCollapsed();
+                Thread thread = new Thread(ConsultaClientes.this);
+                thread.start();
+
+                return true;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.menu_sinc_cliente) {
+            Boolean ConexOk = Util.checarConexaoCelular(this);
+            SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
+            if (ConexOk) {
+                flag = 1;
+                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL = " + idPerfil, null);
+                if (cursorVerificaClie.getCount() == 0) {
+                    cursorVerificaClie.close();
+                    dialog = new ProgressDialog(ConsultaClientes.this);
+                    dialog.setTitle(R.string.wait);
+                    dialog.setMessage(getString(R.string.primeira_sync_clientes));
+                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    dialog.setIcon(R.drawable.icon_sync);
+                    dialog.setCancelable(false);
+                    dialog.show();
+
+                    Thread thread = new Thread(this);
+                    thread.start();
+
+
+                } else {
+                    cursorVerificaClie.close();
+                    dialog = new ProgressDialog(ConsultaClientes.this);
+                    dialog.setCancelable(false);
+                    dialog.setTitle(getString(R.string.wait));
+                    dialog.setMessage(getString(R.string.sync_clients));
+                    dialog.show();
+
+                    Thread thread = new Thread(this);
+                    thread.start();
+                }
+            } else {
+                Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
+            }
+        } else if (item.getItemId() == R.id.action_searchable_activity) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onBackPressed() {
@@ -891,5 +885,45 @@ public class ConsultaClientes extends AppCompatActivity
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
+    }
+
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString(getString(R.string.intent_prefs_host), null);
+        nomeEmpresa = prefs.getString(getString(R.string.intent_prefs_nomeempresa), null);
+        idPerfil = prefs.getInt(getString(R.string.intent_prefs_perfil), 0);
+    }
+
+    private void carregausuariologado() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        TextView usuariologado = (TextView) header.findViewById(R.id.lblUsuarioLogado);
+        SharedPreferences prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
+        if (UsuarioLogado != null) {
+            UsuarioLogado = prefs.getString(getString(R.string.intent_usuario), null);
+            usuariologado.setText("Olá " + UsuarioLogado + "!");
+        } else {
+            usuariologado.setText("Olá " + usuario + "!");
+        }
+
+    }
+
+    private void declaraobjetos() {
+        DB = new ConfigDB(this).getReadableDatabase();
+        txvqtdregclie = (TextView) findViewById(R.id.txvqtdregistroclie);
+        fabcadclie = (FloatingActionButton) findViewById(R.id.cadclie);
+        ImageView imgStatus = (ImageView) findViewById(R.id.imgStatus);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        //drawer.setDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 }

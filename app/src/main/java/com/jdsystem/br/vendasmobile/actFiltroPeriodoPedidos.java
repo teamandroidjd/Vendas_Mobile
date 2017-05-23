@@ -1,26 +1,16 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
 import java.text.DateFormat;
@@ -29,28 +19,69 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.jdsystem.br.vendasmobile.R.drawable.calendar;
-
 public class actFiltroPeriodoPedidos extends AppCompatActivity {
 
 
-    private DatePickerDialog datePickerDialog;
-    private EditText dpResultFinal, dpResult;
-    private Button btnConfirmar;
-
-    Calendar calendar;
-
-    private int AnoInicio, AnoFim;
-    private int MesInicio, MesFim;
-    private int DiaInicio, DiaFim;
-    private Date DataIni, DataFim;
-
-    public String DataInicial, DataFinal, usuario, senha;
-    int year, dayOfMonth, month;
-
     static final int DATE_DIALOG_ID_Inicio = 999;
     static final int DATE_DIALOG_ID_Fim = 998;
+    public String DataInicial, DataFinal, usuario, senha;
+    Calendar calendar;
+    int year, dayOfMonth, month;
+    private DatePickerDialog datePickerDialog;
+    private EditText dpResultFinal, dpResult;
+    private Date DataIni, DataFim;
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
 
+
+        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
+
+
+            int tag = ((Integer) view.getTag());
+
+            if (tag == DATE_DIALOG_ID_Inicio) {
+                int anoInicio = selectedYear;
+                int mesInicio = selectedMonth;
+                int diaInicio = selectedDay;
+
+                dpResult.setText(diaInicio + "/" + (mesInicio + 1) + "/" + anoInicio);
+
+                if ((mesInicio + 1) == 12) {
+                    mesInicio = 1;
+                } else {
+                    //MesInicio = MesInicio + 1;
+                }
+
+                DataInicial = anoInicio + "-" + Util.AcrescentaZeros(String.valueOf(mesInicio + 1), 2) + "-" + Util.AcrescentaZeros(String.valueOf(diaInicio), 2);
+                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                try {
+                    DataIni = (Date) formatter.parse(diaInicio + "/" + (mesInicio + 1) + "/" + anoInicio);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            } else if (tag == DATE_DIALOG_ID_Fim) {
+                int anoFim = selectedYear;
+                int mesFim = selectedMonth;
+                int diaFim = selectedDay;
+
+                dpResultFinal.setText(diaFim + "/" + (mesFim + 1) + "/" + anoFim);
+
+                if ((mesFim + 1) == 12) {
+                    mesFim = 1;
+                } else {
+                    mesFim = mesFim + 1;
+                }
+
+                DataFinal = anoFim + "-" + Util.AcrescentaZeros(String.valueOf((mesFim)), 2) + "-" + Util.AcrescentaZeros(String.valueOf(diaFim), 2);
+                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                try {
+                    DataFim = (Date) formatter.parse(diaFim + "/" + mesFim + "/" + anoFim);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +124,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
 
     private void declaraobjetos() {
 
-        btnConfirmar = (Button) findViewById(R.id.btnConfirmar);
+        Button btnConfirmar = (Button) findViewById(R.id.btnConfirmar);
         dpResultFinal = (EditText) findViewById(R.id.dpResultFinal);
         //dpResultFinal.addTextChangedListener(Mask.insert(Mask.DATA_MASK, dpResultFinal));
         dpResult = (EditText) findViewById(R.id.dpResult);
@@ -102,10 +133,10 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
     }
 
     public void confirmafiltro(View view) {
-        if(DataIni == null){
+        if (DataIni == null) {
             Util.msg_toast_personal(actFiltroPeriodoPedidos.this, "Informar a data inicial!", Toast.LENGTH_SHORT);
             return;
-        } else if (DataFim == null){
+        } else if (DataFim == null) {
             Util.msg_toast_personal(actFiltroPeriodoPedidos.this, "Informar a data final", Toast.LENGTH_SHORT);
             return;
         } else if (DataIni.before(DataFim) || (DataIni.equals(DataFim))) {
@@ -122,59 +153,5 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
         }
 
     }
-
-    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
-
-
-        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
-
-
-            int tag = ((Integer) view.getTag());
-
-            if (tag == DATE_DIALOG_ID_Inicio) {
-                AnoInicio = selectedYear;
-                MesInicio = selectedMonth;
-                DiaInicio = selectedDay;
-
-                dpResult.setText(DiaInicio + "/" + (MesInicio + 1) + "/" + AnoInicio);
-
-                if ((MesInicio + 1) == 12) {
-                    MesInicio = 1;
-                } else {
-                    //MesInicio = MesInicio + 1;
-                }
-
-                DataInicial = AnoInicio + "-" + Util.AcrescentaZeros(String.valueOf(MesInicio + 1), 2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaInicio), 2);
-                ;
-                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                try {
-                    DataIni = (Date) formatter.parse(DiaInicio + "/" + (MesInicio + 1) + "/" + AnoInicio);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-            } else if (tag == DATE_DIALOG_ID_Fim) {
-                AnoFim = selectedYear;
-                MesFim = selectedMonth;
-                DiaFim = selectedDay;
-
-                dpResultFinal.setText(DiaFim + "/" + (MesFim + 1) + "/" + AnoFim);
-
-                if ((MesFim + 1) == 12) {
-                    MesFim = 1;
-                } else {
-                    MesFim = MesFim + 1;
-                }
-
-                DataFinal = AnoFim + "-" + Util.AcrescentaZeros(String.valueOf((MesFim)), 2) + "-" + Util.AcrescentaZeros(String.valueOf(DiaFim), 2);
-                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                try {
-                    DataFim = (Date) formatter.parse(DiaFim + "/" + MesFim + "/" + AnoFim);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    };
 
 }

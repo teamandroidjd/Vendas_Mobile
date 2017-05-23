@@ -23,16 +23,22 @@ public class SqliteVendaDBean {
     public static final String QUANTVENDIDA_TEMP = "QTDMAIORPEDTEMP";
 
     private String vendac_chave;
-    private Integer vendad_nro_item ;
-    private String vendad_ean ;
-    private String vendad_prd_codigo ;
+    private Integer vendad_nro_item;
+    private String vendad_ean;
+    private String vendad_prd_codigo;
     private int vendad_prd_codigo_interno;
-    private String vendad_prd_descricao ;
-    private String vendad_prd_unidade ;
-    private Integer vendad_prd_codigoitem ;
+    private String vendad_prd_descricao;
+    private String vendad_prd_unidade;
+    private Integer vendad_prd_codigoitem;
     private Integer numped;
     private String vendad_prd_view;
-
+    private String vendac_prd_numped;
+    private BigDecimal vendad_quantidade;
+    private BigDecimal vendad_quantidade_temp;
+    private BigDecimal vendad_preco_venda;
+    private BigDecimal vendad_preco_venda_temp;
+    private BigDecimal vendad_total;
+    private BigDecimal vendad_tmercad;
 
     public String getVendad_prd_unidade() {
         return vendad_prd_unidade;
@@ -50,28 +56,20 @@ public class SqliteVendaDBean {
         this.vendac_prd_numped = vendac_prd_numped;
     }
 
-    private String vendac_prd_numped;
-    private BigDecimal vendad_quantidade;
-    private BigDecimal vendad_quantidade_temp;
-    private BigDecimal vendad_preco_venda;
-    private BigDecimal vendad_preco_venda_temp;
-    private BigDecimal vendad_total ;
-    private BigDecimal vendad_tmercad ;
-
-    public void setvendad_quantidade_temp (BigDecimal qtd_temp){
+    public void setvendad_quantidade_temp(BigDecimal qtd_temp) {
         this.vendad_quantidade_temp = qtd_temp;
 
     }
 
-    public BigDecimal getvendad_quantidade_temp(){
+    public BigDecimal getvendad_quantidade_temp() {
         return vendad_quantidade_temp;
     }
 
-    public void setvendad_preco_venda_temp (BigDecimal preco_temp){
+    public void setvendad_preco_venda_temp(BigDecimal preco_temp) {
         this.vendad_preco_venda_temp = preco_temp;
     }
 
-    public BigDecimal getvendad_preco_venda_temp(){
+    public BigDecimal getvendad_preco_venda_temp() {
         return vendad_preco_venda_temp;
     }
 
@@ -165,8 +163,8 @@ public class SqliteVendaDBean {
         this.vendad_total = vendad_total;
     }
 
-    public BigDecimal getSubTotal (){
-        return  this.vendad_quantidade.multiply(this.vendad_preco_venda);
+    public BigDecimal getSubTotal() {
+        return this.vendad_quantidade.multiply(this.vendad_preco_venda);
     }
 
     public Integer getVendad_prd_codigoitem() {

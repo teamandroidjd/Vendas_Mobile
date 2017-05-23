@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/dadosprod"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,13 +12,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
 
         <LinearLayout
-            android:id="@+id/linearLayoutprod"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -31,7 +29,6 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/codprod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Código: "
@@ -56,7 +53,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/descricao"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Descrição:"
@@ -184,9 +180,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lnrtababpadrao"
-                    android:visibility="gone"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/txttabpadrao"
@@ -198,7 +193,6 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/prod_txv_simbol_precopadrao"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/txtprecopadrao"
@@ -220,9 +214,9 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/lnrtabab1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lnrtabab1"
                     android:orientation="horizontal">
 
                     <TextView
@@ -235,7 +229,6 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/prod_txv_simbol_preco"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/txtpreco"
@@ -248,8 +241,8 @@
                         android:id="@+id/txtpreco"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100000,0000"
                         android:layout_alignParentRight="true"
+                        android:text="100000,0000"
                         android:textColor="@color/colordescClie"
                         android:textSize="35sp"
                         android:textStyle="normal|bold" />
@@ -257,9 +250,9 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/lnrtabab2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lnrtabab2"
                     android:orientation="horizontal">
 
                     <TextView
@@ -272,7 +265,6 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/prod_txv_simbol_preco2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/txtprecoauxiliara"
@@ -285,8 +277,8 @@
                         android:id="@+id/txtprecoauxiliara"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100000,0000"
                         android:layout_alignParentRight="true"
+                        android:text="100000,0000"
                         android:textColor="@color/colordescClie"
                         android:textSize="35sp"
                         android:textStyle="normal|bold" />
@@ -294,9 +286,9 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/lnrtabab3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lnrtabab3"
                     android:orientation="horizontal">
 
                     <TextView
@@ -309,7 +301,6 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/prod_txv_simbol_preco3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/txtprecoauxiliarb"
@@ -331,9 +322,9 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/lnrtabab4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lnrtabab4"
                     android:orientation="horizontal">
 
                     <TextView
@@ -346,7 +337,6 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/prod_txv_simbol_preco4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/txtprecoauxiliarc"
@@ -359,8 +349,8 @@
                         android:id="@+id/txtprecoauxiliarc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100000,0000"
                         android:layout_alignParentRight="true"
+                        android:text="100000,0000"
                         android:textColor="@color/colordescClie"
                         android:textSize="35sp"
                         android:textStyle="normal|bold" />
@@ -368,9 +358,9 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/lnrtabab5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lnrtabab5"
                     android:orientation="horizontal">
 
                     <TextView
@@ -383,7 +373,6 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/prod_txv_simbol_preco5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/txtprecoauxiliard"
@@ -396,8 +385,8 @@
                         android:id="@+id/txtprecoauxiliard"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100000,0000"
                         android:layout_alignParentRight="true"
+                        android:text="100000,0000"
                         android:textColor="@color/colordescClie"
                         android:textSize="35sp"
                         android:textStyle="normal|bold" />
@@ -405,9 +394,9 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/lnrtabab6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/lnrtabab6"
                     android:orientation="horizontal">
 
                     <TextView
@@ -420,7 +409,6 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/prod_txv_simbol_preco6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/txtprecopromocaoa"
@@ -433,14 +421,14 @@
                         android:id="@+id/txtprecopromocaoa"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100000,0000"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
                         android:gravity="right"
+                        android:text="100000,0000"
                         android:textColor="@color/colordescClie"
                         android:textSize="35sp"
-                        android:textStyle="normal|bold"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true" />
+                        android:textStyle="normal|bold" />
 
                 </RelativeLayout>
 
@@ -460,7 +448,6 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/prod_txv_simbol_preco7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/txtprecopromocaob"
@@ -483,13 +470,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/lnrtaEstoque"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/lnrtaEstoque"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/txt_estoque"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="Estoque: "

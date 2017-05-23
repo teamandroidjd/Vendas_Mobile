@@ -1,70 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#328098"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:layout_gravity="center"
+    android:background="#328098"
     android:gravity="center"
     android:orientation="vertical"
     android:scrollbarAlwaysDrawVerticalTrack="true"
     tools:context=".Login">
 
     <TextView
+        android:id="@+id/txtversaologin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:text="versao"
         android:textAlignment="center"
-        android:id="@+id/txtversaologin"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textSize="20sp"
-        android:text="versao"/>
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="20sp" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="50sp"
         android:background="#fff"
         android:elevation="7dp"
-        android:layout_margin="50sp"
-        android:gravity="center"
         android:foregroundGravity="center"
+        android:gravity="center"
         android:orientation="vertical"
         android:padding="20dp"
-        android:layout_centerVertical="true">
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="10dp"
-            android:id="@+id/linearLayout"
             android:weightSum="1">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/login"
-                android:textSize="40sp"
+                android:textAlignment="center"
                 android:textColor="#14bfd6"
-                android:id="@+id/txt_login"
-                android:textStyle="normal|bold"
-                android:textAlignment="center" />
+                android:textSize="40sp"
+                android:textStyle="normal|bold" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <EditText
                     android:id="@+id/edtUsuario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableRight="@drawable/icon_user"
-                    android:singleLine="true"
                     android:hint="Usuário"
+                    android:inputType="textCapCharacters"
                     android:textAllCaps="true"
-                    android:textSize="30dp"
-                    android:inputType="textCapCharacters"/>
+                    android:textSize="30sp"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -74,70 +73,64 @@
 
                 <EditText
                     android:id="@+id/edtSenha"
-                    android:singleLine="true"
                     android:layout_width="match_parent"
-                    android:drawableRight="@drawable/icn_block"
                     android:layout_height="wrap_content"
-                    android:textSize="30dp"
-                    android:hint="Senha"
+                    android:drawableRight="@drawable/icn_block"
                     android:ems="10"
-                    android:inputType="textWebPassword" />
+                    android:hint="Senha"
+                    android:inputType="textWebPassword"
+                    android:textSize="30sp"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <TextView
+                android:id="@+id/txtempresalogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:id="@+id/txtempresalogin"
                 android:text="empresa"
-                android:textSize="30dp"
+                android:textAlignment="center"
                 android:textColor="@color/colordescClie"
-                android:textStyle="normal|bold"/>
+                android:textSize="30sp"
+                android:textStyle="normal|bold" />
 
             <CheckBox
-                android:text="Salvar Senha?"
+                android:id="@+id/cbGravSenha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#4d4d4d"
-                android:textSize="25dp"
-                android:id="@+id/cbGravSenha"
                 android:layout_gravity="right"
-                android:buttonTint="@color/colorPrimary" />
+                android:buttonTint="@color/colorPrimary"
+                android:text="Salvar Senha?"
+                android:textColor="#4d4d4d"
+                android:textSize="25sp"
+                tools:ignore="UnusedAttribute" />
 
             <Button
+                android:id="@+id/btnEntrar"
                 android:layout_width="match_parent"
                 android:layout_height="60sp"
                 android:layout_margin="10dp"
                 android:background="#14bfd6"
+                android:onClick="logar"
                 android:text="Entrar"
                 android:textAllCaps="false"
                 android:textColor="#fff"
-                android:textSize="40sp"
-                android:onClick="logar"
-                android:id="@+id/btnEntrar" />
+                android:textSize="40sp" />
         </LinearLayout>
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></RelativeLayout>
-
     <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:text="Copyright © 2016 - JD System Tecnologia em Informática"
-        android:id="@+id/textView2"
-        android:singleLine="true"
-        android:editable="true"
-        android:textAlignment="center"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textSize="20sp"
-        android:textAllCaps="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        />
+        android:text="Copyright © 2016 - JD System Tecnologia em Informática"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="20sp" />
 
 
 </RelativeLayout>

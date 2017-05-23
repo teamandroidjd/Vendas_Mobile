@@ -105,6 +105,7 @@ public class SqliteConfPagamentoBean {
     public void setConf_valor_recebido(BigDecimal conf_valor_recebido) {
         this.conf_valor_recebido = conf_valor_recebido;
     }
+
     public Boolean getAtuPedido() {
         return AtuPedido;
     }
@@ -136,10 +137,12 @@ public class SqliteConfPagamentoBean {
     public void setConf_enviado(String conf_enviado) {
         this.conf_enviado = conf_enviado;
     }
-    public String getConf_temp(){
+
+    public String getConf_temp() {
         return conf_temp;
     }
-    public void setConf_temp(String confTemp){
+
+    public void setConf_temp(String confTemp) {
         this.conf_temp = confTemp;
     }
 }

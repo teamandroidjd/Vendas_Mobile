@@ -31,13 +31,13 @@ public class SqliteVendaD_TempBean {
     public SqliteVendaD_TempBean() {
     }
 
-    public SqliteVendaD_TempBean(String vendad_eanTEMP, String vendad_prd_codigoTEMP, String vendad_prd_descricaoTEMP, BigDecimal vendad_quantidadeTEMP, BigDecimal vendad_preco_vendaTEMP, BigDecimal vendad_totalTEMP, String vendad_prd_unidadeTEMP,String vendad_prd_view) {
+    public SqliteVendaD_TempBean(String vendad_eanTEMP, String vendad_prd_codigoTEMP, String vendad_prd_descricaoTEMP, BigDecimal vendad_quantidadeTEMP, BigDecimal vendad_preco_vendaTEMP, BigDecimal vendad_totalTEMP, String vendad_prd_unidadeTEMP, String vendad_prd_view) {
         this.vendad_eanTEMP = vendad_eanTEMP;
         this.vendad_prd_codigoTEMP = vendad_prd_codigoTEMP;
         this.vendad_prd_descricaoTEMP = vendad_prd_descricaoTEMP;
         this.vendad_quantidadeTEMP = vendad_quantidadeTEMP;
-        this.vendad_preco_vendaTEMP = vendad_preco_vendaTEMP.setScale(4,BigDecimal.ROUND_HALF_UP);
-        this.vendad_totalTEMP = vendad_totalTEMP.setScale(4,BigDecimal.ROUND_HALF_UP);
+        this.vendad_preco_vendaTEMP = vendad_preco_vendaTEMP.setScale(4, BigDecimal.ROUND_HALF_UP);
+        this.vendad_totalTEMP = vendad_totalTEMP.setScale(4, BigDecimal.ROUND_HALF_UP);
         this.vendad_prd_unidadeTEMP = vendad_prd_unidadeTEMP;
         this.vendad_prd_view = vendad_prd_view;
 
@@ -68,9 +68,11 @@ public class SqliteVendaD_TempBean {
     public void setVendad_prd_codigoTEMP(String vendad_prd_codigoTEMP) {
         this.vendad_prd_codigoTEMP = vendad_prd_codigoTEMP;
     }
-    public int getVendad_prd_codigoItemTEMP(){
+
+    public int getVendad_prd_codigoItemTEMP() {
         return vendad_prd_codigoitemTEMP;
     }
+
     public void setVendad_prd_codigoItemTEMP(int vendad_prd_codigoitemTEMP) {
         this.vendad_prd_codigoitemTEMP = vendad_prd_codigoitemTEMP;
     }
@@ -108,11 +110,13 @@ public class SqliteVendaD_TempBean {
         this.vendad_totalTEMP = vendad_totalTEMP;
     }
 
-    public BigDecimal getSubTotal (){
-        return  this.vendad_preco_vendaTEMP.multiply(this.vendad_quantidadeTEMP);
+    public BigDecimal getSubTotal() {
+        return this.vendad_preco_vendaTEMP.multiply(this.vendad_quantidadeTEMP);
     }
 
-    public String getvendad_prd_view(){return vendad_prd_view;}
+    public String getvendad_prd_view() {
+        return vendad_prd_view;
+    }
 
     public void setVendad_prd_view(String vendad_prd_view) {
         this.vendad_prd_view = vendad_prd_view;

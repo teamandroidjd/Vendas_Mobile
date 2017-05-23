@@ -8,35 +8,32 @@ import java.math.BigDecimal;
 public class SqliteProdutoBean {
 
     //public static final String P_PRODUTO_SIMPLECURSOR = "CODITEMANUAL";
-    public static final String P_PRODUTO_SIMPLECURSOR   = "_id";
-    public static final String P_CODIGO_PRODUTO         = "CODITEMANUAL";
-    public static final String P_CODIGOITEM             = "CODIGOITEM";
-    public static final String P_DESCRICAO_PRODUTO      = "DESCRICAO";
-    public static final String P_UNIDADE_MEDIDA         = "UNIVENDA";
+    public static final String P_PRODUTO_SIMPLECURSOR = "_id";
+    public static final String P_CODIGO_PRODUTO = "CODITEMANUAL";
+    public static final String P_CODIGOITEM = "CODIGOITEM";
+    public static final String P_DESCRICAO_PRODUTO = "DESCRICAO";
+    public static final String P_UNIDADE_MEDIDA = "UNIVENDA";
     //public static final String P_CUSTO_PRODUTO        = "prd_custo";
-    public static final String P_QUANTIDADE_PRODUTO     = "QTDESTPROD";
-    public static final String P_PRECO_PROD_PADRAO      = "VLVENDA1";
-    public static final String P_PRECO_PROD_VLVENDA1    = "VENDAPADRAO";
-    public static final String P_PRECO_PROD_VLVENDA2    = "VLVENDA2";
-    public static final String P_PRECO_PROD_VLVENDA3    = "VLVENDA3";
-    public static final String P_PRECO_PROD_VLVENDA4    = "VLVENDA4";
-    public static final String P_PRECO_PROD_VLVENDA5    = "VLVENDA5";
-    public static final String P_PRECO_PROD_VLVENDAP1   = "VLVENDAP1";
-    public static final String P_PRECO_PROD_VLVENDAP2   = "VLVENDAP2";
-    public static final String P_CATEGORIA_PRODUTO      = "CLASSE";
-    public static final String P_STATUS_PRODUTO         = "ATIVO";
-    public static final String P_APRESENTACAO_PRODUTO   = "APRESENTACAO";
+    public static final String P_QUANTIDADE_PRODUTO = "QTDESTPROD";
+    public static final String P_PRECO_PROD_PADRAO = "VLVENDA1";
+    public static final String P_PRECO_PROD_VLVENDA1 = "VENDAPADRAO";
+    public static final String P_PRECO_PROD_VLVENDA2 = "VLVENDA2";
+    public static final String P_PRECO_PROD_VLVENDA3 = "VLVENDA3";
+    public static final String P_PRECO_PROD_VLVENDA4 = "VLVENDA4";
+    public static final String P_PRECO_PROD_VLVENDA5 = "VLVENDA5";
+    public static final String P_PRECO_PROD_VLVENDAP1 = "VLVENDAP1";
+    public static final String P_PRECO_PROD_VLVENDAP2 = "VLVENDAP2";
+    public static final String P_CATEGORIA_PRODUTO = "CLASSE";
+    public static final String P_STATUS_PRODUTO = "ATIVO";
+    public static final String P_APRESENTACAO_PRODUTO = "APRESENTACAO";
 
-    public static final String P_DESCRICAO_TAB1   = "TAB1";
-    public static final String P_DESCRICAO_TAB2   = "TAB2";
-    public static final String P_DESCRICAO_TAB3   = "TAB3";
-    public static final String P_DESCRICAO_TAB4   = "TAB4";
-    public static final String P_DESCRICAO_TAB5   = "TAB5";
-    public static final String P_DESCRICAO_TAB6   = "TAB6";
-    public static final String P_DESCRICAO_TAB7   = "TAB7";
-
-
-
+    public static final String P_DESCRICAO_TAB1 = "TAB1";
+    public static final String P_DESCRICAO_TAB2 = "TAB2";
+    public static final String P_DESCRICAO_TAB3 = "TAB3";
+    public static final String P_DESCRICAO_TAB4 = "TAB4";
+    public static final String P_DESCRICAO_TAB5 = "TAB5";
+    public static final String P_DESCRICAO_TAB6 = "TAB6";
+    public static final String P_DESCRICAO_TAB7 = "TAB7";
 
 
     private String prd_codigo;
@@ -55,16 +52,16 @@ public class SqliteProdutoBean {
     public SqliteProdutoBean() {
     }
 
+    public SqliteProdutoBean(String prd_codigo) {
+        this.prd_codigo = prd_codigo;
+    }
+
     public BigDecimal getPrd_preco_padrao() {
         return prd_preco_padrao;
     }
 
     public void setPrd_preco_padrao(BigDecimal prd_preco_padrao) {
         this.prd_preco_padrao = prd_preco_padrao;
-    }
-
-    public SqliteProdutoBean(String prd_codigo) {
-        this.prd_codigo = prd_codigo;
     }
 
     public String getPrd_codigo() {
@@ -108,19 +105,19 @@ public class SqliteProdutoBean {
         this.prd_categoria = prd_categoria;
     }
 
-    public String getPrd_status () {
+    public String getPrd_status() {
         return prd_status;
     }
 
-    public void setPrd_status (String prd_status) {
+    public void setPrd_status(String prd_status) {
         this.prd_status = prd_status;
     }
 
-    public String getPrd_apresentacao () {
+    public String getPrd_apresentacao() {
         return prd_apresentacao;
     }
 
-    public void setPrd_apresentacao (String prd_apresentacao) {
+    public void setPrd_apresentacao(String prd_apresentacao) {
         this.prd_apresentacao = prd_apresentacao;
     }
 }

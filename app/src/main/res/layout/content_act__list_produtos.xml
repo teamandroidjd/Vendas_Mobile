@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_act__list_produtos"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,17 +14,16 @@
     tools:showIn="@layout/app_bar_act__list_produtos">
 
     <RelativeLayout
-        android:id="@+id/LinearLayoutTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/txvqtdregistroprod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/txvqtdregistroprod"
             android:layout_alignParentRight="true"
-            android:text="Quantidade de registro:"/>
+            android:text="Quantidade de registro:" />
 
     </RelativeLayout>
 
@@ -36,7 +33,6 @@
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:layout_weight="1"
-        android:orientation="vertical">
-    </RelativeLayout>
+        android:orientation="vertical"></RelativeLayout>
 
 </LinearLayout>

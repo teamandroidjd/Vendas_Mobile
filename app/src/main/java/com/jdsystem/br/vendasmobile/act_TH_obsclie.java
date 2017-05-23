@@ -22,21 +22,19 @@ import android.widget.Toast;
 
 public class act_TH_obsclie extends Fragment {
 
-    String CodCliente,codVendedor,URLPrincipal,usuario,senha;
-
-    SQLiteDatabase DB;
-    private Context ctx;
-    private Activity act;
-    public SharedPreferences prefs;
     public static final String CONFIG_HOST = "CONFIG_HOST";
+    public SharedPreferences prefs;
+    String CodCliente, codVendedor, URLPrincipal, usuario, senha;
+    SQLiteDatabase DB;
     int idPerfil;
+    private Activity act;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.act_obs_cliente,container,false);
-        ctx = getContext();
+        View v = inflater.inflate(R.layout.act_obs_cliente, container, false);
+        Context ctx = getContext();
 
-        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
 
@@ -60,18 +58,18 @@ public class act_TH_obsclie extends Fragment {
         }
         try {
             Cursor CursorClie = DB.rawQuery(" SELECT OBS, CODPERFIL FROM CLIENTES " +
-                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente) +" AND CODPERFIL = "+idPerfil, null);
+                    " WHERE CODCLIE_INT = " + Integer.parseInt(CodCliente) + " AND CODPERFIL = " + idPerfil, null);
 
             if (CursorClie.getCount() > 0) {
                 CursorClie.moveToFirst();
                 do {
-                    TAG_OBSCLIENTE.setText("Observações: "+CursorClie.getString(CursorClie.getColumnIndex("OBS")));
+                    TAG_OBSCLIENTE.setText("Observações: " + CursorClie.getString(CursorClie.getColumnIndex("OBS")));
 
                 }
                 while (CursorClie.moveToNext());
                 CursorClie.close();
             }
-        }catch (Exception E){
+        } catch (Exception E) {
             Toast.makeText(ctx, E.toString(), Toast.LENGTH_SHORT).show();
         }
         return v;

@@ -14,7 +14,7 @@
         android:paddingLeft="4dp"
         android:text="produto com a descricao muito grande. assim podemos ver como se compota."
         android:textColor="@color/colordescClie"
-        android:textSize="30sp"/>
+        android:textSize="30sp" />
 
     <TextView
         android:id="@+id/prod_lisview_quantidade"
@@ -35,8 +35,7 @@
         android:gravity="center"
         android:text="R$ 1000,5000"
         android:textColor="@color/colordescClie"
-        android:textSize="30sp"/>
-
+        android:textSize="30sp" />
 
 
     <TextView
@@ -47,8 +46,8 @@
         android:gravity="center"
         android:paddingRight="4dp"
         android:text="R$ 1000,00"
-        android:textSize="30sp"
         android:textColor="@color/colordescClie"
+        android:textSize="30sp"
 
         />
 

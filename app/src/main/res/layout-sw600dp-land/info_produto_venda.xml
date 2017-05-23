@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorCardClie"
@@ -12,164 +11,142 @@
         android:layout_margin="10dp"
         android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-    <TextView
-        android:id="@+id/txv01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:text="Código do Produto: "
-        android:textStyle="bold"
-        android:textColor="@color/colordescClie"
-        android:textSize="25dp"/>
-
-    <TextView
-        android:id="@+id/info_txv_codproduto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/txv01"
-        android:layout_toRightOf="@+id/txv01"
-        android:text="0125"
-        android:textStyle="bold"
-        android:textColor="@color/colorAccent"
-        android:textSize="25dp"/>
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/txv02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txv01"
-        android:layout_marginTop="10dp"
-        android:text="Descrição Produto:"
-        android:textStyle="bold"
-        android:textColor="@color/colordescClie"
-        android:textSize="25dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lnr_info_txv_descricaoproduto"
-        android:layout_alignStart="@+id/txv01"
-        android:layout_alignLeft="@+id/txv01"
-        android:layout_below="@+id/txv02">
-
-        <TextView
-            android:id="@+id/info_txv_descricaoproduto"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Coca cola 600 ml 2 litros e 5000 mil reais de produtos com nome grande para acertar aqui"
-            android:textStyle="bold"
-            android:textColor="@color/colorAccent"
-            android:textSize="25dp"/>
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/txv01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Código do Produto: "
+                android:textColor="@color/colordescClie"
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/info_txv_codproduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0125"
+                android:textColor="@color/colorAccent"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/txv04"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Unidade de Medida: "
-        android:textColor="@color/colordescClie"
-        android:textStyle="bold"
-        android:textSize="25dp"/>
+        <TextView
+            android:id="@+id/txv02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Descrição Produto:"
+            android:textColor="@color/colordescClie"
+            android:textSize="25sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/info_txv_unmedida"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="LT"
-        android:textColor="@color/colorAccent"
-        android:textSize="25dp"/>
+        <LinearLayout
+            android:id="@+id/lnr_info_txv_descricaoproduto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/info_txv_descricaoproduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Coca cola 600 ml 2 litros e 5000 mil reais de produtos com nome grande para acertar aqui"
+                android:textColor="@color/colorAccent"
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
-    <Spinner
-        android:id="@+id/spntabpreco"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textColor="@color/colordescClie"
-        android:textSize="25dp"
-        android:layout_below="@+id/txv04"
-        android:entries="@array/tabela_preco"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-    </Spinner>
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/txv06"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Preço do Produto: "
-        android:textColor="@color/colordescClie"
-        android:textStyle="bold"
-        android:textSize="25dp"/>
+            <TextView
+                android:id="@+id/txv04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Unidade de Medida: "
+                android:textColor="@color/colordescClie"
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/info_txv_precoproduto"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3.50"
-        android:textColor="@color/colorAccent"
-        android:textSize="25dp"/>
+            <TextView
+                android:id="@+id/info_txv_unmedida"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="LT"
+                android:textColor="@color/colorAccent"
+                android:textSize="25sp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        <Spinner
+            android:id="@+id/spntabpreco"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/tabela_preco"
+            android:padding="10dp"
+            android:textColor="@color/colordescClie"
+            android:textSize="25sp"></Spinner>
 
-    <TextView
-        android:id="@+id/txv07"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txv06"
-        android:layout_marginTop="10dp"
-        android:text="Informe a quantidade: "
-        android:textStyle="bold"
-        android:textColor="@color/colordescClie"
-        android:textSize="25dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/info_txt_quantidadecomprada"
-        android:layout_margin="10dp"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txv07"
-        android:textAlignment="center"
-        android:textColor="@color/colorAccent"
-        android:textSize="25dp"/>
-    </LinearLayout>
+            <TextView
+                android:id="@+id/txv06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Preço do Produto: "
+                android:textColor="@color/colordescClie"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/info_txv_precoproduto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="3.50"
+                android:textColor="@color/colorAccent"
+                android:textSize="25sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txv07"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Informe a quantidade: "
+                android:textColor="@color/colordescClie"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/info_txt_quantidadecomprada"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:inputType="numberDecimal"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="25sp" />
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,16 +13,20 @@ import com.jdsystem.br.vendasmobile.Util.SlidingTabLayout;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterViewPager;
 
 
-public class DadosCliente extends ActionBarActivity {
+public class DadosCliente extends AppCompatActivity {
 
-    private String DocClie,sCodVend,URLPrincipal,usuario,senha,NomeCliente;
     String CodCliente;
     Toolbar toolbar;
     ViewPager pager;
     ListAdapterViewPager adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[]={"Dados","Contatos","obs"};
-    int Numboftabs =3;
+    CharSequence Titles[] = {"Dados", "Contatos", "obs"};
+    int Numboftabs = 3;
+    private String DocClie;
+    private String sCodVend;
+    private String URLPrincipal;
+    private String usuario;
+    private String senha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +34,7 @@ public class DadosCliente extends ActionBarActivity {
         setContentView(R.layout.activity_act_dados_cliente);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        adapter =  new ListAdapterViewPager(getSupportFragmentManager(),Titles,Numboftabs);
+        adapter = new ListAdapterViewPager(getSupportFragmentManager(), Titles, Numboftabs);
 
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
@@ -56,7 +61,7 @@ public class DadosCliente extends ActionBarActivity {
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
                 CodCliente = params.getString(getString(R.string.intent_codcliente));
-                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
+                String nomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
         }
 
@@ -84,6 +89,7 @@ public class DadosCliente extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
         Intent intent1 = new Intent(DadosCliente.this, ConsultaClientes.class);

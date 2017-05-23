@@ -1,13 +1,8 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.graphics.Point;
-import android.graphics.PointF;
 
-import java.lang.reflect.Array;
-import java.text.Format;
 import java.util.Random;
-
-import static com.jdsystem.br.vendasmobile.R.id.end;
 
 /**
  * Created by eduardo.costa on 31/10/2016.
@@ -15,12 +10,12 @@ import static com.jdsystem.br.vendasmobile.R.id.end;
 
 public class actFormulas {
 
-    public String CryptArquivo(String Action, String Src){
+    public String CryptArquivo(String Action, String Src) {
         int KeyLen, KeyPos, SrcPos, SrcAsc, TmpSrcAsc, Range;
         Random OffSet;
         String Dest, Key;
         Point vRange;
-       // MemoryStream vMemory;
+        // MemoryStream vMemory;
 
         try {
            /* if (Src == "") {
@@ -66,7 +61,7 @@ public class actFormulas {
                 SrcPos = SrcPos + 2;
                 until(SrcPos >= (Src));
             }*/
-        }catch (Exception E){
+        } catch (Exception E) {
 
         }
         return "";

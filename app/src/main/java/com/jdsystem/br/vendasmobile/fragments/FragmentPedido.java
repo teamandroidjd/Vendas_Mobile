@@ -1,10 +1,9 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +16,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -28,25 +26,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
-import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.CadastroPedidos;
-import com.jdsystem.br.vendasmobile.Login;
-import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
+import com.jdsystem.br.vendasmobile.ConfigDB;
+import com.jdsystem.br.vendasmobile.ConsultaPedidos;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Util;
-import com.jdsystem.br.vendasmobile.ConsultaPedidos;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
-//import com.lowagie.text.HeaderFooter;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.List;
+
+//import com.lowagie.text.HeaderFooter;
 
 /**
  * Created by WKS22 on 29/11/2016.
@@ -54,15 +50,13 @@ import java.util.List;
 
 public class FragmentPedido extends Fragment implements RecyclerViewOnClickListenerHack, Runnable {
 
-    private RecyclerView mRecyclerView;
-    private List<Pedidos> mList;
-    private Context context = this.getActivity();
-    private SQLiteDatabase DB;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
     int codclie_ext;
     String limitecred, bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte, URLPrincipal;
-    private SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
+    private RecyclerView mRecyclerView;
+    private Context context = this.getActivity();
+    private SQLiteDatabase DB;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,7 +91,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(llm);
 
-        mList = ((ConsultaPedidos) getActivity()).CarregarPedidos();
+        List<Pedidos> mList = ((ConsultaPedidos) getActivity()).CarregarPedidos();
         ListAdapterPedidos adapter = new ListAdapterPedidos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);
@@ -170,7 +164,6 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                     });
             AlertDialog alert = builder.create();
             alert.show();
-            return;
         }
     }
 
@@ -186,18 +179,18 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
 
-            final Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT,VALORTOTAL, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + " AND CODPERFIL = "+idPerfil, null);
+            final Cursor cursorped = DB.rawQuery("SELECT CODCLIE_EXT,DATAVENDA,VALORTOTAL, CODCLIE FROM PEDOPER WHERE NUMPED = " + NumPedido + " AND CODPERFIL = " + idPerfil, null);
             cursorped.moveToFirst();
             codclie_ext = cursorped.getInt(cursorped.getColumnIndex("CODCLIE_EXT"));
             codclie_inte = cursorped.getString(cursorped.getColumnIndex("CODCLIE"));
+            final String datavend = cursorped.getString(cursorped.getColumnIndex("DATAVENDA"));
             String vltotal = cursorped.getString(cursorped.getColumnIndex("VALORTOTAL")).replace(".", ",");
             BigDecimal vendatotal = new BigDecimal(Double.parseDouble(vltotal.replace(',', '.')));
-            String vltotalvenda = vendatotal.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-            final String totalvenda = vltotalvenda;
+            final String totalvenda = vendatotal.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
             cursorped.close();
             try {
                 if (codclie_ext != 0) {
-                    Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, FLAGINTEGRADO, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = " + codclie_ext + " AND CODPERFIL = "+idPerfil, null);
+                    Cursor cursorclie = DB.rawQuery("SELECT LIMITECRED, FLAGINTEGRADO, BLOQUEIO FROM CLIENTES WHERE CODCLIE_EXT = " + codclie_ext + " AND CODPERFIL = " + idPerfil, null);
                     cursorclie.moveToFirst();
                     limitecred = cursorclie.getString(cursorclie.getColumnIndex("LIMITECRED"));
                     bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
@@ -210,7 +203,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             // Neese momento é que a tela com as opções do pedido é criada.
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            final View formElementsView = inflater.inflate(R.layout.act_pergunta_list_pedido, null, false);
+            @SuppressLint("InflateParams") final View formElementsView = inflater.inflate(R.layout.act_pergunta_list_pedido, null, false);
             final RadioGroup genderRadioGroup = (RadioGroup) formElementsView.findViewById(R.id.genderRadioGroup);
             new AlertDialog.Builder(getActivity()).setView(formElementsView)
                     .setTitle("Pedido: " + NumPedido)
@@ -225,7 +218,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     String pedidoendiado;
                                     String sitcliexvend;
                                     try {
-                                        Cursor cursorclie = DB.rawQuery("SELECT FLAGINTEGRADO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = '" + codclie_inte + "' AND CODPERFIL = "+idPerfil, null);
+                                        Cursor cursorclie = DB.rawQuery("SELECT FLAGINTEGRADO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = '" + codclie_inte + "' AND CODPERFIL = " + idPerfil, null);
                                         cursorclie.moveToFirst();
                                         flagintegrado = cursorclie.getString(cursorclie.getColumnIndex("FLAGINTEGRADO"));
 
@@ -234,11 +227,15 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         e.toString();
                                     }
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
-                                        if (ConexOk == true) {
+                                        if (ConexOk) {
                                             if (flagintegrado.equals("1")) {
-                                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), usuario, senha,null,null,null);
+                                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), usuario, senha, null, null, null);
                                                 if (sitclieenvio.equals("OK")) {
-                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido,null,null,null);
+                                                    if(String.valueOf(datavend).equals("null")){
+                                                        String dtvend = Util.DataHojeComHorasBR();
+                                                        DB.execSQL(" UPDATE PEDOPER SET DATAVENDA = '"+dtvend+"' WHERE NUMPED = '" + NumPedido + "' AND CODPERFIL = " + idPerfil);
+                                                    }
+                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido, null, null, null);
                                                     if (pedidoendiado.equals("OK")) {
                                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                         ((ConsultaPedidos) getActivity()).finish();
@@ -255,7 +252,11 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             } else {
                                                 sitcliexvend = Sincronismo.SituacaodoClientexPed(totalvenda, getActivity(), usuario, senha, codclie_ext);
                                                 if (sitcliexvend.equals("OK")) {
-                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido,null,null,null);
+                                                    if(String.valueOf(datavend).equals("null")){
+                                                        String dtvend = Util.DataHojeComHorasBR();
+                                                        DB.execSQL(" UPDATE PEDOPER SET DATAVENDA = '"+dtvend+"' WHERE NUMPED = '" + NumPedido + "' AND CODPERFIL = " + idPerfil);
+                                                    }
+                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido, null, null, null);
                                                     if (pedidoendiado.equals("OK")) {
                                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                         ((ConsultaPedidos) getActivity()).finish();
@@ -414,10 +415,10 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
 
             Configuration configuration = getResources().getConfiguration();
 
-            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-            }else{
+            } else {
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
 
@@ -432,7 +433,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     }
 
     private void carregarpreferencias() {
-        prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
+        SharedPreferences prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
     }

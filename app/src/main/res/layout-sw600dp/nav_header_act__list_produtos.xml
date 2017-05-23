@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/side_nav_bar"
@@ -12,20 +13,20 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/imageView"
         android:layout_width="280dp"
         android:layout_height="160dp"
+        android:layout_gravity="left"
         android:layout_marginTop="5sp"
         android:background="@drawable/ico_logo_fv"
-        android:layout_gravity="left" />
+        tools:ignore="ContentDescription" />
 
     <TextView
+        android:id="@+id/lblUsuarioLogado"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="8sp"
         android:text="JD System"
-        android:textSize="30dp"
-        android:id="@+id/lblUsuarioLogado"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="30sp" />
 
 </LinearLayout>

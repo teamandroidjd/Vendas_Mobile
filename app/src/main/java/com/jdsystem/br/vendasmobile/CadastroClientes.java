@@ -46,25 +46,24 @@ import static com.jdsystem.br.vendasmobile.Login.NOME_USUARIO;
 
 public class CadastroClientes extends AppCompatActivity implements Runnable, View.OnFocusChangeListener, AdapterView.OnItemSelectedListener {
 
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    private static ProgressDialog DialogECB;
+    public SharedPreferences prefs;
     String sTipoPessoa, sUF, codVendedor, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada, codEmpresa,
-            chavepedido, numPedido,atuok;
-    private Handler handler = new Handler();
+            chavepedido, numPedido, atuok;
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
-    int CodCidade, CodBairro, telaInvocada, codClieExt, idPerfil, flag, posicao;
+    int CodCidade, CodCidadeInt,CodBairro,telaInvocada,idPerfil,flag,posicao,codClieExt,codClieInt;
     Boolean PesqCEP;
     ImageButton BtnPesqCep;
-    private static ProgressDialog DialogECB;
     EditText nomerazao, nomefan, nomecompleto, cnpjcpf, Edtcpf, EdtRG, ie, endereco, numero, cep, tel1, tel2, email, edtOBS, Complemento;
     SQLiteDatabase DB;
+    private Handler handler = new Handler();
     private GoogleApiClient client;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cad_clientes);
-        //TODO: RAFAEL - CORRIGIR O BUG AO SETAR O BAIRRO E TESTAR OFFLINE
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         declaraobjetos();
         carregarpreferencias();
@@ -82,6 +81,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                 codEmpresa = params.getString(getString(R.string.intent_codigoempresa));
                 chavepedido = params.getString(getString(R.string.intent_chavepedido));
                 numPedido = params.getString(getString(R.string.intent_numpedido));
+                codClieInt = params.getInt(getString(R.string.intent_codcliente));
 
             }
         }
@@ -127,12 +127,13 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 Boolean ConexOk = VerificaConexao();
-                if (ConexOk == false) {
+                if (!ConexOk) {
                     NomeCidade = spCidade.getSelectedItem().toString();
                     Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
                     if (CurCidade.getCount() > 0) {
                         CurCidade.moveToFirst();
                         CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
+                        CodCidadeInt = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
                     }
                     CurCidade.close();
                     Cursor CurBairro = null;
@@ -156,26 +157,34 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                     }
                     CurBairro.close();
 
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
-                    ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
-                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    spBairro.setAdapter(spinnerArrayAdapter);
+                    new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                    spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
 
                 } else {
+                    //if (codClieInt == 0) {
                     NomeCidade = spCidade.getSelectedItem().toString();
-                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
+                    //}
+                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE_EXT, CODCIDADE FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '"+sUF+"'", null);
                     if (CurCidade.getCount() > 0) {
                         CurCidade.moveToFirst();
-                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
+                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
+                        CodCidadeInt = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
                     }
                     CurCidade.close();
                     Cursor CurBairro = null;
                     try {
-                        if (PesqCEP.equals(false)) {
-                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
-                        } else {
-                            CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = '" + CodCidade + "'", null);
-                        }
+                        /*if (PesqCEP.equals(false)) {
+                            if (codClieInt != 0) {
+                                CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
+                            } else {
+                                // só executa esse bloco se a busca for manualmente
+                                CurBairro = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = '" +CodCidade+ "'", null);
+                            }
+
+                        } else {*/
+                        //só executa este bloco quando a pesquisa for feita pelo CEP
+                        CurBairro = DB.rawQuery(" SELECT DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidade, null);
+                        //}
                     } catch (Exception e) {
                         e.toString();
                     }
@@ -190,10 +199,10 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                     }
                     CurBairro.close();
 
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro);
-                    ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
-                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    spBairro.setAdapter(spinnerArrayAdapter);
+                    new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                    spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
+                    int pos = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).getPosition(NomeBairro);
+                    spBairro.setSelection(pos);
                 }
             }
 
@@ -220,6 +229,198 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        if (codClieInt != 0) {
+            carregardadoscliente();
+
+        }
+    }
+
+    private void carregardadoscliente() {
+        try {
+            Cursor cursoclie = DB.rawQuery("SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                    " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
+                    " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
+                    " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
+                    " WHERE CODCLIE_INT = " + codClieInt, null);
+            cursoclie.moveToFirst();
+            if (cursoclie.getCount() > 0) {
+                String tipopessoa = cursoclie.getString(cursoclie.getColumnIndex("TIPOPESSOA"));
+                if (tipopessoa.equals("F")) {
+                    spTipoPessoa.setSelection(0);
+                    nomerazao.setVisibility(EditText.GONE);
+                    nomefan.setVisibility(EditText.GONE);
+                    cnpjcpf.setVisibility(EditText.GONE);
+                    ie.setVisibility(EditText.GONE);
+                    Edtcpf.setVisibility(EditText.VISIBLE);
+                    nomecompleto.setVisibility(EditText.VISIBLE);
+                    nomecompleto.setText(cursoclie.getString(cursoclie.getColumnIndex("NOMERAZAO")));
+                    EdtRG.setVisibility(EditText.VISIBLE);
+                    EdtRG.setText(cursoclie.getString(cursoclie.getColumnIndex("REGIDENT")));
+                    Edtcpf.setText(cursoclie.getString(cursoclie.getColumnIndex("CNPJ_CPF")));
+                    email.setText(cursoclie.getString(cursoclie.getColumnIndex("EMAIL")));
+                    cep.setText(cursoclie.getString(cursoclie.getColumnIndex("CEP")));
+                    endereco.setText(cursoclie.getString(cursoclie.getColumnIndex("ENDERECO")));
+                    numero.setText(cursoclie.getString(cursoclie.getColumnIndex("NUMERO")));
+                    Complemento.setText(cursoclie.getString(cursoclie.getColumnIndex("COMPLEMENT")));
+                    sUF = cursoclie.getString(cursoclie.getColumnIndex("UF"));
+                    NomeCidade = cursoclie.getString(cursoclie.getColumnIndex("CIDADE"));
+                    NomeBairro = cursoclie.getString(cursoclie.getColumnIndex("BAIRRO"));
+                    carregaruf(sUF);
+                    tel1.setText(cursoclie.getString(cursoclie.getColumnIndex("TEL1")));
+                    tel2.setText(cursoclie.getString(cursoclie.getColumnIndex("TEL2")));
+                    edtOBS.setText(cursoclie.getString(cursoclie.getColumnIndex("OBS")));
+                } else {
+                    spTipoPessoa.setSelection(1);
+                    nomerazao.setVisibility(EditText.VISIBLE);
+                    nomefan.setVisibility(EditText.VISIBLE);
+                    cnpjcpf.setVisibility(EditText.VISIBLE);
+                    ie.setVisibility(EditText.VISIBLE);
+                    Edtcpf.setVisibility(EditText.GONE);
+                    nomecompleto.setVisibility(EditText.GONE);
+                    EdtRG.setVisibility(EditText.GONE);
+                    nomerazao.setText(cursoclie.getString(cursoclie.getColumnIndex("NOMERAZAO")));
+                    nomefan.setText(cursoclie.getString(cursoclie.getColumnIndex("NOMEFAN")));
+                    ie.setText(cursoclie.getString(cursoclie.getColumnIndex("INSCREST")));
+                    cnpjcpf.setText(cursoclie.getString(cursoclie.getColumnIndex("CNPJ_CPF")));
+                    email.setText(cursoclie.getString(cursoclie.getColumnIndex("EMAIL")));
+                    cep.setText(cursoclie.getString(cursoclie.getColumnIndex("CEP")));
+                    endereco.setText(cursoclie.getString(cursoclie.getColumnIndex("ENDERECO")));
+                    numero.setText(cursoclie.getString(cursoclie.getColumnIndex("NUMERO")));
+                    Complemento.setText(cursoclie.getString(cursoclie.getColumnIndex("COMPLEMENT")));
+                    sUF = cursoclie.getString(cursoclie.getColumnIndex("UF"));
+                    NomeCidade = cursoclie.getString(cursoclie.getColumnIndex("CIDADE"));
+                    NomeBairro = cursoclie.getString(cursoclie.getColumnIndex("BAIRRO"));
+                    carregaruf(sUF);
+                    tel1.setText(cursoclie.getString(cursoclie.getColumnIndex("TEL1")));
+                    tel2.setText(cursoclie.getString(cursoclie.getColumnIndex("TEL2")));
+                    edtOBS.setText(cursoclie.getString(cursoclie.getColumnIndex("OBS")));
+                }
+            } else {
+                Toast.makeText(this, "Não foi possível localizar o cliente. Verifique e tente novamente", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.toString();
+
+        }
+    }
+
+    private void carregaruf(String uf) {
+        switch (uf) {
+            case "0":
+                sUF = "0";
+                onItemSelected(null, null, 0, 0);
+                break;
+            case "AC":
+                sUF = "AC"; //Acre
+                onItemSelected(null, null, 1, 0);
+                break;
+            case "AL":
+                sUF = "AL"; // Alagoas
+                onItemSelected(null, null, 2, 0);
+                break;
+            case "AP":
+                sUF = "AP"; //Amapá
+                onItemSelected(null, null, 3, 0);
+                break;
+            case "AM":
+                sUF = "AM";//Amazonas
+                onItemSelected(null, null, 4, 0);
+                break;
+            case "BA":
+                sUF = "BA";//Bahia
+                onItemSelected(null, null, 5, 0);
+                break;
+            case "CE":
+                sUF = "CE";//Ceará
+                onItemSelected(null, null, 6, 0);
+                break;
+            case "DF":
+                sUF = "DF";//Distrito Federal
+                onItemSelected(null, null, 7, 0);
+                break;
+            case "ES":
+                sUF = "ES";//Espírito Santo
+                onItemSelected(null, null, 8, 0);
+                break;
+            case "GO":
+                sUF = "GO";//Goiás
+                onItemSelected(null, null, 9, 0);
+                break;
+            case "MA":
+                sUF = "MA";//Maranhão
+                onItemSelected(null, null, 10, 0);
+                break;
+            case "MT":
+                sUF = "MT";//Mato Grosso
+                onItemSelected(null, null, 11, 0);
+                break;
+            case "MS":
+                sUF = "MS";//Mato Grosso do Sul
+                onItemSelected(null, null, 12, 0);
+                break;
+            case "MG":
+                sUF = "MG";//Minas Gerais
+                onItemSelected(null, null, 13, 0);
+                break;
+            case "PA":
+                sUF = "PA";//Pará
+                onItemSelected(null, null, 14, 0);
+                break;
+            case "PB":
+                sUF = "PB";//Paraíba
+                onItemSelected(null, null, 15, 0);
+                break;
+            case "PR":
+                sUF = "PR";//Paraná
+                onItemSelected(null, null, 16, 0);
+                break;
+            case "PE":
+                sUF = "PE";//Pernambuco
+                onItemSelected(null, null, 17, 0);
+                break;
+            case "PI":
+                sUF = "PI";//Piauí
+                onItemSelected(null, null, 18, 0);
+                break;
+            case "RJ":
+                sUF = "RJ";//Rio de Janeiro
+                spUF.setSelection(19);
+                onItemSelected(null, null, 19, 0);
+                break;
+            case "RN":
+                sUF = "RN"; //Rio Grande do Norte
+                onItemSelected(null, null, 20, 0);
+                break;
+            case "RS":
+                sUF = "RS";//Rio Grande do Sul
+                onItemSelected(null, null, 21, 0);
+                break;
+            case "RO":
+                sUF = "RO"; //Rondônia
+                onItemSelected(null, null, 22, 0);
+                break;
+            case "RR":
+                sUF = "RR"; //Roraima
+                onItemSelected(null, null, 23, 0);
+                break;
+            case "SC":
+                sUF = "SC";//Santa Catarina
+                onItemSelected(null, null, 24, 0);
+                break;
+            case "SP":
+                sUF = "SP";//São Paulo
+                onItemSelected(null, null, 25, 0);
+                break;
+            case "SE":
+                sUF = "SE";//Sergipe
+                onItemSelected(null, null, 26, 0);
+                break;
+            case "TO":
+                sUF = "TO";//Tocantins
+                onItemSelected(null, null, 27, 0);
+                break;
+        }
     }
 
     private void carregarpreferencias() {
@@ -257,20 +458,15 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         EdtRG = (EditText) findViewById(R.id.EdtRG);
         edtOBS = (EditText) findViewById(R.id.EdtOBS);
 
-        final EditText etCNPJ = (EditText) findViewById(R.id.EdtCnpjCpf);
-        etCNPJ.addTextChangedListener(Mask.insert(Mask.CNPJ_MASK, etCNPJ));
+        cnpjcpf.addTextChangedListener(Mask.insert(Mask.CNPJ_MASK, cnpjcpf));
 
-        final EditText etCPF = (EditText) findViewById(R.id.Edtcpf);
-        etCPF.addTextChangedListener(Mask.insert(Mask.CPF_MASK, etCPF));
+        Edtcpf.addTextChangedListener(Mask.insert(Mask.CPF_MASK, Edtcpf));
 
-        final EditText etCEP = (EditText) findViewById(R.id.EdtCep);
-        etCEP.addTextChangedListener(Mask.insert(Mask.CEP_MASK, etCEP));
+        cep.addTextChangedListener(Mask.insert(Mask.CEP_MASK, cep));
 
-        EditText etTelefone1 = (EditText) findViewById(R.id.EdtTel1);
-        etTelefone1.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone1));
+        tel1.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, tel1));
 
-        EditText etTelefone2 = (EditText) findViewById(R.id.EdtTel2);
-        etTelefone2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, etTelefone2));
+        tel2.addTextChangedListener(Mask.insert(Mask.TELEFONE_MASK, tel2));
 
         Edtcpf.setOnFocusChangeListener(this);
         cnpjcpf.setOnFocusChangeListener(this);
@@ -280,13 +476,9 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
     public boolean VerificaConexao() {
         boolean conectado;
         ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (conectivtyManager.getActiveNetworkInfo() != null
+        conectado = conectivtyManager.getActiveNetworkInfo() != null
                 && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                && conectivtyManager.getActiveNetworkInfo().isConnected()) {
-            conectado = true;
-        } else {
-            conectado = false;
-        }
+                && conectivtyManager.getActiveNetworkInfo().isConnected();
         return conectado;
     }
 
@@ -328,7 +520,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
         try {
             Boolean ConexOK = Util.checarConexaoCelular(this);
-            if (ConexOK == true) {
+            if (ConexOK) {
                 try {
                     Envio.call("", envelope);
                 } catch (Exception e) {
@@ -364,7 +556,6 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             endereco.setText("");
             return;
         }
-
         try {
             JSONObject jsonObj = new JSONObject(RetDadosEndereco);
             JSONArray JEndereco = jsonObj.getJSONArray("cep");
@@ -375,57 +566,46 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             for (int i = 0; i < JEndereco.length(); i++) {
                 while (jumpTime < totalProgressTime) {
                     JSONObject c = JEndereco.getJSONObject(jumpTime);
+                    jumpTime += 1;
+
+
                     try {
-                        jumpTime += 1;
-                        String SiglaEstado = c.getString("uf");
-
-                        Cursor CursosEstado = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-
-                        if (CursosEstado.getCount() > 0) {
-                            DB.execSQL(" UPDATE ESTADOS SET UF = '" + SiglaEstado + "', DESCRICAO = '" + SiglaEstado + "'" +
-                                    " WHERE UF = '" + SiglaEstado + "'");
-                            Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-                            cursor1.moveToFirst();
-                            Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
-                            cursor1.close();
-                        } else {
-                            DB.execSQL("INSERT INTO ESTADOS VALUES('" + SiglaEstado + "','" + SiglaEstado + "');");
-                            Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-                            cursor1.moveToFirst();
-                            Estado = cursor1.getString(cursor1.getColumnIndex("UF"));
-                            cursor1.close();
-                        }
-                        CursosEstado.close();
-                    } catch (Exception E) {
-                    }
-
-                    //Cadastrar Cidades
-                    try {
+                        sUF = c.getString("uf");
                         NomeCidade = c.getString("cidade");
-                        //int CodCidadeExt = c.getInt("id_cidade");
+                        CodCidade = c.getInt("id_cidade");
+                        if(codClieInt != 0){
+                            carregaruf(sUF);
+                        }
+
                         NomeCidade = NomeCidade.replaceAll("'", "");
 
-                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                        //Carregar endereço
+                        String end = c.getString("logradouro");
+                        String tipoend = c.getString("tipo_logradouro");
+                        endereco.setText(tipoend + " " + end);
+                        numero.requestFocus();
+
+                        //Cadastrar Cidades
+                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + sUF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                         if (CursorCidade.getCount() > 0) {
-                            DB.execSQL(" UPDATE CIDADES SET UF = '" + Estado + "', DESCRICAO = '" + NomeCidade + "' " +//, CODCIDADE_EXT = '" + CodCidadeExt + "'" +
-                                    " WHERE DESCRICAO = '" + NomeCidade + "'");
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                            DB.execSQL(" UPDATE CIDADES SET UF = '" + sUF + "', DESCRICAO = '" + NomeCidade + "', CODCIDADE_EXT = " + CodCidade + "" +
+                                    " WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '" + sUF + "'");
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + sUF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                             cursor1.moveToFirst();
-                            CodCidade = Integer.parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE_EXT")));
+                            CodCidade = (cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT")));
                             cursor1.close();
                         } else {
-                            DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF)" +
-                                    " VALUES('" + NomeCidade + "','" + Estado + "');");
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + Estado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                            DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODCIDADE_EXT)" +
+                                    " VALUES('" + NomeCidade + "','" + sUF + "'," + CodCidade + ");");
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + sUF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
                             cursor1.moveToFirst();
-                            CodCidade = Integer.parseInt(cursor1.getString(cursor1.getColumnIndex("CODCIDADE_EXT")));
+                            CodCidade = (cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT")));
                             cursor1.close();
                         }
                         CursorCidade.close();
                     } catch (Exception E) {
                         E.printStackTrace();
                     }
-
                     //Cadastrar Bairros
                     try {
                         NomeBairro = c.getString("bairro");
@@ -438,56 +618,65 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                             DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = " + CodCidade + ", DESCRICAO = '" + NomeBairro + "'" +
                                     " WHERE DESCRICAO = '" + NomeBairro + "' AND CODCIDADE = '" + CodCidade + "'");
                         } else {
-                            DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODCIDADE)" +
-                                    " VALUES('" + NomeBairro + "'," + CodCidade + ");");
+                            DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODCIDADE, CODBAIRRO_EXT)" +
+                                    " VALUES('" + NomeBairro + "'," + CodCidade + "," + CodBairroExt + ");");
                         }
                         CursorBairro.close();
+
+                        // Carrega o Estado
+                        String ufconvert = Util.converteUf(sUF);
+                        ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.uf));
+                        arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                        int pos = arrayAdapterUF.getPosition(ufconvert);
+                        spUF.setSelection(pos);
+
+
                     } catch (Exception E) {
                         E.printStackTrace();
                     }
-                    String end = c.getString("logradouro");
-                    String tipoend = c.getString("tipo_logradouro");
-                    endereco.setText(tipoend + " " + end);
-                    numero.requestFocus();
 
-                    //Estado
-                    List<String> DadosListEstado = new ArrayList<String>();
-                    DadosListEstado.add(Estado);
-                    sUF = Estado;
-                    ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListEstado);
-                    arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-
-                    spUF.setAdapter(arrayAdapterUF);
-
-                    //Cidade
-                    List<String> DadosListCidade = new ArrayList<String>();
-                    DadosListCidade.add(NomeCidade);
-                    ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListCidade);
-                    ArrayAdapter<String> spinnerArrayAdapterCidade = arrayAdapterCidade;
-                    spinnerArrayAdapterCidade.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    spCidade.setAdapter(spinnerArrayAdapterCidade);
-
-                    //Bairro
-                    List<String> DadosListBairroUnic = new ArrayList<String>();
-                    DadosListBairroUnic.add(NomeBairro);
-                    ArrayAdapter<String> arrayAdapterBairroUnic = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairroUnic);
-                    ArrayAdapter<String> spinnerArrayAdapterBairroUnic = arrayAdapterBairroUnic;
-                    spinnerArrayAdapterBairroUnic.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                    spBairro.setAdapter(spinnerArrayAdapterBairroUnic);
 
                 }
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
         if (DialogECB.isShowing())
             DialogECB.dismiss();
-
     }
 
     @Override
     public void onBackPressed() {
+        if (codClieInt != 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(CadastroClientes.this);
+            builder.setTitle(R.string.app_namesair);
+            builder.setIcon(R.drawable.logo_ico);
+            builder.setMessage("Deseja Realmente cancelar as alterações no cadastro deste cliente?")
+                    .setCancelable(false)
+                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            Intent intent = new Intent(CadastroClientes.this, ConsultaPedidos.class);
+                            Bundle params = new Bundle();
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
+                            intent.putExtras(params);
+                            startActivity(intent);
+                            finish();
+                        }
+                    })
+
+                    .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+            return;
+
+        }
         if (nomecompleto.getText().length() != 0 || Edtcpf.getText().length() != 0 || EdtRG.getText().length() != 0 || nomerazao.getText().length() != 0 ||
                 nomefan.getText().length() != 0 || cnpjcpf.getText().length() != 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(CadastroClientes.this);
@@ -585,17 +774,12 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             cep.requestFocus();
             return;
         }
-        sUF = spUF.getSelectedItem().toString();
         if (sUF.equals("Selecione um estado") || sUF.equals("0")) {
 
             Toast.makeText(this, "Informe o estado! Campo obrigatória", Toast.LENGTH_LONG).show();
             return;
 
-        }/*else if (Util.validaEmail(email.getText().toString()) == false) {
-            email.setError("E-mail inválido! Verifique.");
-            email.requestFocus();
-            return;
-        }*/
+        }
         CEP = cep.getText().toString().replaceAll("[.-]", "");
 
         Cursor CursorClieCons = DB.rawQuery(" SELECT CNPJ_CPF, NOMERAZAO, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
@@ -615,7 +799,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         "', COMPLEMENT = '" + Complemento.getText().toString() +
                         "', CODBAIRRO = '" + CodBairro +
                         "', OBS = '" + edtOBS.getText().toString() +
-                        "', CODCIDADE = '" + CodCidade +
+                        "', CODCIDADE = '" + CodCidadeInt +
                         "', UF = '" + sUF +
                         "', CEP = '" + CEP + "', " +
                         " TIPOPESSOA = '" + sTipoPessoa +
@@ -640,7 +824,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         "', '" + Complemento.getText().toString() +
                         "'," + CodBairro +
                         ", '" + edtOBS.getText().toString() +
-                        "', " + CodCidade +
+                        "', " + CodCidadeInt +
                         ", '" + sUF +
                         "','" + CEP +
                         "', " + codVendedor +
@@ -656,6 +840,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "' AND CODPERFIL = " + idPerfil + "", null);
             cursor1.moveToFirst();
             final String CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
+            cursor1.close();
 
             Toast.makeText(this, "Cliente salvo com sucesso!", Toast.LENGTH_SHORT).show();
 
@@ -715,7 +900,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         })
                         .setNegativeButton("Não", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                if (TelaChamada.valueOf(TelaChamada).equals("null")) {
+                                if (String.valueOf(TelaChamada).equals("null")) {
                                     Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
                                     Bundle params = new Bundle();
                                     params.putString(getString(R.string.intent_usuario), usuario);
@@ -900,8 +1085,8 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if (sTipoPessoa.equals("F") && hasFocus == false && Edtcpf.getText().toString().length() > 0 && v == Edtcpf) {
-            if (Util.validaCPF(Edtcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
+        if (sTipoPessoa.equals("F") && !hasFocus && Edtcpf.getText().toString().length() > 0 && v == Edtcpf) {
+            if (!Util.validaCPF(Edtcpf.getText().toString().replaceAll("[^0123456789]", ""))) {
                 AlertDialog.Builder alerta = new AlertDialog.Builder(this);
                 alerta.setTitle(R.string.app_namesair);
                 alerta.setIcon(R.drawable.logo_ico);
@@ -934,12 +1119,11 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
                 AlertDialog alert = alerta.create();
                 alert.show();
-                return;
 
             }
 
-        } else if (sTipoPessoa.equals("J") && hasFocus == false && cnpjcpf.getText().toString().length() > 0 && v == cnpjcpf) {
-            if (Util.validaCNPJ(cnpjcpf.getText().toString().replaceAll("[^0123456789]", "")) == false) {
+        } else if (sTipoPessoa.equals("J") && !hasFocus && cnpjcpf.getText().toString().length() > 0 && v == cnpjcpf) {
+            if (!Util.validaCNPJ(cnpjcpf.getText().toString().replaceAll("[^0123456789]", ""))) {
                 AlertDialog.Builder alerta = new AlertDialog.Builder(this);
                 alerta.setTitle(R.string.app_namesair);
                 alerta.setIcon(R.drawable.logo_ico);
@@ -971,11 +1155,11 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
                 AlertDialog alert = alerta.create();
                 alert.show();
-                return;
 
             }
-        } else if (cep.getText().length() == 0 && hasFocus == false && v == cep) {
+        } else if (cep.getText().length() == 0 && !hasFocus && v == cep) {
             atuok = "N";
+            PesqCEP = false;
             onItemSelected(null, null, 0, 0);
 
 
@@ -1072,11 +1256,11 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                 sUF = "TO";//Tocantins
                 break;
         }
-        if (!sUF.equals("0")) {
+        if (!sUF.equals("0") && codClieInt == 0 && PesqCEP.equals(false)) {
             String UF = Util.converteUf(sUF);
             Cursor cursorEstadoAC = DB.rawQuery("SELECT UF FROM CIDADES WHERE UF = '" + sUF + "'", null);
             cursorEstadoAC.moveToFirst();
-            if (!(cursorEstadoAC.getCount() > 0) && conexOK == true) {
+            if (!(cursorEstadoAC.getCount() > 0) && conexOK) {
                 DialogECB = new ProgressDialog(CadastroClientes.this);
                 DialogECB.setCancelable(false);
                 DialogECB.setIcon(R.drawable.icon_sync);
@@ -1095,19 +1279,28 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         int CodCidade = 0;
         Cursor cursor = null;
         try {
-            //if (PesqCEP.equals(false)) {
+            if (codClieInt == 0) {
                 cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
-            /*}else {
-                cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
-            }*/
-            if (PesqCEP.equals(true) && cep.getText().length() == 0 && sUF.equals("0")) {
-                if(atuok.valueOf(atuok).equals("null") || atuok.equals("N")){
+            } else {
+                cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "'", null);
+                //cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '"+sUF+"'", null);
+            }
+            if (PesqCEP.equals(false) /*&& cep.getText().length() == 0*/ && sUF.equals("0") && codClieInt == 0) {
+                if (String.valueOf(atuok).equals("null") || atuok.equals("N")) {
+                    atualizaspinner();
+                    spCidade.setAdapter(null);
+                    spBairro.setAdapter(null);
+                    return;
+                }
+            }else if(PesqCEP.equals(false) /*&& cep.getText().length() == 0*/ && sUF.equals("0") && codClieInt != 0){
+                if (String.valueOf(atuok).equals("null") || atuok.equals("N")) {
                     atualizaspinner();
                     spCidade.setAdapter(null);
                     spBairro.setAdapter(null);
                     return;
                 }
             }
+
             List<String> DadosList = new ArrayList<String>();
             DadosList.clear();
             if (cursor.getCount() > 0) {
@@ -1119,16 +1312,30 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                 } while (cursor.moveToNext());
                 cursor.close();
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
-                final ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
+                final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, DadosList);
                 spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                spinnerArrayAdapter.notifyDataSetChanged();
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         spCidade.setAdapter(spinnerArrayAdapter);
+
                     }
                 });
+
+                /*if (PesqCEP.equals(true) && !sUF.equals("0") && codClieInt == 0 ){
+                    atuok = "N";
+                    PesqCEP = false;
+                    return;
+                }*/
+                if (codClieInt != 0) {
+                    spUF.setSelection(position);
+                }
+
+                if (codClieInt != 0 || PesqCEP.equals(true)) {
+                    int pos = spinnerArrayAdapter.getPosition(NomeCidade);
+                    spCidade.setSelection(pos);
+                }
 
 
             }
@@ -1136,10 +1343,8 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             System.out.println("Error" + E);
         }
 
-
         Thread thread = new Thread(CadastroClientes.this);
         thread.start();
-
     }
 
     private String atualizaspinner() {
@@ -1148,7 +1353,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.uf));
             arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
             spUF.setAdapter(arrayAdapterUF);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.toString();
             atuok = "N";
             return atuok;

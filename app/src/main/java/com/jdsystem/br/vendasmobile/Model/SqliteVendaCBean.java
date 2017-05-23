@@ -2,7 +2,6 @@ package com.jdsystem.br.vendasmobile.Model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,17 +23,16 @@ public class SqliteVendaCBean {
     public static String VALOR_DA_VENDA = "VALORTOTAL";
     public static String DESCONTO = "VLDESCONTO";
     public static String PERCDESCONTO = "PERCDESCO";
-   // public static String PESO_TOTAL_DOS_PRODUTOS = "vendac_pesototal";
+    // public static String PESO_TOTAL_DOS_PRODUTOS = "vendac_pesototal";
     public static String VENDA_ENVIADA_SERVIDOR = "STATUS";
     public static String LATITUDE = "LATITUDEPEDIDO";
     public static String LONGITUDE = "LONGITUDEPEDIDO";
     public static String OBSERVACAO = "OBS";
     public static String INTEGRADO = "FLAGINTEGRADO";
-
+    public List<SqliteVendaDBean> itens_da_venda;
     private Integer vendac_id;
     private String vendac_chave;
     private String vendac_datahoravenda;
-
     private String vendac_previsaoentrega;
     private Integer vendac_cli_codigo;
     private Integer vendac_cli_codigo_ext;
@@ -55,6 +53,10 @@ public class SqliteVendaCBean {
     private String Integrado;
     private String CodEmpresa;
     private String CodVendedor;
+
+    public SqliteVendaCBean() {
+        this.itens_da_venda = new ArrayList<SqliteVendaDBean>();
+    }
 
     public String getCodVendedor() {
         return CodVendedor;
@@ -112,13 +114,6 @@ public class SqliteVendaCBean {
     public void setVendac_vlmercad(double vendac_vlmercad) {
         this.vendac_vlmercad = vendac_vlmercad;
     }
-
-    public List<SqliteVendaDBean> itens_da_venda;
-
-    public SqliteVendaCBean() {
-        this.itens_da_venda = new ArrayList<SqliteVendaDBean>();
-    }
-
 
     public List<SqliteVendaDBean> getItens_da_venda() {
         return itens_da_venda;

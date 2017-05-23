@@ -1,8 +1,7 @@
 package com.jdsystem.br.vendasmobile.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,17 +11,12 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -35,17 +29,17 @@ import com.jdsystem.br.vendasmobile.CadastroContatos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.ConsultaProdutos;
 import com.jdsystem.br.vendasmobile.DadosContato;
+import com.jdsystem.br.vendasmobile.DadosProduto;
 import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
 import com.jdsystem.br.vendasmobile.Model.Sqlite_VENDADAO;
+import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterProdutos;
-import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.DadosProduto;
 import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
@@ -58,20 +52,20 @@ import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class FragmentProdutos extends Fragment implements RecyclerViewOnClickListenerHack, Runnable {
 
-    private RecyclerView mRecyclerView;
-    private List<Produtos> mList;
-    private int flag, sprecoprincipal, CodProdExt;
-    private String numPedido, chavePedido, usuario, senha, codVendedor, urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7, telaInvocada, sincprod, CodProd;
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    public AlertDialog Dialog;
+    public int actCadastraContato, CodCliente, CodContato;
     SQLiteDatabase DB;
+    int idPerfil;
+    private RecyclerView mRecyclerView;
+    private int flag;
+    private int CodProdExt;
+    private String numPedido, vendenegativo, habcontrolqtdmin, chavePedido, usuario, senha, codVendedor, urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7;
     private Spinner spntabpreco;
     private String PREFS_PRIVATE = "PREFS_PRIVATE", NomeCliente;
     private SharedPreferences prefs;
     private ListView prod_listview_itenstemp;
-    public AlertDialog Dialog;
-    public int actCadastraContato, CodCliente, CodContato;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
-    int idPerfil;
-    private Double qtdestoque;
+    private Double qtdestoque, qtdminvend;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,7 +81,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             View view = inflater.inflate(R.layout.fragment_produtos, container, false);
 
 
-
             Bundle params = getArguments();
             if (params != null) {
                 flag = params.getInt(getString(R.string.intent_flag));
@@ -97,13 +90,14 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 senha = params.getString(getString(R.string.intent_senha));
                 codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 urlprincipal = params.getString(getString(R.string.intent_urlprincipal));
-                telaInvocada = params.getString(getString(R.string.intent_telainvocada));
+                String telaInvocada = params.getString(getString(R.string.intent_telainvocada));
                 actCadastraContato = params.getInt(getString(R.string.intent_cad_contato));
                 CodCliente = params.getInt(getString(R.string.intent_codcliente));
                 CodContato = params.getInt(getString(R.string.intent_codcontato));
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
             carregarpreferencias();
+
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_Prod);
             mRecyclerView.setHasFixedSize(true);
@@ -122,15 +116,40 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             mRecyclerView.setLayoutManager(llm);
 
-            mList = ((ConsultaProdutos) getActivity()).carregarprodutos();
+            List<Produtos> mList = ((ConsultaProdutos) getActivity()).carregarprodutos();
             ListAdapterProdutos adapter = new ListAdapterProdutos(getActivity(), mList);
             adapter.setRecyclerViewOnClickListenerHack(this);
             mRecyclerView.setAdapter(adapter);
+
+            carregarparametros();
             return view;
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
         return mRecyclerView;
+    }
+
+    private void carregarparametros() {
+        DB = new ConfigDB(getActivity()).getReadableDatabase();
+        try {
+            Cursor curosrparam = DB.rawQuery("SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6," +
+                    " DESCRICAOTAB7, HABCONTROLQTDMINVEND,HABITEMNEGATIVO FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
+            curosrparam.moveToFirst();
+            if (curosrparam.getCount() > 0) {
+                habcontrolqtdmin = curosrparam.getString(curosrparam.getColumnIndex("HABCONTROLQTDMINVEND"));
+                vendenegativo = curosrparam.getString(curosrparam.getColumnIndex("HABITEMNEGATIVO"));
+                tab1 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB1"));
+                tab2 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB2"));
+                tab3 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB3"));
+                tab4 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB4"));
+                tab5 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB5"));
+                tab6 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB6"));
+                tab7 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB7"));
+            }
+        } catch (Exception e) {
+            e.toString();
+        }
+
     }
 
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
@@ -151,6 +170,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     @Override
     public void onClickListener(View v, int position) {
 
+        String codProd;
         if (flag == 0 && actCadastraContato == 1) {
             ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
@@ -162,7 +182,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             try {
                 Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
                         "from produtos_contatos_temp " +
-                        "where cod_item = " + codIntItem + " and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd +"'", null);
+                        "where cod_item = " + codIntItem + " and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd + "'", null);
                 cursor.moveToFirst();
 
                 if (cursor.getCount() > 0) {
@@ -192,10 +212,10 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     startActivity(intentp);
                     getActivity().finish();
                 }
-            }catch (Exception E){
+            } catch (Exception E) {
                 E.toString();
             }
-        }else if (flag == 0 && actCadastraContato == 2) {
+        } else if (flag == 0 && actCadastraContato == 2) {
             ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             String CodProd = adapterProdutos.ChamaDados(position);
@@ -206,7 +226,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             try {
                 Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
                         "from produtos_contatos " +
-                        "where cod_item = '" + codIntItem + "' and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd +"'", null);
+                        "where cod_item = '" + codIntItem + "' and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd + "'", null);
                 cursor.moveToFirst();
 
                 if (cursor.getCount() > 0) {
@@ -241,7 +261,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
         } else if (flag == 0 && numPedido == null) {
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
-            CodProd = adapter.ChamaDados(position).trim();
+            codProd = adapter.ChamaDados(position).trim();
             CodProdExt = adapter.ChamaCodItemExt(position);
             Intent intentp = new Intent(getActivity(), DadosProduto.class);
             Bundle params = new Bundle();
@@ -255,7 +275,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             getActivity().finish();
         } else {
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
-            CodProd = adapter.ChamaDados(position).trim();
+            codProd = adapter.ChamaDados(position).trim();
             CodProdExt = adapter.ChamaCodItemExt(position);
             String codItem = null;
             String descricao = null;
@@ -265,19 +285,18 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
 
+            int sprecoprincipal;
+            String sincprod;
             if (numPedido.equals("0")) {
-                Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-                Bloqueios.moveToFirst();
-                final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
-                Bloqueios.close();
                 boolean ConexOk = Util.checarConexaoCelular(getActivity());
-                if (vendenegativo.equals("N") && ConexOk == true) {
-                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt,null,null,null);
+                if (vendenegativo.equals("N") && ConexOk) {
+                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt, null, null, null);
 
                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM =" + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
                         CursItens.moveToFirst();
                         qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                        qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
                         CursItens.close();
                         if (vendenegativo.equals("N") && qtdestoque <= 0) {
                             Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
@@ -288,6 +307,8 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         CursItens.moveToFirst();
 
                         qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                        qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
+
                         CursItens.close();
                         if (vendenegativo.equals("N") && qtdestoque <= 0) {
                             Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
@@ -299,6 +320,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM =" + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
                     CursItens.moveToFirst();
                     qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                    qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
                     CursItens.close();
                     if (vendenegativo.equals("N") && qtdestoque <= 0) {
                         Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
@@ -307,7 +329,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 }
 
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                View view = inflater.inflate(R.layout.info_produto_venda, null);
+                @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.info_produto_venda, null);
                 AlertDialog.Builder alerta = new AlertDialog.Builder(getActivity());
                 alerta.setCancelable(false);
                 alerta.setView(view);
@@ -358,17 +380,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                 try {
                     List<String> DadosListTabPreco = new ArrayList<String>();
-
-                    Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-                    CursorParametro.moveToFirst();
-                    tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-                    tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-                    tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-                    tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-                    tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-                    tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-                    tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-                    CursorParametro.close();
 
                     cursoritem = DB.rawQuery("SELECT DESCRICAO, CODIGOITEM,UNIVENDA,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2,TABELAPADRAO,CODITEMANUAL FROM ITENS WHERE CODIGOITEM = " + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
                     cursoritem.moveToFirst();
@@ -515,61 +526,67 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                         Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
 
-                        if (TAMANHO_TEXTO > 0) {
-                            SqliteProdutoBean prdBean = new SqliteProdutoBean();
-                            Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
-                            String COD_PRODUTO = info_txv_codproduto.getText().toString();
-                            String DESCRICAO = info_txv_descricaoproduto.getText().toString();
-                            String UNIDADE = info_txv_unmedida.getText().toString();
+                        if (TAMANHO_TEXTO <= 0) {
+                            Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                            return;
+                        }
+                        SqliteProdutoBean prdBean = new SqliteProdutoBean();
+                        //Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
+                        String qtdinformada = Util.removeZerosEsquerda(info_txt_quantidadecomprada.getText().toString());
+                        Double QUANTIDADE_DIGITADA = Double.parseDouble(qtdinformada);
 
-                            if (QUANTIDADE_DIGITADA > 0) {
-                                if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > finalQtdestoque) {
-                                    Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                    return;
-                                }
+                        String COD_PRODUTO = info_txv_codproduto.getText().toString();
+                        String DESCRICAO = info_txv_descricaoproduto.getText().toString();
+                        String UNIDADE = info_txv_unmedida.getText().toString();
 
-                                SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
-                                SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
-                                SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
-                                SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getActivity());
+                        if (QUANTIDADE_DIGITADA > 0) {
+                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > finalQtdestoque) {
+                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                return;
+                            }
+                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
+                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                return;
+                            }
+                            SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
+                            SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
+                            SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
+                            SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getActivity());
 
-                                itemBean2.setVendad_prd_codigoTEMP(COD_PRODUTO);
-                                itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
+                            itemBean2.setVendad_prd_codigoTEMP(COD_PRODUTO);
+                            itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
 
-                                if (itemBean3 == null) {
-                                    itemBean1.setVendad_prd_codigoItemTEMP(CodProdExt);
-                                    itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
-                                    itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
-                                    itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
-                                    itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
+                            if (itemBean3 == null) {
+                                itemBean1.setVendad_prd_codigoItemTEMP(CodProdExt);
+                                itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
+                                itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
+                                itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
+                                itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
 
-                                    String ValorItem = info_txv_precoproduto.getText().toString();
-                                    if (!ValorItem.equals("0,0000")) {
-                                        BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                        venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                        itemBean1.setVendad_preco_vendaTEMP(venda);
+                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                if (!ValorItem.equals("0,0000")) {
+                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                    venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                    itemBean1.setVendad_preco_vendaTEMP(venda);
 
-                                        itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
-                                        itemDao.insere_item(itemBean1);
-                                        getActivity().finish();
-                                    } else {
-                                        Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
-                                        return;
-                                    }
+                                    itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
+                                    itemDao.insere_item(itemBean1);
+                                    getActivity().finish();
                                 } else {
-                                    Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
+                                    Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
                                     return;
                                 }
                             } else {
-                                Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
                                 return;
                             }
-
                         } else {
                             Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
                             return;
                         }
+
                     }
+
                 });
                 alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
 
@@ -585,29 +602,25 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                 Configuration configuration = getResources().getConfiguration();
 
-                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-                }else{
+                } else {
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
 
                 alerta.show();
 
             } else {
-
-                Cursor Bloqueios = DB.rawQuery("SELECT HABITEMNEGATIVO FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-                Bloqueios.moveToFirst();
-                final String vendenegativo = Bloqueios.getString(Bloqueios.getColumnIndex("HABITEMNEGATIVO"));
-                Bloqueios.close();
                 boolean ConexOk = Util.checarConexaoCelular(getActivity());
-                if (vendenegativo.equals("N") && ConexOk == true) {
-                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt,null,null,null);
+                if (vendenegativo.equals("N") && ConexOk) {
+                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt, null, null, null);
 
                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
                         CursItens.moveToFirst();
                         qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                        qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
                         CursItens.close();
                         if (vendenegativo.equals("N") && qtdestoque <= 0) {
                             Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
@@ -617,6 +630,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
                         CursItens.moveToFirst();
                         qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                        qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
                         CursItens.close();
                         if (vendenegativo.equals("N") && qtdestoque <= 0) {
                             Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
@@ -627,6 +641,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
                     CursItens.moveToFirst();
                     qtdestoque = CursItens.getDouble(CursItens.getColumnIndex("QTDESTPROD"));
+                    qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
                     CursItens.close();
                     if (vendenegativo.equals("N") && qtdestoque <= 0) {
                         Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
@@ -635,7 +650,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 }
 
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                View view = inflater.inflate(R.layout.info_produto_venda, null);
+                @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.info_produto_venda, null);
                 AlertDialog.Builder alerta = new AlertDialog.Builder(getActivity());
                 alerta.setCancelable(false);
                 alerta.setView(view);
@@ -687,18 +702,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                 try {
                     List<String> DadosListTabPreco = new ArrayList<String>();
-
-                    Cursor CursorParametro = DB.rawQuery(" SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-                    CursorParametro.moveToFirst();
-                    tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-                    tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-                    tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-                    tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-                    tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-                    tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-                    tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-                    CursorParametro.close();
-
                     cursoritem = DB.rawQuery("SELECT DESCRICAO,CODIGOITEM,UNIVENDA,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2,TABELAPADRAO,CODITEMANUAL FROM ITENS WHERE CODIGOITEM = " + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
                     cursoritem.moveToFirst();
                     if (cursoritem.getCount() > 0) {
@@ -847,65 +850,72 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                         Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
 
-                        if (TAMANHO_TEXTO > 0) {
-                            SqliteProdutoBean prdBean = new SqliteProdutoBean();
-                            Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
-                            String COD_PRODUTO = info_txv_codproduto.getText().toString();
-                            String DESCRICAO = info_txv_descricaoproduto.getText().toString();
-                            String UNIDADE = info_txv_unmedida.getText().toString();
+                        if (TAMANHO_TEXTO <= 0) {
+                            Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                            return;
+                        }
 
-                            if (QUANTIDADE_DIGITADA > 0) {
-                                if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                                    Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                    return;
-                                }
-                                SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
-                                final SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
-                                SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
-                                Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getActivity(), codVendedor, true);
+                        SqliteProdutoBean prdBean = new SqliteProdutoBean();
+                        //Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
+                        String qtdinformada = Util.removeZerosEsquerda(info_txt_quantidadecomprada.getText().toString());
+                        Double QUANTIDADE_DIGITADA = Double.parseDouble(qtdinformada);
+                        String COD_PRODUTO = info_txv_codproduto.getText().toString();
+                        String DESCRICAO = info_txv_descricaoproduto.getText().toString();
+                        String UNIDADE = info_txv_unmedida.getText().toString();
 
-                                itemBean2.setVendad_prd_codigo(COD_PRODUTO);
-                                itemBean3 = itemDao.altera_item_na_venda(itemBean2, chavePedido);
+                        if (QUANTIDADE_DIGITADA > 0) {
+                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
+                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                return;
+                            }
+                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
+                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                return;
+                            }
+                            SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
+                            final SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
+                            SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
+                            Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getActivity(), codVendedor, true);
 
-                                if (itemBean3 == null) {
-                                    itemBean1.setVendad_prd_codigoitem(CodProdExt);
-                                    itemBean1.setVendad_prd_codigo(COD_PRODUTO);
-                                    itemBean1.setVendad_prd_descricao(DESCRICAO);
-                                    itemBean1.setVendad_prd_unidade(UNIDADE);
-                                    itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
-                                    itemBean1.setVendac_chave(chavePedido);
-                                    itemBean1.setvendad_prd_view("T");
+                            itemBean2.setVendad_prd_codigo(COD_PRODUTO);
+                            itemBean3 = itemDao.altera_item_na_venda(itemBean2, chavePedido);
 
-                                    //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                                    String ValorItem = info_txv_precoproduto.getText().toString();
-                                    ValorItem = ValorItem.trim();
-                                    if (!ValorItem.equals("0,0000")) {
-                                        BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                        venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                        itemBean1.setVendad_preco_venda(venda);
+                            if (itemBean3 == null) {
+                                itemBean1.setVendad_prd_codigoitem(CodProdExt);
+                                itemBean1.setVendad_prd_codigo(COD_PRODUTO);
+                                itemBean1.setVendad_prd_descricao(DESCRICAO);
+                                itemBean1.setVendad_prd_unidade(UNIDADE);
+                                itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
+                                itemBean1.setVendac_chave(chavePedido);
+                                itemBean1.setvendad_prd_view("T");
 
-                                        //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
-                                        itemBean1.setVendad_total(itemBean1.getSubTotal());
-                                        itemDao.insere_item_na_venda(itemBean1);
-                                        //atualiza_listview_com_os_itens_pedido();
-                                        getActivity().finish();
-                                    } else {
-                                        Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
-                                        return;
-                                    }
+                                //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
+                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                ValorItem = ValorItem.trim();
+                                if (!ValorItem.equals("0,0000")) {
+                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                    venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                    itemBean1.setVendad_preco_venda(venda);
+
+                                    //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
+                                    itemBean1.setVendad_total(itemBean1.getSubTotal());
+                                    itemDao.insere_item_na_venda(itemBean1);
+                                    //atualiza_listview_com_os_itens_pedido();
+                                    getActivity().finish();
                                 } else {
-
-                                    Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
+                                    Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
                                     return;
                                 }
                             } else {
-                                Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+
+                                Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
                                 return;
                             }
                         } else {
                             Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
                             return;
                         }
+
                     }
                 });
                 alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
@@ -922,16 +932,17 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                 Configuration configuration = getResources().getConfiguration();
 
-                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+                if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-                }else{
+                } else {
                     getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
 
                 alerta.show();
             }
         }
+
     }
 
     @Override
@@ -955,7 +966,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void run() {
-
 
 
     }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.jdsystem.br.vendasmobile.ConfigDB;
@@ -13,7 +12,6 @@ public class SqliteParametroDao {
 
 
     private Context ctx;
-    private String sql;
     private boolean gravacao;
 
 
@@ -26,7 +24,7 @@ public class SqliteParametroDao {
         SQLiteDatabase db = new ConfigDB(ctx).getReadableDatabase();
         SqliteParametroBean parametro = null;
 
-        sql = "select * from PARAMAPP";
+        String sql = "select * from PARAMAPP";
 
         try {
 
@@ -47,14 +45,15 @@ public class SqliteParametroDao {
                     parametro.setP_usuario(cursor.getString(cursor.getColumnIndex(parametro.P_USUARIO)));
                     parametro.setP_senha(cursor.getString(cursor.getColumnIndex(parametro.P_SENHA)));
                     parametro.setP_qual_endereco_ip(cursor.getString(cursor.getColumnIndex(parametro.P_QUAL_END_IP)));
-                }catch (Exception E){
+                    cursor.close();
+                } catch (Exception E) {
                     E.toString();
                 }
             }
 
         } catch (SQLiteException e) {
             Log.d("Script", e.getMessage());
-        }finally {
+        } finally {
             db.close();
 
         }

@@ -60,9 +60,6 @@ public class SqliteConRecBean {
     }
 
 
-
-
-
     public Integer getRec_codigo() {
         return rec_codigo;
     }

@@ -7,23 +7,20 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
-import android.view.MotionEvent;
 
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoDao;
@@ -31,7 +28,6 @@ import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,9 +40,8 @@ import static android.R.layout.simple_spinner_dropdown_item;
 
 public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, Spinner.OnItemSelectedListener {
 
-    private SimpleDateFormat dateFormatterBR;
-    private SimpleDateFormat dateFormatterUSA;
-    private DatePickerDialog datePicker;
+    public static final String DADOS_PG = "DADOS DO PAGAMENTO";
+    public SharedPreferences prefs;
     private RadioGroup conf_rgPagamentos;
     private EditText conf_txtqtdparcelas, conf_txtvalorrecebido;
     private TextView conf_txvvalorvenda, conf_valorparcela, conf_valorparcela2, conf_valorparcela3,
@@ -56,21 +51,15 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     private List<String> array_forma_pagamento = new ArrayList<String>();
     private ArrayAdapter<String> arrayAdapter;
     private String RECEBIMENTO_DIN_CAR_CHQ = "";
-    private String COMENTRADA_SEMENTRADA = "";
     private String TIPO_PAGAMENTO = "";
     private String ChavePedido = "";
     private Double SUBTOTAL_VENDA;
-    private BigDecimal VALORRECEBIDO;
     private Boolean AtuPedido;
-    public SharedPreferences prefs;
-    public static final String DADOS_PG = "DADOS DO PAGAMENTO";
     private ScrollView vScroll;
     private HorizontalScrollView hScroll;
     private float mx, my;
     private float curX, curY;
     private String din_boleto, avista_parcelado, qtdparcelas;
-    private Intent INTENT_SOBTOTAL_VENDA, INTENT_CLI_CODIGO;
-    private Integer CLI_CODIGO;
     private RadioButton conf_rbdinheiro, conf_rbboleto;
     private SqliteConfPagamentoDao confDao;
     private SqliteConfPagamentoBean confBean;
@@ -84,15 +73,15 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 
-        INTENT_SOBTOTAL_VENDA = getIntent();
+        Intent INTENT_SOBTOTAL_VENDA = getIntent();
         SUBTOTAL_VENDA = INTENT_SOBTOTAL_VENDA.getDoubleExtra("SUBTOTAL_VENDA", 0);
-        INTENT_CLI_CODIGO = getIntent();
-        CLI_CODIGO = INTENT_CLI_CODIGO.getIntExtra("CLI_CODIGO", 0);
+        Intent INTENT_CLI_CODIGO = getIntent();
+        Integer CLI_CODIGO = INTENT_CLI_CODIGO.getIntExtra("CLI_CODIGO", 0);
         ChavePedido = INTENT_CLI_CODIGO.getStringExtra("ChavePedido");
         AtuPedido = INTENT_CLI_CODIGO.getBooleanExtra("AtuPedido", false);
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-        VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
+        BigDecimal VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
         array_forma_pagamento.add(getString(R.string.confpagamento_avista));
         array_forma_pagamento.add(getString(R.string.confpagamento_parcelado));
         arrayAdapter = new ArrayAdapter<String>(this, simple_spinner_dropdown_item, array_forma_pagamento);
@@ -179,13 +168,13 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
             }
 
-        din_boleto = confBean.getConf_recebeucom_din_chq_car().toString();
-        if (din_boleto.equals(getString(R.string.confpagamento_dinheiro))) {
-            conf_rbdinheiro.setChecked(true);
-        }
-        if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
-            conf_rbboleto.setChecked(true);
-        }
+            din_boleto = confBean.getConf_recebeucom_din_chq_car().toString();
+            if (din_boleto.equals(getString(R.string.confpagamento_dinheiro))) {
+                conf_rbdinheiro.setChecked(true);
+            }
+            if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
+                conf_rbboleto.setChecked(true);
+            }
         }
     }
 
@@ -232,6 +221,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
             Util.log("TIPO_PAGAMENTO :" + TIPO_PAGAMENTO);
             Util.log("PARCELAS :" + conf_txtqtdparcelas.getText().toString());
+            String COMENTRADA_SEMENTRADA = "";
             Util.log("COM_ENTRADA :" + COMENTRADA_SEMENTRADA);
             Util.log("VALOR_RECEBIDO :" + conf_txtvalorrecebido.getText().toString());
             Util.log("COMO_RECEBEU :" + RECEBIMENTO_DIN_CAR_CHQ);
@@ -278,57 +268,58 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         TIPO_PAGAMENTO = spinner.getItemAtPosition(position).toString();
 
 
-            if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_avista))) {
+        if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_avista))) {
 
 
-                conf_txvlabelparcelas.setVisibility(View.GONE);
-                conf_txtqtdparcelas.setVisibility(View.GONE);
-                conf_valorparcela.setVisibility(View.GONE);
-                conf_valorparcela2.setVisibility(View.GONE);
-                conf_valorparcela3.setVisibility(View.GONE);
-                conf_valorparcela4.setVisibility(View.GONE);
-                conf_valorparcela5.setVisibility(View.GONE);
-                conf_valorparcela6.setVisibility(View.GONE);
-                conf_valorparcela7.setVisibility(View.GONE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_rbdinheiro.setVisibility(View.VISIBLE);
-                conf_rgPagamentos.setVisibility(View.VISIBLE);
-                conf_txtqtdparcelas.setText("1");
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
+            conf_txvlabelparcelas.setVisibility(View.GONE);
+            conf_txtqtdparcelas.setVisibility(View.GONE);
+            conf_valorparcela.setVisibility(View.GONE);
+            conf_valorparcela2.setVisibility(View.GONE);
+            conf_valorparcela3.setVisibility(View.GONE);
+            conf_valorparcela4.setVisibility(View.GONE);
+            conf_valorparcela5.setVisibility(View.GONE);
+            conf_valorparcela6.setVisibility(View.GONE);
+            conf_valorparcela7.setVisibility(View.GONE);
+            conf_valorparcela8.setVisibility(View.GONE);
+            conf_valorparcela9.setVisibility(View.GONE);
+            conf_valorparcela10.setVisibility(View.GONE);
+            conf_valorparcela11.setVisibility(View.GONE);
+            conf_valorparcela12.setVisibility(View.GONE);
+            conf_rbdinheiro.setVisibility(View.VISIBLE);
+            conf_rgPagamentos.setVisibility(View.VISIBLE);
+            conf_txtqtdparcelas.setText("1");
+            conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+            conf_txtvalorrecebido.setVisibility(View.GONE);
+            conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
 
+        }
+
+        if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))) {
+
+            conf_txvlabelparcelas.setVisibility(View.VISIBLE);
+            conf_rbboleto.setChecked(true);
+            conf_txtqtdparcelas.setVisibility(View.VISIBLE);
+            conf_rbdinheiro.setVisibility(View.GONE);
+            conf_valorparcela.setVisibility(View.VISIBLE);
+            conf_txtqtdparcelas.setFocusable(true);
+            conf_rgPagamentos.setVisibility(View.VISIBLE);
+            conf_txtvalorrecebido.setVisibility(View.GONE);
+            conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
+            if (confBean != null) {
+                conf_txtqtdparcelas.setText(qtdparcelas);
+            }
+            if (!AtuPedido && confBean == null) {
+                conf_txtqtdparcelas.setText("");
             }
 
-            if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))) {
 
-                conf_txvlabelparcelas.setVisibility(View.VISIBLE);
-                conf_rbboleto.setChecked(true);
-                conf_txtqtdparcelas.setVisibility(View.VISIBLE);
-                conf_rbdinheiro.setVisibility(View.GONE);
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_txtqtdparcelas.setFocusable(true);
-                conf_rgPagamentos.setVisibility(View.VISIBLE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-                if (confBean != null) {
-                    conf_txtqtdparcelas.setText(qtdparcelas);
-                } if (!AtuPedido && confBean == null) {
-                    conf_txtqtdparcelas.setText("");
-                }
-
-
-            }
-            if(TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))){
-                InputMethodManager imm=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(conf_txtqtdparcelas, InputMethodManager.SHOW_IMPLICIT);
-            }else {
-                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(conf_txtqtdparcelas.getWindowToken(), 0);
-            }
+        }
+        if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(conf_txtqtdparcelas, InputMethodManager.SHOW_IMPLICIT);
+        } else {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(conf_txtqtdparcelas.getWindowToken(), 0);
+        }
 
     }
 
@@ -788,10 +779,10 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
 
     private void mostraCalendario() {
-        dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        dateFormatterUSA = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+        SimpleDateFormat dateFormatterUSA = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Calendar newCalendar = Calendar.getInstance();
-        datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);

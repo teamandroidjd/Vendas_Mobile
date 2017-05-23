@@ -6,22 +6,21 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_list"
-        android:scrollbars="vertical"
-        android:fastScrollEnabled="true"
-        android:fastScrollAlwaysVisible="true"
-        android:cacheColorHint="@color/colorAccent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:cacheColorHint="@color/colorAccent"
+        android:fastScrollAlwaysVisible="true"
+        android:fastScrollEnabled="true"
+        android:scrollbars="vertical" />
 
     <com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller
         android:id="@+id/fast_scroller"
         android:layout_width="24dp"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
 
         recyclerviewfastscroller:rfs_barColor="@color/fastScrollBarColor"
-        recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded"
-        />
+        recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle_rounded" />
 
 </RelativeLayout>

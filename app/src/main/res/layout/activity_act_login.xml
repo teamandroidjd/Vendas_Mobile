@@ -11,14 +11,14 @@
     tools:context=".Login">
 
     <TextView
+        android:id="@+id/txtversaologin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:text="versao"
         android:textAlignment="center"
-        android:id="@+id/txtversaologin"
-        android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textSize="12sp"
-        android:text="versao"/>
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:textSize="12sp" />
 
 
     <RelativeLayout
@@ -31,17 +31,16 @@
         android:background="#fff"
         android:elevation="7dp"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        tools:ignore="UnusedAttribute">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="30dp">
 
             <TextView
-                android:id="@+id/txt_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/login"
@@ -61,8 +60,8 @@
                     android:drawableRight="@drawable/icon_user"
                     android:hint="Usuário"
                     android:inputType="textCapCharacters"
-                    android:singleLine="true"
-                    android:textAllCaps="true" />
+                    android:textAllCaps="true"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -78,18 +77,18 @@
                     android:ems="10"
                     android:hint="Senha"
                     android:inputType="textWebPassword"
-                    android:singleLine="true" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <TextView
+                android:id="@+id/txtempresalogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:id="@+id/txtempresalogin"
                 android:text="empresa"
-                android:textSize="20dp"
+                android:textAlignment="center"
                 android:textColor="@color/colordescClie"
-                android:textStyle="normal|bold"/>
+                android:textSize="20sp"
+                android:textStyle="normal|bold" />
 
             <CheckBox
                 android:id="@+id/cbGravSenha"
@@ -99,15 +98,16 @@
                 android:buttonTint="@color/colorPrimary"
                 android:text="Salvar Senha?"
                 android:textColor="#4d4d4d"
-                android:textSize="15dp" />
+                android:textSize="15sp"
+                tools:ignore="UnusedAttribute" />
 
             <Button
                 android:id="@+id/btnEntrar"
-                android:onClick="logar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:background="#14bfd6"
+                android:onClick="logar"
                 android:text="Entrar"
                 android:textAllCaps="false"
                 android:textColor="#fff"
@@ -117,7 +117,6 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/txtcopyright"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rltprincipal"
@@ -129,8 +128,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:editable="true"
-            android:singleLine="true"
             android:text="Copyright © 2016 - JD System Tecnologia em Informática"
             android:textAlignment="center"
             android:textAllCaps="true"

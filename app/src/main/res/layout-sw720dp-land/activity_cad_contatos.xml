@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cad_clientes"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -18,7 +17,7 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:weightSum="1">
 
@@ -30,7 +29,7 @@
                     android:id="@+id/spnTipoContato"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:entries="@array/Tipo_contato"></Spinner>
+                    android:entries="@array/Tipo_contato" />
             </LinearLayout>
 
             <LinearLayout
@@ -44,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:text="Razao Social:"
                     android:textColor="@color/colordescClie"
-                    android:textSize="22dp"
+                    android:textSize="22sp"
                     android:textStyle="normal|bold" />
 
                 <TextView
@@ -52,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="nome do cliente que ira vincular o contato"
-                    android:textSize="22dp" />
+                    android:textSize="22sp" />
 
             </LinearLayout>
 
@@ -121,15 +120,34 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp">
+                android:layout_height="60dp"
+                android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/spnCargoEspec"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:entries="@array/Cargo_espec">
+                    android:layout_height="60dp"
+                    android:layout_weight="4">
 
-                </Spinner>
+                    <Spinner
+                        android:id="@+id/spnCargoEspec"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="18dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/btn_add_novo_cargo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/ic_add_prod"
+                        tools:ignore="ContentDescription" />
+                </LinearLayout>
             </LinearLayout>
 
 
@@ -150,7 +168,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:baselineAligned="false">
 
                 <RelativeLayout
                     android:layout_width="0dp"
@@ -169,7 +188,8 @@
                             android:elevation="1dp"
                             android:hint="CEP"
                             android:inputType="number"
-                            android:maxLines="1" />
+                            android:maxLines="1"
+                            tools:ignore="UnusedAttribute" />
                     </android.support.design.widget.TextInputLayout>
 
                     <ImageButton
@@ -180,7 +200,8 @@
                         android:layout_toEndOf="@+id/textInputLayout2"
                         android:layout_toRightOf="@+id/textInputLayout2"
                         android:background="@drawable/busca_cep"
-                        android:onClick="buscacep" />
+                        android:onClick="buscacep"
+                        tools:ignore="ContentDescription" />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -234,7 +255,7 @@
                     android:id="@+id/spnUF"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:entries="@array/uf"></Spinner>
+                    android:entries="@array/uf" />
             </LinearLayout>
 
             <LinearLayout
@@ -244,7 +265,7 @@
                 <Spinner
                     android:id="@+id/spnCidade"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></Spinner>
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <LinearLayout
@@ -254,7 +275,7 @@
                 <Spinner
                     android:id="@+id/spnBairro"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></Spinner>
+                    android:layout_height="match_parent" />
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -295,18 +316,18 @@
                 android:visibility="visible">
 
                 <TextView
-                    android:id="@+id/txtdiassemana"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Informe os dias e horários de visita"
                     android:textColor="@color/colordescClie"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -316,8 +337,8 @@
                     <ListView
                         android:id="@+id/list_view_agenda_contato"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                    </ListView>
+                        android:layout_height="wrap_content"
+                        tools:ignore="NestedScrolling" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -332,32 +353,32 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/ic_add_prod" />
+                        android:background="@drawable/ic_add_prod"
+                        tools:ignore="ContentDescription" />
                 </LinearLayout>
 
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/lnrtxtitenscontato"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:visibility="visible">
 
                 <TextView
-                    android:id="@+id/txtitenscontato"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Produtos oferecidos ao contato: "
                     android:textColor="@color/colordescClie"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -367,7 +388,8 @@
                     <ListView
                         android:id="@+id/list_view_produtos_contato"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        tools:ignore="NestedScrolling">
 
                     </ListView>
                 </LinearLayout>
@@ -384,7 +406,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/ic_add_prod" />
+                        android:background="@drawable/ic_add_prod"
+                        tools:ignore="ContentDescription" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -403,7 +426,6 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/btnsalvarcontato"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorPrimary"
@@ -415,3 +437,5 @@
 
 
 </LinearLayout>
+
+    <!--android:entries="@array/Cargo_espec"-->

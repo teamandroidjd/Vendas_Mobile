@@ -10,13 +10,6 @@ public class ConfigDB extends SQLiteOpenHelper {
 
     public static String Dbname = "WSGEDB.db";
     public static int versao = 2;
-
-    public ConfigDB(Context ctx) {
-
-        super(ctx, Dbname, null, versao);
-    }
-
-
     private static String SQL_CLIENTE = (" CREATE TABLE IF NOT EXISTS CLIENTES ( CNPJ_CPF VARCHAR (14)  NOT NULL, " +
             " NOMERAZAO     VARCHAR (60) NOT NULL,             " +
             " NOMEFAN       VARCHAR (50) NOT NULL,             " +
@@ -45,26 +38,22 @@ public class ConfigDB extends SQLiteOpenHelper {
             " CODPERFIL     INTEGER,                           " +
             " CHAVE         VARCHAR(100)                       " +
             ");");
-
     private static String SQL_BAIRROS = ("CREATE TABLE IF NOT EXISTS BAIRROS (" +
             " CODBAIRRO     INTEGER PRIMARY KEY AUTOINCREMENT," +
             " CODBAIRRO_EXT INTEGER,                          " +
             " CODCIDADE     INTEGER      NOT NULL,            " +
             " DESCRICAO     VARCHAR (30) NOT NULL             " +
             ");");
-
     private static String SQL_CIDADES = ("CREATE TABLE IF NOT EXISTS CIDADES (" +
             " CODCIDADE     INTEGER PRIMARY KEY AUTOINCREMENT," +
             " CODCIDADE_EXT INTEGER,                          " +
             " DESCRICAO     VARCHAR (50) NOT NULL,            " +
             " UF            CHAR (2)     NOT NULL             " +
             ");");
-
     private static String SQL_ESTADOS = ("CREATE TABLE IF NOT EXISTS ESTADOS (" +
             " UF        CHAR(2) PRIMARY KEY,  " +
             " DESCRICAO VARCHAR (20) NOT NULL " +
             ");");
-
     private static String SQL_PARAMAPP = ("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME," +
             " DT_ULT_CLIE                      DATETIME,           " +
             " DT_ULT_ITENS                     DATETIME,           " +
@@ -85,12 +74,13 @@ public class ConfigDB extends SQLiteOpenHelper {
             " DESCRICAOTAB7                    VARCHAR (20),       " +
             " HABITEMNEGATIVO                  CHAR (1),           " +
             " HABCLIEXVEND                     CHAR (1),           " +
+            " HABCADASTRO_CLIE                 INTEGER,            " +
+            " HABCONTROLQTDMINVEND             CHAR (1),           " +
             " HABCRITSITCLIE                   CHAR (1),           " +
-            " TIPOCRITICQTDITEM                CHAR(1),            " +
+            " TIPOCRITICQTDITEM                CHAR (1),           " +
             " CODPERFIL                        INTEGER,            " +
             " p_trabalhar_com_estoque_negativo CHAR DEFAULT 1,     " +
             " p_desconto_do_vendedor INTEGER);");
-
     private static String SQL_CONTATOS = (" CREATE TABLE IF NOT EXISTS CONTATO (" +
             "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
             "    CODCLIENTE                   INTEGER,                  " +
@@ -119,7 +109,6 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    FLAGINTEGRADO                CHAR(1),                  " +
             "    CODPERFIL                    INTEGER)                  " +
             ";");
-
     private static String SQL_ITENS = ("CREATE TABLE IF NOT EXISTS ITENS (" +
             " CODIGOITEM   INTEGER        PRIMARY KEY" +
             "                              NOT NULL, " +
@@ -134,7 +123,6 @@ public class ConfigDB extends SQLiteOpenHelper {
             " VLVENDA5     DECIMAL (12, 4),          " +
             " VLVENDAP1    DECIMAL (12, 4),          " +
             " VLVENDAP2    DECIMAL (12, 4),          " +
-            // " VENDAPADRAO  DECIMAL (12, 4),          " +
             " TABELAPADRAO VARCHAR(20),              " +
             " QTDESTPROD   VARCHAR(10),              " +
             " CLASSE       VARCHAR(15),              " +
@@ -145,13 +133,14 @@ public class ConfigDB extends SQLiteOpenHelper {
             " MARCA        VARCHAR(15),              " +
             " VLICMSST     FLOAT,                    " +
             " VLIPI        FLOAT,                    " +
-            " CODPERFIL    INTEGER                   " +
+            " CODPERFIL    INTEGER,                  " +
+            " QTDMINVEND   FLOAT                     " +
             ");");
-
     private static String SQL_PEDOPER = ("CREATE TABLE IF NOT EXISTS PEDOPER ( " +
             " NUMPED              INTEGER PRIMARY KEY AUTOINCREMENT, " +
             " CHAVE_PEDIDO        VARCHAR(70),                       " +
             " DATAEMIS            DATETIME        NOT NULL,          " +
+            " DATAVENDA           DATETIME,                          " +
             " DATAPREVISTAENTREGA DATE,                              " +
             " CODEMPRESA          INTEGER,                           " +
             " CODCLIE             INTEGER         NOT NULL,          " +
@@ -177,8 +166,6 @@ public class ConfigDB extends SQLiteOpenHelper {
             " NUMFISCAL           INTEGER,                           " +
             " CODPERFIL           INTEGER,                           " +
             " LONGITUDEPEDIDO DOUBLE);");
-
-
     private static String SQL_PEDITENS = ("CREATE TABLE IF NOT EXISTS PEDITENS (" +
             " NUMIDEOPE       INTEGER         PRIMARY KEY AUTOINCREMENT " +
             "                                 NOT NULL,                 " +
@@ -201,9 +188,10 @@ public class ConfigDB extends SQLiteOpenHelper {
             " VIEW            CHAR(1),                                  " +
             " CODPERFIL       INTEGER                                   " +
             ");");
-
     private static String SQL_CONFPAGAMENTO = "CREATE TABLE IF NOT EXISTS [CONFPAGAMENTO] (" +
             " conf_codigo                 INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " conf_codigo_ext             INTEGER,                           " +
+            " conf_descricao              VARCHAR(30),                       " +
             " conf_sementrada_comentrada  CHAR DEFAULT 1,                    " +
             " conf_tipo_pagamento         VARCHAR DEFAULT 20,                " +
             " conf_recebeucom_din_chq_car VARCHAR DEFAULT  20,               " +
@@ -212,7 +200,6 @@ public class ConfigDB extends SQLiteOpenHelper {
             " vendac_chave                VARCHAR DEFAULT 70 ,               " +
             " conf_temp                   CHAR DEFAULT N,                    " +
             " conf_enviado                CHAR DEFAULT 1 )";
-
     private static String SQL_VENDA_D_TEMP = "CREATE TABLE [VENDAD_TEMP] (" +
             " vendad_eanTEMP           VARCHAR DEFAULT 50, " +
             " vendad_prd_codigoTEMP    INTEGER,            " +
@@ -222,7 +209,6 @@ public class ConfigDB extends SQLiteOpenHelper {
             " vendad_preco_vendaTEMP   DECIMAL(10,2),      " +
             " vendad_prd_unidadeTEMP   VARCHAR(5),         " +
             " vendad_totalTEMP         DECIMAL(10,2))";
-
     private static String SQL_RECEBER = "CREATE TABLE [CONREC] (" +
             " rec_codigo         INTEGER PRIMARY KEY AUTOINCREMENT, " +
             " rec_numparcela     INTEGER,                           " +
@@ -236,7 +222,6 @@ public class ConfigDB extends SQLiteOpenHelper {
             " rec_data_que_pagou DATE ,                             " +
             " rec_recebeu_com    VARCHAR DEFAULT 20,                " +
             " rec_enviado        CHAR DEFAULT 1)";
-
     private static String SQL_EMPRESA = ("CREATE TABLE IF NOT EXISTS EMPRESAS (" +
             " CODEMPRESA  INTEGER      NOT NULL,                    " +
             " CODPERFIL   INTEGER,                                  " +
@@ -249,15 +234,14 @@ public class ConfigDB extends SQLiteOpenHelper {
             " ATIVO       CHAR(1),                                  " +
             " LOGO        BLOB                                      " +
             ");");
-
     private static String SQL_USUARIOS = (" CREATE TABLE IF NOT EXISTS USUARIOS (" +
             " CODVEND         INTEGER,        " +
+            " HABCADCLIE      CHAR(1),        " +
             " DT_ULT_ATU_CLIE DATETIME,       " +
             " USUARIO         VARCHAR (30),   " +
             " SENHA           VARCHAR  (100), " +
             " CODEMPRESA      INTEGER,        " +
             " CODPERFIL       INTEGER ); ");
-
     private static String SQL_BLOQUEIOS = (" CREATE TABLE IF NOT EXISTS BLOQCLIE (" +
             " CODBLOQ   VARCHAR (3),  " +
             " DESCRICAO VARCHAR (30), " +
@@ -265,13 +249,11 @@ public class ConfigDB extends SQLiteOpenHelper {
             " LIBERAR   CHAR    (1),  " +
             " CODPERFIL INTEGER,      " +
             " FPAVISTA  VARCHAR (3) ); ");
-
     private static String SQL_PERFIL = (" CREATE TABLE IF NOT EXISTS PERFIL (" +
             " CODPERFIL  INTEGER PRIMARY KEY AUTOINCREMENT,   " +
             " LICENCA    VARCHAR (20),                        " +
             " HOST       VARCHAR (50),                        " +
             " NOMEPERFIL VARCHAR (20) ); ");
-
     private static String SQL_DIAS_CONTATOS = ("create table if not exists diascontatotemporario (" +
             "coddiacontato      integer primary key autoincrement, " +
             "dia_visita        varchar(40), " +
@@ -280,7 +262,6 @@ public class ConfigDB extends SQLiteOpenHelper {
             "minuto_inicio      integer,     " +
             "hora_final         integer,     " +
             "minuto_final       integer);    ");
-
     private static String SQL_DIAS_CONTATOS_FINAL = ("create table if not exists dias_contatos (" +
             "coddiacontato      integer primary key autoincrement, " +
             "cod_dia_semana     integer, " +
@@ -294,13 +275,11 @@ public class ConfigDB extends SQLiteOpenHelper {
             "cod_produto_manual         varchar(15), " +
             "cod_interno_contato        integer,  " +
             "cod_item                   integer);");
-
     private static String SQL_PRODUTOS_CONTATOS_TEMP = ("create table if not exists produtos_contatos_temp (" +
             "cod_produto_contato        integer primary key autoincrement, " +
             "cod_produto_manual         varchar(15), " +
             "cod_interno_contato        integer, " +
             "cod_item                   integer);");
-
     private static String SQL_CONTATOS_TEMPORARIOS = (" CREATE TABLE IF NOT EXISTS CONTATO_TEMPORARIO (" +
             "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
             "    CODCLIENTE                   INTEGER,                  " +
@@ -332,11 +311,15 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    CODPERFIL                    INTEGER,                  " +
             "    CARGO_POS                    INTEGER)                  " +
             ";");
-
     private static String SQL_CARGOS = ("CREATE TABLE IF NOT EXISTS CARGOS (" +
             "   DES_CARGO           VARCHAR(30),                         " +
             "   CODCARGO_EXT        INTEGER,                    " +
             "   CODCARGO            INTEGER PRIMAY KEY AAUTOINCREMENT); ");
+
+    public ConfigDB(Context ctx) {
+
+        super(ctx, Dbname, null, versao);
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -389,48 +372,87 @@ public class ConfigDB extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.toString();
             }
-            try{
+            try {
                 db.execSQL("ALTER TABLE USUARIOS ADD DT_ULT_ATU_CLIE DATETIME");
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
 
             }
 
-            try{
+            try {
                 db.execSQL("alter table produtos_contatos_temp add cod_item integer");
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
             }
 
-            try{
+            try {
                 db.execSQL("alter table produtos_contatos add cod_item integer");
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
             }
 
-            try{
+            try {
                 db.execSQL("CREATE TABLE IF NOT EXISTS CARGOS (" +
                         "   DES_CARGO           VARCHAR(30)                         " +
                         "   CODCARGO_EXT        INTEGER NOT NULL                    " +
                         "   CODCARGO            INTEGER PRIMAY KEY AAUTOINCREMENT); ");
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.toString();
             }
 
-            try{
+            try {
                 db.execSQL("alter table CONTATO_TEMPORARIO add SETOR VARCHAR(30)");
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
             }
 
-            try{
+            try {
                 db.execSQL("alter table CONTATO add SETOR VARCHAR(30)");
+            } catch (Exception e) {
+                e.toString();
+            }
+
+            try {
+                db.execSQL("alter table CONTATO_TEMPORARIO add CARGO_POS INTEGER");
+            } catch (Exception e) {
+                e.toString();
+            }
+
+            try{
+                db.execSQL("ALTER TABLE ITENS ADD QTDMINVEND FLOAT ");
             }catch (Exception e){
                 e.toString();
             }
 
             try{
-                db.execSQL("alter table CONTATO_TEMPORARIO add CARGO_POS INTEGER");
+                db.execSQL("ALTER TABLE PEDOPER ADD DATAVENDA DATETIME");
+            }catch (Exception e){
+                e.toString();
+            }
+
+            try{
+                db.execSQL("ALTER TABLE USUARIOS ADD HABCADCLIE CHAR(1)");
+            }catch (Exception e){
+                e.toString();
+            }
+
+            try{
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABCADASTRO_CLIE INTEGER");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE PARAMAPP ADD HABCONTROLQTDMINVEND CHAR(1)");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE CONFPAGAMENTO ADD conf_codigo_ext INTEGER");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE CONFPAGAMENTO ADD conf_descricao VARCHAR(30)");
             }catch (Exception e){
                 e.toString();
             }

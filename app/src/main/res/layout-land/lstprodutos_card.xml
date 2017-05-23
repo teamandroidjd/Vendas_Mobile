@@ -29,7 +29,6 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -58,7 +57,6 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/lbl3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Código: "
@@ -83,7 +81,6 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/lbl4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Status: "
@@ -110,7 +107,6 @@
                         android:layout_height="wrap_content">
 
                         <TextView
-                            android:id="@+id/lbl5"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Unidade: "
@@ -131,18 +127,14 @@
                             android:id="@+id/lbl1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
                             android:layout_marginLeft="10dp"
                             android:layout_marginStart="3dp"
-                            android:layout_toEndOf="@+id/txtunvenda"
-                            android:layout_toRightOf="@+id/txtunvenda"
                             android:text=" - "
                             android:textColor="@color/colordescClie"
                             android:textSize="13sp"
                             android:textStyle="normal|bold" />
 
                         <TextView
-                            android:id="@+id/lbl6"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Apresentação:"
@@ -154,11 +146,8 @@
                             android:id="@+id/txtapres"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
                             android:layout_marginLeft="10dp"
                             android:layout_marginStart="3dp"
-                            android:layout_toEndOf="@+id/lbl1"
-                            android:layout_toRightOf="@+id/lbl1"
                             android:text="Apresentação"
                             android:textColor="@color/colordescClie"
                             android:textSize="13sp"
@@ -171,316 +160,309 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="210dp"
                     android:background="@color/colorCardClie"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="vertical">
 
-                <RelativeLayout
-                    android:id="@+id/lay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tabpadrao"
+                    <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tabela padrão"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_precopadrao"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tabela padrão"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/txtprecopadrao"
+                            android:text="R$ "
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtprecopadrao"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20sp"
+                            android:text="100000,0000"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/laytab1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/txtprecopadrao"
-                        android:text="R$ "
-                        android:textSize="13sp"
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/txtprecopadrao"
+                        <TextView
+                            android:id="@+id/tab1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tabela 1"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/txtpreco"
+                            android:text="R$ "
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtpreco"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20sp"
+                            android:gravity="right"
+                            android:text="100000,0000"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/laytab2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="100000,0000"
-                        android:layout_marginRight="20sp"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold"
-                        />
+                        android:orientation="horizontal">
 
-                </RelativeLayout>
+                        <TextView
+                            android:id="@+id/tab2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tabela 2"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
 
-                <RelativeLayout
-                    android:id="@+id/laytab1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/txtprecoauxiliara"
+                            android:text="R$ "
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tab1"
+                        <TextView
+                            android:id="@+id/txtprecoauxiliara"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20sp"
+                            android:text="100000,0000"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/laytab3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tabela 1"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_preco"
+                        <TextView
+                            android:id="@+id/tab3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tabela 3"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/txtprecoauxiliarb"
+                            android:text="R$ "
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtprecoauxiliarb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20sp"
+                            android:text="100000,0000"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/laytab4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/txtpreco"
-                        android:text="R$ "
-                        android:textSize="13sp"
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/txtpreco"
+                        <TextView
+                            android:id="@+id/tab4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tabela 4"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/txtprecoauxiliarc"
+                            android:text="R$ "
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtprecoauxiliarc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20sp"
+                            android:text="100000,0000"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/laytab5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:layout_alignParentRight="true"
-                        android:text="100000,0000"
-                        android:layout_marginRight="20sp"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
+                        android:orientation="horizontal">
 
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/laytab2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tab5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tabela 5"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
 
-                    <TextView
-                        android:id="@+id/tab2"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/txtprecoauxiliard"
+                            android:text="R$ "
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtprecoauxiliard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20sp"
+                            android:text="100000,0000"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/laytabp1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tabela 2"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_preco1"
+                        <TextView
+                            android:id="@+id/tabp1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tabela Promo 1"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/txtprecopromocaoa"
+                            android:text="R$ "
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtprecopromocaoa"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20sp"
+                            android:text="100000,0000"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/laytabp2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/txtprecoauxiliara"
-                        android:text="R$ "
-                        android:textSize="13sp"
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/txtprecoauxiliara"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100000,0000"
-                        android:layout_marginRight="20sp"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/laytab3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tabp2"
+                            android:layout_width="220dp"
+                            android:layout_height="wrap_content"
+                            android:text="Tabela Promo 2"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
 
-                    <TextView
-                        android:id="@+id/tab3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tabela 3"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toLeftOf="@+id/txtprecopromocaob"
+                            android:text="R$ "
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_preco2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/txtprecoauxiliarb"
-                        android:text="R$ "
-                        android:textSize="13sp"
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/txtprecopromocaob"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="20sp"
+                            android:text="100000,0000"
+                            android:textColor="@color/colordescClie"
+                            android:textSize="13sp"
+                            android:textStyle="normal|bold" />
 
-                    <TextView
-                        android:id="@+id/txtprecoauxiliarb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100000,0000"
-                        android:layout_marginRight="20sp"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/laytab4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tab4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tabela 4"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_preco3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="R$ "
-                        android:textSize="13sp"
-                        android:layout_toLeftOf="@+id/txtprecoauxiliarc"
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/txtprecoauxiliarc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100000,0000"
-                        android:layout_marginRight="20sp"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/laytab5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tab5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tabela 5"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_preco4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/txtprecoauxiliard"
-                        android:text="R$ "
-                        android:textSize="13sp"
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/txtprecoauxiliard"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100000,0000"
-                        android:layout_marginRight="20sp"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/laytabp1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tabp1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tabela Promo 1"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_preco5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/txtprecopromocaoa"
-                        android:text="R$ "
-                        android:textSize="13sp"
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/txtprecopromocaoa"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100000,0000"
-                        android:layout_marginRight="20sp"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/laytabp2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tabp2"
-                        android:layout_width="220dp"
-                        android:layout_height="wrap_content"
-                        android:text="Tabela Promo 2"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-
-                    <TextView
-                        android:id="@+id/prod_txv_simbol_preco6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/txtprecopromocaob"
-                        android:text="R$ "
-                        android:textSize="13sp"
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/txtprecopromocaob"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="100000,0000"
-                        android:layout_marginRight="20sp"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="13sp"
-                        android:textStyle="normal|bold" />
-
-                </RelativeLayout>
+                    </RelativeLayout>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layquantidade"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:id="@+id/layquantidade">
+                    android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/txt_estoque"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="Estoque disponível: "

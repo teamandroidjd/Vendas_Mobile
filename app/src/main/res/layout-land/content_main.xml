@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -31,7 +30,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/bola_vermelha" />
+                    android:src="@drawable/bola_vermelha"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -39,7 +39,7 @@
                     android:layout_marginLeft="2dp"
                     android:text="Orçamento"
                     android:textColor="@color/ColorText"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -51,7 +51,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/bola_preta" />
+                    android:src="@drawable/bola_preta"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -59,7 +60,7 @@
                     android:layout_marginLeft="2dp"
                     android:text="Cancelado"
                     android:textColor="@color/ColorText"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -71,7 +72,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginLeft="5dp"
-                    android:src="@drawable/bola_azul" />
+                    android:src="@drawable/bola_azul"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -79,7 +81,7 @@
                     android:layout_marginLeft="2dp"
                     android:text="Faturado"
                     android:textColor="@color/ColorText"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -103,7 +105,8 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_marginLeft="5dp"
-                        android:src="@drawable/bola_verde" />
+                        android:src="@drawable/bola_verde"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -111,7 +114,7 @@
                         android:layout_marginLeft="2dp"
                         android:text="Sincronizado"
                         android:textColor="@color/ColorText"
-                        android:textSize="14dp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -124,7 +127,8 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_marginLeft="5dp"
-                        android:src="@drawable/bola_laranja" />
+                        android:src="@drawable/bola_laranja"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -132,7 +136,7 @@
                         android:layout_marginLeft="2dp"
                         android:text="Gerar Venda"
                         android:textColor="@color/ColorText"
-                        android:textSize="14dp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -150,13 +154,12 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:text="Nenhum pedido cadastrado!"
                 android:textAlignment="center"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
         </LinearLayout>
 
     </RelativeLayout>

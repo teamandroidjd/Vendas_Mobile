@@ -23,25 +23,32 @@ import org.jetbrains.annotations.Nullable;
  */
 
 public class act_TH_dadoscontato extends Fragment {
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    public SharedPreferences prefs;
     int sCodCliente;
-    String codVendedor,URLPrincipal,usuario,senha, numContato;
+    String codVendedor, URLPrincipal, usuario, senha, numContato;
     SQLiteDatabase DB;
-    private Context ctx;
-    private Activity act;
     int sCodContato;
     Cursor CursorClie;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
+    private Activity act;
+
+    private static String verificaNum(String numeroCont) {
+        if (numeroCont != null) {
+            return numeroCont;
+        } else {
+            return "null";
+        }
+    }
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.act_dados_contatos, container, false);
-        ctx = getContext();
+        Context ctx = getContext();
         DB = new ConfigDB(ctx).getReadableDatabase();
 
-        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
 
@@ -82,7 +89,7 @@ public class act_TH_dadoscontato extends Fragment {
                     "CLIENTES.NOMERAZAO, CONTATO.DESC_CIDADE, CONTATO.CODCLIENTE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
                     "FROM CONTATO " +
                     "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
-                    "WHERE CONTATO.CODCONTATO_INT = " + sCodContato +" AND CONTATO.CODPERFIL = "+idPerfil, null);
+                    "WHERE CONTATO.CODCONTATO_INT = " + sCodContato + " AND CONTATO.CODPERFIL = " + idPerfil, null);
 
             CursorClie.moveToFirst();
 
@@ -102,7 +109,7 @@ public class act_TH_dadoscontato extends Fragment {
             String emailContato = CursorClie.getString(CursorClie.getColumnIndex("CONTATO.EMAIL"));
             String aniversarioContato = CursorClie.getString(CursorClie.getColumnIndex("CONTATO.DATA"));
 
-            if ((nomeFantasia==null) || (nomeFantasia.equals("")) || (nomeFantasia.equals("0")) ||  (nomeFantasia.equals("null"))) {
+            if ((nomeFantasia == null) || (nomeFantasia.equals("")) || (nomeFantasia.equals("0")) || (nomeFantasia.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_nome_fantasia);
                 linearLayout.setVisibility(View.GONE);
             } else {
@@ -116,14 +123,14 @@ public class act_TH_dadoscontato extends Fragment {
                 NOMECONTATO.setText(nomeContato);
             }
 
-            if ((documentoContato == null) || (documentoContato.equals("")) || (documentoContato.equals("0")) || (documentoContato.equals("null"))){
+            if ((documentoContato == null) || (documentoContato.equals("")) || (documentoContato.equals("0")) || (documentoContato.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_documento);
                 linearLayout.setVisibility(View.GONE);
             } else {
                 DOCUMENTOCONTATO.setText(documentoContato);
             }
 
-            if ((cargoContato == null) || (cargoContato.equals(""))|| (cargoContato.equals("0")) || (cargoContato.equals("null"))) {
+            if ((cargoContato == null) || (cargoContato.equals("")) || (cargoContato.equals("0")) || (cargoContato.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_cargo);
                 linearLayout.setVisibility(View.GONE);
             } else {
@@ -136,9 +143,9 @@ public class act_TH_dadoscontato extends Fragment {
             } else {
                 TextView textView = (TextView) v.findViewById(R.id.tv_end_contato);
                 textView.setVisibility(View.GONE);
-                if ((verificaNum(numContato).equals("null")) || (verificaNum(numContato).equals(""))){
+                if ((verificaNum(numContato).equals("null")) || (verificaNum(numContato).equals(""))) {
                     ENDERECOCONTATO.setText("Endereço: " + enderecoContato);
-                }else {
+                } else {
                     ENDERECOCONTATO.setText("Endereço: " + enderecoContato + ", " + verificaNum(numContato));
                 }
             }
@@ -163,44 +170,44 @@ public class act_TH_dadoscontato extends Fragment {
                 UFCONTATO.setText(ufContato);
             }
 
-            if((complementoContato == null) || (complementoContato.equals("")) || (complementoContato.equals("0")) ||
-                    (complementoContato.equals("null"))){
+            if ((complementoContato == null) || (complementoContato.equals("")) || (complementoContato.equals("0")) ||
+                    (complementoContato.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_complemento);
                 linearLayout.setVisibility(View.GONE);
             } else {
                 COMPLCONTATO.setText(complementoContato);
             }
 
-            if((cepContato == null) ||  (cepContato.equals("")) || (cepContato.equals("0")) || (cepContato.equals("null"))){
+            if ((cepContato == null) || (cepContato.equals("")) || (cepContato.equals("0")) || (cepContato.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_cep);
                 linearLayout.setVisibility(View.GONE);
             } else {
                 CEPCONTATO.setText(cepContato);
             }
 
-            if((tel1Contato == null) ||  (tel1Contato.equals("")) || (tel1Contato.equals("0")) || (tel1Contato.equals("null"))){
+            if ((tel1Contato == null) || (tel1Contato.equals("")) || (tel1Contato.equals("0")) || (tel1Contato.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_tel1);
                 linearLayout.setVisibility(View.GONE);
             } else {
                 TEL1CONTATO.setText(tel1Contato);
             }
 
-            if((tel2Contato== null) ||  (tel2Contato.equals("")) || (tel2Contato.equals("0")) || (tel2Contato.equals("null"))){
+            if ((tel2Contato == null) || (tel2Contato.equals("")) || (tel2Contato.equals("0")) || (tel2Contato.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_tel2);
                 linearLayout.setVisibility(View.GONE);
             } else {
                 TEL2CONTATO.setText(tel2Contato);
             }
 
-            if((emailContato == null) ||  (emailContato.equals("")) || (emailContato.equals("0")) || (emailContato.equals("null"))){
+            if ((emailContato == null) || (emailContato.equals("")) || (emailContato.equals("0")) || (emailContato.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_email);
                 linearLayout.setVisibility(View.GONE);
             } else {
                 EMAILCONTATO.setText(emailContato);
             }
 
-            if((aniversarioContato == null) || (aniversarioContato.equals("")) || (aniversarioContato.equals("0")) ||
-                    (aniversarioContato.equals("null"))){
+            if ((aniversarioContato == null) || (aniversarioContato.equals("")) || (aniversarioContato.equals("0")) ||
+                    (aniversarioContato.equals("null"))) {
                 LinearLayout linearLayout = (LinearLayout) v.findViewById(R.id.ll_aniversario);
                 linearLayout.setVisibility(View.GONE);
             } else {
@@ -212,14 +219,6 @@ public class act_TH_dadoscontato extends Fragment {
         }
         return v;
 
-    }
-
-    private static String verificaNum(String numeroCont){
-        if (numeroCont != null){
-            return numeroCont;
-        }else{
-            return "null";
-        }
     }
 
 }

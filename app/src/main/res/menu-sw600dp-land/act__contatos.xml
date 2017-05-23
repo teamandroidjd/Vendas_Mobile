@@ -4,10 +4,10 @@
     tools:context="inventarioconsreal.jdsystem.com.br.inventarioconsignadoreal.actListaClientes">
     <item
         android:id="@+id/action_searchable_activity"
-        android:orderInCategory="100"
         android:icon="@drawable/ic_search"
+        android:orderInCategory="100"
         android:title="Buscar"
-        app:showAsAction="always"
-        app:actionViewClass="android.widget.SearchView" />
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
 </menu>
 

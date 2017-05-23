@@ -18,25 +18,25 @@ import android.widget.SectionIndexer;
 
 import com.jdsystem.br.vendasmobile.R;
 
-/**
- * Created by Usuário on 04/05/2017.
- */
 
 public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements RecyclerViewScroller {
 
     private static final int[] STYLEABLE = R.styleable.AbsRecyclerViewFastScroller;
-    /** The long bar along which a handle travels */
+    /**
+     * The long bar along which a handle travels
+     */
     protected final View mBar;
-    /** The handle that signifies the user's progress in the list */
+    /**
+     * The handle that signifies the user's progress in the list
+     */
     protected final View mHandle;
-
-
+    /**
+     * If I had my druthers, AbsRecyclerViewFastScroller would implement this as an interface, but Android has made
+     * {@link RecyclerView.OnScrollListener} an abstract class instead of an interface.
+     */
+    protected RecyclerView.OnScrollListener mOnScrollListener;
     private RecyclerView mRecyclerView;
     private SectionIndicator mSectionIndicator;
-
-    /** If I had my druthers, AbsRecyclerViewFastScroller would implement this as an interface, but Android has made
-     * {@link RecyclerView.OnScrollListener} an abstract class instead of an interface. Hmmm */
-    protected RecyclerView.OnScrollListener mOnScrollListener;
 
     public AbsRecyclerViewFastScroller(Context context) {
         this(context, null, 0);
@@ -84,6 +84,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Provides the ability to programmatically set the color of the fast scroller's handle
+     *
      * @param color for the handle to be
      */
     public void setHandleColor(int color) {
@@ -92,6 +93,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Provides the ability to programmatically set the background drawable of the fast scroller's handle
+     *
      * @param drawable for the handle's background
      */
     public void setHandleBackground(Drawable drawable) {
@@ -100,6 +102,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Provides the ability to programmatically set the color of the fast scroller's bar
+     *
      * @param color for the bar to be
      */
     public void setBarColor(int color) {
@@ -108,6 +111,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Provides the ability to programmatically set the background drawable of the fast scroller's bar
+     *
      * @param drawable for the bar's background
      */
     public void setBarBackground(Drawable drawable) {
@@ -129,13 +133,13 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
         mRecyclerView = recyclerView;
     }
 
-    public void setSectionIndicator(SectionIndicator sectionIndicator) {
-        mSectionIndicator = sectionIndicator;
-    }
-
     @Nullable
     public SectionIndicator getSectionIndicator() {
         return mSectionIndicator;
+    }
+
+    public void setSectionIndicator(SectionIndicator sectionIndicator) {
+        mSectionIndicator = sectionIndicator;
     }
 
     @Override
@@ -165,6 +169,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
     /**
      * Classes that extend AbsFastScroller must implement their own {@link RecyclerView.OnScrollListener} to respond to scroll
      * events when the {@link #mRecyclerView} is scrolled NOT using the fast scroller.
+     *
      * @return an implementation for responding to scroll events from the {@link #mRecyclerView}
      */
     @NonNull
@@ -205,6 +210,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Takes a touch event and determines how much scroll progress this translates into
+     *
      * @param event touch event received by the layout
      * @return scroll progress, or fraction by which list is scrolled [0 to 1]
      */
@@ -219,12 +225,14 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
     /**
      * Define a layout resource for your implementation of AbsFastScroller
      * Currently must contain a handle view (R.id.scroll_handle) and a bar (R.id.scroll_bar)
+     *
      * @return a resource id corresponding to the chosen layout.
      */
     protected abstract int getLayoutResourceId();
 
     /**
      * Define a ScrollProgressCalculator for your implementation of AbsFastScroller
+     *
      * @return a chosen implementation of {@link ScrollProgressCalculator}
      */
     @Nullable
@@ -232,6 +240,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
 
     /**
      * Moves the handle of the scroller by specific progress amount
+     *
      * @param scrollProgress fraction by which to move scroller [0 to 1]
      */
     public abstract void moveHandleToPosition(float scrollProgress);

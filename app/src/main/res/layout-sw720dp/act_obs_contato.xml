@@ -2,7 +2,6 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/horarioscontato"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,7 +11,6 @@
     tools:context=".act_TH_obscontato">
 
     <LinearLayout
-        android:id="@+id/linearLayoutCont"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
@@ -28,13 +26,14 @@
                 android:id="@+id/txt_obs_contatos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:scrollbars="vertical"
                 android:text="Observações"
                 android:textColor="@color/colordescClie"
                 android:textSize="20sp"
-                android:textStyle="normal|bold"
-                android:scrollbars="vertical"/>
+                android:textStyle="normal|bold" />
         </LinearLayout>
     </LinearLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/cad_obs_contato"
         android:layout_width="wrap_content"

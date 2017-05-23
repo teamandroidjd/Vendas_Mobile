@@ -7,9 +7,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
-import org.jetbrains.annotations.Nullable;
-
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,27 +15,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Created by hp1 on 21-01-2015.
  */
 public class act_TH_dadosclie extends Fragment {
 
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    public SharedPreferences prefs;
     String CodCliente, codVendedor, URLPrincipal, usuario, senha;
     SQLiteDatabase DB;
-    private Context ctx;
-    private Activity act;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
-
+    private Activity act;
 
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.act_dadosclie, container, false);
-        ctx = getContext();
+        Context ctx = getContext();
 
-        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
 
@@ -131,13 +128,13 @@ public class act_TH_dadosclie extends Fragment {
                     }
                     String cidade = CursorClie.getString(CursorClie.getColumnIndex("CIDADE"));
                     String bairro = CursorClie.getString(CursorClie.getColumnIndex("BAIRRO"));
-                    if(cidade != null && !cidade.equals("NULL")){
-                        TAG_CIDADE.setText("Cidade: "+cidade);
-                    }else {
+                    if (cidade != null && !cidade.equals("NULL")) {
+                        TAG_CIDADE.setText("Cidade: " + cidade);
+                    } else {
                         TAG_CIDADE.setText("Cidade:");
                     }
-                    if(bairro != null && !bairro.equals("NULL")){
-                        TAG_BAIRRO.setText("Bairro: "+bairro);
+                    if (bairro != null && !bairro.equals("NULL")) {
+                        TAG_BAIRRO.setText("Bairro: " + bairro);
                     } else {
                         TAG_BAIRRO.setText("Bairro:");
                     }

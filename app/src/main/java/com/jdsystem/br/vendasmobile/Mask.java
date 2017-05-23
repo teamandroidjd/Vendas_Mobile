@@ -9,12 +9,12 @@ import android.widget.TextView;
  * Created by eduardo.costa on 08/11/2016.
  */
 public class Mask {
-    public static String CPF_MASK       = "###.###.###-##";
-    public static String CNPJ_MASK      = "##.###.###/####-##";
-    public static String TELEFONE_MASK  = "(##) ####-#####";
-    public static String CEP_MASK       = "#####-###";
-    public static String VALOR_MASK     = "#.###,##";
-    public static String DATA_MASK      = "##/##/####";
+    public static String CPF_MASK = "###.###.###-##";
+    public static String CNPJ_MASK = "##.###.###/####-##";
+    public static String TELEFONE_MASK = "(##) ####-#####";
+    public static String CEP_MASK = "#####-###";
+    public static String VALOR_MASK = "#.###,##";
+    public static String DATA_MASK = "##/##/####";
 
 
     public static String unmask(String s) {
@@ -105,12 +105,13 @@ public class Mask {
 
             }
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         };
     }
-
 
 
     public static TextWatcher insert(final String mask, final EditText ediTxt) {
@@ -167,13 +168,15 @@ public class Mask {
 
             }
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         };
     }
 
-    public static String addMask(final String textoAFormatar, final String mask){
+    public static String addMask(final String textoAFormatar, final String mask) {
         String formatado = "";
         int i = 0;
         // vamos iterar a mascara, para descobrir quais caracteres vamos adicionar e quando...

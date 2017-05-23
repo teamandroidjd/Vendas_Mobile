@@ -11,9 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.jdsystem.br.vendasmobile.R;
-import com.jdsystem.br.vendasmobile.DadosContato;
 import com.jdsystem.br.vendasmobile.ConsultaContatos;
+import com.jdsystem.br.vendasmobile.DadosContato;
+import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterContatos;
 import com.jdsystem.br.vendasmobile.domain.Contatos;
@@ -26,12 +26,11 @@ import java.util.List;
  */
 
 public class FragmentContatos extends Fragment implements RecyclerViewOnClickListenerHack {
-    private RecyclerView mRecyclerView;
-    private List<Contatos> mList;
-    private String usuario,senha,codVendedor,urlprincipal;
-    private int flag;
     Context context = getActivity();
     ProgressDialog pDialog;
+    private RecyclerView mRecyclerView;
+    private String usuario, senha, codVendedor, urlprincipal;
+    private int flag;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
         mRecyclerView.setLayoutManager(llm);
 
 
-        mList = ((ConsultaContatos) getActivity()).carregarcontatos();
+        List<Contatos> mList = ((ConsultaContatos) getActivity()).carregarcontatos();
         ListAdapterContatos adapter = new ListAdapterContatos(getActivity(), mList);
         adapter.setRecyclerViewOnClickListenerHack(this);
         mRecyclerView.setAdapter(adapter);

@@ -11,16 +11,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class Splash extends Activity {
-    private static final int REQUEST_READ_PHONE_STATE = 0 ;
+    private static final int REQUEST_READ_PHONE_STATE = 0;
+    /**
+     * Called when the activity is first created.
+     */
+    Thread splashTread;
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         Window window = getWindow();
         window.setFormat(PixelFormat.RGB_565);
     }
-    /** Called when the activity is first created. */
-    Thread splashTread;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,10 +30,11 @@ public class Splash extends Activity {
         setContentView(R.layout.activity_ct_splash);
         StartAnimations();
     }
+
     private void StartAnimations() {
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.alpha);
         anim.reset();
-        RelativeLayout l=(RelativeLayout) findViewById(R.id.lin_lay);
+        RelativeLayout l = (RelativeLayout) findViewById(R.id.lin_lay);
         l.clearAnimation();
         l.startAnimation(anim);
 

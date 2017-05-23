@@ -3,12 +3,8 @@ package com.jdsystem.br.vendasmobile;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +13,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,24 +31,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ConsultaContatos extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Runnable{
+public class ConsultaContatos extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Runnable {
+    public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
+    public SharedPreferences prefs;
     String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, editQuery;
     SQLiteDatabase DB;
     Contatos lstcontatos;
     //Contatos lstfiltrocontatos;
     ProgressDialog pDialog;
-    private TextView txvqtdregcont;
-    private EditText pesquisacliente;
     Handler handler = new Handler();
     Toolbar toolbar;
     MenuItem searchItem;
     SearchView searchView;
     ProgressDialog Dialogo;
-    int flag,idPerfil;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
-
+    int flag, idPerfil;
+    private TextView txvqtdregcont;
+    private EditText pesquisacliente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +100,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        //drawer.setDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(ConsultaContatos.this);
@@ -114,7 +108,6 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
         carregausuariologado();
         carregarpreferencias();
         carregarobjetos();
-
 
 
     }
@@ -154,7 +147,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
-                params.putInt(getString(R.string.intent_flag),flag);
+                params.putInt(getString(R.string.intent_flag), flag);
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -193,8 +186,8 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
                 query.toString();
                 editQuery = query;
-                searchView.setQuery("",false);
-               // searchView.clearFocus();
+                searchView.setQuery("", false);
+                // searchView.clearFocus();
 
 
                 Thread thread = new Thread(ConsultaContatos.this);
@@ -213,7 +206,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
             @Override
             public boolean onClose() {
 
-               // flag = 1;
+                // flag = 1;
                 editQuery = null;
                 searchView.onActionViewCollapsed();
                 Thread thread = new Thread(ConsultaContatos.this);
@@ -328,11 +321,11 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
                         "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT " +
                         "FROM CONTATO " +
-                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT WHERE CONTATO.CODPERFIL = "+idPerfil+" "+
+                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT WHERE CONTATO.CODPERFIL = " + idPerfil + " " +
                         "ORDER BY NOME ", null);
                 cursorContatos.moveToFirst();
                 if (cursorContatos.getCount() > 0) {
-                    txvqtdregcont.setText("Quantidade de registro: "+cursorContatos.getCount());
+                    txvqtdregcont.setText("Quantidade de registro: " + cursorContatos.getCount());
                     do {
                         String nome = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
                         String cargo = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
@@ -384,13 +377,13 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
                     "FROM CONTATO " +
                     "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
-                    "WHERE (CONTATO.CODPERFIL = "+idPerfil+") AND CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
+                    "WHERE (CONTATO.CODPERFIL = " + idPerfil + ") AND CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
                     "LIKE '%" + editQuery + "%'" +
                     " order by CONTATO.NOME ", null);
 
             CursorContatos.moveToFirst();
             if (CursorContatos.getCount() > 0) {
-                txvqtdregcont.setText("Quantidade de registro: "+CursorContatos.getCount());
+                txvqtdregcont.setText("Quantidade de registro: " + CursorContatos.getCount());
                 do {
                     String nome = CursorContatos.getString(CursorContatos.getColumnIndex("NOME"));
                     String cargo = CursorContatos.getString(CursorContatos.getColumnIndex("CARGO"));

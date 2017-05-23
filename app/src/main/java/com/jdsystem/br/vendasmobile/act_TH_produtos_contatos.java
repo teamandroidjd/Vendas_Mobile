@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -20,10 +19,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.jdsystem.br.vendasmobile.Util.Util;
 
 import java.util.ArrayList;
 
@@ -32,22 +27,55 @@ import java.util.ArrayList;
  */
 
 public class act_TH_produtos_contatos extends Fragment {
+    public static final String CONFIG_HOST = "CONFIG_HOST";
+    public SharedPreferences prefs;
     int sCodContato;
     SQLiteDatabase DB;
-    private Context ctx;
-    private Activity act;
-    String codVendedor, usuario, senha,URLPrincipal, NomeCliente, telaInvocada;
+    String codVendedor, usuario, senha, URLPrincipal, NomeCliente, telaInvocada;
     int CodCliente;
     ArrayList<String> arrayListProd, produtosRelacionados;
     ArrayAdapter<String> arrayAdapterProdutos;
     ListView lv_informa_produtos;
-    public SharedPreferences prefs;
-    public static final String CONFIG_HOST = "CONFIG_HOST";
     int idPerfil;
+    private Context ctx;
+    private Activity act;
+
+    public static void excluiProdutoSelecionado(Context context, int codContato, String sItemLista) {
+        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("select produtos_contatos.cod_produto_manual, produtos_contatos.cod_interno_contato, " +
+                    "itens.descricao as desc, produtos_contatos.cod_item " +
+                    "from produtos_contatos " +
+                    "left outer join itens on produtos_contatos.cod_produto_manual = itens.CODITEMANUAL " +
+                    "where produtos_contatos.cod_interno_contato = " + codContato, null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                do {
+                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_produto_manual"));
+                    String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
+                    String itemLista;
+                    if (descProdCont.length() <= 26) {
+                        itemLista = codProdutoCont + " - " + descProdCont;
+                    } else {
+                        itemLista = codProdutoCont + " - " + descProdCont.substring(0, 26);
+                    }
+
+                    if (itemLista.equals(sItemLista)) {
+                        db.execSQL("delete from produtos_contatos where cod_produto_manual = '" + codProdutoCont + "' and " +
+                                "cod_interno_contato = " + codContato);
+                    }
+
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+        } catch (Exception E) {
+            E.toString();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.act_produtos_contatos,container,false);
+        View v = inflater.inflate(R.layout.act_produtos_contatos, container, false);
         ctx = getContext();
 
         Intent intent = ((DadosContato) getActivity()).getIntent();
@@ -109,7 +137,6 @@ public class act_TH_produtos_contatos extends Fragment {
                         .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                return;
                             }
                         });
                 AlertDialog alert = confirmRemove.create();
@@ -117,7 +144,7 @@ public class act_TH_produtos_contatos extends Fragment {
             }
         });
 
-        prefs = ctx.getSharedPreferences(CONFIG_HOST, ctx.MODE_PRIVATE);
+        prefs = ctx.getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
 
@@ -127,7 +154,7 @@ public class act_TH_produtos_contatos extends Fragment {
         fabCadProdCont.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               declaraProdutosContatos();
+                declaraProdutosContatos();
             }
         });
 
@@ -146,11 +173,10 @@ public class act_TH_produtos_contatos extends Fragment {
         params.putInt(getString(R.string.intent_codcliente), CodCliente);
         params.putString(getString(R.string.intent_nomerazao), NomeCliente);
         params.putString(getString(R.string.intent_telainvocada), "TAB_PRODUTOS_CONTATOS");
-        params.putInt(getString(R.string.intent_codcontato),sCodContato);
+        params.putInt(getString(R.string.intent_codcontato), sCodContato);
         i.putExtras(params);
         startActivity(i);
     }
-
 
     private void listaProdutosContato() {
         ArrayList<String> produtosContatos = listaProdutosRelacionados();
@@ -176,8 +202,8 @@ public class act_TH_produtos_contatos extends Fragment {
                     String itemLista;
                     if (descProdCont.length() <= 26) {
                         itemLista = codProdutoCont + " - " + descProdCont;
-                    }else{
-                        itemLista = codProdutoCont + " - " + descProdCont.substring(0,26);
+                    } else {
+                        itemLista = codProdutoCont + " - " + descProdCont.substring(0, 26);
                     }
 
                     produtosRelacionados.add(itemLista);
@@ -190,39 +216,6 @@ public class act_TH_produtos_contatos extends Fragment {
         }
         return produtosRelacionados;
 
-    }
-
-    public static void excluiProdutoSelecionado(Context context, int codContato, String sItemLista){
-        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
-        try {
-            Cursor cursor = db.rawQuery("select produtos_contatos.cod_produto_manual, produtos_contatos.cod_interno_contato, " +
-                    "itens.descricao as desc, produtos_contatos.cod_item " +
-                    "from produtos_contatos " +
-                    "left outer join itens on produtos_contatos.cod_produto_manual = itens.CODITEMANUAL " +
-                    "where produtos_contatos.cod_interno_contato = " + codContato, null);
-            cursor.moveToFirst();
-            if (cursor.getCount() > 0) {
-                do {
-                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_produto_manual"));
-                    String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
-                    String itemLista;
-                    if (descProdCont.length() <= 26) {
-                        itemLista = codProdutoCont + " - " + descProdCont;
-                    }else{
-                        itemLista = codProdutoCont + " - " + descProdCont.substring(0,26);
-                    }
-
-                    if(itemLista.equals(sItemLista)){
-                        db.execSQL("delete from produtos_contatos where cod_produto_manual = '"+ codProdutoCont + "' and " +
-                                "cod_interno_contato = " + codContato);
-                    }
-
-                } while (cursor.moveToNext());
-                cursor.close();
-            }
-        } catch (Exception E) {
-            E.toString();
-        }
     }
 
 

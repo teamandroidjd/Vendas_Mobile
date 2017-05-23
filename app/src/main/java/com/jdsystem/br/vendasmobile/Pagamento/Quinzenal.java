@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.Locale;
 
 
-
 public class Quinzenal implements iPagamento {
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

@@ -4,11 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.jdsystem.br.vendasmobile.act_TH_contclie;
-import com.jdsystem.br.vendasmobile.act_TH_dadosclie;
 import com.jdsystem.br.vendasmobile.act_TH_dadoscontato;
 import com.jdsystem.br.vendasmobile.act_TH_horarios_contatos;
-import com.jdsystem.br.vendasmobile.act_TH_obsclie;
 import com.jdsystem.br.vendasmobile.act_TH_obscontato;
 import com.jdsystem.br.vendasmobile.act_TH_produtos_contatos;
 
@@ -36,26 +33,17 @@ public class DadosContatosAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
 
-        if(position == 0) // if the position is 0 we are returning the First tab
+        if (position == 0) // if the position is 0 we are returning the First tab
         {
 
-            act_TH_dadoscontato tab1 = new act_TH_dadoscontato();
-            return tab1;
-        }
-        else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+            return new act_TH_dadoscontato();
+        } else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
-            act_TH_obscontato tab2 = new act_TH_obscontato();
-            return tab2;
-        }
-        else if (position == 2)
-        {
-            act_TH_produtos_contatos tab3 = new act_TH_produtos_contatos();
-            return tab3;
-        }
-        else
-        {
-            act_TH_horarios_contatos tab4 = new act_TH_horarios_contatos();
-            return tab4;
+            return new act_TH_obscontato();
+        } else if (position == 2) {
+            return new act_TH_produtos_contatos();
+        } else {
+            return new act_TH_horarios_contatos();
         }
 
     }

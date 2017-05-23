@@ -15,11 +15,12 @@
 
     <application
 
-        android:largeHeap="true"
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
+        android:largeHeap="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_descriptor">
         <activity android:name=".Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +32,7 @@
             android:name=".Login"
             android:label="Força de Vendas"
             android:theme="@style/AppTheme">
-            <action android:name="android.intent.action.MAIN" />
+
         </activity>
         <activity
             android:name=".ConsultaClientes"
@@ -56,21 +57,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Sincronismo"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="Sincronização de dados" />
-        <activity android:name=".act_TH_contclie" />
-        <activity android:name=".act_TH_dadosclie" />
-        <activity android:name=".act_TH_obsclie" />
-
-        <activity android:name=".act_TH_dadoscontato" />
-        <activity android:name=".act_TH_horarios_contatos" />
-        <activity android:name=".act_TH_obscontato" />
-        <activity android:name=".act_TH_produtos_contatos" />
+            android:label="Sincronização de dados"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".InfoJDSystem"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="Informações de contato" />
+            android:label="Informações de contato"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="com.google.android.gms.version"
