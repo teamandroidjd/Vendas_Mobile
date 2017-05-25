@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.annotation.IntegerRes;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -510,6 +511,149 @@ public class Util extends Activity {
             x = linha;
         }
         return x;
+    }
+
+    public static void atualizaCargoContato(String desCargo, String sCodCargo, String atvCargo, Context ctx){
+        //int codCargo = Integer.parseInt(sCodCargo);
+
+        SQLiteDatabase db = new ConfigDB(ctx).getReadableDatabase();
+
+        if(!desCargo.equals("")){
+            int codCargo = Integer.parseInt(sCodCargo);
+            Cursor cursCargos = db.rawQuery("select DES_CARGO, CODCARGO_EXT, ATIVO from CARGOS " +
+                    "where CODCARGO_EXT = " + codCargo ,null);
+            cursCargos.moveToFirst();
+            if((cursCargos.getCount()>0)&&(!cursCargos.getString(cursCargos.getColumnIndex("CODCARGO_EXT")).equals(desCargo))){
+                try {
+                    db.execSQL("update CARGOS set DES_CARGO = '" + desCargo + "', ATIVO = '" +atvCargo+
+                            "' where CODCARGO_EXT = " + codCargo);
+                }catch (Exception e){
+                    e.toString();
+                }
+            } else {
+                try{
+                    db.execSQL("insert into CARGOS (DES_CARGO, CODCARGO_EXT, ATIVO) values ('" + desCargo + "', " + codCargo + ", '" +
+                            atvCargo + "');");
+                }catch(Exception e){
+                    e.toString();
+                }
+            }
+            if(!atvCargo.equals(cursCargos.getString(cursCargos.getColumnIndex("ATIVO")))){
+                try {
+                    db.execSQL("update CARGOS set ATIVO = '" + atvCargo + "' where CODCARGO_EXT = " + codCargo);
+                }catch (Exception E){
+                    E.toString();
+                }
+            }
+            cursCargos.close();
+        }
+
+    }
+
+    public static String verificaString(String resultJson){
+        char caracter = ';';
+        int j = 100;
+        String retornaCodCargo = "";
+        for(int i=0;i < resultJson.length();i++){
+            if(resultJson.charAt(i) == caracter){
+                j = i;
+            }
+            if(i > j){
+                retornaCodCargo = retornaCodCargo + resultJson.charAt(i);
+            }
+
+        }
+        return retornaCodCargo.substring(1,retornaCodCargo.length());
+    }
+
+    public static String retornaCodContato(String codContato){
+        String retornaCodContato = "";
+        int i = 0;
+        char caracter = ';';
+        while(codContato.charAt(i) != caracter){
+            retornaCodContato = retornaCodContato + codContato.charAt(i);
+            i++;
+        }
+        return retornaCodContato;
+    }
+
+    public static void gravaHorariosContatos(Context ctx, String hrInicio, String hrFinal, int codDiaSemana, int codContato){
+        char caracter = ':';
+        int i = 0;
+
+        int horaInicio = 0;
+        int minutoInicio = 0;
+        int horaFinal = 0;
+        int minutoFinal = 0;
+
+        String horaInicial = "";
+
+        while(hrInicio.charAt(i) != caracter){
+            horaInicial = horaInicial + hrInicio.charAt(i);
+            i++;
+        }
+        horaInicio = Integer.parseInt(horaInicial);
+
+        int j = 100;
+        i=0;
+        String retornaCodCargo = "";
+        for(i=0;i < hrInicio.length();i++){
+            if(hrInicio.charAt(i) == caracter){
+                j = i;
+            }
+            if(i > j){
+                retornaCodCargo = retornaCodCargo + hrInicio.charAt(i);
+            }
+        }
+        minutoInicio = Integer.parseInt(retornaCodCargo);
+
+        String hourFinal = "";
+        i = 0;
+
+        while(hrFinal.charAt(i) != caracter){
+            hourFinal = hourFinal + hrFinal.charAt(i);
+            i++;
+        }
+        horaFinal = Integer.parseInt(hourFinal);
+
+        i=0;
+        j = 100;
+        retornaCodCargo = "";
+        for(i=0;i < hrFinal.length();i++){
+            if(hrFinal.charAt(i) == caracter){
+                j = i;
+            }
+            if(i > j){
+                retornaCodCargo = retornaCodCargo + hrFinal.charAt(i);
+            }
+        }
+        minutoFinal = Integer.parseInt(retornaCodCargo);
+
+        SQLiteDatabase db = new ConfigDB(ctx).getReadableDatabase();
+
+        Cursor cursorDias = db.rawQuery("SELECT CODCONTATOEXT, HORA_INICIO, MINUTO_INICIO, HORA_FINAL, MINUTO_FINAL, " +
+                "COD_DIA_SEMANA " +
+                "WHERE CODCONTATOEXT = " + codContato + " AND HORA_INICIO = " + horaInicio + " AND MINUTO_INICIO = " +
+                minutoInicio + " AND HORA_FINAL = " + horaFinal + " AND MINUTO_FINAL = " + minutoFinal +
+                " AND COD_DIA_SEMANA = " + codDiaSemana, null );
+        if(cursorDias.getCount()==0){
+            db.execSQL("insert into dias_contatos (CODCONTATO_EXT, HORA_INICIO, MINUTO_INICIO, HORA_FINAL, MINUTO_FINAL, " +
+                    "COD_DIA_SEMANA) VALUES (" + codContato +"," + horaInicio + "," + minutoInicio + "," + horaFinal + "," +
+                    minutoFinal + "," + codDiaSemana);
+        }
+    }
+
+    public static void setIntegrar(int codContato, Context ctx) {
+        SQLiteDatabase db = new ConfigDB(ctx).getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("SELECT CODCONTATO_INT, FLAGINTEGRADO FROM CONTATO WHERE CODCONTATO_INT = " + codContato, null);
+
+            if (cursor.getCount() > 0) {
+                db.execSQL("UPDATE CONTATO SET FLAGINTEGRADO = 'N'");
+            }
+        }catch (Exception e){
+            e.toString();
+        }
     }
 }
 

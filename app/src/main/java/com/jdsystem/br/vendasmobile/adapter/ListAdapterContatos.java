@@ -57,6 +57,9 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
 
         String nomeContato = mList.get(position).getNomeCont();
         String nomeCliente = mList.get(position).getNOMECLIENTE();
+        if (nomeCliente == null){
+            nomeCliente = "";
+        }
 
         /*if((nomeContato.isEmpty())&&(nomeCliente.isEmpty())){
             myViewHolder.NOME.setVisibility(View.GONE);

@@ -20,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.jdsystem.br.vendasmobile.Util.Util;
+
 import java.util.ArrayList;
 
 /**
@@ -39,39 +41,6 @@ public class act_TH_produtos_contatos extends Fragment {
     int idPerfil;
     private Context ctx;
     private Activity act;
-
-    public static void excluiProdutoSelecionado(Context context, int codContato, String sItemLista) {
-        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
-        try {
-            Cursor cursor = db.rawQuery("select produtos_contatos.cod_produto_manual, produtos_contatos.cod_interno_contato, " +
-                    "itens.descricao as desc, produtos_contatos.cod_item " +
-                    "from produtos_contatos " +
-                    "left outer join itens on produtos_contatos.cod_produto_manual = itens.CODITEMANUAL " +
-                    "where produtos_contatos.cod_interno_contato = " + codContato, null);
-            cursor.moveToFirst();
-            if (cursor.getCount() > 0) {
-                do {
-                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_produto_manual"));
-                    String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
-                    String itemLista;
-                    if (descProdCont.length() <= 26) {
-                        itemLista = codProdutoCont + " - " + descProdCont;
-                    } else {
-                        itemLista = codProdutoCont + " - " + descProdCont.substring(0, 26);
-                    }
-
-                    if (itemLista.equals(sItemLista)) {
-                        db.execSQL("delete from produtos_contatos where cod_produto_manual = '" + codProdutoCont + "' and " +
-                                "cod_interno_contato = " + codContato);
-                    }
-
-                } while (cursor.moveToNext());
-                cursor.close();
-            }
-        } catch (Exception E) {
-            E.toString();
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -132,6 +101,7 @@ public class act_TH_produtos_contatos extends Fragment {
                                 } catch (Exception E) {
                                     E.toString();
                                 }
+                                Util.setIntegrar(sCodContato,ctx);
                             }
                         })
                         .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -216,6 +186,41 @@ public class act_TH_produtos_contatos extends Fragment {
         }
         return produtosRelacionados;
 
+    }
+
+    public static void excluiProdutoSelecionado(Context context, int codContato, String sItemLista){
+        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("select produtos_contatos.cod_produto_manual, produtos_contatos.cod_interno_contato, " +
+                    "itens.descricao as desc, produtos_contatos.cod_item " +
+                    "from produtos_contatos " +
+                    "left outer join itens on produtos_contatos.cod_produto_manual = itens.CODITEMANUAL " +
+                    "where produtos_contatos.cod_interno_contato = " + codContato, null);
+            cursor.moveToFirst();
+            if (cursor.getCount() > 0) {
+                do {
+                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_produto_manual"));
+                    String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
+                    String itemLista;
+                    if (descProdCont.length() <= 26) {
+                        itemLista = codProdutoCont + " - " + descProdCont;
+                    }else{
+                        itemLista = codProdutoCont + " - " + descProdCont.substring(0,26);
+                    }
+
+                    if(itemLista.equals(sItemLista)){
+                        db.execSQL("delete from produtos_contatos where cod_produto_manual = '"+ codProdutoCont + "' and " +
+                                "cod_interno_contato = " + codContato);
+
+                        Util.setIntegrar(codContato,context);
+                    }
+
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+        } catch (Exception E) {
+            E.toString();
+        }
     }
 
 

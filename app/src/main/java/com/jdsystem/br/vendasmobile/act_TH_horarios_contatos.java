@@ -323,6 +323,7 @@ public class act_TH_horarios_contatos extends Fragment {
                                 }
                             }
                         });
+                        Util.setIntegrar(sCodContato,ctx);
                     }
                 });
                 mAlertDialog.show();
@@ -378,6 +379,62 @@ public class act_TH_horarios_contatos extends Fragment {
         }
         return diasMarcadosVisita;
     }
+
+
+    /*private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minuteOfHour) {
+            hour = hourOfDay;
+            minute = minuteOfHour;
+
+            if (idEditText.equals(horaFinal)) {
+                hora2 = hour;
+                minute2 = minute;
+                //horarioFinal = converteZero(Integer.toString(hour)) + converteZero(Integer.toString(minute));
+                horaFinal.setText(converteZero(Integer.toString(hour)) + ":" + converteZero(Integer.toString(minute)));
+                idEditText = null;
+            } else if (idEditText.equals(horaInicial)) {
+                hora1 = hour;
+                minute1 = minute;
+                //horarioInicial = converteZero(Integer.toString(hour)) + converteZero(Integer.toString(minute));
+                horaInicial.setText(converteZero(Integer.toString(hour)) + ":" + converteZero(Integer.toString(minute)));
+                idEditText = null;
+            }
+            Calendar time = Calendar.getInstance();
+            time.set(Calendar.HOUR_OF_DAY, hour);
+            time.set(Calendar.MINUTE, minute);
+        }
+    };*/
+
+    /*public static void excluiContatoAgendado(String busca, int codContato, Context context) {
+        SQLiteDatabase db = new ConfigDB(context).getReadableDatabase();
+        Cursor cursor = db.rawQuery("select coddiacontato, cod_dia_semana, codcontatoint, hora_inicio, minuto_inicio, hora_final, minuto_final " +
+                "from dias_contatos " +
+                "where codcontatoint = " + codContato, null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            do {
+                int codSemana = cursor.getInt(cursor.getColumnIndex("dias_contatos.cod_dia_semana"));
+                String mDiaSemana = Util.diaSemana(codSemana);
+                String horaInicio = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("hora_inicio"))));
+                String minutoInicio = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("minuto_inicio"))));
+                String horaFinal = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("hora_final"))));
+                String minutoFinal = converteZero(Integer.toString(cursor.getInt(cursor.getColumnIndex("minuto_final"))));
+                String indiceAgenda = Integer.toString(cursor.getInt(cursor.getColumnIndex("coddiacontato")));
+                String diaVisita = mDiaSemana + ", de " + horaInicio + ":" + minutoInicio + " às " + horaFinal + ":" + minutoFinal;
+
+                if (diaVisita.equals(busca)) {
+                    db.execSQL("delete from dias_contatos " +
+                            "where coddiacontato = " + indiceAgenda);
+                    cursor.moveToLast();
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        Util.setIntegrar(codContato,context);
+    }*/
 }
 
 

@@ -70,6 +70,12 @@
     <string name="primeira_sync_clientes">Esta é sua primeira sincronização de clientes. Esse processo pode demorar alguns minutos.</string>
     <string name="msg_noclient">Nenhum cliente encontrando. Verifique!</string>
 
+    <!--Mensagens de Contatos -->
+
+    <string name="primeira_sync_contatos">Esta é sua primeira sincronização de contatos. Esse processo pode demorar alguns minutos.</string>
+    <string name="no_sync_cont">Nenhum contato sincronizado. Verifique!</string>
+    <string name="alert_sync_contacts">Não existe nenhum contato sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de Dados e clique no botão Sincronizar.</string>
+    <string name="syn_contatos_successfully">Contatos sincronizados com sucesso!</string>
     <!-- Mensagens de itens-->
 
     <string name="alertsyncproducts">Não existe nenhum item sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de dados e clique no botão Sincronizar.</string>
@@ -86,24 +92,27 @@
 
     <!-- Mensagens de sincronização e leitura de dados-->
 
-    <string name="sync_clients">Sincronizando clientes…</string>
-    <string name="sync_products">Sincronizando itens…</string>
-    <string name="loading_products">Carregando itens…</string>
-    <string name="loading_clients">Carregando clientes…</string>
-    <string name="updating_city">Atualizando cadastro de cidades/bairros…</string>
-    <string name="sending_orders">Enviando pedidos…</string>
-    <string name="sync_companies">Sincronizando empresas…</string>
-    <string name="updating_parameters">Atualizando parâmetros…</string>
-    <string name="updating_tables">Atualizando tabelas…</string>
-    <string name="updating_locks">Atualizando bloqueios…</string>
-    <string name="checking_user_password">Verificando usuário e senha…</string>
-    <string name="valid_license">Validando licença…</string>
-    <string name="loading_orders">Carregando pedidos…</string>
-    <string name="loadingcontacts">Carregando contatos…</string>
-    <string name="searchingcontacts">Buscando contatos…</string>
-    <string name="searchingclients">Buscando clientes…</string>
-    <string name="updating_customer_registration">Enviando novos cadastros de clientes…</string>
-    <string name="searching_the_CEP_informed">Pesquisando o CEP informado…</string>
+    <string name="sync_clients">Sincronizando clientes...</string>
+    <string name="sync_products">Sincronizando itens...</string>
+    <string name="sync_contacts">Sincronizando contatos...</string>
+    <string name="loading_products">Carregando itens...</string>
+    <string name="loading_clients">Carregando clientes...</string>
+    <string name="updating_city">Atualizando cadastro de cidades/bairros...</string>
+    <string name="sending_orders">Enviando pedidos...</string>
+    <string name="sync_companies">Sincronizando empresas...</string>
+    <string name="updating_parameters">Atualizando parâmetros...</string>
+    <string name="updating_tables">Atualizando tabelas...</string>
+    <string name="updating_locks">Atualizando bloqueios...</string>
+    <string name="checking_user_password">Verificando usuário e senha...</string>
+    <string name="valid_license">Validando licença...</string>
+    <string name="loading_orders">Carregando pedidos...</string>
+    <string name="loadingcontacts">Carregando contatos...</string>
+    <string name="searchingcontacts">Buscando contatos...</string>
+    <string name="searchingclients">Buscando clientes...</string>
+    <string name="updating_customer_registration">Enviando novos cadastros de clientes...</string>
+    <string name="updating_contacts">Enviando novos cadastros de contatos...</string>
+    <string name="searching_the_CEP_informed">Pesquisando o CEP informado...</string>
+    <string name="performing_filter">Realizando filtro...</string>
 
     <!-- Utilizado somente nas Intent-->
 
@@ -136,6 +145,7 @@
     <string name="intent_prefs_senha">senha</string>
     <string name="intent_prefs_nomeempresa">nome</string>
 
+    <!--Utilizado para Contatos-->
 
     <string name="title_novocontato">Novo Contato</string>
     <string name="question_newcontact">Deseja cadastrar outro contato para este cliente?</string>

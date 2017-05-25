@@ -635,6 +635,13 @@ public class Login extends AppCompatActivity implements Runnable {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+                            Dialogo.setMessage(getString(R.string.updating_contacts));
+                        }
+                    });
+                    Sincronismo.SincronizarContatosEnvioStatic(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(),null,null,null);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
@@ -695,7 +702,15 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
+
+                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(),null,null,null);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Dialogo.setMessage(getString(R.string.updating_contacts));
+                        }
+                    });
+                    Sincronismo.SincronizarContatosEnvioStatic(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(),null,null,null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {

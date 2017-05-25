@@ -321,7 +321,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
                         "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT " +
                         "FROM CONTATO " +
-                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT WHERE CONTATO.CODPERFIL = " + idPerfil + " " +
+                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_EXT WHERE CONTATO.CODPERFIL = "+idPerfil+" "+
                         "ORDER BY NOME ", null);
                 cursorContatos.moveToFirst();
                 if (cursorContatos.getCount() > 0) {
@@ -376,8 +376,8 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
                     "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
                     "FROM CONTATO " +
-                    "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
-                    "WHERE (CONTATO.CODPERFIL = " + idPerfil + ") AND CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
+                    "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_EXT " +
+                    "WHERE (CONTATO.CODPERFIL = "+idPerfil+") AND CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
                     "LIKE '%" + editQuery + "%'" +
                     " order by CONTATO.NOME ", null);
 

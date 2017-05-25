@@ -56,6 +56,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             ");");
     private static String SQL_PARAMAPP = ("CREATE TABLE IF NOT EXISTS PARAMAPP (DT_ULT_ATU DATETIME," +
             " DT_ULT_CLIE                      DATETIME,           " +
+            " DT_ULT_CONT                      DATETIME,           " +
             " DT_ULT_ITENS                     DATETIME,           " +
             " p_usu_codigo                     INTEGER,            " +
             " p_importar_todos_clientes        CHAR DEFAULT 1,     " +
@@ -88,6 +89,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    CODCONTATO_EXT               VARCHAR (7),              " +
             "    NOME                         VARCHAR (60)  NOT NULL,   " +
             "    CARGO                        VARCHAR (30),             " +
+            "    CODCARGO                     INTEGER,                  " +
             "    SETOR                        VARCHAR (30),             " +
             "    DOCUMENTO                    VARCHAR(15),              " +
             "    DATA                         VARCHAR(10),              " +
@@ -238,6 +240,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " CODVEND         INTEGER,        " +
             " HABCADCLIE      CHAR(1),        " +
             " DT_ULT_ATU_CLIE DATETIME,       " +
+            " DT_ULT_ATU_CONT DATETIME,       " +
             " USUARIO         VARCHAR (30),   " +
             " SENHA           VARCHAR  (100), " +
             " CODEMPRESA      INTEGER,        " +
@@ -266,6 +269,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "coddiacontato      integer primary key autoincrement, " +
             "cod_dia_semana     integer, " +
             "codcontatoint      integer, " +
+            "codcontatoext      integer, " +
             "hora_inicio        integer, " +
             "minuto_inicio      integer, " +
             "hora_final         integer, " +
@@ -273,13 +277,17 @@ public class ConfigDB extends SQLiteOpenHelper {
     private static String SQL_PRODUTOS_CONTATOS = ("create table if not exists produtos_contatos (" +
             "cod_produto_contato        integer primary key autoincrement, " +
             "cod_produto_manual         varchar(15), " +
-            "cod_interno_contato        integer,  " +
-            "cod_item                   integer);");
+            "cod_interno_contato        integer,     " +
+            "cod_externo_contato        integer,     " +
+            "cod_item                   integer);    ");
+
     private static String SQL_PRODUTOS_CONTATOS_TEMP = ("create table if not exists produtos_contatos_temp (" +
             "cod_produto_contato        integer primary key autoincrement, " +
             "cod_produto_manual         varchar(15), " +
-            "cod_interno_contato        integer, " +
-            "cod_item                   integer);");
+            "cod_interno_contato        integer,     " +
+            "cod_externo_contato        integer,     " +
+            "cod_item                   integer);    ");
+
     private static String SQL_CONTATOS_TEMPORARIOS = (" CREATE TABLE IF NOT EXISTS CONTATO_TEMPORARIO (" +
             "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
             "    CODCLIENTE                   INTEGER,                  " +
@@ -288,6 +296,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    NOME                         VARCHAR (60)  NOT NULL,   " +
             "    CARGO                        VARCHAR (30),             " +
             "    SETOR                        VARCHAR (30),             " +
+            "    CODCARGO                     INTEGER,                  " +
+            "    CODCARGO_EXT                 INTEGER,                  " +
             "    DOCUMENTO                    VARCHAR(15),              " +
             "    DATA                         VARCHAR(10),              " +
             "    CEP                          VARCHAR(10),              " +
@@ -313,7 +323,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             ";");
     private static String SQL_CARGOS = ("CREATE TABLE IF NOT EXISTS CARGOS (" +
             "   DES_CARGO           VARCHAR(30),                         " +
-            "   CODCARGO_EXT        INTEGER,                    " +
+            "   CODCARGO_EXT        INTEGER,                             " +
+            "   ATIVO               CHAR(1),                             " +
             "   CODCARGO            INTEGER PRIMAY KEY AAUTOINCREMENT); ");
 
     public ConfigDB(Context ctx) {
@@ -394,7 +405,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             try {
                 db.execSQL("CREATE TABLE IF NOT EXISTS CARGOS (" +
                         "   DES_CARGO           VARCHAR(30)                         " +
-                        "   CODCARGO_EXT        INTEGER NOT NULL                    " +
+                        "   CODCARGO_EXT        INTEGER,                            " +
                         "   CODCARGO            INTEGER PRIMAY KEY AAUTOINCREMENT); ");
             } catch (Exception e) {
                 e.toString();
@@ -456,7 +467,47 @@ public class ConfigDB extends SQLiteOpenHelper {
             }catch (Exception e){
                 e.toString();
             }
+            try{
+                db.execSQL("alter table CONTATO_TEMPORARIO add CODCARGO INTEGER");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("alter table CONTATO add CODCARGO INTEGER");
+            }catch (Exception e){
+                e.toString();
+            }
 
+            try{
+                db.execSQL("alter table PARAMAPP add DT_ULT_CONT DATETIME");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("alter table dias_contatos add codcontatoext integer");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("alter table produtos_contatos add cod_externo_contato integer");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("alter table produtos_contatos_temp add cod_externo_contato integer");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("alter table USUARIOS add DT_ULT_ATU_CONT DATETIME");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("alter table CARGOS add ATIVO CHAR");
+            }catch (Exception e){
+                e.toString();
+            }
         }
     }
 }

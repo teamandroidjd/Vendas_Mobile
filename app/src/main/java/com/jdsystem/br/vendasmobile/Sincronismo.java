@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -770,7 +771,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         } catch (Exception E) {
                             E.toString();
                         }
-                        if (CodClieExt == null) {
+                        /*if (CodClieExt == null) {
                             Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
                             CursorContatosEnv.moveToFirst();
                             if ((CursorContatosEnv.getCount() > 0)) {
@@ -791,10 +792,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         JSONArray Cont = ObjCont.getJSONArray("contatos");
                         String nomeContato = null,
                                 cargoContato = null,
+                                atvCargoContato = null,
+                                codExtContato = null,
                                 emailContato = null,
                                 tel1Contato = null,
                                 tel2Contato = null,
-                                codExtContato = null,
                                 bairroContato = null,
                                 documentoContato = null,
                                 dataAnivContato = null,
@@ -804,7 +806,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 obsContato = null,
                                 cepContato = null,
                                 cidadeContato = null,
-                                tipoContato = null;
+                                tipoContato = null,
+                                setorContato = null;
+                        String codCargoContato = null;
+
 
                         try {
                             for (int co = 0; co < Cont.length(); co++) {
@@ -812,6 +817,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 if (co == 0) {
                                     nomeContato = cc.getString("nome");
                                     cargoContato = cc.getString("cargo");
+                                    codCargoContato = cc.getString("codcargo");
+                                    atvCargoContato = cc.getString("cargoativo");
                                     emailContato = cc.getString("email");
                                     codExtContato = cc.getString("CodContato");
                                     documentoContato = cc.getString("Documento");
@@ -843,7 +850,20 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 if (co == 1) {
                                     nomeContato = cc.getString("nome");
                                     cargoContato = cc.getString("cargo");
+                                    codCargoContato = cc.getString("codcargo");
+                                    atvCargoContato = cc.getString("cargoativo");
                                     emailContato = cc.getString("email");
+                                    codExtContato = cc.getString("CodContato");
+                                    documentoContato = cc.getString("Documento");
+                                    dataAnivContato = cc.getString("DataAniversario");
+                                    endContato = cc.getString("Logradouro");
+                                    complContato = cc.getString("complemento");
+                                    bairroContato = cc.getString("Bairro");
+                                    cidadeContato = cc.getString("Cidade");
+                                    cepContato = cc.getString("cep");
+                                    ufContato = cc.getString("uf");
+                                    obsContato = cc.getString("observacao");
+                                    tipoContato = "C";
 
                                     String TelCont2 = c.getString("telefones");
                                     TelCont2 = "{\"telefones\":" + TelCont2 + "\t}";
@@ -863,7 +883,20 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 if (co == 2) {
                                     nomeContato = cc.getString("nome");
                                     cargoContato = cc.getString("cargo");
+                                    codCargoContato = cc.getString("codcargo");
+                                    atvCargoContato = cc.getString("cargoativo");
                                     emailContato = cc.getString("email");
+                                    codExtContato = cc.getString("CodContato");
+                                    documentoContato = cc.getString("Documento");
+                                    dataAnivContato = cc.getString("DataAniversario");
+                                    endContato = cc.getString("Logradouro");
+                                    complContato = cc.getString("complemento");
+                                    bairroContato = cc.getString("Bairro");
+                                    cidadeContato = cc.getString("Cidade");
+                                    cepContato = cc.getString("cep");
+                                    ufContato = cc.getString("uf");
+                                    obsContato = cc.getString("observacao");
+                                    tipoContato = "C";
 
                                     String TelCont3 = c.getString("telefones");
                                     TelCont3 = "{\"telefones\":" + TelCont3 + "\t}";
@@ -881,20 +914,34 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     }
                                 }
 
+                                String produtosCont = c.getString("itens_contato");
+                                produtosCont = "{\"codigoitem\":" + produtosCont + "\t}";
+                                JSONObject objProdCont = new JSONObject(produtosCont);
+                                JSONArray prodCont = objProdCont.getJSONArray("itens_contato");
+
+                                for(int pd = 0; pd < prodCont.length(); pd++){
+                                    JSONObject pdt = prodCont.getJSONObject(pd);
+                                }
 
                                 try {
                                     if (!nomeContato.equals("0") || !cargoContato.equals("0") || !emailContato.equals("0") ||
                                             !tel1Contato.equals("0") || !tel2Contato.equals("0")) {
                                         DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT, codcontato_ext, documento, " +
-                                                "data, cep, endereco, complemento, uf, codvendedor, bairro, desc_cidade, tipo, obs, codperfil) VALUES(" +
+                                                "data, cep, endereco, complemento, uf, codvendedor, bairro, desc_cidade, tipo, obs, codperfil, CODCARGO_EXT, SETOR) VALUES(" +
                                                 "'" + nomeContato.trim() + "','" + cargoContato.trim() +
                                                 "',' " + emailContato.trim() + "',' " + tel1Contato + "',' " + tel2Contato + "'" +
                                                 "," + CodCliente + ", '" + CodClieExt + "', '" + codExtContato + "', '" + documentoContato + "', '" +
                                                 dataAnivContato + "', '" + cepContato + "', '" + endContato + "', '" + complContato + "', '" +
                                                 ufContato + "', " + sCodVend + ", '" + bairroContato + "', '" + cidadeContato + "', '" +
-                                                tipoContato + "', '" + obsContato + "', " + idPerfil + ");");
+                                                tipoContato + "', '" + obsContato + "', " + idPerfil + ", " + Integer.parseInt(codCargoContato) + ", '" + setorContato + "');");
                                     }
-
+                                    try{
+                                        if (!codCargoContato.equals("")){
+                                            Util.atualizaCargoContato(cargoContato,codCargoContato,atvCargoContato,ctxEnvClie);
+                                        }
+                                    }catch(Exception e){
+                                        e.toString();
+                                    }
                                     //}
                                     sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
                                 } catch (Exception E) {
@@ -903,7 +950,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             }
                         } catch (Exception e) {
                             e.toString();
-                        }
+                        }*/
                     } catch (Exception E) {
                         E.toString();
                     }
@@ -2177,6 +2224,718 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincclieenvstatic;
     }
 
+    public static void SincronizarContatosClientesStatic(final Context ctxEnvCont, String user, String pass,
+                                                         int Codclie, final ProgressDialog dialog,
+                                                         final ProgressDialog DialogECB, Handler hd){
+
+        SharedPreferences prefsHost = ctxEnvCont.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
+        SharedPreferences prefs = ctxEnvCont.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
+
+
+        SQLiteDatabase db = new ConfigDB(ctxEnvCont).getReadableDatabase();
+        hd.post(new Runnable() {
+            @Override
+            public void run() {
+
+                if(DialogECB.isShowing()){
+                    DialogECB.dismiss();
+                }
+                dialog.setTitle(R.string.wait);
+                dialog.setMessage("Sincronizando contatos dos clientes cadastrados");
+                dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                dialog.setIcon(R.drawable.icon_sync);
+                dialog.setCancelable(false);
+                dialog.show();
+            }
+        });
+
+        String DtUlt = null;
+        try {
+                Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ATU_CONT FROM USUARIOS WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'", null);
+                cursorparamapp.moveToFirst();
+
+                DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CONT"));
+                if (DtUlt == null) {
+                    DtUlt = "01/01/2000 10:00:00";
+                }
+                cursorparamapp.close();
+        } catch (Exception e) {
+            e.toString();
+        }
+
+        try {
+            hd.post(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.setMessage("Sincronizando contatos...");
+                }
+            });
+
+            final Cursor cursor = db.rawQuery("SELECT NOMEFAN, CODCLIE_EXT FROM CLIENTES", null);
+            cursor.moveToFirst();
+            dialog.setMax(cursor.getCount());
+            int i=0;
+            if (cursor.getCount()>0) {
+                do {
+                    dialog.setProgress(i);
+
+                    int codigoCliente = cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT"));
+                    SincronizarContatosStatic(ctxEnvCont, user, pass, codigoCliente, dialog, DialogECB, hd);
+                    i++;
+                } while (cursor.moveToNext());
+            }
+        }catch(Exception E){
+            E.toString();
+        }
+
+    }
+
+
+    public static String retornaString(String nomeFan){
+        if(nomeFan.length()>30){
+            return nomeFan.substring(1,30);
+        }
+        return nomeFan;
+    }
+
+    public static String SincronizarContatosStatic(final Context ctxEnvCont, String user, String pass, int Codclie, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+
+        SharedPreferences prefsHost = ctxEnvCont.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
+        SharedPreferences prefs = ctxEnvCont.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
+        String sincContatoEnvio = "0";
+
+        String METHOD_NAME = "CarregarContatos",
+                CONTATO_INFO = "Contatos",
+                PRODUTOS_INFO = "itens_contato",
+                HORARIOS_INFO = "dias_contato",
+                NOME_CONTATO = "nome",
+                CARGO_CONTATO = "cargo",
+                COD_CONTATO = "codcontat",
+                TIPO_CONTATO = "tipo",
+                CODCLIE_CONTATO = "codclie",
+                CODVEND_CONTATO = "codvend",
+                CODCARGO_CONTATO = "codcargo",
+                CARGOATIVO_CONTATO = "cargoativo",
+                SETOR_CONTATO = "setor",
+                EMAIL_CONTATO = "email",
+                TELEFONES_CONTATOS = "telefones",
+                DOC_CONTATOS = "Documento",
+                DATA_CONTATO = "DataAniversario",
+                ENDERECO_CONTATO = "Logradouro",
+                COMPL_CONTATO = "complemento",
+                BAIRRO_CONTATO = "Bairro",
+                CIDADE_COONTATO = "Cidade",
+                CEP_CONTATO = "cep",
+                UF_CONTATO = "uf",
+                OBS_CONTATO = "observacao",
+                CODITEM_CONTATO = "codigoitem";
+
+        String CodVendedor = sCodVend;
+        String DtUlt = null;
+        try {
+            //if (Codclie == 0) {
+
+                Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ATU_CONT FROM USUARIOS WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'", null);
+                cursorparamapp.moveToFirst();
+
+                DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CONT"));
+                if (DtUlt == null) {
+                    DtUlt = "01/01/2000 10:00:00";
+                }
+                cursorparamapp.close();
+           // }
+        } catch (Exception e) {
+            e.toString();
+        }
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+        if (senha != null) {
+            if (Codclie == 0) {
+                soap.addProperty("aParam", "V" + CodVendedor + "%"+DtUlt);
+                soap.addProperty("aUsuario", usuario);
+                soap.addProperty("aSenha", senha);
+            } else {
+                soap.addProperty("aParam", "C" + Codclie);
+                soap.addProperty("aUsuario", usuario);
+                soap.addProperty("aSenha", senha);
+            }
+        } else {
+            if (Codclie == 0) {
+                soap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+                soap.addProperty("aUsuario", user);
+                soap.addProperty("aSenha", pass);
+            } else {
+                soap.addProperty("aParam", "C" + Codclie);
+                soap.addProperty("aUsuario", user);
+                soap.addProperty("aSenha", pass);
+            }
+        }
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
+        String RetContatos = null;
+
+        Boolean ConexOk = Util.checarConexaoCelular(ctxEnvCont);
+
+        if (ConexOk == true) {
+            try {
+                Cursor cursorVerificaCont = DB.rawQuery("SELECT * FROM CONTATO WHERE CODPERFIL =" + idPerfil, null);
+                if (cursorVerificaCont.getCount() == 0 && DialogECB != null && DtUlt.equals("01/01/2000 10:00:00")) {
+                    hd.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            DialogECB.setTitle(R.string.wait);
+                            DialogECB.setMessage(ctxEnvCont.getString(R.string.primeira_sync_contatos));
+                            DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                            DialogECB.setIcon(R.drawable.icon_sync);
+                            DialogECB.setCancelable(false);
+                            DialogECB.show();
+                        }
+                    });
+                    int i = 0;
+                    do {
+                        try {
+                            if (i > 0) {
+                                if (hd != null) {
+                                    hd.post(new Runnable() {
+                                        public void run() {
+                                            DialogECB.setMessage(ctxEnvCont.getString(R.string.primeira_sync_contatos));
+                                        }
+                                    });
+                                }
+                                Thread.sleep(500);
+                            }
+                            final int y = i;
+                            switch (i) {
+                                case 1:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 2:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 3:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 4:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 5:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 6:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            if (ConexOk == true) {
+
+                                try {
+                                    if (i == 0) {
+                                        Envio.call("", envelope);
+
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                        RetContatos = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } else {
+                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                                        newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+                                        newsoap.addProperty("aUsuario", user);
+                                        newsoap.addProperty("aSenha", pass);
+                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                        envelope.setOutputSoapObject(soap);
+                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
+                                        newEnvio.call("", newenvelope);
+
+                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                        RetContatos = (String) newenvelope.getResponse();
+                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                    }
+                                } catch (Exception e) {
+                                    e.toString();
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(ctxEnvCont, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                }
+                                cursorVerificaCont.close();
+                            } else {
+                                if (hd != null) {
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(ctxEnvCont, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error na solicitação" + e);
+                        }
+                        i = i + 1;
+                    } while (RetContatos == null && i <= 6);
+                    if (DialogECB != null) {
+                        DialogECB.dismiss();
+                    }
+                } else {
+                    int i = 0;
+                    if(Codclie==0) {
+                        if (hd != null) {
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    dialog.setMessage("Por favor aguarde, realizando conexão com o servidor...");
+                                }
+                            });
+                        }
+                    }
+                    do {
+                        try {
+                            if (i > 0) {
+                                Thread.sleep(500);
+                            }
+                            final int y = i;
+                            switch (i) {
+                                case 1:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 2:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 3:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 4:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 5:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                                case 6:
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            public void run() {
+                                                dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
+                                            }
+                                        });
+                                    }
+                                    break;
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            if (ConexOk == true) {
+
+                                try {
+                                    if (i == 0) {
+                                        Envio.call("", envelope);
+
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                        RetContatos = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } else {
+                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
+                                        if (senha != null) {
+                                            if (Codclie == 0) {
+                                                newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+                                                newsoap.addProperty("aUsuario", usuario);
+                                                newsoap.addProperty("aSenha", senha);
+                                            } else {
+                                                newsoap.addProperty("aParam", "C" + Codclie);
+                                                newsoap.addProperty("aUsuario", usuario);
+                                                newsoap.addProperty("aSenha", senha);
+                                            }
+                                        } else {
+                                            if (Codclie == 0) {
+                                                newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
+                                                newsoap.addProperty("aUsuario", user);
+                                                newsoap.addProperty("aSenha", pass);
+                                            } else {
+                                                newsoap.addProperty("aParam", "C" + Codclie);
+                                                newsoap.addProperty("aUsuario", user);
+                                                newsoap.addProperty("aSenha", pass);
+                                            }
+                                        }
+                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                        newenvelope.setOutputSoapObject(newsoap);
+                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
+                                        newEnvio.call("", newenvelope);
+
+                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                        RetContatos = (String) newenvelope.getResponse();
+                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                    }
+                                } catch (Exception e) {
+                                    e.toString();
+                                    if (hd != null) {
+                                        hd.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(ctxEnvCont, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+
+                                }
+
+                                cursorVerificaCont.close();
+
+                            } else {
+                                if (hd != null) {
+                                    hd.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(ctxEnvCont, R.string.no_connection, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Erro na solicitação" + e);
+                        }
+                        i = i + 1;
+                    } while (RetContatos == null && i <= 6);
+                }
+            } catch (Exception e) {
+                e.toString();
+                if (hd != null) {
+                    hd.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ctxEnvCont, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            }
+
+        } else {
+            if (hd != null) {
+                hd.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ctxEnvCont, R.string.no_connection, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+
+        if (RetContatos.equals("0")) {
+            sincContatoEnvio = ctxEnvCont.getString(R.string.syn_contatos_successfully);
+            return sincContatoEnvio;
+        } else if (RetContatos == null) {
+            sincContatoEnvio = ctxEnvCont.getString(R.string.failure_communicate);
+            return sincContatoEnvio;
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetContatos);
+            JSONArray pedidosblq = jsonObj.getJSONArray(CONTATO_INFO);
+
+
+                int jumpTime = 0;
+                final int totalProgressTime = pedidosblq.length();
+
+            if(Codclie==0) {
+                if (dialog != null) {
+                    dialog.setProgress(jumpTime);
+                    dialog.setMax(totalProgressTime);
+                }
+            }
+            String CodCliente = null;
+            String CodClieExt = null;
+
+            DB = new ConfigDB(ctxEnvCont).getReadableDatabase();
+
+            for (int i = 0; i < pedidosblq.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = pedidosblq.getJSONObject(jumpTime);
+
+                        String Telefone = c.getString(TELEFONES_CONTATOS);
+                        Telefone = "{\"telefones\":" + Telefone + "\t}";
+                        JSONObject ObjTel = new JSONObject(Telefone);
+                        JSONArray Telef = ObjTel.getJSONArray("telefones");
+                        String Tel1 = null;
+                        String Tel2 = null;
+                        String Tel3 = null;
+
+                        for (int t = 0; t < Telef.length(); t++) {
+                            JSONObject tt = Telef.getJSONObject(t);
+                            if (t == 0) {
+                                Tel1 = tt.getString("numero");
+                            }
+                            if (t == 1) {
+                                Tel2 = tt.getString("numero");
+                            }
+                            if (t == 2) {
+                                Tel3 = tt.getString("numero");
+                            }
+                        }
+
+                        jumpTime += 1;
+                        if(Codclie == 0) {
+                            if (dialog != null) {
+                                dialog.setProgress(jumpTime);
+                                hd.post(new Runnable() {
+                                    public void run() {
+                                        dialog.setMessage(ctxEnvCont.getString(R.string.sync_contacts));
+                                    }
+                                });
+                            }
+                        }
+
+                        Cursor cursorContato = DB.rawQuery("SELECT CONTATO.* " +
+                                "FROM CONTATO WHERE CODCONTATO_EXT = " + c.getString(COD_CONTATO) + " and CODPERFIL = " + idPerfil, null);
+                        cursorContato.moveToFirst();
+                        //String CodEstado = RetornaEstado(c.getString(UF_CONTATO));
+
+                        int codContato = c.getInt(COD_CONTATO);
+                        int codCargoContato = 0;
+                        if(c.getString(CODCARGO_CONTATO).equals("")) {
+                            codCargoContato = 0;
+                        }else{
+                            codCargoContato = Integer.parseInt(c.getString(CODCARGO_CONTATO));
+                        }
+                        try {
+                            if (cursorContato.getCount() > 0) {
+                                DB.execSQL(" UPDATE CONTATO SET CODCLIENTE = " + c.getString(CODCLIE_CONTATO) + ", " +
+                                        "    CODCONTATO_EXT = " + c.getString(COD_CONTATO) + ", " +
+                                        "    NOME = '" + c.getString(NOME_CONTATO) + "', " +
+                                        "    CARGO = '" + c.getString(CARGO_CONTATO) + "', " +
+                                        "    CODCARGO = " + codCargoContato + ", " +
+                                        "    SETOR  = '" + c.getString(SETOR_CONTATO) + "', " +
+                                        "    DOCUMENTO = '" + c.getString(DOC_CONTATOS) + "', " +
+                                        "    DATA = '" + c.getString(DATA_CONTATO) + "', " +
+                                        "    CEP = '" + c.getString(CEP_CONTATO) + "', " +
+                                        "    ENDERECO = '" + c.getString(ENDERECO_CONTATO) + "', " +
+                                        "    COMPLEMENTO = '" + c.getString(COMPL_CONTATO) + "', " +
+                                        "    UF = '" + c.getString(UF_CONTATO) + "', " +
+                                        "    CODVENDEDOR = " + c.getString(CODVEND_CONTATO) + ", " +
+                                        "    BAIRRO = '" + c.getString(BAIRRO_CONTATO) + "', " +
+                                        "    DESC_CIDADE = '" + c.getString(CIDADE_COONTATO) + "', " +
+                                        "    EMAIL = '" + c.getString(EMAIL_CONTATO) + "', " +
+                                        "    TIPO = '" + c.getString(TIPO_CONTATO) + "', " +
+                                        "    OBS = '" + c.getString(OBS_CONTATO) + "', " +
+                                        //"    CODCLIE_EXT = " + Codclie + ", " +
+                                        "    FLAGINTEGRADO = 'S', " +
+                                        "    CODPERFIL = " + idPerfil +
+                                        " WHERE CODCONTATO_EXT = " + c.getString(COD_CONTATO) + " and CODPERFIL = " + idPerfil);
+                            } else {
+                                DB.execSQL("INSERT INTO CONTATO (CODCLIENTE, CODCONTATO_EXT, NOME, CARGO, CODCARGO, SETOR, TEL1, TEL2, DOCUMENTO, " +
+                                        "DATA, CEP, SETOR, " +
+                                        "ENDERECO, COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, EMAIL, TIPO, OBS, FLAGINTEGRADO, CODPERFIL) " +
+                                        "VALUES(" +
+                                        "" + c.getString(CODCLIE_CONTATO) +
+                                        "," + c.getString(COD_CONTATO) +
+                                        ",'" + c.getString(NOME_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(CARGO_CONTATO).trim().replace("'", "''") +
+                                        "'," + codCargoContato +
+                                        ",'" + c.getString(SETOR_CONTATO) +
+                                        "','" + Tel1 +
+                                        "','" + Tel2 +
+                                        "','" + c.getString(DOC_CONTATOS).trim().replace("'", "''") +
+                                        "','" + c.getString(DATA_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(CEP_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(SETOR_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(ENDERECO_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(COMPL_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(UF_CONTATO).trim().replace("'", "''") +
+                                        "'," + c.getString(CODVEND_CONTATO) +
+                                        ",'" + c.getString(BAIRRO_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(CIDADE_COONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(EMAIL_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(TIPO_CONTATO).trim().replace("'", "''") +
+                                        "','" + c.getString(OBS_CONTATO).trim().replace("'", "''").replace("\n", "' '") +
+                                        "','" + "S" +
+                                        "'," + idPerfil + ");");
+                            }
+
+                            //-------------------CADASTRO E ATUALIZAÇÃO CARGOS----------------------------
+
+                            //if(!c.getString(CODCARGO_CONTATO).equals("")) {
+                                try {
+                                    /*Cursor cursor1 = DB.rawQuery(" SELECT CODCARGO_EXT, ATIVO, DES_CARGO FROM CARGOS WHERE DES_CARGO = '" + c.getString(CARGO_CONTATO) + "' " +
+                                            " and CODCARGO_EXT = " + c.getInt(CODCARGO_CONTATO), null);
+                                    cursor1.moveToFirst();*/
+
+                                    //if (cursor1.getCount() > 0) {
+                                        String desc_cargo = c.getString(CARGO_CONTATO);
+                                        String codCargo = c.getString(CODCARGO_CONTATO);
+                                        String ativCargo = c.getString(CARGOATIVO_CONTATO);
+
+                                        Util.atualizaCargoContato(desc_cargo, codCargo, ativCargo, ctxEnvCont);
+                                    //}
+                                    //cursor1.close();
+                                }catch (Exception E){
+                                    E.toString();
+                                }
+                            //}
+
+                            //-------------------CADASTRO DOS ITENS DO CONTATO----------------------------
+
+                                String Produtos = c.getString(PRODUTOS_INFO);
+                                Produtos = "{\"itens_contato\":" + Produtos + "\t}";
+                                JSONObject ObjProd = new JSONObject(Produtos);
+                                JSONArray Prod = ObjProd.getJSONArray("itens_contato");
+
+
+                                Cursor cursProd = null;
+                                for (int iProd = 0; iProd < Prod.length();iProd++) {
+
+                                    JSONObject pp = Prod.getJSONObject(iProd);
+
+                                    int codProdCont = pp.getInt("codigoitem");
+
+                                    DB = new ConfigDB(ctxEnvCont).getReadableDatabase();
+                                    cursProd = DB.rawQuery("select cod_externo_contato, cod_item " +
+                                            "from produtos_contatos " +
+                                            "where cod_externo_contato = " + c.getString(COD_CONTATO) + ", and " +
+                                            "cod_item = " + codProdCont, null);
+                                    if (cursProd.getCount() == 0) {
+                                        DB.execSQL("insert into produtos_contatos (cod_externo_contato, cod_item) values (" +
+                                                c.getString(COD_CONTATO) + "," +
+                                                codProdCont);
+                                    }
+                                    cursProd.close();
+                                }
+
+                                //-------------------------------CADASTRO DE DIAS AGENDA-------------------------------
+
+                            String Agenda = c.getString(PRODUTOS_INFO);
+                            Agenda = "{\"dias_contato\":" + Agenda + "\t}";
+                            JSONObject ObjAg = new JSONObject(Agenda);
+                            JSONArray Ag = ObjAg.getJSONArray("dias_contato");
+
+                            Cursor cursAg = null;
+                            for (int iAg = 0; iAg < Ag.length();iAg++) {
+
+                                JSONObject pp = Prod.getJSONObject(iAg);
+
+                                int codDiaSemana = pp.getInt("cod_dia_semana");
+                                String hrInicio = pp.getString("hora_inicio");
+                                String hrFinal = pp.getString("hora_saida");
+
+                                Util.gravaHorariosContatos(ctxEnvCont, hrInicio, hrFinal, codDiaSemana, codContato);
+                            }
+                            cursorContato.close();
+
+                        } catch (Exception E) {
+                            E.toString();
+                        }
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+        } catch (
+                JSONException e)
+
+        {
+            e.toString();
+        }
+
+        try {
+            if (Codclie == 0) {
+                try {
+                    DtUlt = Util.DataHojeComHorasMinSecBR();
+                    DB.execSQL("UPDATE USUARIOS SET DT_ULT_ATU_CONT = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'");
+                } catch (Exception e) {
+                    e.toString();
+                }
+            }
+        }catch (Exception E){
+            E.toString();
+        }
+
+        return sincContatoEnvio;
+
+    }
+
     public static String SincronizarContatosEnvioStatic(final Context ctxEnvClie, String user, String pass, final ProgressDialog DialogoECB, final ProgressDialog dialog, Handler hd) {
 
         SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
@@ -2196,8 +2955,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         int codContatoInt = 0;
         try {
             Cursor cursorContatos = DB.rawQuery("select NOME, CARGO, TIPO, CODCLIE_EXT, CODVENDEDOR, BAIRRO, DOCUMENTO, DATA, " +
-                    "ENDERECO, COMPLEMENTO, UF, OBS, CEP, DESC_CIDADE, EMAIL, TEL1, TEL2, CODCONTATO_INT " +
-                    "from CONTATO where FLAGINTEGRADO = 'N'", null);
+                    "ENDERECO, COMPLEMENTO, UF, OBS, CEP, DESC_CIDADE, EMAIL, TEL1, TEL2, CODCONTATO_INT, SETOR, CODCARGO " +
+                    "from CONTATO where FLAGINTEGRADO = 'N' AND CODPERFIL = " + idPerfil , null);
 
             String EnvioContato = "";
             int codContInt = 0;
@@ -2221,16 +2980,18 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             dialog.setProgress(jumpTime);
                             hd.post(new Runnable() {
                                 public void run() {
-                                    dialog.setMessage(ctxEnvClie.getString(R.string.updating_tables));
+                                    dialog.setMessage("Sincronizando contatos...");
                                 }
                             });
                         }
 
                         String NOME = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
                         codContInt = cursorContatos.getInt(cursorContatos.getColumnIndex("CODCONTATO_INT"));
+                        String CARGO = cursorContatos.getString(cursorContatos.getColumnIndex("CARGO"));
 
                         EnvioContato = "{nome: '" + NOME + "'," +
-                                "cargo: '" + cursorContatos.getString(cursorContatos.getColumnIndex("CARGO")) + "'," +
+                                "cargo: '" + CARGO + "'," +
+                                "codcargo: '" + cursorContatos.getString(cursorContatos.getColumnIndex("CODCARGO")) + "'," +
                                 "tipo: '" + cursorContatos.getString(cursorContatos.getColumnIndex("TIPO")) + "'," +
                                 "codclie: '" + cursorContatos.getInt(cursorContatos.getColumnIndex("CODCLIE_EXT")) + "'," +
                                 "codvend: '" + cursorContatos.getInt(cursorContatos.getColumnIndex("CODVENDEDOR")) + "'," +
@@ -2242,6 +3003,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 "uf: '" + cursorContatos.getString(cursorContatos.getColumnIndex("UF")) + "'," +
                                 "observacao: '" + cursorContatos.getString(cursorContatos.getColumnIndex("OBS")) + "'," +
                                 "cep: '" + cursorContatos.getString(cursorContatos.getColumnIndex("CEP")) + "'," +
+                                "setor: '" + cursorContatos.getString(cursorContatos.getColumnIndex("SETOR")) + "'," +
                                 "Cidade: '" + cursorContatos.getString(cursorContatos.getColumnIndex("DESC_CIDADE")) + "'," +
                                 "emails: [{email: '" + cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL")) + "'}]," +
                                 "telefones: [{numero: '" + cursorContatos.getString(cursorContatos.getColumnIndex("TEL1")) + "'," +
@@ -2286,7 +3048,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                                         RetClieEnvio = (String) envelope.getResponse();
                                         System.out.println("Response :" + resultsRequestSOAP.toString());
-                                        Util.gravaContatoSincronizado(ctxEnvClie, RetClieEnvio, codContInt);
+                                        Util.gravaContatoSincronizado(ctxEnvClie, Util.retornaCodContato(RetClieEnvio), codContInt);
+                                        Util.atualizaCargoContato(CARGO, Util.verificaString(RetClieEnvio), "S", ctxEnvClie);
 
                                     } else {
                                         SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_CONTATOENVIO);
@@ -2307,7 +3070,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                                         SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
                                         RetClieEnvio = (String) envelope.getResponse();
-                                        Util.gravaContatoSincronizado(ctxEnvClie, RetClieEnvio, codContInt);
+                                        Util.gravaContatoSincronizado(ctxEnvClie, Util.retornaCodContato(RetClieEnvio), codContInt);
+                                        Util.atualizaCargoContato(CARGO, Util.verificaString(RetClieEnvio), "S", ctxEnvClie);
                                         System.out.println("Response :" + newresultsRequestSOAP.toString());
                                     }
 

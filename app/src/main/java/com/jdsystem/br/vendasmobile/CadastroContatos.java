@@ -12,6 +12,7 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -66,22 +67,25 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             SABADO = "Sábado",
             codVendedor, URLPrincipal, usuario, senha, sUF, sTipoContato, NomeBairro, NomeCidade,
             NomeCliente, descBairro, telaInvocada, sDiaSemana, horarioInicial, horarioFinal,
-            agendaContato, codProdManual, cargoContato;
+            agendaContato, codProdManual;
     Boolean PesqCEP;
     TimePicker timePicker;
     ImageButton BtnPesqCep, btnInformaDiasVisita, btnInformaprodutos, btnInformaCargo;
     int CodCidade, CodBairro, CodCliente, hour, minute, codInternoUlt, tipoContatoPos, ufPosition, cidadePos, bairroPos,
             idPerfil, hora1, minute1, hora2, minute2, codProd, CodContato, codCargo, posCargo;
     EditText nome, setor, data, documento, endereco, numero, cep, tel1, tel2, email, OBS, Complemento, horaFinal, horaInicial, idEditText;
-    Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF, horarioContato;
+    Spinner TipoContato, TipoCargoEspec, spCidade, spBairro, spUF;
     Context ctx;
-    LinearLayout linearcheck1, linearcheck2, lineartxtsemana, linearrazao;
+    LinearLayout lineartxtsemana, linearrazao;
     TextView razaosocial;
     SQLiteDatabase DB;
+    //private static ProgressDialog DialogECB;
+    //private GoogleApiClient client;
     ListView listView, lv_informa_produtos;
     ArrayList<String> diasContatos;
     ArrayAdapter<String> arrayAdapter, arrayAdapterProdutos;
     TimePickerDialog timePickerDialog;
+
     private Handler handler = new Handler();
     private GoogleApiClient client;
     private TimePicker timerPicker1;
@@ -642,9 +646,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     Cursor cursorCargo = DB.rawQuery(" SELECT CODCARGO_EXT, CODCARGO, DES_CARGO FROM CARGOS WHERE DES_CARGO = '" + descCargo + "'", null);
                     cursorCargo.moveToFirst();
                     if (cursorCargo.getCount() > 0) {
-                        //codCargo = cursorCargo.getInt(cursorCargo.getColumnIndex("CODCARGO"));
-                        descCargo = cursorCargo.getString(cursorCargo.getColumnIndex("DES_CARGO"));
-
+                            codCargo = cursorCargo.getInt(cursorCargo.getColumnIndex("CODCARGO"));
+                            //descCargo = cursorCargo.getString(cursorCargo.getColumnIndex("DES_CARGO"));
                         cursorCargo.close();
                     }
 
@@ -750,7 +753,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         cursor1.moveToFirst();
         cursor1.close();*/
 
-
         try {
 
             //Cursor CursorContatos = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND NOME = '" + nome.getText().toString() + "'", null);
@@ -760,7 +762,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             //SALVA DADOS NA TABELA DE CONTATOS FINAL
 
             DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
-                    "COMPLEMENTO, UF, CODVENDEDOR, CODPERFIL, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, FLAGINTEGRADO, SETOR) VALUES(" +
+                    "COMPLEMENTO, UF, CODVENDEDOR, CODPERFIL, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, FLAGINTEGRADO, SETOR, CODCARGO) VALUES(" +
                     "'" + nome.getText().toString() +
                     "', '" + descCargo +
                     "', '" + email.getText().toString() +
@@ -781,7 +783,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     ", '" + sTipoContato +
                     "', '" + OBS.getText().toString() +
                     "', 'N', '" +
-                    setor.getText().toString() + "');");
+                    setor.getText().toString() + "', " +
+                    codCargo + ");");
 
             returnLastId(); //APÓS SALVAR, A FUNÇÃO ABAIXO PEGA A ÚLTIMA ID DO CONTATO SALVO PARA PREENCHER A TABELA DE AGENDA;
             salvarAgenda(); //ESTA FUNÇÃO SALVA AS INFORMAÇÕES DA TABELA TEMPORÁRIA DA AGENDA NA TABELA FINAL DE AGENDA
@@ -1246,9 +1249,13 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
 
                         if ((horaFinal.getText().toString().equals("")) || (horaInicial.getText().toString().equals(""))) {
                             if ((horaInicial.getText().toString().equals("")) || (horaInicial.getText().toString().equals(null))) {
-                                Util.msg_toast_personal(CadastroContatos.this, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(CadastroContatos.this, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT);
+                                }
                             } else if ((horaFinal.getText().toString().equals("")) || (horaFinal.getText().toString().equals(null))) {
-                                Util.msg_toast_personal(CadastroContatos.this, "Horário final de visita não informado!", Toast.LENGTH_SHORT);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(CadastroContatos.this, "Horário final de visita não informado!", Toast.LENGTH_SHORT);
+                                }
                             }
                         } else {
                             horarioInicial = horaInicial.getText().toString();
@@ -1258,8 +1265,10 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                             int b = parseInt(horarioInicial.substring(0, 2));
 
                             if (a < b) {
-                                Util.msg_toast_personal(CadastroContatos.this, "Horário final " +
-                                        "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(CadastroContatos.this, "Horário final " +
+                                            "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT);
+                                }
                             } else {
                                 agendaContato = sDiaSemana + ", de " + converteZero(Integer.toString(hora1)) +
                                         ":" + converteZero(Integer.toString(minute1)) + " às " + converteZero(Integer.toString(hora2)) + ":" +
@@ -1302,7 +1311,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                     "where dia_visita = '" + diaVisita + "'", null);
 
             if (cursor.getCount() > 0) {
-                Util.msg_toast_personal(CadastroContatos.this, getString(R.string.sched_already_exist), Toast.LENGTH_SHORT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    Util.msg_toast_personal(CadastroContatos.this, getString(R.string.sched_already_exist), Toast.LENGTH_SHORT);
+                }
                 cursor.close();
                 return false;
             } else {
@@ -1442,22 +1453,22 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             if (cursor.getCount() > 0) {
                 //returnLastId();
                 DB.execSQL("update contato_temporario set NOME = '" + nomeContato + "', " +
-                                "CARGO = '" + descCargo + "', EMAIL = '" + emailContato + "', " +
-                                "TEL1 = '" + tel1Contato + "', TEL2 = '" + tel2Contato + "', " +
-                                "DOCUMENTO = '" + docContato + "', DATA = '" + dataContato + "', " +
-                                "CEP = '" + cepContato + "', ENDERECO = '" + endContato + "', " +
-                                "NUMERO = '" + numEndContato + "', " +
-                                "COMPLEMENTO = '" + complContato + "', " +
-                                "UF = '" + sUF + "', CODVENDEDOR = " + codVendedor + ", BAIRRO = '" + descBairro + "', " +
-                                "DESC_CIDADE = '" + NomeCidade + "', CODCLIENTE = " + CodCliente + ", TIPO = '" + sTipoContato + "', " +
-                                "OBS = '" + obsContato + "', TIPO_POS = " + tipoContatoPos + ", CODBAIRRO = " + bairroPos + ", " +
-                                "CODCIDADE = " + cidadePos + ", UFPOSITION = " + ufPosition + ", SETOR = '" + setorContato + "', CARGO_POS = " +
-                                posCargo
+                        "CARGO = '" + descCargo + "', EMAIL = '" + emailContato + "', " +
+                        "TEL1 = '" + tel1Contato + "', TEL2 = '" + tel2Contato + "', " +
+                        "DOCUMENTO = '" + docContato +"', DATA = '" + dataContato + "', " +
+                        "CEP = '" + cepContato + "', ENDERECO = '" + endContato + "', " +
+                        "NUMERO = '" + numEndContato + "', " +
+                        "COMPLEMENTO = '" + complContato + "', " +
+                        "UF = '" + sUF + "', CODVENDEDOR = " + codVendedor + ", BAIRRO = '" + descBairro + "', " +
+                        "DESC_CIDADE = '" + NomeCidade + "', CODCLIENTE = " + CodCliente + ", TIPO = '" + sTipoContato + "', " +
+                        "OBS = '" + obsContato + "', TIPO_POS = " + tipoContatoPos + ", CODBAIRRO = " + bairroPos + ", " +
+                        "CODCIDADE = " + cidadePos + ", UFPOSITION = " + ufPosition + ", SETOR = '" + setorContato +"', CARGO_POS = " +
+                        posCargo + ", CODCARGO = " + codCargo
                         /*"where CODCONTATO_INT = " + codInternoUlt*/);
             } else {
                 DB.execSQL("INSERT INTO CONTATO_TEMPORARIO (NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
                         "COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, TIPO_POS, CODBAIRRO, CODCIDADE, UFPOSITION, " +
-                        "SETOR, CARGO_POS) VALUES(" +
+                        "SETOR, CARGO_POS, CODCARGO) VALUES(" +
                         "'" + nomeContato + "', '" + descCargo + "', '" +
                         emailContato + "', '" + tel1Contato + "', '" + tel2Contato +
                         "', '" + docContato + "', '" + dataContato + "','" +
@@ -1466,7 +1477,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                         complContato + "', '" + sUF + "', " + codVendedor + ", '" + descBairro + "', '" +
                         NomeCidade + "', " + CodCliente + ", '" + sTipoContato + "', '" + obsContato + "', " +
                         tipoContatoPos + ", " + bairroPos + ", " + cidadePos + ", " + ufPosition + ", '" + setorContato + "', " +
-                        posCargo + ");");
+                        posCargo + ", " + codCargo + ");");
             }
             cursor.close();
         } catch (Exception E) {
@@ -1480,73 +1491,52 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         try {
             Cursor cursor = DB.rawQuery("select NOME, CARGO, EMAIL, TEL1, TEL2, DOCUMENTO, DATA, CEP, ENDERECO, NUMERO, " +
                     "COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, CODCLIENTE, TIPO, OBS, codcontato_int, TIPO_POS, " +
-                    "CODBAIRRO, CODCIDADE, UFPOSITION, SETOR, CARGO_POS " +
+                    "CODBAIRRO, CODCIDADE, UFPOSITION, SETOR, CARGO_POS, CODCARGO " +
                     "from contato_temporario ", null);
             //returnLastId();
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 String nomeRazao = cursor.getString(cursor.getColumnIndex("NOME"));
                 nome.setText(nomeRazao);
-
                 descCargo = cursor.getString(cursor.getColumnIndex("CARGO"));
-
                 posCargo = cursor.getInt(cursor.getColumnIndex("CARGO_POS"));
-
+                codCargo = cursor.getInt(cursor.getColumnIndex("CODCARGO"));
                 String setorContato = cursor.getString(cursor.getColumnIndex("SETOR"));
                 setor.setText(setorContato);
-
                 String emailContato = cursor.getString(cursor.getColumnIndex("EMAIL"));
                 email.setText(emailContato);
-
                 String telefone1 = cursor.getString(cursor.getColumnIndex("TEL1"));
                 if (!telefone1.equals("")) {
                     tel1.setText(telefone1);
                 }
-
                 String telefone2 = cursor.getString(cursor.getColumnIndex("TEL2"));
                 if (!telefone2.equals("")) {
                     tel2.setText(telefone2);
                 }
-
-                //tel2.setText(cursor.getString(cursor.getColumnIndex("TEL2")));
                 String docContato = cursor.getString(cursor.getColumnIndex("DOCUMENTO"));
                 documento.setText(docContato);
-
                 String dataContato = cursor.getString(cursor.getColumnIndex("DATA"));
                 data.setText(dataContato);
-
                 String cepContato = cursor.getString(cursor.getColumnIndex("CEP"));
                 cep.setText(cepContato);
-
                 String endContato = cursor.getString(cursor.getColumnIndex("ENDERECO"));
                 endereco.setText(endContato);
-
                 String numContato = cursor.getString(cursor.getColumnIndex("NUMERO"));
                 numero.setText(numContato);
-
                 String complContato = cursor.getString(cursor.getColumnIndex("COMPLEMENTO"));
                 Complemento.setText(complContato);
-
                 sUF = cursor.getString(cursor.getColumnIndex("UF"));
                 codVendedor = cursor.getString(cursor.getColumnIndex("CODVENDEDOR"));
                 descBairro = cursor.getString(cursor.getColumnIndex("BAIRRO"));
                 NomeBairro = descBairro;
-
                 NomeCidade = cursor.getString(cursor.getColumnIndex("DESC_CIDADE"));
-
-                //CodCliente = cursor.getInt(cursor.getColumnIndex("CODCLIENTE"));
                 sTipoContato = cursor.getString(cursor.getColumnIndex("TIPO"));
                 tipoContatoPos = cursor.getInt(cursor.getColumnIndex("TIPO_POS"));
-
                 String obs = cursor.getString(cursor.getColumnIndex("OBS"));
                 OBS.setText(obs);
-                //codInternoUlt = cursor.getInt(cursor.getColumnIndex("codcontato_int"));
-
                 bairroPos = cursor.getInt(cursor.getColumnIndex("CODBAIRRO"));
                 cidadePos = cursor.getInt(cursor.getColumnIndex("CODCIDADE"));
-
                 ufPosition = cursor.getInt(cursor.getColumnIndex("UFPOSITION"));
-
                 cursor.close();
             }
         } catch (Exception E) {
@@ -1704,6 +1694,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         //cargoContato = TipoCargoEspec.getSelectedItem().toString();
         try {
             ArrayList<String> listCargo = new ArrayList<String>();
+            listCargo.add("Selecione o cargo");
             DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
             Cursor cursorCargo = DB.rawQuery(" SELECT CODCARGO_EXT, CODCARGO, DES_CARGO FROM CARGOS ", null);
             cursorCargo.moveToFirst();
@@ -1732,15 +1723,17 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
         Cursor cursor = null;
         try {
             DB = new ConfigDB(CadastroContatos.this).getReadableDatabase();
-            cursor = DB.rawQuery("select DES_CARGO from CARGOS " +
-                    "where DES_CARGO = '" + descCargo + "'", null);
+             cursor = DB.rawQuery("select DES_CARGO from CARGOS " +
+                    "where DES_CARGO = '" + descCargo.toUpperCase() + "'", null);
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
 
-                Util.msg_toast_personal(CadastroContatos.this, "Este cargo já existe cadastrado. Verifique!", Toast.LENGTH_SHORT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    Util.msg_toast_personal(CadastroContatos.this, "Este cargo já existe cadastrado. Verifique!", Toast.LENGTH_SHORT);
+                }
                 cursor.close();
             } else {
-                DB.execSQL("insert into CARGOS(DES_CARGO) values ('" + descCargo + "');");
+                DB.execSQL("insert into CARGOS(DES_CARGO) values ('" + descCargo.toUpperCase() + "');");
                 cursor.close();
             }
         } catch (Exception E) {
