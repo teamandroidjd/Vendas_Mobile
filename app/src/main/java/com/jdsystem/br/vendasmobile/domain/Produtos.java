@@ -32,11 +32,16 @@ public class Produtos extends ItensPedido {
     private String Tabpromo2;
     private String TipoEstoque;
     private int codigoItem;
+    private String controlqtdmin;
+    private String quantidademinitem;
 
     public Produtos() {
     }
 
-    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1, BigDecimal Preco2, BigDecimal Preco3, BigDecimal Preco4, BigDecimal Preco5, BigDecimal PrecoP1, BigDecimal PrecoP2, String Quantidade, String Tabela1, String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque, String TabelaPdrao, int CodigoExterno/*BigDecimal PrecoPadrao*/) {
+    public Produtos(String Descricao, String CodigoManual, String Status, String UnidVenda, String Apresentacao, BigDecimal Preco1, BigDecimal Preco2,
+                    BigDecimal Preco3, BigDecimal Preco4, BigDecimal Preco5, BigDecimal PrecoP1, BigDecimal PrecoP2, String Quantidade, String Tabela1,
+                    String Tabela2, String Tabela3, String Tabela4, String Tabela5, String Tabpromo1, String Tabpromo2, String TipoEstoque,
+                    String TabelaPdrao, int CodigoExterno, String habcontrolqtdmin, String qtdminvenitem) {
 
         this.Descricao = Descricao;
         this.CodigoManual = CodigoManual;
@@ -55,6 +60,8 @@ public class Produtos extends ItensPedido {
         this.TipoEstoque = TipoEstoque;
         this.TabelaPadrao = TabelaPdrao;
         this.codigoItem = CodigoItem;
+        this.controlqtdmin = habcontrolqtdmin;
+        this.quantidademinitem = qtdminvenitem;
 
         if (!Tabela1.equals("")) {
             if (Preco1 != null) {
@@ -280,5 +287,21 @@ public class Produtos extends ItensPedido {
 
     public void setTabPadrao(String tabPadrao) {
         TabelaPadrao = tabPadrao;
+    }
+
+    public String getControlqtdmin() {
+        return controlqtdmin;
+    }
+
+    public void setControlqtdmin(String qtdmin) {
+        controlqtdmin = qtdmin;
+    }
+
+    public String getqtdminvenditem() {
+        return quantidademinitem;
+    }
+
+    public void setqtdminvenditem(String qtdminvenditem) {
+        quantidademinitem = qtdminvenditem;
     }
 }

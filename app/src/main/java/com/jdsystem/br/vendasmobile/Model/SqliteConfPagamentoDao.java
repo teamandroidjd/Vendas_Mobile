@@ -1,6 +1,7 @@
 package com.jdsystem.br.vendasmobile.Model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -12,6 +13,8 @@ import com.jdsystem.br.vendasmobile.ConfigDB;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class SqliteConfPagamentoDao {
 
@@ -32,7 +35,8 @@ public class SqliteConfPagamentoDao {
         boolean gravou = false;
         try {
             if (AtuPedido.equals(true)) {
-                Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado)  VALUES (?,?,?,?,?,?,?)";
+                Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas," +
+                        "vendac_chave,conf_enviado,conf_codformpgto_ext,conf_dias_vencimento,conf_descricao_formpgto)  VALUES (?,?,?,?,?,?,?,?,?,?)";
                 stmt = db.compileStatement(Sql);
                 stmt.bindString(1, pagamento.getConf_sementrada_comentrada());
                 stmt.bindString(2, pagamento.getConf_tipo_pagamento());
@@ -41,6 +45,9 @@ public class SqliteConfPagamentoDao {
                 stmt.bindLong(5, pagamento.getConf_parcelas());
                 stmt.bindString(6, ChavePedido);
                 stmt.bindString(7, pagamento.getConf_enviado());
+                stmt.bindString(8, pagamento.getConf_codformpgto());
+                stmt.bindString(9, pagamento.getConf_diasvencimento());
+                stmt.bindString(10, pagamento.getConf_descformpgto());
 
                 if (stmt.executeInsert() > 0) {
                     gravou = true;
@@ -61,7 +68,8 @@ public class SqliteConfPagamentoDao {
 
             } else {
 
-                Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado)  VALUES (?,?,?,?,?,?,?)";
+                Sql = "INSERT INTO CONFPAGAMENTO  (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido," +
+                        "conf_parcelas,vendac_chave,conf_enviado,conf_codformpgto_ext,conf_dias_vencimento,conf_descricao_formpgto)  VALUES (?,?,?,?,?,?,?,?,?,?)";
                 stmt = db.compileStatement(Sql);
                 stmt.bindString(1, pagamento.getConf_sementrada_comentrada());
                 stmt.bindString(2, pagamento.getConf_tipo_pagamento());
@@ -70,6 +78,9 @@ public class SqliteConfPagamentoDao {
                 stmt.bindLong(5, pagamento.getConf_parcelas());
                 stmt.bindString(6, pagamento.getVendac_chave());
                 stmt.bindString(7, pagamento.getConf_enviado());
+                stmt.bindString(8, pagamento.getConf_codformpgto());
+                stmt.bindString(9, pagamento.getConf_diasvencimento());
+                stmt.bindString(10, pagamento.getConf_descformpgto());
 
 
                 if (stmt.executeInsert() > 0) {
@@ -130,6 +141,10 @@ public class SqliteConfPagamentoDao {
                 conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
                 conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
                 conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
+                conf.setConf_codformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_CODFORMPGTO)));
+                conf.setConf_diasvencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DIASVENCIMENTO)));
+                conf.setConf_descformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_DESCFORMPGTO)));
+                conf.setConf_datavencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DATAVENCIMENTO)));
                 lista.add(conf);
             }
         } catch (SQLiteException e) {
@@ -143,38 +158,77 @@ public class SqliteConfPagamentoDao {
     }
 
 
-    public List<SqliteConfPagamentoBean> busca_todos_CONFPAGAMENTO_nao_enviados() {
+    public List<SqliteConfPagamentoBean> busca_todos_CONFPAGAMENTO_nao_enviados(String chave) {
+        String CONFIG_HOST = "CONFIG_HOST";
+        SharedPreferences prefs = ctx.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        int idPerfil = prefs.getInt("idperfil", 0);
         List<SqliteConfPagamentoBean> lista = new ArrayList<SqliteConfPagamentoBean>();
-        try {
-            db = new ConfigDB(ctx).getReadableDatabase();
-            cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE conf_enviado = 'N' ", null);
-            while (cursor.moveToNext()) {
-                SqliteConfPagamentoBean conf = new SqliteConfPagamentoBean();
-                conf.setConf_codigo(cursor.getInt(cursor.getColumnIndex(conf.CONF_CODIGO_CONFPAGAMENTO)));
-                conf.setConf_parcelas(cursor.getInt(cursor.getColumnIndex(conf.CONF_QUANTIDADE_PARCELAS)));
-                conf.setConf_recebeucom_din_chq_car(cursor.getString(cursor.getColumnIndex(conf.CONF_DINHEIRO_CARTAO_CHEQUE)));
-                conf.setConf_sementrada_comentrada(cursor.getString(cursor.getColumnIndex(conf.CONF_SEMENTADA_COMENTRADA)));
-                conf.setConf_tipo_pagamento(cursor.getString(cursor.getColumnIndex(conf.CONF_TIPO_DO_PAGAMENTO)));
-                conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
-                conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
-                conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
-                lista.add(conf);
+        if(chave.toString().equals("")) {
+            try {
+                db = new ConfigDB(ctx).getReadableDatabase();
+                cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = '' AND CODPERFIL =" + idPerfil, null);
+                while (cursor.moveToNext()) {
+                    SqliteConfPagamentoBean conf = new SqliteConfPagamentoBean();
+                    conf.setConf_codigo(cursor.getInt(cursor.getColumnIndex(conf.CONF_CODIGO_CONFPAGAMENTO)));
+                    conf.setConf_parcelas(cursor.getInt(cursor.getColumnIndex(conf.CONF_QUANTIDADE_PARCELAS)));
+                    conf.setConf_recebeucom_din_chq_car(cursor.getString(cursor.getColumnIndex(conf.CONF_DINHEIRO_CARTAO_CHEQUE)));
+                    conf.setConf_sementrada_comentrada(cursor.getString(cursor.getColumnIndex(conf.CONF_SEMENTADA_COMENTRADA)));
+                    conf.setConf_tipo_pagamento(cursor.getString(cursor.getColumnIndex(conf.CONF_TIPO_DO_PAGAMENTO)));
+                    conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
+                    conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
+                    conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
+                    conf.setConf_codformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_CODFORMPGTO)));
+                    conf.setConf_diasvencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DIASVENCIMENTO)));
+                    conf.setConf_descformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_DESCFORMPGTO)));
+                    conf.setConf_datavencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DATAVENCIMENTO)));
+                    lista.add(conf);
+                }
+            } catch (SQLiteException e) {
+                Log.d("busca_todos_confpag", e.getMessage());
+            } finally {
+                db.close();
+                cursor.close();
             }
-        } catch (SQLiteException e) {
-            Log.d("busca_todos_confpag", e.getMessage());
-        } finally {
-            db.close();
-            cursor.close();
+        } else {
+            try {
+                db = new ConfigDB(ctx).getReadableDatabase();
+                cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = '"+chave+"' AND CODPERFIL =" + idPerfil, null);
+                while (cursor.moveToNext()) {
+                    SqliteConfPagamentoBean conf = new SqliteConfPagamentoBean();
+                    conf.setConf_codigo(cursor.getInt(cursor.getColumnIndex(conf.CONF_CODIGO_CONFPAGAMENTO)));
+                    conf.setConf_parcelas(cursor.getInt(cursor.getColumnIndex(conf.CONF_QUANTIDADE_PARCELAS)));
+                    conf.setConf_recebeucom_din_chq_car(cursor.getString(cursor.getColumnIndex(conf.CONF_DINHEIRO_CARTAO_CHEQUE)));
+                    conf.setConf_sementrada_comentrada(cursor.getString(cursor.getColumnIndex(conf.CONF_SEMENTADA_COMENTRADA)));
+                    conf.setConf_tipo_pagamento(cursor.getString(cursor.getColumnIndex(conf.CONF_TIPO_DO_PAGAMENTO)));
+                    conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
+                    conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
+                    conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
+                    conf.setConf_codformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_CODFORMPGTO)));
+                    conf.setConf_diasvencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DIASVENCIMENTO)));
+                    conf.setConf_descformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_DESCFORMPGTO)));
+                    conf.setConf_datavencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DATAVENCIMENTO)));
+                    lista.add(conf);
+                }
+            } catch (SQLiteException e) {
+                Log.d("busca_todos_confpag", e.getMessage());
+            } finally {
+                db.close();
+                cursor.close();
+            }
+
         }
 
         return lista;
     }
 
     public SqliteConfPagamentoBean busca_CONFPAGAMENTO_sem_chave() {
+        String CONFIG_HOST = "CONFIG_HOST";
+        SharedPreferences prefs = ctx.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        int idPerfil = prefs.getInt("idperfil", 0);
         SqliteConfPagamentoBean conf = null;
         try {
             db = new ConfigDB(ctx).getReadableDatabase();
-            cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = '' ", null);
+            cursor = db.rawQuery("SELECT * FROM CONFPAGAMENTO WHERE vendac_chave = '' AND CODPERFIL = "+idPerfil, null);
             if (cursor.moveToFirst()) {
                 conf = new SqliteConfPagamentoBean();
                 conf.setConf_codigo(cursor.getInt(cursor.getColumnIndex(conf.CONF_CODIGO_CONFPAGAMENTO)));
@@ -185,6 +239,10 @@ public class SqliteConfPagamentoDao {
                 conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
                 conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
                 conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
+                conf.setConf_codformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_CODFORMPGTO)));
+                conf.setConf_diasvencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DIASVENCIMENTO)));
+                conf.setConf_descformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_DESCFORMPGTO)));
+                conf.setConf_datavencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DATAVENCIMENTO)));
 
             }
         } catch (SQLiteException e) {
@@ -214,6 +272,10 @@ public class SqliteConfPagamentoDao {
                     conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
                     conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
                     conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
+                    conf.setConf_codformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_CODFORMPGTO)));
+                    conf.setConf_diasvencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DIASVENCIMENTO)));
+                    conf.setConf_descformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_DESCFORMPGTO)));
+                    conf.setConf_datavencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DATAVENCIMENTO)));
                 } while (cursor.moveToNext());
             }
         } catch (SQLiteException e) {
@@ -242,6 +304,10 @@ public class SqliteConfPagamentoDao {
                     conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
                     conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
                     conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
+                    conf.setConf_codformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_CODFORMPGTO)));
+                    conf.setConf_diasvencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DIASVENCIMENTO)));
+                    conf.setConf_descformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_DESCFORMPGTO)));
+                    conf.setConf_datavencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DATAVENCIMENTO)));
                     conf.setConf_temp("T");
                     db.execSQL("INSERT INTO CONFPAGAMENTO (conf_sementrada_comentrada, conf_tipo_pagamento,conf_recebeucom_din_chq_car,conf_valor_recebido,conf_parcelas,vendac_chave,conf_enviado, conf_temp) values(" + "'" + conf.getConf_sementrada_comentrada() +
                             "', '" + conf.getConf_tipo_pagamento() + "', '" + conf.getConf_recebeucom_din_chq_car() + "', '" + conf.getConf_valor_recebido() + "', '" + conf.getConf_parcelas() + "','" + conf.getVendac_chave() +
@@ -274,6 +340,10 @@ public class SqliteConfPagamentoDao {
                     conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
                     conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
                     conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
+                    conf.setConf_codformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_CODFORMPGTO)));
+                    conf.setConf_diasvencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DIASVENCIMENTO)));
+                    conf.setConf_descformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_DESCFORMPGTO)));
+                    conf.setConf_datavencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DATAVENCIMENTO)));
                     db.execSQL("UPDATE CONFPAGAMENTO SET conf_sementrada_comentrada = '" + conf.getConf_codigo() + "', conf_tipo_pagamento = '" + conf.getConf_tipo_pagamento() + "', conf_recebeucom_din_chq_car = '" + conf.getConf_recebeucom_din_chq_car() +
                             "', conf_valor_recebido = '" + conf.getConf_valor_recebido() + "', conf_parcelas = '" + conf.getConf_parcelas() + "', vendac_chave = '" + conf.getVendac_chave() + "', conf_enviado = '" + conf.getConf_enviado() + "', conf_temp = 'N' WHERE vendac_chave = '" + conf.getVendac_chave() + "' AND conf_temp = 'N' ");
                 } while (cursor.moveToNext());
@@ -325,8 +395,16 @@ public class SqliteConfPagamentoDao {
                         conf.setConf_valor_recebido(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(conf.CONF_VALOR_RECEBIDO))));
                         conf.setVendac_chave(cursor.getString(cursor.getColumnIndex(conf.CONF_VENDAC_CHAVE)));
                         conf.setConf_enviado(cursor.getString(cursor.getColumnIndex(conf.CONF_ENVIADO)));
-                        db.execSQL("UPDATE CONFPAGAMENTO SET conf_sementrada_comentrada = '" + conf.getConf_codigo() + "', conf_tipo_pagamento = '" + conf.getConf_tipo_pagamento() + "', conf_recebeucom_din_chq_car = '" + conf.getConf_recebeucom_din_chq_car() +
-                                "', conf_valor_recebido = '" + conf.getConf_valor_recebido() + "', conf_parcelas = '" + conf.getConf_parcelas() + "', vendac_chave = '" + conf.getVendac_chave() + "', conf_enviado = '" + conf.getConf_enviado() + "', conf_temp = 'N' WHERE vendac_chave = '" + conf.getVendac_chave() + "' AND conf_temp = 'N' ");
+                        conf.setConf_codformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_CODFORMPGTO)));
+                        conf.setConf_diasvencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DIASVENCIMENTO)));
+                        conf.setConf_descformpgto(cursor.getString(cursor.getColumnIndex(conf.CONF_DESCFORMPGTO)));
+                        conf.setConf_datavencimento(cursor.getString(cursor.getColumnIndex(conf.CONF_DATAVENCIMENTO)));
+                        db.execSQL("UPDATE CONFPAGAMENTO SET conf_sementrada_comentrada = '" + conf.getConf_codigo() + "', conf_tipo_pagamento = '"
+                                + conf.getConf_tipo_pagamento() + "', conf_recebeucom_din_chq_car = '" + conf.getConf_recebeucom_din_chq_car() +
+                                "', conf_valor_recebido = '" + conf.getConf_valor_recebido() + "', conf_parcelas = '" + conf.getConf_parcelas() +
+                                "', vendac_chave = '" + conf.getVendac_chave() + "', conf_enviado = '" + conf.getConf_enviado() +
+                                "', conf_codformpgto_ext = '" + conf.getConf_codformpgto() + "', conf_descricao_formpgto = '" + conf.getConf_descformpgto() + "'," +
+                                " conf_dias_vencimento = '" + conf.getConf_diasvencimento() + "',  conf_temp = 'N' WHERE vendac_chave = '" + conf.getVendac_chave() + "' AND conf_temp = 'N' ");
                     } while (cursor.moveToNext());
                     db.execSQL("DELETE FROM CONFPAGAMENTO WHERE vendac_chave = " + Chave_pedido + " AND CONF_TEMP = 'T' ");
                 }
@@ -370,4 +448,13 @@ public class SqliteConfPagamentoDao {
         }
     }
 
+    public void exluiparcela(int codparcela) {
+        db = new ConfigDB(ctx).getWritableDatabase();
+        try {
+            db.execSQL("DELETE FROM CONFPAGAMENTO WHERE CONF_CODIGO ="+codparcela);
+
+        }catch (Exception e){
+            e.toString();
+        }
+    }
 }

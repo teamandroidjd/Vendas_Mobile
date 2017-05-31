@@ -34,7 +34,9 @@ public class SqliteConRecDao {
         try {
             gravou = false;
             db = new ConfigDB(ctx).getWritableDatabase();
-            sql = "INSERT INTO CONREC (rec_numparcela,rec_cli_codigo,rec_cli_nome,vendac_chave,rec_datamovimento,rec_valor_receber,rec_valorpago,rec_datavencimento,rec_data_que_pagou,rec_recebeu_com,rec_enviado) values (?,?,?,?,?,?,?,?,?,?,?)";
+            sql = "INSERT INTO CONREC (rec_numparcela,rec_cli_codigo,rec_cli_nome,vendac_chave,rec_datamovimento,rec_valor_receber,rec_valorpago," +
+                    "rec_datavencimento,rec_data_que_pagou,rec_recebeu_com,rec_enviado," +
+                    "rec_codformpgto_ext,rec_dias_vencimento,rec_descricao_formpgto,CODPERFIL) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             stmt = db.compileStatement(sql);
             stmt.bindLong(1, rec.getRec_numparcela());
             stmt.bindLong(2, rec.getRec_cli_codigo());
@@ -47,6 +49,10 @@ public class SqliteConRecDao {
             stmt.bindString(9, rec.getRec_data_que_pagou());
             stmt.bindString(10, rec.getRec_recebeu_com());
             stmt.bindString(11, rec.getRec_enviado());
+            stmt.bindString(12, rec.getRec_codformpgto());
+            stmt.bindString(13, rec.getRec_diasvencimento());
+            stmt.bindString(14, rec.getRec_descformpgto());
+            stmt.bindLong(15, rec.getRec_codperfil());
             if (stmt.executeInsert() > 0) {
                 gravou = true;
                 sql = "";
@@ -84,12 +90,18 @@ public class SqliteConRecDao {
         db = new ConfigDB(ctx).getReadableDatabase();
         SqliteConRecBean receber = null;
         try {
-            cursor = db.rawQuery("select min(rec_numparcela) as rec_numparcela ,rec_cli_codigo,rec_cli_nome,vendac_chave,rec_datamovimento,rec_valor_receber,rec_valorpago,rec_datavencimento,rec_data_que_pagou,rec_recebeu_com,rec_enviado from CONREC where vendac_chave = ? and rec_valorpago = 0", new String[]{chave_da_venda});
+            cursor = db.rawQuery("select min(rec_numparcela) as rec_numparcela ,rec_cli_codigo,rec_cli_nome,vendac_chave,rec_datamovimento," +
+                    "rec_valor_receber,rec_valorpago,rec_datavencimento,rec_data_que_pagou,rec_recebeu_com,rec_enviado,rec_codformpgto_ext,rec_dias_vencimento,conf_descricao_formpgto" +
+                    " from CONREC where vendac_chave = ? and rec_valorpago = 0", new String[]{chave_da_venda});
             if (cursor.moveToFirst()) {
                 receber = new SqliteConRecBean();
                 receber.setRec_numparcela(cursor.getInt(cursor.getColumnIndex(receber.NUMERO_DA_PARCELA)));
                 receber.setVendac_chave(cursor.getString(cursor.getColumnIndex(receber.CHAVE_DA_VENDA)));
                 receber.setRec_valor_receber(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(receber.VALOR_A_RECEBER))));
+                receber.setVendac_chave(cursor.getString(cursor.getColumnIndex(receber.REC_CODFORMPGTO)));
+                receber.setVendac_chave(cursor.getString(cursor.getColumnIndex(receber.REC_DIASVENCIMENTO)));
+                receber.setVendac_chave(cursor.getString(cursor.getColumnIndex(receber.REC_DESCFORMPGTO)));
+
             }
         } catch (SQLiteException e) {
             Log.d("busca_numero_parcela", e.getMessage());
@@ -160,6 +172,9 @@ public class SqliteConRecDao {
                 parcela.setRec_valor_receber(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(parcela.VALOR_A_RECEBER))).setScale(2, BigDecimal.ROUND_UP));
                 parcela.setRec_valorpago(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(parcela.VALOR_PAGO))).setScale(2, BigDecimal.ROUND_UP));
                 parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.CHAVE_DA_VENDA)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_CODFORMPGTO)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_DIASVENCIMENTO)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_DESCFORMPGTO)));
                 parcelas_geradas.add(parcela);
             }
         } catch (SQLiteException e) {
@@ -190,6 +205,10 @@ public class SqliteConRecDao {
                 parcela.setRec_valor_receber(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(parcela.VALOR_A_RECEBER))).setScale(2, BigDecimal.ROUND_DOWN));
                 parcela.setRec_valorpago(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(parcela.VALOR_PAGO))).setScale(2, BigDecimal.ROUND_DOWN));
                 parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.CHAVE_DA_VENDA)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_CODFORMPGTO)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_DIASVENCIMENTO)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_DESCFORMPGTO)));
+
                 lista_de_pacelas.add(parcela);
             }
 
@@ -219,6 +238,9 @@ public class SqliteConRecDao {
                 parcela.setRec_valor_receber(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(parcela.VALOR_A_RECEBER))).setScale(2, BigDecimal.ROUND_UP));
                 parcela.setRec_valorpago(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(parcela.VALOR_PAGO))).setScale(2, BigDecimal.ROUND_UP));
                 parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.CHAVE_DA_VENDA)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_CODFORMPGTO)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_DIASVENCIMENTO)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_DESCFORMPGTO)));
                 parcelas.add(parcela);
             }
 
@@ -259,6 +281,9 @@ public class SqliteConRecDao {
                 parcela.setRec_valor_receber(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(parcela.VALOR_A_RECEBER))).setScale(2, BigDecimal.ROUND_UP));
                 parcela.setRec_valorpago(new BigDecimal(cursor.getDouble(cursor.getColumnIndex(parcela.VALOR_PAGO))).setScale(2, BigDecimal.ROUND_UP));
                 parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.CHAVE_DA_VENDA)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_CODFORMPGTO)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_DIASVENCIMENTO)));
+                parcela.setVendac_chave(cursor.getString(cursor.getColumnIndex(parcela.REC_DESCFORMPGTO)));
                 lista_de_pacelas.add(parcela);
             }
 

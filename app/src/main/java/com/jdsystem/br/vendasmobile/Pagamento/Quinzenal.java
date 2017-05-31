@@ -65,7 +65,11 @@ public class Quinzenal implements iPagamento {
                             dateFormat.format(data_de_vencimento),
                             dateFormat.format(data_padrao),
                             "",
-                            "N"
+                            "N",
+                            pagamento.getConf_codformpgto(),
+                            pagamento.getConf_diasvencimento(),
+                            pagamento.getConf_diasvencimento(),
+                            0
                     ));
 
             Log.i("script", "+++++++++++++++++++++++++++++");

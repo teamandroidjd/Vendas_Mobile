@@ -37,7 +37,11 @@ public class BaixaParcelaEntrada {
                     pagamento.getConf_recebeucom_din_chq_car(),
                     "N",
                     primeiraParcela.getVendac_chave(),
-                    primeiraParcela.getRec_numparcela()
+                    primeiraParcela.getRec_numparcela(),
+                    primeiraParcela.getRec_codformpgto(),
+                    primeiraParcela.getRec_diasvencimento(),
+                    primeiraParcela.getRec_descformpgto(),
+                    0
             ));
         }
 
@@ -49,6 +53,9 @@ public class BaixaParcelaEntrada {
             parcela_parcial.setRec_enviado("N");
             parcela_parcial.setVendac_chave(primeiraParcela.getVendac_chave());
             parcela_parcial.setRec_numparcela(primeiraParcela.getRec_numparcela());
+            parcela_parcial.setRec_codformpgto(primeiraParcela.getRec_codformpgto());
+            parcela_parcial.setRec_diasvencimento(primeiraParcela.getRec_diasvencimento());
+            parcela_parcial.setRec_descformpgto(primeiraParcela.getRec_descformpgto());
             new SqliteConRecDao(ctx).atualiza_valorparcela(parcela_parcial);
         }
 
@@ -69,7 +76,11 @@ public class BaixaParcelaEntrada {
                             pagamento.getConf_recebeucom_din_chq_car(),
                             "N",
                             lista_de_parcela.get(posicao).getVendac_chave(),
-                            lista_de_parcela.get(posicao).getRec_numparcela()
+                            lista_de_parcela.get(posicao).getRec_numparcela(),
+                            lista_de_parcela.get(posicao).getRec_codformpgto(),
+                            lista_de_parcela.get(posicao).getRec_diasvencimento(),
+                            lista_de_parcela.get(posicao).getRec_descformpgto(),
+                            0
                     ));
                     VALOR_DA_ENTRADA = VALOR_DA_ENTRADA.subtract(VALOR_A_RECEBER);
 
@@ -83,6 +94,9 @@ public class BaixaParcelaEntrada {
                     parcela_parcial.setRec_enviado("N");
                     parcela_parcial.setVendac_chave(parcela_menor.getVendac_chave());
                     parcela_parcial.setRec_numparcela(parcela_menor.getRec_numparcela());
+                    parcela_parcial.setRec_codformpgto(parcela_menor.getRec_codformpgto());
+                    parcela_parcial.setRec_diasvencimento(parcela_menor.getRec_diasvencimento());
+                    parcela_parcial.setRec_descformpgto(parcela_menor.getRec_descformpgto());
                     new SqliteConRecDao(ctx).atualiza_valorparcela(parcela_parcial);
                     VALOR_DA_ENTRADA = BigDecimal.ZERO;
 

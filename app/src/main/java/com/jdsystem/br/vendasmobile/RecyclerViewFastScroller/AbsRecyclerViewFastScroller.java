@@ -211,7 +211,7 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
     /**
      * Takes a touch event and determines how much scroll progress this translates into
      *
-     * @param event touch event received by the layout
+     * @param event touch event received by the form_pgto_listview_parcelas
      * @return scroll progress, or fraction by which list is scrolled [0 to 1]
      */
     public float getScrollProgress(MotionEvent event) {
@@ -223,10 +223,10 @@ public abstract class AbsRecyclerViewFastScroller extends FrameLayout implements
     }
 
     /**
-     * Define a layout resource for your implementation of AbsFastScroller
+     * Define a form_pgto_listview_parcelas resource for your implementation of AbsFastScroller
      * Currently must contain a handle view (R.id.scroll_handle) and a bar (R.id.scroll_bar)
      *
-     * @return a resource id corresponding to the chosen layout.
+     * @return a resource id corresponding to the chosen form_pgto_listview_parcelas.
      */
     protected abstract int getLayoutResourceId();
 

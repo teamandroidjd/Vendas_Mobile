@@ -39,7 +39,11 @@ public class Avista implements iPagamento {
                         Util.DataHojeSemHorasUSA(),
                         Util.DataHojeSemHorasUSA(),
                         pagamento.getConf_recebeucom_din_chq_car(),
-                        "N"
+                        "N",
+                        pagamento.getConf_codformpgto(),
+                        pagamento.getConf_diasvencimento(),
+                        pagamento.getConf_descformpgto(),
+                        0
                 ));
 
 

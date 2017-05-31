@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public class SqliteConfPagamentoBean {
 
-    public static final String CONF_CODIGO_CONFPAGAMENTO = "conf_codigo";
+    public static final String CONF_CODIGO_CONFPAGAMENTO = "CONF_CODIGO";
     public static final String CONF_SEMENTADA_COMENTRADA = "conf_sementrada_comentrada";
     public static final String CONF_TIPO_DO_PAGAMENTO = "conf_tipo_pagamento";
     public static final String CONF_DINHEIRO_CARTAO_CHEQUE = "conf_recebeucom_din_chq_car";
@@ -13,6 +13,11 @@ public class SqliteConfPagamentoBean {
     public static final String CONF_QUANTIDADE_PARCELAS = "conf_parcelas";
     public static final String CONF_VENDAC_CHAVE = "vendac_chave";
     public static final String CONF_ENVIADO = "conf_enviado";
+    public static final String CONF_CODFORMPGTO = "CONF_CODFORMPGTO_EXT";
+    public static final String CONF_DIASVENCIMENTO = "CONF_DIAS_VENCIMENTO";
+    public static final String CONF_DATAVENCIMENTO = "CONF_DATA_VENCIMENTO";
+    public static final String CONF_DESCFORMPGTO = "conf_descricao_formpgto";
+
 
 
     private Integer conf_codigo;
@@ -25,13 +30,19 @@ public class SqliteConfPagamentoBean {
     private String conf_enviado;
     private Boolean AtuPedido;
     private String conf_temp;
+    private String conf_codformpgto;
+    private String conf_diasvencimento;
+    private String conf_datavencimento;
+    private String conf_descformpgto;
 
 
     public SqliteConfPagamentoBean() {
     }
 
 
-    public SqliteConfPagamentoBean(String conf_sementrada_comentrada, String conf_tipo_pagamento, String conf_recebeucom_din_chq_car, BigDecimal conf_valor_recebido, Integer conf_parcelas, String vendac_chave, String conf_enviado) {
+    public SqliteConfPagamentoBean(String conf_sementrada_comentrada, String conf_tipo_pagamento, String conf_recebeucom_din_chq_car,
+                                   BigDecimal conf_valor_recebido, Integer conf_parcelas, String vendac_chave, String conf_enviado,
+                                   String conf_codformpgto_ext, String conf_diasvenc, String conf_descformpgtoext,String conf_dtvencimento) {
         this.conf_sementrada_comentrada = conf_sementrada_comentrada;
         this.conf_tipo_pagamento = conf_tipo_pagamento;
         this.conf_recebeucom_din_chq_car = conf_recebeucom_din_chq_car;
@@ -39,6 +50,10 @@ public class SqliteConfPagamentoBean {
         this.conf_parcelas = conf_parcelas;
         this.vendac_chave = vendac_chave;
         this.conf_enviado = conf_enviado;
+        this.conf_codformpgto = conf_codformpgto_ext;
+        this.conf_diasvencimento = conf_diasvenc;
+        this.conf_descformpgto = conf_descformpgtoext;
+        this.conf_datavencimento = conf_dtvencimento;
 
     }
 
@@ -144,5 +159,36 @@ public class SqliteConfPagamentoBean {
 
     public void setConf_temp(String confTemp) {
         this.conf_temp = confTemp;
+    }
+
+    public String getConf_codformpgto() {
+        return conf_codformpgto;
+    }
+
+    public void setConf_codformpgto(String confcodformpgto) {
+        this.conf_codformpgto = confcodformpgto;
+    }
+    public String getConf_diasvencimento() {
+        return conf_diasvencimento;
+    }
+
+    public void setConf_diasvencimento(String confdiasvencimento) {
+        this.conf_diasvencimento = confdiasvencimento;
+    }
+
+    public String getConf_descformpgto() {
+        return conf_descformpgto;
+    }
+
+    public void setConf_descformpgto(String conf_descformpgto) {
+        this.conf_descformpgto = conf_descformpgto;
+    }
+
+    public String getConf_datavencimento() {
+        return conf_datavencimento;
+    }
+
+    public void setConf_datavencimento(String conf_dtvenc) {
+        this.conf_datavencimento = conf_dtvenc;
     }
 }

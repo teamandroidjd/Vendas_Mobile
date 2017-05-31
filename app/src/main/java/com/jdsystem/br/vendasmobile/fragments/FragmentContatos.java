@@ -77,7 +77,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
         int scrollPosition = 0;
 
-        // If a layout manager has already been set, get current scroll position.
+        // If a form_pgto_listview_parcelas manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {
             scrollPosition =
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();

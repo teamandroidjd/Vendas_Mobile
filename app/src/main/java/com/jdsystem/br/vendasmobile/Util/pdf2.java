@@ -105,7 +105,7 @@ public class pdf2 {
 
             cb.setLineWidth(1f);
 
-            // Invoice Header box layout
+            // Invoice Header box form_pgto_listview_parcelas
             cb.rectangle(420, 700, 150, 60);
             cb.moveTo(420, 720);
             cb.lineTo(570, 720);
@@ -120,7 +120,7 @@ public class pdf2 {
             createHeadings(cb, 422, 723, "Invoice No.");
             createHeadings(cb, 422, 703, "Invoice Date");
 
-            // Invoice Detail box layout
+            // Invoice Detail box form_pgto_listview_parcelas
             cb.rectangle(20, 50, 550, 600);
             cb.moveTo(20, 630);
             cb.lineTo(570, 630);

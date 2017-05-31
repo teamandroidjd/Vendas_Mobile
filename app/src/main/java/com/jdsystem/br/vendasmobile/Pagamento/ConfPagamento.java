@@ -1,55 +1,64 @@
 package com.jdsystem.br.vendasmobile.Pagamento;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jdsystem.br.vendasmobile.ConfigDB;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteConfPagamentoDao;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.Util.Util;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapterFormpgtoTemp;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import static android.R.layout.simple_spinner_dropdown_item;
-
 
 public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, Spinner.OnItemSelectedListener {
 
     public static final String DADOS_PG = "DADOS DO PAGAMENTO";
+    public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
-    private RadioGroup conf_rgPagamentos;
-    private EditText conf_txtqtdparcelas, conf_txtvalorrecebido;
-    private TextView conf_txvvalorvenda, conf_valorparcela, conf_valorparcela2, conf_valorparcela3,
+    private EditText conf_txtqtdparcelas, conf_txtvalorrecebido, edtdiasvenc;
+    private TextView conf_txvvalorvenda, txvdatavenc, conf_valorparcela, conf_valorparcela2, conf_valorparcela3,
             conf_valorparcela4, conf_valorparcela5, conf_valorparcela6, conf_valorparcela7, conf_valorparcela8, conf_valorparcela9, conf_valorparcela10,
             conf_valorparcela11, conf_valorparcela12, conf_txvlabelvalorrecebido, conf_txvlabelparcelas;
     private Spinner conf_spfpgto;
-    private List<String> array_forma_pagamento = new ArrayList<String>();
-    private ArrayAdapter<String> arrayAdapter;
+    FloatingActionButton btnincluirpagamento;
+    //private List<String> array_forma_pagamento = new ArrayList<String>();
+    //private ArrayAdapter<String> arrayAdapter;
     private String RECEBIMENTO_DIN_CAR_CHQ = "";
     private String TIPO_PAGAMENTO = "";
     private String ChavePedido = "";
@@ -63,6 +72,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     private RadioButton conf_rbdinheiro, conf_rbboleto;
     private SqliteConfPagamentoDao confDao;
     private SqliteConfPagamentoBean confBean;
+    private List<SqliteConfPagamentoBean> itens_temp = new ArrayList<>();
+    private ListView ListView_formapgto;
+    private int idPerfil, codformpgto, flag;
+    private String descformpgto, qtdparcela;
+    SQLiteDatabase DB;
+    List<String> DadosList = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +85,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         setContentView(R.layout.conf_pagamento);
 
         declaraObjetosListeners();
+        carregarpreferencias();
         //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 
@@ -81,51 +97,266 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         AtuPedido = INTENT_CLI_CODIGO.getBooleanExtra("AtuPedido", false);
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-        BigDecimal VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
-        array_forma_pagamento.add(getString(R.string.confpagamento_avista));
+        //BigDecimal VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
+        /*array_forma_pagamento.add(getString(R.string.confpagamento_avista));
         array_forma_pagamento.add(getString(R.string.confpagamento_parcelado));
         arrayAdapter = new ArrayAdapter<String>(this, simple_spinner_dropdown_item, array_forma_pagamento);
-        conf_spfpgto.setAdapter(arrayAdapter);
+        conf_spfpgto.setAdapter(arrayAdapter);*/
 
+
+        carregaformapagamento();
+        atualizalistviewparcelas();
         obterConfiguracoesPagamento();
     }
 
+    private void carregarpreferencias() {
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        idPerfil = prefs.getInt("idperfil", 0);
+    }
+
+    public void incluirformapagamento(View view) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Atenção");
+        builder.setCancelable(true);
+        builder.setMessage("Deseja incluir parcela?");
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.info_form_pgto, null);
+                        AlertDialog.Builder alerta = new AlertDialog.Builder(ConfPagamento.this);
+                        alerta.setCancelable(false);
+                        alerta.setView(v);
+
+                        TextView desctotalvend = (TextView) v.findViewById(R.id.txvdescparcela);
+                        TextView numparcela = (TextView) v.findViewById(R.id.txvnumparcelaformpgto);
+                        final Spinner formpgto = (Spinner) v.findViewById(R.id.spnformpgtopercela);
+                        edtdiasvenc = (EditText) v.findViewById(R.id.edtdiasvencimento);
+                        txvdatavenc = (TextView) v.findViewById(R.id.txvdatavencimento);
+                        final EditText edtvlparcela = (EditText) v.findViewById(R.id.edtvalorparcela);
+
+                        Cursor cursorformpgto = DB.rawQuery("SELECT DESCRICAO FROM FORMAPAGAMENTO WHERE STATUS = 'A' AND CODPERFIL = " + idPerfil, null);
+                        cursorformpgto.moveToFirst();
+                        List<String> DadosList = new ArrayList<String>();
+                        DadosList.add("Selecione a forma de pagamento");
+                        if (cursorformpgto.getCount() > 0) {
+                            do {
+                                DadosList.add(cursorformpgto.getString(cursorformpgto.getColumnIndex("DESCRICAO")));
+                            } while (cursorformpgto.moveToNext());
+                        } else {
+                            Toast.makeText(getBaseContext(), "Não existe forma de pagamento habilitada. Verifique!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        cursorformpgto.close();
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ConfPagamento.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                        arrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                        formpgto.setAdapter(arrayAdapter);
+
+                        formpgto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> spinner, View view, int position, long id) {
+                                TIPO_PAGAMENTO = spinner.getSelectedItem().toString();
+                                SQLiteDatabase DB = new ConfigDB(ConfPagamento.this).getReadableDatabase();
+                                Cursor cursorformpgto = DB.rawQuery("SELECT DESCRICAO, CODEXTERNO FROM FORMAPAGAMENTO WHERE DESCRICAO = '" + TIPO_PAGAMENTO + "' AND CODPERFIL = " + idPerfil, null);
+                                cursorformpgto.moveToFirst();
+                                if (cursorformpgto.getCount() > 0) {
+
+                                    codformpgto = cursorformpgto.getInt(cursorformpgto.getColumnIndex("CODEXTERNO"));
+                                    descformpgto = cursorformpgto.getString(cursorformpgto.getColumnIndex("DESCRICAO"));
+                                }
+                                cursorformpgto.close();
+
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                        edtdiasvenc.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence char_digitado, int start, int before, int count) {
+                                try {
+                                    calcular_data_parcela(char_digitado);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
+
+                        txvdatavenc.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                calcular_dias_parcela();
+                            }
+                        });
+
+                        alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (AtuPedido) {
+                                    String vlparcela = edtvlparcela.getText().toString();
+                                    BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.')));
+                                    vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                    try {
+                                            DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
+                                                    "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                                    "'" + String.valueOf(codformpgto) +
+                                                    "','" + edtdiasvenc +
+                                                    "','" + TIPO_PAGAMENTO +
+                                                    "','" + vlparcela +
+                                                    "'," + qtdparcela +
+                                                    ",'" + ChavePedido +
+                                                    "','" + TIPO_PAGAMENTO +
+                                                    "','S'" +
+                                                    ", " + idPerfil +
+                                                    ", '" + txvdatavenc.getText().toString() + "');");
+
+                                    } catch (Exception e) {
+                                        e.toString();
+                                    }
+                                } else {
+                                    String vlparcela = edtvlparcela.getText().toString();
+                                    BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.')));
+                                    vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                                    try {
+                                        DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
+                                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                                "'" + String.valueOf(codformpgto) +
+                                                "','" + edtdiasvenc +
+                                                "','" + TIPO_PAGAMENTO +
+                                                "','" + vlparcela +
+                                                "'," + qtdparcela +
+                                                ",'" + ChavePedido +
+                                                "','" + TIPO_PAGAMENTO +
+                                                "','S'" +
+                                                ", " + idPerfil +
+                                                ", '" + txvdatavenc.getText().toString() + "');");
+                                    } catch (Exception e) {
+                                        e.toString();
+                                    }
+                                }
+                                atualizalistviewparcelas();
+
+                            }
+                        });
+
+                        alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+
+                        alerta.show();
+                    }
+                }
+        );
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        //atualizalistviewparcelas();
+                    }
+                }
+        );
+        builder.create().show();
+    }
+
+
+    private void carregaformapagamento() {
+        SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
+        Cursor cursorformpgto = DB.rawQuery("SELECT DESCRICAO FROM FORMAPAGAMENTO WHERE STATUS = 'A' AND CODPERFIL = " + idPerfil, null);
+        cursorformpgto.moveToFirst();
+        DadosList.add("Selecione a forma de pagamento");
+        if (cursorformpgto.getCount() > 0) {
+            do {
+                DadosList.add(cursorformpgto.getString(cursorformpgto.getColumnIndex("DESCRICAO")));
+            } while (cursorformpgto.moveToNext());
+        } else {
+            Toast.makeText(this, "Não existe forma de pagamento habilitada. Verifique!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        cursorformpgto.close();
+        new ArrayAdapter<String>(ConfPagamento.this, android.R.layout.simple_spinner_dropdown_item, DadosList).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+        conf_spfpgto.setAdapter(new ArrayAdapter<String>(ConfPagamento.this, android.R.layout.simple_spinner_dropdown_item, DadosList));
+
+    }
+
     private void obterConfiguracoesPagamento() {
-        int sppg = 0;
         if (AtuPedido) {
-            confBean = new SqliteConfPagamentoDao(getApplicationContext()).busca_CONFPAGAMENTO_Pedido(ChavePedido);
+            confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
             if (confBean != null) {
+                TIPO_PAGAMENTO = confBean.getConf_descformpgto();
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ConfPagamento.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                arrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                int pos = arrayAdapter.getPosition(TIPO_PAGAMENTO);
+                conf_spfpgto.setSelection(pos);
+                carregarparcelas();
+                //confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
+                conf_txtqtdparcelas.setText(qtdparcela);
+                flag = 1;
+            }
 
-                qtdparcelas = confBean.getConf_parcelas().toString();
+        } else {
+            confBean = confDao.busca_CONFPAGAMENTO_sem_chave();
+            if (confBean != null) {
+                TIPO_PAGAMENTO = confBean.getConf_descformpgto();
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ConfPagamento.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                arrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                int pos = arrayAdapter.getPosition(TIPO_PAGAMENTO);
+                conf_spfpgto.setSelection(pos);
+                carregarparcelas();
+                //new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
+                flag = 1;
+                conf_txtqtdparcelas.setText(qtdparcela);
 
-                avista_parcelado = confBean.getConf_tipo_pagamento().toString();
-                if (avista_parcelado.equals(getString(R.string.confpagamento_avista))) {
-                    sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_avista));
-                    conf_spfpgto.setSelection(sppg);
 
-                }
-                if (avista_parcelado.equals(getString(R.string.confpagamento_parcelado))) {
-                    sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_parcelado));
-                    conf_spfpgto.setSelection(sppg);
-
-                }
-
-                din_boleto = confBean.getConf_recebeucom_din_chq_car().toString();
-                if (din_boleto.equals(getString(R.string.confpagamento_dinheiro))) {
-                    conf_rbdinheiro.setChecked(true);
-                }
-                if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
-                    conf_rbboleto.setChecked(true);
-                }
             }
         }
-        if (!AtuPedido) {
-            declaraPreferencias();
+    }
+
+    private void carregarparcelas() {
+        if (AtuPedido) {
+            try {
+                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_parcelas FROM CONFPAGAMENTO WHERE vendac_chave = '" + ChavePedido + "' AND CODPERFIL = " + idPerfil, null);
+                cursorconfpagamento.moveToFirst();
+                if (cursorconfpagamento.getCount() > 0) {
+                    do {
+                        qtdparcela = cursorconfpagamento.getString(cursorconfpagamento.getColumnIndex("conf_parcelas"));
+
+                    } while (cursorconfpagamento.moveToNext());
+                    cursorconfpagamento.close();
+                }
+            } catch (Exception e) {
+                e.toString();
+            }
+        } else {
+            try {
+                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_parcelas FROM CONFPAGAMENTO WHERE vendac_chave = '' AND CODPERFIL = " + idPerfil, null);
+                cursorconfpagamento.moveToFirst();
+                if (cursorconfpagamento.getCount() > 0) {
+                    do {
+                        qtdparcela = cursorconfpagamento.getString(cursorconfpagamento.getColumnIndex("conf_parcelas"));
+
+                    } while (cursorconfpagamento.moveToNext());
+                    cursorconfpagamento.close();
+
+                }
+            } catch (Exception e) {
+                e.toString();
+            }
         }
     }
 
     private void declaraPreferencias() {
-        int sppg = 0;
+        /*int sppg = 0;
         confBean = new SqliteConfPagamentoDao(getApplicationContext()).busca_CONFPAGAMENTO_sem_chave();
 
         if (confBean == null) {
@@ -175,9 +406,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
                 conf_rbboleto.setChecked(true);
             }
-        }
+        }*/
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -213,18 +443,19 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
         if (validar_forma_de_pagamento()) {
 
-            if (ChavePedido == null) {
+            /*if (ChavePedido == null) {
                 new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
             } else {
                 new SqliteConfPagamentoDao(this).excluir_FormaPgto_Chave(ChavePedido);
             }
 
+
             Util.log("TIPO_PAGAMENTO :" + TIPO_PAGAMENTO);
             Util.log("PARCELAS :" + conf_txtqtdparcelas.getText().toString());
             String COMENTRADA_SEMENTRADA = "";
             Util.log("COM_ENTRADA :" + COMENTRADA_SEMENTRADA);
-            Util.log("VALOR_RECEBIDO :" + conf_txtvalorrecebido.getText().toString());
-            Util.log("COMO_RECEBEU :" + RECEBIMENTO_DIN_CAR_CHQ);
+            Util.log("VALOR_RECEBIDO :" + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
+            Util.log("COMO_RECEBEU :" + TIPO_PAGAMENTO);
 
             String rec = conf_txtvalorrecebido.getText().toString();
 
@@ -232,18 +463,22 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                     new SqliteConfPagamentoBean(
                             COMENTRADA_SEMENTRADA,
                             TIPO_PAGAMENTO,
-                            RECEBIMENTO_DIN_CAR_CHQ,
+                            TIPO_PAGAMENTO,
                             new BigDecimal(conf_txtvalorrecebido.getText().toString().trim()).setScale(2, RoundingMode.HALF_EVEN),
                             Integer.parseInt(conf_txtqtdparcelas.getText().toString()),
                             "",
-                            "N"
+                            "N",
+                            String.valueOf(codformpgto),
+                            "30",
+                            descformpgto,
+                            "30/05/2017"
                     ), AtuPedido, ChavePedido
             );
 
             SharedPreferences.Editor editor = getSharedPreferences(DADOS_PG, MODE_PRIVATE).edit();
             editor.putString("avista_parcelado", TIPO_PAGAMENTO);
             editor.putString("din_boleto", RECEBIMENTO_DIN_CAR_CHQ);
-            editor.commit();
+            editor.commit();*/
 
             finish();
         }
@@ -251,76 +486,84 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
     private boolean validar_forma_de_pagamento() {
         boolean fechar = true;
-        if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))) {
-            // condicao sem entrada
-            if (conf_txtqtdparcelas.getText().toString().trim().equals("") || conf_txtqtdparcelas.getText().toString().trim().equals("0")) {
-                fechar = false;
-                Util.msg_toast_personal(getBaseContext(), getString(R.string.enter_quntity), Util.ALERTA);
-            }
+        if (TIPO_PAGAMENTO.equals("Selecione a forma de pagamento")) {
+            fechar = false;
+            Util.msg_toast_personal(getBaseContext(), "Informe a forma de pagamento", Util.ALERTA);
         }
+        // condicao sem entrada
+        if (conf_txtqtdparcelas.getText().toString().trim().equals("") || conf_txtqtdparcelas.getText().toString().trim().equals("0")) {
+            fechar = false;
+            Util.msg_toast_personal(getBaseContext(), getString(R.string.enter_quntity), Util.ALERTA);
+        }
+        if (AtuPedido) {
+            try {
+                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '" + ChavePedido + "' AND CODPERFIL = " + idPerfil, null);
+                cursorconfpagamento.moveToFirst();
+                if (cursorconfpagamento.getCount() > 0) {
+                    double vltotal = 0;
+                    do {
+                        double vlparcela = cursorconfpagamento.getDouble(cursorconfpagamento.getColumnIndex("conf_valor_recebido"));
+                        vltotal = vltotal + vlparcela;
+                    } while (cursorconfpagamento.moveToNext());
+                    cursorconfpagamento.close();
+                    BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
+                    if (vltotal != SUBTOTAL_VENDA) {
+                        fechar = false;
+                        Util.msg_toast_personal(getBaseContext(), "Valor total das parcelas defere do valor total do pedido. Verifique!", Util.ALERTA);
+                    }
+                }
+            } catch (Exception e) {
+                fechar = false;
+                e.toString();
+
+            }
+        } else {
+            try {
+                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '' AND CODPERFIL = " + idPerfil, null);
+                cursorconfpagamento.moveToFirst();
+                if (cursorconfpagamento.getCount() > 0) {
+                    double vltotal = 0;
+                    do {
+                        double vlparcela = cursorconfpagamento.getDouble(cursorconfpagamento.getColumnIndex("conf_valor_recebido"));
+                        BigDecimal VALORRECEBIDO = new BigDecimal(vlparcela).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        vlparcela = Double.parseDouble(String.valueOf(VALORRECEBIDO));
+                        vltotal = vltotal + vlparcela;
+                    } while (cursorconfpagamento.moveToNext());
+                    cursorconfpagamento.close();
+                    BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
+                    BigDecimal subtotal = new BigDecimal(SUBTOTAL_VENDA).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    SUBTOTAL_VENDA = Double.parseDouble(String.valueOf(subtotal));
+                    if (vltotal != SUBTOTAL_VENDA) {
+                        fechar = false;
+                        Util.msg_toast_personal(getBaseContext(), "Valor total das parcelas defere do valor total do pedido. Verifique!", Util.ALERTA);
+                    }
+                }
+            } catch (Exception e) {
+                fechar = false;
+                e.toString();
+
+            }
+
+        }
+
+
         return fechar;
     }
 
-
     @Override
     public void onItemSelected(AdapterView<?> spinner, View view, int position, long id) {
+        TIPO_PAGAMENTO = spinner.getSelectedItem().toString();
+        SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
+        Cursor cursorformpgto = DB.rawQuery("SELECT DESCRICAO, CODEXTERNO FROM FORMAPAGAMENTO WHERE DESCRICAO = '" + TIPO_PAGAMENTO + "' AND CODPERFIL = " + idPerfil, null);
+        cursorformpgto.moveToFirst();
+        if (cursorformpgto.getCount() > 0) {
 
-        TIPO_PAGAMENTO = spinner.getItemAtPosition(position).toString();
-
-
-        if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_avista))) {
-
-
-            conf_txvlabelparcelas.setVisibility(View.GONE);
-            conf_txtqtdparcelas.setVisibility(View.GONE);
-            conf_valorparcela.setVisibility(View.GONE);
-            conf_valorparcela2.setVisibility(View.GONE);
-            conf_valorparcela3.setVisibility(View.GONE);
-            conf_valorparcela4.setVisibility(View.GONE);
-            conf_valorparcela5.setVisibility(View.GONE);
-            conf_valorparcela6.setVisibility(View.GONE);
-            conf_valorparcela7.setVisibility(View.GONE);
-            conf_valorparcela8.setVisibility(View.GONE);
-            conf_valorparcela9.setVisibility(View.GONE);
-            conf_valorparcela10.setVisibility(View.GONE);
-            conf_valorparcela11.setVisibility(View.GONE);
-            conf_valorparcela12.setVisibility(View.GONE);
-            conf_rbdinheiro.setVisibility(View.VISIBLE);
-            conf_rgPagamentos.setVisibility(View.VISIBLE);
-            conf_txtqtdparcelas.setText("1");
-            conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-            conf_txtvalorrecebido.setVisibility(View.GONE);
-            conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-
+            codformpgto = cursorformpgto.getInt(cursorformpgto.getColumnIndex("CODEXTERNO"));
+            descformpgto = cursorformpgto.getString(cursorformpgto.getColumnIndex("DESCRICAO"));
         }
-
-        if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))) {
-
-            conf_txvlabelparcelas.setVisibility(View.VISIBLE);
-            conf_rbboleto.setChecked(true);
-            conf_txtqtdparcelas.setVisibility(View.VISIBLE);
-            conf_rbdinheiro.setVisibility(View.GONE);
-            conf_valorparcela.setVisibility(View.VISIBLE);
-            conf_txtqtdparcelas.setFocusable(true);
-            conf_rgPagamentos.setVisibility(View.VISIBLE);
-            conf_txtvalorrecebido.setVisibility(View.GONE);
-            conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-            if (confBean != null) {
-                conf_txtqtdparcelas.setText(qtdparcelas);
-            }
-            if (!AtuPedido && confBean == null) {
-                conf_txtqtdparcelas.setText("");
-            }
-
-
-        }
-        if (TIPO_PAGAMENTO.equals(getString(R.string.confpagamento_parcelado))) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(conf_txtqtdparcelas, InputMethodManager.SHOW_IMPLICIT);
-        } else {
-            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(conf_txtqtdparcelas.getWindowToken(), 0);
-        }
-
+        cursorformpgto.close();
     }
 
     @Override
@@ -328,412 +571,463 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
     }
 
-
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
 
         switch (checkedId) {
 
-            case R.id.conf_rbdinheiro:
+            /*case R.id.conf_rbdinheiro:
                 RECEBIMENTO_DIN_CAR_CHQ = getString(R.string.confpagamento_dinheiro);
                 conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
                 //Util.msg_toast_personal(getBaseContext(), "dinheiro", Util.ALERTA);
                 break;
 
-            case R.id.conf_rbboleto:
+              case R.id.conf_rbboleto:
                 RECEBIMENTO_DIN_CAR_CHQ = getString(R.string.confpagamento_boleto);
                 conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
                 //Util.msg_toast_personal(getBaseContext(), "cartao", Util.ALERTA);
-                break;
+                break;*/
         }
     }
 
-    public void calcular_valor_parcela(CharSequence valor_digitado) {
-        String vl = valor_digitado.toString();
-        if (!vl.equals("0") && !vl.equals("")) {
-            String QUANTIDADE_PARCELAS = conf_txtqtdparcelas.getText().toString();
-            if (Integer.parseInt(QUANTIDADE_PARCELAS) == 1) {
-                conf_valorparcela2.setVisibility(View.GONE);
-                conf_valorparcela3.setVisibility(View.GONE);
-                conf_valorparcela4.setVisibility(View.GONE);
-                conf_valorparcela5.setVisibility(View.GONE);
-                conf_valorparcela6.setVisibility(View.GONE);
-                conf_valorparcela7.setVisibility(View.GONE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal valor_parcela = new BigDecimal(SUBTOTAL_VENDA.toString());
-                conf_valorparcela.setText("Parcela 1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
+    public void calcular_valor_parcela(CharSequence valor_digitado, int tipo) throws ParseException {
+        if (tipo == 1) {
+            flag = 0;
+            return;
+        }
+        if (TIPO_PAGAMENTO.equals("Selecione a forma de pagamento")) {
+            Util.msg_toast_personal(getBaseContext(), "Informe a forma de pagamento", Util.ALERTA);
+            return;
+        }
+        if (valor_digitado.toString().equals("")) {
+            if (AtuPedido) {
+                confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
 
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 2) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.GONE);
-                conf_valorparcela4.setVisibility(View.GONE);
-                conf_valorparcela5.setVisibility(View.GONE);
-                conf_valorparcela6.setVisibility(View.GONE);
-                conf_valorparcela7.setVisibility(View.GONE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_DOWN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 3) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.GONE);
-                conf_valorparcela5.setVisibility(View.GONE);
-                conf_valorparcela6.setVisibility(View.GONE);
-                conf_valorparcela7.setVisibility(View.GONE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_DOWN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_DOWN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 4) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.GONE);
-                conf_valorparcela6.setVisibility(View.GONE);
-                conf_valorparcela7.setVisibility(View.GONE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 5) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.VISIBLE);
-                conf_valorparcela6.setVisibility(View.GONE);
-                conf_valorparcela7.setVisibility(View.GONE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 6) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.VISIBLE);
-                conf_valorparcela6.setVisibility(View.VISIBLE);
-                conf_valorparcela7.setVisibility(View.GONE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 7) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.VISIBLE);
-                conf_valorparcela6.setVisibility(View.VISIBLE);
-                conf_valorparcela7.setVisibility(View.VISIBLE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 8) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.VISIBLE);
-                conf_valorparcela6.setVisibility(View.VISIBLE);
-                conf_valorparcela7.setVisibility(View.VISIBLE);
-                conf_valorparcela8.setVisibility(View.VISIBLE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela8.setText("Parc.   8/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 9) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.VISIBLE);
-                conf_valorparcela6.setVisibility(View.VISIBLE);
-                conf_valorparcela7.setVisibility(View.VISIBLE);
-                conf_valorparcela8.setVisibility(View.VISIBLE);
-                conf_valorparcela9.setVisibility(View.VISIBLE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela8.setText("Parc.   8/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela9.setText("Parc.   9/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 10) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.VISIBLE);
-                conf_valorparcela6.setVisibility(View.VISIBLE);
-                conf_valorparcela7.setVisibility(View.VISIBLE);
-                conf_valorparcela8.setVisibility(View.VISIBLE);
-                conf_valorparcela9.setVisibility(View.VISIBLE);
-                conf_valorparcela10.setVisibility(View.VISIBLE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela8.setText("Parc.   8/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela9.setText("Parc.   9/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela10.setText("Parc. 10/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 11) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.VISIBLE);
-                conf_valorparcela6.setVisibility(View.VISIBLE);
-                conf_valorparcela7.setVisibility(View.VISIBLE);
-                conf_valorparcela8.setVisibility(View.VISIBLE);
-                conf_valorparcela9.setVisibility(View.VISIBLE);
-                conf_valorparcela10.setVisibility(View.VISIBLE);
-                conf_valorparcela11.setVisibility(View.VISIBLE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.  2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.  3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.  4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela5.setText("Parc.  5/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela6.setText("Parc.  6/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela7.setText("Parc.  7/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela8.setText("Parc.  8/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela9.setText("Parc.  9/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela10.setText("Parc. 10/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela11.setText("Parc. 11/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-            } else if (Integer.parseInt(QUANTIDADE_PARCELAS) == 12) {
-                conf_valorparcela.setVisibility(View.VISIBLE);
-                conf_valorparcela2.setVisibility(View.VISIBLE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.VISIBLE);
-                conf_valorparcela5.setVisibility(View.VISIBLE);
-                conf_valorparcela6.setVisibility(View.VISIBLE);
-                conf_valorparcela7.setVisibility(View.VISIBLE);
-                conf_valorparcela8.setVisibility(View.VISIBLE);
-                conf_valorparcela9.setVisibility(View.VISIBLE);
-                conf_valorparcela10.setVisibility(View.VISIBLE);
-                conf_valorparcela11.setVisibility(View.VISIBLE);
-                conf_valorparcela12.setVisibility(View.VISIBLE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela2.setText("Parc.   2/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela3.setText("Parc.   3/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela4.setText("Parc.   4/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela5.setText("Parc.   5/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela6.setText("Parc.   6/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela7.setText("Parc.   7/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela8.setText("Parc.   8/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela9.setText("Parc.   9/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela10.setText("Parc. 10/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela11.setText("Parc. 11/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                conf_valorparcela12.setText("Parc. 12/" + QUANTIDADE_PARCELAS + ":  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
             } else {
-                BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-                BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-                BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-                BigDecimal recalculo = valor_parcela.multiply(divisor);
-                BigDecimal diferenca = valor_venda.subtract(recalculo);
-                BigDecimal parc_1 = valor_parcela.add(diferenca);
-                conf_valorparcela2.setVisibility(View.GONE);
-                conf_valorparcela3.setVisibility(View.VISIBLE);
-                conf_valorparcela4.setVisibility(View.GONE);
-                conf_valorparcela5.setVisibility(View.GONE);
-                conf_valorparcela6.setVisibility(View.GONE);
-                conf_valorparcela7.setVisibility(View.GONE);
-                conf_valorparcela8.setVisibility(View.GONE);
-                conf_valorparcela9.setVisibility(View.GONE);
-                conf_valorparcela10.setVisibility(View.GONE);
-                conf_valorparcela11.setVisibility(View.GONE);
-                conf_valorparcela12.setVisibility(View.GONE);
-                conf_txtvalorrecebido.setVisibility(View.GONE);
-                conf_txvlabelvalorrecebido.setVisibility(View.GONE);
+                new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
+            }
+            atualizalistviewparcelas();
+            return;
+        } else if (Integer.parseInt(String.valueOf(valor_digitado)) == 0) {
+            Toast.makeText(this, "Informe a quantidade de parcela!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (AtuPedido) {
+            confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
+            String date = Util.DataHojeSemHorasBR();
+            SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy");
+            Calendar newCalendar = Calendar.getInstance();
+            newCalendar.setTime(dateFormatterBR.parse(date));
+            int qtdparcela = 0;
+            int dias = 0;
+            int diasVenc = 0;
+            String QUANTIDADE_PARCELAS = conf_txtqtdparcelas.getText().toString();
+            BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+            BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+            BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+            BigDecimal recalculo = valor_parcela.multiply(divisor);
+            BigDecimal diferenca = valor_venda.subtract(recalculo);
+            BigDecimal parc_1 = valor_parcela.add(diferenca).setScale(2, BigDecimal.ROUND_HALF_UP);
+            try {
+                do {
+                    qtdparcela += 1;
+                    dias += 30;
+                    diasVenc += 30;
+                    if (qtdparcela == 1) {
+                        dias += 30;
+                    }
+                    newCalendar.add(Calendar.DATE, dias);
+                    date = dateFormatterBR.format(newCalendar.getTime());
+                    if (qtdparcela == 1) {
+                        DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
+                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                "'" + String.valueOf(codformpgto) +
+                                "','" + dias +
+                                "','" + TIPO_PAGAMENTO +
+                                "','" + parc_1 +
+                                "'," + qtdparcela +
+                                ",'" + ChavePedido +
+                                "','" + TIPO_PAGAMENTO +
+                                "','S'" +
+                                ", " + idPerfil +
+                                ", '" + date + "');");
+                    } else {
+                        DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
+                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                "'" + String.valueOf(codformpgto) +
+                                "','" + dias +
+                                "','" + TIPO_PAGAMENTO +
+                                "','" + valor_parcela +
+                                "'," + qtdparcela +
+                                ",'" + ChavePedido +
+                                "','" + TIPO_PAGAMENTO +
+                                "','S'" +
+                                ", " + idPerfil +
+                                ", '" + date + "');");
+                    }
 
-                if (parc_1.equals(valor_parcela)) {
-                    conf_valorparcela.setText("Valor das parcelas: R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                    conf_valorparcela3.setText("Quantidade de parcelas: " + QUANTIDADE_PARCELAS + " parcelas");
-                } else {
-                    conf_valorparcela.setText("Parc.   1/" + QUANTIDADE_PARCELAS + ": R$ " + new BigDecimal(parc_1.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                    conf_valorparcela3.setText("Demais parcelas:  R$ " + new BigDecimal(valor_parcela.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ',') + " ");
-                }
+
+                } while (qtdparcela < Integer.parseInt(String.valueOf(valor_digitado)));
+            }catch (Exception e){
+                e.toString();
             }
 
+            atualizalistviewparcelas();
         } else {
-            conf_valorparcela2.setVisibility(View.GONE);
-            conf_valorparcela3.setVisibility(View.GONE);
-            conf_valorparcela4.setVisibility(View.GONE);
-            conf_valorparcela5.setVisibility(View.GONE);
-            conf_valorparcela6.setVisibility(View.GONE);
-            conf_valorparcela7.setVisibility(View.GONE);
-            conf_valorparcela8.setVisibility(View.GONE);
-            conf_valorparcela9.setVisibility(View.GONE);
-            conf_valorparcela10.setVisibility(View.GONE);
-            conf_valorparcela11.setVisibility(View.GONE);
-            conf_valorparcela12.setVisibility(View.GONE);
-            conf_txtvalorrecebido.setVisibility(View.GONE);
-            conf_txvlabelvalorrecebido.setVisibility(View.GONE);
-            conf_valorparcela.setText("Valor parcela : 0,00");
+            new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
+            String date = Util.DataHojeSemHorasBR();
+            SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy");
+            Calendar newCalendar = Calendar.getInstance();
+            newCalendar.setTime(dateFormatterBR.parse(date));
+            int qtdparcela = 0;
+            int dias = 0;
+            int diasVenc = 0;
+            ChavePedido = "";
+            String QUANTIDADE_PARCELAS = conf_txtqtdparcelas.getText().toString();
+            BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+            BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+            BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+            BigDecimal recalculo = valor_parcela.multiply(divisor);
+            BigDecimal diferenca = valor_venda.subtract(recalculo);
+            BigDecimal parc_1 = valor_parcela.add(diferenca);
+            try {
+                do {
+                    qtdparcela += 1;
+                    diasVenc += 30;
+                    if (qtdparcela == 1) {
+                        dias += 30;
+                    }
+                    newCalendar.add(Calendar.DATE, dias);
+                    date = dateFormatterBR.format(newCalendar.getTime());
+                    if (qtdparcela == 1) {
+
+                        DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
+                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                "'" + String.valueOf(codformpgto) +
+                                "','" + diasVenc +
+                                "','" + TIPO_PAGAMENTO +
+                                "','" + parc_1 +
+                                "'," + qtdparcela +
+                                ",'" + ChavePedido +
+                                "','" + TIPO_PAGAMENTO +
+                                "','S'" +
+                                ", " + idPerfil +
+                                ", '" + date + "');");
+                    } else {
+                        DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
+                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                "'" + String.valueOf(codformpgto) +
+                                "','" + diasVenc +
+                                "','" + TIPO_PAGAMENTO +
+                                "','" + valor_parcela +
+                                "'," + qtdparcela +
+                                ",'" + ChavePedido +
+                                "','" + TIPO_PAGAMENTO +
+                                "','S'" +
+                                ", " + idPerfil +
+                                ", '" + date + "');");
+                    }
+
+
+                } while (qtdparcela < Integer.parseInt(String.valueOf(valor_digitado)));
+            }catch (Exception e){
+                e.toString();
+            }
+
+            atualizalistviewparcelas();
         }
 
+
+        /*String vl = valor_digitado.toString();
+        if (!vl.equals("0") && !vl.equals("")) {
+            String QUANTIDADE_PARCELAS = conf_txtqtdparcelas.getText().toString();
+            BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
+            BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
+            BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
+            BigDecimal recalculo = valor_parcela.multiply(divisor);
+            BigDecimal diferenca = valor_venda.subtract(recalculo);
+            BigDecimal parc_1 = valor_parcela.add(diferenca);
+        }*/
+
+    }
+
+    private void atualizalistviewparcelas() {
+        if(AtuPedido) {
+            itens_temp = new SqliteConfPagamentoDao(getApplicationContext()).busca_todos_CONFPAGAMENTO_nao_enviados(ChavePedido);
+            ListView_formapgto.setAdapter(new ListAdapterFormpgtoTemp(getApplicationContext(), itens_temp));
+            ListView_formapgto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> listview1, View v, int posicao, long m) {
+                    alteraexcluiparcela(listview1, posicao);
+                }
+            });
+        } else {
+            ChavePedido = "";
+            itens_temp = new SqliteConfPagamentoDao(getApplicationContext()).busca_todos_CONFPAGAMENTO_nao_enviados(ChavePedido);
+            ListView_formapgto.setAdapter(new ListAdapterFormpgtoTemp(getApplicationContext(), itens_temp));
+            ListView_formapgto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> listview1, View v, int posicao, long m) {
+                    alteraexcluiparcela(listview1, posicao);
+                }
+            });
+
+        }
+    }
+
+    private void alteraexcluiparcela(final AdapterView<?> listview1, final int posicao) {
+        final SqliteConfPagamentoBean parc = (SqliteConfPagamentoBean) listview1.getItemAtPosition(posicao);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Atenção");
+        builder.setCancelable(true);
+        builder.setMessage("Deseja alterar ou excluir parcela?");
+        builder.setPositiveButton("Alterar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        final String[] descricaoformpgto = {parc.getConf_descformpgto()};
+
+
+                        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.info_form_pgto, null);
+                        AlertDialog.Builder alerta = new AlertDialog.Builder(ConfPagamento.this);
+                        alerta.setCancelable(false);
+                        alerta.setView(v);
+
+                        TextView desctotalvend = (TextView) v.findViewById(R.id.txvdescparcela);
+                        TextView numparcela = (TextView) v.findViewById(R.id.txvnumparcelaformpgto);
+                        final Spinner formpgto = (Spinner) v.findViewById(R.id.spnformpgtopercela);
+                        edtdiasvenc = (EditText) v.findViewById(R.id.edtdiasvencimento);
+                        txvdatavenc = (TextView) v.findViewById(R.id.txvdatavencimento);
+                        final EditText edtvlparcela = (EditText) v.findViewById(R.id.edtvalorparcela);
+
+                        numparcela.setText(parc.getConf_parcelas().toString());
+                        edtdiasvenc.setText(parc.getConf_diasvencimento());
+                        txvdatavenc.setText(parc.getConf_datavencimento());
+                        edtvlparcela.setText(parc.getConf_valor_recebido().setScale(2, BigDecimal.ROUND_HALF_UP).toString().replace('.', ','));
+
+                        Cursor cursorformpgto = DB.rawQuery("SELECT DESCRICAO FROM FORMAPAGAMENTO WHERE STATUS = 'A' AND CODPERFIL = " + idPerfil, null);
+                        cursorformpgto.moveToFirst();
+                        List<String> DadosList = new ArrayList<String>();
+                        if (cursorformpgto.getCount() > 0) {
+                            do {
+                                DadosList.add(cursorformpgto.getString(cursorformpgto.getColumnIndex("DESCRICAO")));
+                            } while (cursorformpgto.moveToNext());
+                        } else {
+                            Toast.makeText(getBaseContext(), "Não existe forma de pagamento habilitada. Verifique!", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        cursorformpgto.close();
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ConfPagamento.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                        arrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                        formpgto.setAdapter(arrayAdapter);
+                        int pos = arrayAdapter.getPosition(parc.getConf_descformpgto());
+                        formpgto.setSelection(pos);
+
+                        formpgto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> spinner, View view, int position, long id) {
+                                TIPO_PAGAMENTO = spinner.getSelectedItem().toString();
+                                SQLiteDatabase DB = new ConfigDB(ConfPagamento.this).getReadableDatabase();
+                                Cursor cursorformpgto = DB.rawQuery("SELECT DESCRICAO, CODEXTERNO FROM FORMAPAGAMENTO WHERE DESCRICAO = '" + TIPO_PAGAMENTO + "' AND CODPERFIL = " + idPerfil, null);
+                                cursorformpgto.moveToFirst();
+                                if (cursorformpgto.getCount() > 0) {
+
+                                    codformpgto = cursorformpgto.getInt(cursorformpgto.getColumnIndex("CODEXTERNO"));
+                                    descformpgto = cursorformpgto.getString(cursorformpgto.getColumnIndex("DESCRICAO"));
+                                }
+                                cursorformpgto.close();
+
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                        edtdiasvenc.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence char_digitado, int start, int before, int count) {
+                                try {
+                                    calcular_data_parcela(char_digitado);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+                            }
+                        });
+
+                        txvdatavenc.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                calcular_dias_parcela();
+                            }
+                        });
+
+                        alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (AtuPedido) {
+                                    if (!descricaoformpgto[0].equals(descformpgto)) {
+                                        descricaoformpgto[0] = descformpgto;
+                                    }
+                                    String vlparcela = edtvlparcela.getText().toString();
+                                    BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.')));
+                                    vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                    try {
+                                        DB.execSQL("UPDATE CONFPAGAMENTO SET CONF_CODFORMPGTO_EXT = '" + codformpgto +
+                                                "',CONF_DIAS_VENCIMENTO = '" + edtdiasvenc.getText().toString() +
+                                                "',conf_descricao_formpgto = '" + descricaoformpgto[0] +
+                                                "',conf_valor_recebido = '" + vlparcela +
+                                                "',conf_parcelas = '" + parc.getConf_parcelas().toString() +
+                                                "',vendac_chave = '" + ChavePedido +
+                                                "',conf_tipo_pagamento = '" + TIPO_PAGAMENTO +
+                                                "',conf_sementrada_comentrada = 'S'" +
+                                                ",CONF_DATA_VENCIMENTO = '" + txvdatavenc.getText().toString() +
+                                                "' where CONF_CODIGO = " + parc.getConf_codigo());
+                                    } catch (Exception e) {
+                                        e.toString();
+                                    }
+                                } else {
+                                    if (!descricaoformpgto[0].equals(descformpgto)) {
+                                        descricaoformpgto[0] = descformpgto;
+                                    }
+                                    String vlparcela = edtvlparcela.getText().toString();
+                                    BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.')));
+                                    vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                                    try {
+                                        DB.execSQL("UPDATE CONFPAGAMENTO SET CONF_CODFORMPGTO_EXT = '" + codformpgto +
+                                                "',CONF_DIAS_VENCIMENTO = '" + edtdiasvenc.getText().toString() +
+                                                "',conf_descricao_formpgto = '" + descricaoformpgto[0] +
+                                                "',conf_valor_recebido = '" + vlparcela +
+                                                "',conf_parcelas = '" + parc.getConf_parcelas().toString() +
+                                                "',vendac_chave = ''" +
+                                                ",conf_tipo_pagamento = '" + TIPO_PAGAMENTO +
+                                                "',conf_sementrada_comentrada = 'S'" +
+                                                ",CONF_DATA_VENCIMENTO = '" + txvdatavenc.getText().toString() +
+                                                "' where CONF_CODIGO = " + parc.getConf_codigo());
+                                    } catch (Exception e) {
+                                        e.toString();
+                                    }
+                                }
+                                atualizalistviewparcelas();
+
+                            }
+                        });
+
+                        alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+
+                        alerta.show();
+                    }
+                }
+        );
+        builder.setNegativeButton("Excluir", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        if (AtuPedido) {
+                            BigDecimal qtdparcela = new BigDecimal(conf_txtqtdparcelas.getText().toString());
+                            qtdparcela = qtdparcela.subtract(BigDecimal.valueOf(1));
+                            new SqliteConfPagamentoDao(getApplicationContext()).excluir_CONFPAGAMENTO();
+                            conf_txtqtdparcelas.setText(qtdparcela.toString());
+                        } else {
+                            BigDecimal qtdparcela = new BigDecimal(conf_txtqtdparcelas.getText().toString());
+                            qtdparcela = qtdparcela.subtract(BigDecimal.valueOf(1));
+                            new SqliteConfPagamentoDao(getApplicationContext()).excluir_CONFPAGAMENTO();
+                            conf_txtqtdparcelas.setText(qtdparcela.toString());
+                        }
+                        atualizalistviewparcelas();
+                    }
+                }
+        );
+        builder.create().show();
+    }
+
+    private void calcular_dias_parcela() {
+        final SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+        final Calendar newCalendar = Calendar.getInstance();
+        DatePickerDialog datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                txvdatavenc.setText(dateFormatterBR.format(newDate.getTime()));
+
+                long diff = newDate.getTimeInMillis() - newCalendar.getTimeInMillis();
+                long days = diff / (24 * 60 * 60 * 1000);
+
+                edtdiasvenc.setText(String.valueOf(days));
+            }
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+        datePicker.setTitle("Data Prevista");
+        datePicker.show();
+
+    }
+
+    private String calcular_data_parcela(CharSequence char_digitado) throws ParseException {
+        if (char_digitado.toString().equals("") || char_digitado.toString().equals("0")) {
+            txvdatavenc.setText(Util.DataHojeSemHorasBR());
+        }
+        String date = Util.DataHojeSemHorasBR();
+        SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar newCalendar = Calendar.getInstance();
+        newCalendar.setTime(dateFormatterBR.parse(date));
+        newCalendar.add(Calendar.DATE, Integer.parseInt(String.valueOf(char_digitado)));
+        date = dateFormatterBR.format(newCalendar.getTime());
+        txvdatavenc.setText(date);
+
+        return date;
     }
 
 
     private void declaraObjetosListeners() {
-
-        mostraCalendario();
-
-        conf_txtvalorrecebido = (EditText) findViewById(R.id.conf_txtvalorrecebido);
+        confDao = new SqliteConfPagamentoDao(this);
+        confBean = new SqliteConfPagamentoBean();
+        DB = new ConfigDB(this).getReadableDatabase();
         conf_txvvalorvenda = (TextView) findViewById(R.id.conf_txvvalorvenda);
         conf_txvlabelparcelas = (TextView) findViewById(R.id.conf_txvlabelparcelas);
+        conf_spfpgto = (Spinner) findViewById(R.id.conf_spfpgto);
+        conf_spfpgto.setOnItemSelectedListener(this);
+        conf_txtqtdparcelas = (EditText) findViewById(R.id.conf_txtqtdparcelas);
+        btnincluirpagamento = (FloatingActionButton) findViewById(R.id.btnincluirpagamento);
+        conf_txtvalorrecebido = (EditText) findViewById(R.id.conf_txtvalorrecebido);
+        ListView_formapgto = (ListView) findViewById(R.id.lstparcelas);
+
+        conf_txtqtdparcelas.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence char_digitado, int start, int before, int count) {
+                try {
+                    if (flag == 0) {
+                        calcular_valor_parcela(char_digitado, 0);
+                    } else {
+                        calcular_valor_parcela(char_digitado, 1);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+
+
+        /*mostraCalendario();
+
+        conf_txtvalorrecebido = (EditText) findViewById(R.id.conf_txtvalorrecebido);
         conf_txvlabelvalorrecebido = (TextView) findViewById(R.id.conf_txvlabelvalorrecebido);
         conf_valorparcela = (TextView) findViewById(R.id.conf_valorparcela);
         conf_valorparcela2 = (TextView) findViewById(R.id.conf_valorparcela2);
@@ -749,7 +1043,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         conf_valorparcela12 = (TextView) findViewById(R.id.conf_valorparcela12);
         conf_spfpgto = (Spinner) findViewById(R.id.conf_spfpgto);
         conf_rgPagamentos = (RadioGroup) findViewById(R.id.conf_rgPagamentos);
-        conf_txtqtdparcelas = (EditText) findViewById(R.id.conf_txtqtdparcelas);
+
 
         vScroll = (ScrollView) findViewById(R.id.scrollView);
         hScroll = (HorizontalScrollView) findViewById(R.id.scrollViewh);
@@ -774,12 +1068,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             @Override
             public void afterTextChanged(Editable s) {
             }
-        });
+        });*/
     }
 
 
     private void mostraCalendario() {
-        SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+        /*SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
         SimpleDateFormat dateFormatterUSA = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Calendar newCalendar = Calendar.getInstance();
         DatePickerDialog datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -787,7 +1081,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
             }
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));*/
     }
 
 

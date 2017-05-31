@@ -43,31 +43,16 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
         myViewHolder.lblCodItem.setText(mList.get(position).getCodigoManual());
         myViewHolder.lblNomeItem.setText(mList.get(position).getDescricao());
         myViewHolder.lblUnidItem.setText(mList.get(position).getUnidVenda());
-        /*String tabPadrao = mList.get(position).getTabPadrao();
-        if(tabPadrao == mList.get(position).getTabela1()){
-            myViewHolder.tabpadrao.setText(mList.get(position).getTabPadrao());
-            myViewHolder.txtprecopadrao.setText(mList.get(position).getPreco1());
-        }else if(tabPadrao == mList.get(position).getTabela2()){
-            myViewHolder.tabpadrao.setText(mList.get(position).getTabPadrao());
-            myViewHolder.txtprecopadrao.setText(mList.get(position).getPreco2());
-        }else if(tabPadrao == mList.get(position).getTabela3()){
-            myViewHolder.tabpadrao.setText(mList.get(position).getTabPadrao());
-            myViewHolder.txtprecopadrao.setText(mList.get(position).getPreco3());
-        }else if(tabPadrao == mList.get(position).getTabela4()){
-            myViewHolder.tabpadrao.setText(mList.get(position).getTabPadrao());
-            myViewHolder.txtprecopadrao.setText(mList.get(position).getPreco4());
-        }else if(tabPadrao == mList.get(position).getTabela5()){
-            myViewHolder.tabpadrao.setText(mList.get(position).getTabPadrao());
-            myViewHolder.txtprecopadrao.setText(mList.get(position).getPreco5());
-        }else if(tabPadrao == mList.get(position).getTabpromo1()){
-            myViewHolder.tabpadrao.setText(mList.get(position).getTabPadrao());
-            myViewHolder.txtprecopadrao.setText(mList.get(position).getTabpromo1());
-        }else if(tabPadrao == mList.get(position).getTabpromo2()){
-            myViewHolder.tabpadrao.setText(mList.get(position).getTabPadrao());
-            myViewHolder.txtprecopadrao.setText(mList.get(position).getTabpromo2());
-        }*/
-
         myViewHolder.lblApres.setText(mList.get(position).getApresentacao());
+
+        String habcontrolqtdminvend = mList.get(position).getControlqtdmin();
+        String qtdminitemvend = mList.get(position).getqtdminvenditem();
+        if(habcontrolqtdminvend.equals("S") && Double.parseDouble(qtdminitemvend) > 0){
+            myViewHolder.layqtdminivend.setVisibility(View.VISIBLE);
+            myViewHolder.qtdminvenditem.setText(mList.get(position).getqtdminvenditem());
+        } else {
+            myViewHolder.layqtdminivend.setVisibility(View.GONE);
+        }
 
         String QtdEstoqueNegativo = (mList.get(position).getQuantidade()).replaceAll("[1234567890,]", "").trim();
         String TipoEst = mList.get(position).getTipoEstoque();
@@ -173,7 +158,7 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
         public TextView lblUnidItem;
         public TextView lblStatus;
         public TextView lblApres;
-        //public TextView txtprecopadrao;
+        public TextView qtdminvenditem ;
         public TextView lblPreco;
         public TextView lblpreco2;
         public TextView lblpreco3;
@@ -182,8 +167,8 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
         public TextView lblprecop1;
         public TextView lblprecop2;
         public TextView lblquantidade;
-        public TextView tabpadrao, tab1, tab2, tab3, tab4, tab5, tabp1, tabp2;
-        public LinearLayout layquantidade;
+        public TextView tab1, tab2, tab3, tab4, tab5, tabp1, tabp2;
+        public LinearLayout layquantidade, layqtdminivend;
         public RelativeLayout laytab1, laytab2, laytab3, laytab4, laytab5, laytabp1, laytabp2;
 
 
@@ -196,8 +181,6 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
             lblPreco = (TextView) itemView.findViewById(R.id.txtpreco);
             lblStatus = (TextView) itemView.findViewById(R.id.txtStatus);
             lblApres = (TextView) itemView.findViewById(R.id.txtapres);
-
-            //txtprecopadrao = (TextView) itemView.findViewById(R.id.txtprecopadrao);
             lblpreco2 = (TextView) itemView.findViewById(R.id.txtprecoauxiliara);
             lblpreco3 = (TextView) itemView.findViewById(R.id.txtprecoauxiliarb);
             lblpreco4 = (TextView) itemView.findViewById(R.id.txtprecoauxiliarc);
@@ -205,8 +188,7 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
             lblprecop1 = (TextView) itemView.findViewById(R.id.txtprecopromocaoa);
             lblprecop2 = (TextView) itemView.findViewById(R.id.txtprecopromocaob);
             lblquantidade = (TextView) itemView.findViewById(R.id.txt_qtdestoque);
-
-            //tabpadrao = (TextView) itemView.findViewById(R.id.tabpadrao);
+            qtdminvenditem = (TextView) itemView.findViewById(R.id.txvqtdminvendcardprod);
             tab1 = (TextView) itemView.findViewById(R.id.tab1);
             tab2 = (TextView) itemView.findViewById(R.id.tab2);
             tab3 = (TextView) itemView.findViewById(R.id.tab3);
@@ -214,7 +196,7 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
             tab5 = (TextView) itemView.findViewById(R.id.tab5);
             tabp1 = (TextView) itemView.findViewById(R.id.tabp1);
             tabp2 = (TextView) itemView.findViewById(R.id.tabp2);
-
+            layqtdminivend = (LinearLayout) itemView.findViewById(R.id.lnrqtdminvend);
             layquantidade = (LinearLayout) itemView.findViewById(R.id.layquantidade);
             laytab1 = (RelativeLayout) itemView.findViewById(R.id.laytab1);
             laytab2 = (RelativeLayout) itemView.findViewById(R.id.laytab2);

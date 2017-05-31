@@ -56,6 +56,7 @@ import com.jdsystem.br.vendasmobile.interfaces.iPagamento;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,7 +69,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     public static final String DATA_ENT = "DATA DE ENTREGA";
     public static final String CONFIG_HOST = "CONFIG_HOST";
-    public String Chave_Venda, dataent, sCodVend, URLPrincipal, spreco, COD_PRODUTO, habcontrolqtdmin, usuario, senha, DataHoraVenda, nomeabrevemp;
+    public String Chave_Venda, dataent, sCodVend, URLPrincipal, spreco, COD_PRODUTO, habcontrolqtdmin, habalteraprecovenda, usuario, senha, DataHoraVenda, nomeabrevemp;
     public ProgressDialog dialog;
     public Long venda_ok;
     public AlertDialog alerta, dlg;
@@ -78,13 +79,14 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
     int idPerfil;
     private BigDecimal TOTAL_DA_VENDA;
     private Integer CLI_CODIGO, CLI_CODIGO_EXT;
-    private String ObsPedido, NumPedido, CodClie_Int, DATA_DE_ENTREGA, totalvenda, CodEmpresa, vendenegativo, numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7, CodVendedor;
+    private String ObsPedido, NumPedido, CodClie_Int, DATA_DE_ENTREGA, totalvenda, CodEmpresa, vendenegativo, vlminimovend,
+            numpedido, nomeclievenda, tab1, tab2, tab3, tab4, tab5, tab6, tab7, Preco1, Preco2, Preco3, Preco4, Preco5, Precop1, Precop2, CodVendedor;
     private String PREFS_PRIVATE = "PREFS_PRIVATE";
     private int sprecoprincipal;
     private ListView ListView_ItensVendidos;
     private List<SqliteVendaD_TempBean> itens_temp = new ArrayList<>();
     private List<SqliteVendaDBean> itens_venda = new ArrayList<>();
-    private EditText venda_txt_desconto;
+    private EditText venda_txt_desconto, edtprecovend;
     private Double DESCONTO_PADRAO_VENDEDOR, qtdestoque, qtdminvend;
     private SimpleDateFormat dateFormatterBR, dateFormatterUSA;
     private DatePickerDialog datePicker;
@@ -273,23 +275,22 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 incluirobs();
             }
         });
-
-        //obterConfiguracoesPagamento();
         if (!NumPedido.equals("0")) {
             confDao.salva_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
         }
-
     }
 
     private void carregarparametros() {
         DB = new ConfigDB(this).getReadableDatabase();
         try {
             Cursor curosrparam = DB.rawQuery("SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6," +
-                    " DESCRICAOTAB7, HABCONTROLQTDMINVEND,HABITEMNEGATIVO FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
+                    " DESCRICAOTAB7, HABCONTROLQTDMINVEND,HABALTPRECOVENDA,VLMINVENDA, HABITEMNEGATIVO FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
             curosrparam.moveToFirst();
             if (curosrparam.getCount() > 0) {
                 habcontrolqtdmin = curosrparam.getString(curosrparam.getColumnIndex("HABCONTROLQTDMINVEND"));
+                habalteraprecovenda = curosrparam.getString(curosrparam.getColumnIndex("HABALTPRECOVENDA"));
                 vendenegativo = curosrparam.getString(curosrparam.getColumnIndex("HABITEMNEGATIVO"));
+                vlminimovend = curosrparam.getString(curosrparam.getColumnIndex("VLMINVENDA"));
                 tab1 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB1"));
                 tab2 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB2"));
                 tab3 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB3"));
@@ -297,13 +298,36 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 tab5 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB5"));
                 tab6 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB6"));
                 tab7 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB7"));
+                if (habalteraprecovenda.equals("S")) {
+                    switch (vlminimovend) {
+                        case "V1":
+                            vlminimovend = tab1;
+                            break;
+                        case "V2":
+                            vlminimovend = tab2;
+                            break;
+                        case "V3":
+                            vlminimovend = tab3;
+                            break;
+                        case "V4":
+                            vlminimovend = tab4;
+                            break;
+                        case "V5":
+                            vlminimovend = tab5;
+                            break;
+                        case "P1":
+                            vlminimovend = tab6;
+                            break;
+                        case "P2":
+                            vlminimovend = tab7;
+                            break;
+                    }
+                }
             }
         } catch (Exception e) {
             e.toString();
         }
-
     }
-
 
     private void carregarpreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
@@ -629,7 +653,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     private void carregarempresa() {
         DB = new ConfigDB(this).getReadableDatabase();
-        //TextView venda_txv_empresa = (TextView) findViewById(R.id.venda_txv_empresa);
         try {
             Cursor CursorEmpresa = DB.rawQuery(" SELECT CODEMPRESA, CODPERFIL, NOMEABREV FROM EMPRESAS WHERE CODEMPRESA = " + CodEmpresa + " AND CODPERFIL = " + idPerfil, null);
             if (CursorEmpresa.getCount() > 0) {
@@ -783,7 +806,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     private void setDateTimeField() {
         dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        //dateFormatterUSA = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Calendar newCalendar = Calendar.getInstance();
         datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -818,44 +840,38 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     private void obterConfiguracoesPagamento() {
         confBean = new SqliteConfPagamentoBean();
-
         if (!NumPedido.equals("0")) {
             confBean = confDao.busca_CONFPAGAMENTO_Pedido(Chave_Venda);
-          /* if (confBean != null) {
-                if (confBean.isAvista()) {
-                    venda_txv_desconto.setVisibility(View.VISIBLE);
-                    venda_txt_desconto.setVisibility(View.VISIBLE);
-                }
-            }*/
         } else {
             confBean = confDao.busca_CONFPAGAMENTO_sem_chave();
-            /*if (confBean == null) {
-                 if (confBean.isAvista()) {
-                    venda_txv_desconto.setVisibility(View.VISIBLE);
-                    venda_txt_desconto.setVisibility(View.VISIBLE);
-                }
-            }*/
         }
     }
 
     public boolean verifica_limite_desconto() {
 
         if (Double.parseDouble(venda_txt_desconto.getText().toString()) > DESCONTO_PADRAO_VENDEDOR) {
-            Util.msg_toast_personal(getBaseContext(), "Limite de desconto incompatível", Util.PADRAO);
-            //venda_txt_desconto.setText("0");
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setCancelable(false);
+            alert.setTitle(getString(R.string.wait));
+            alert.setMessage("Limite de desconto acima do permitido. Verifique!");
+            alert.setIcon(R.drawable.logo_ico)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+
+            alert.show();
             venda_txt_desconto.requestFocus();
             return false;
         }
-
         return true;
     }
 
     private void finalizarvenda(boolean sincpedido) {
         if (!NumPedido.equals("0")) {
             confDao.atualiza_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
-
         }
-
         BigDecimal valor_recebido = null;
         BigDecimal total_venda = null;
         if (venda_txt_desconto.getText().toString().isEmpty()) {
@@ -909,11 +925,28 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
             startActivity(it);
         } else if (confBean.getConf_valor_recebido() != null) {
             Double ValorVENDA = TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue();
-
-            valor_recebido = new BigDecimal(confBean.getConf_valor_recebido().toString().trim()).setScale(2, RoundingMode.HALF_EVEN);
+           // valor_recebido = new BigDecimal(confBean.getConf_valor_recebido().toString().trim()).setScale(2, RoundingMode.HALF_EVEN);
             //total_venda = new BigDecimal(TOTAL_DA_VENDA.setScale(2, RoundingMode.HALF_EVEN).subtract(calculaDesconto()).toString());
             total_venda = new BigDecimal(ValorVENDA.toString()).setScale(2, RoundingMode.HALF_EVEN);
-            if ((total_venda.doubleValue()) != (valor_recebido.doubleValue())) {
+
+            double vltotal = 0;
+            try {
+                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '' AND CODPERFIL = " + idPerfil, null);
+                cursorconfpagamento.moveToFirst();
+                if (cursorconfpagamento.getCount() > 0) {
+
+                    do {
+                        double vlparcela = cursorconfpagamento.getDouble(cursorconfpagamento.getColumnIndex("conf_valor_recebido"));
+                        vltotal = vltotal + vlparcela;
+                    } while (cursorconfpagamento.moveToNext());
+                    cursorconfpagamento.close();
+                }
+            }catch (Exception e){
+                e.toString();
+            }
+            BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
+            vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
+            if ((total_venda.doubleValue()) != vltotal) {
                 Util.msg_toast_personal(getBaseContext(), "Valor total do pedido diferente do valor total do pagamento", Util.PADRAO);
 
                 if (!NumPedido.equals("0")) {
@@ -929,8 +962,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     it.putExtra("CLI_CODIGO", CLI_CODIGO);
                     startActivity(it);
                 }
-
-
             } else {
                 if (!NumPedido.equals("0")) {
                     new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaquantidadeprecotemp(Chave_Venda);
@@ -938,7 +969,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaItensTemp(Chave_Venda);
                     Alterar_Pedido_listview_e_calcula_total();
                 }
-                // if (verifica_limite_desconto()) {
                 Gps gps = new Gps(getApplicationContext());
                 vendaCBean = new SqliteVendaCBean();
                 if (NumPedido.equals("0")) {
@@ -1006,24 +1036,15 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                         finish();
                     }
                 }
-
-                //onBackPressed();
-                // }
             }
         }
     }
 
     public void gerar_parcelas_venda() {
 
-        if (confBean.isMensal()) {
-            iPagamento mensal = new Mensal();
-            mensal.gerar_parcela(confBean, vendaCBean, this);
-        }
+        iPagamento mensal = new Mensal();
+        mensal.gerar_parcela(confBean, vendaCBean, this);
 
-        if (confBean.isAvista()) {
-            iPagamento avista = new Avista();
-            avista.gerar_parcela(confBean, vendaCBean, this);
-        }
     }
 
     public void declaraObjetos() {
@@ -1159,7 +1180,8 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
                                 final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
                                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-                                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                //final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                edtprecovend = (EditText) view.findViewById(R.id.edtprecovenda);
                                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
 
                                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
@@ -1191,7 +1213,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                             spreco = spreco.replace(tab7, "");
                                         }
                                         spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                                        info_txv_precoproduto.setText(spreco);
+                                        //edtprecovend.setText(spreco);
                                     }
 
                                     @Override
@@ -1212,7 +1234,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda1 = vlvenda1.trim();
                                         if (!vlvenda1.equals("0,0000")) {
                                             BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
-                                            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco1 = Preco1.replace('.', ',');
                                             DadosListTabPreco.add(tab1 + " R$: " + Preco1);
                                         }
@@ -1222,7 +1244,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda2 = vlvenda2.trim();
                                         if (!vlvenda2.equals("0,0000")) {
                                             BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
-                                            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco2 = Preco2.replace('.', ',');
                                             DadosListTabPreco.add(tab2 + " R$: " + Preco2);
                                         }
@@ -1232,7 +1254,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda3 = vlvenda3.trim();
                                         if (!vlvenda3.equals("0,0000")) {
                                             BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
-                                            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco3 = Preco3.replace('.', ',');
                                             DadosListTabPreco.add(tab3 + " R$: " + Preco3);
                                         }
@@ -1242,7 +1264,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda4 = vlvenda4.trim();
                                         if (!vlvenda4.equals("0,0000")) {
                                             BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
-                                            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco4 = Preco4.replace('.', ',');
                                             DadosListTabPreco.add(tab4 + " R$: " + Preco4);
                                         }
@@ -1252,7 +1274,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda5 = vlvenda5.trim();
                                         if (!vlvenda5.equals("0,0000")) {
                                             BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
-                                            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco5 = Preco5.replace('.', ',');
                                             DadosListTabPreco.add(tab5 + " R$: " + Preco5);
                                         }
@@ -1262,7 +1284,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvendap1 = vlvendap1.trim();
                                         if (!vlvendap1.equals("0,0000")) {
                                             BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
-                                            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Precop1 = Precop1.replace('.', ',');
                                             DadosListTabPreco.add(tab6 + " R$: " + Precop1);
                                         }
@@ -1272,7 +1294,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvendap2 = vlvendap2.trim();
                                         if (!vlvendap2.equals("0,0000")) {
                                             BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
-                                            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Precop2 = Precop2.replace('.', ',');
                                             DadosListTabPreco.add(tab7 + " R$: " + Precop2);
                                         }
@@ -1295,7 +1317,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                                 String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                 Preco = Preco.replace('.', ',');
-                                info_txv_precoproduto.setText(Preco);
+                                edtprecovend.setText(Preco);
 
                                 String qtd = String.valueOf(item.getVendad_quantidadeTEMP());
                                 info_txt_quantidadecomprada.setText(qtd);
@@ -1315,6 +1337,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         //Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
                                         String qtdinformada = Util.removeZerosEsquerda(info_txt_quantidadecomprada.getText().toString());
                                         Double QUANTIDADE_DIGITADA = Double.parseDouble(qtdinformada);
+
                                         String COD_PRODUTO = info_txv_codproduto.getText().toString();
                                         String DESCRICAO = info_txv_descricaoproduto.getText().toString();
                                         String UNIDADE = info_txv_unmedida.getText().toString();
@@ -1324,7 +1347,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                 Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
                                                 return;
                                             }
-                                            if (habcontrolqtdmin.equals("S") && TAMANHO_TEXTO < qtdminvend) {
+                                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
                                                 Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
                                                 return;
                                             }
@@ -1344,9 +1367,16 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                 itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
                                                 itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
 
-                                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                                String ValorItem = edtprecovend.getText().toString();
                                                 ValorItem = ValorItem.trim();
                                                 if (!ValorItem.equals("0,0000")) {
+                                                    if (habalteraprecovenda.equals("S")) {
+                                                        String validapreco = validaprecominimo(ValorItem);
+                                                        if (!validapreco.equals("ok")) {
+                                                            Util.msg_toast_personal(getBaseContext(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                            return;
+                                                        }
+                                                    }
                                                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                                                     venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
                                                     itemBean1.setVendad_preco_vendaTEMP(venda);
@@ -1413,7 +1443,8 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
                                 final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
                                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-                                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                //final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                edtprecovend = (EditText) view.findViewById(R.id.edtprecovenda);
                                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
 
                                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
@@ -1445,7 +1476,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                             spreco = spreco.replace(tab7, "");
                                         }
                                         spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                                        info_txv_precoproduto.setText(spreco);
+                                        //edtprecovend.setText(spreco);
                                     }
 
                                     @Override
@@ -1468,7 +1499,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda1 = vlvenda1.trim();
                                         if (!vlvenda1.equals("0,0000")) {
                                             BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
-                                            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco1 = Preco1.replace('.', ',');
                                             DadosListTabPreco.add(tab1 + " R$: " + Preco1);
                                         }
@@ -1479,7 +1510,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda2 = vlvenda2.trim();
                                         if (!vlvenda2.equals("0,0000")) {
                                             BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
-                                            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco2 = Preco2.replace('.', ',');
                                             DadosListTabPreco.add(tab2 + " R$: " + Preco2);
                                         }
@@ -1490,7 +1521,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda3 = vlvenda3.trim();
                                         if (!vlvenda3.equals("0,0000")) {
                                             BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
-                                            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco3 = Preco3.replace('.', ',');
                                             DadosListTabPreco.add(tab3 + " R$: " + Preco3);
                                         }
@@ -1501,7 +1532,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda4 = vlvenda4.trim();
                                         if (!vlvenda4.equals("0,0000")) {
                                             BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
-                                            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco4 = Preco4.replace('.', ',');
                                             DadosListTabPreco.add(tab4 + " R$: " + Preco4);
                                         }
@@ -1512,7 +1543,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvenda5 = vlvenda5.trim();
                                         if (!vlvenda5.equals("0,0000")) {
                                             BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
-                                            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Preco5 = Preco5.replace('.', ',');
                                             DadosListTabPreco.add(tab5 + " R$: " + Preco5);
                                         }
@@ -1523,7 +1554,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvendap1 = vlvendap1.trim();
                                         if (!vlvendap1.equals("0,0000")) {
                                             BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
-                                            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Precop1 = Precop1.replace('.', ',');
                                             DadosListTabPreco.add(tab6 + " R$: " + Precop1);
                                         }
@@ -1534,7 +1565,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         vlvendap2 = vlvendap2.trim();
                                         if (!vlvendap2.equals("0,0000")) {
                                             BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
-                                            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                                            Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                             Precop2 = Precop2.replace('.', ',');
                                             DadosListTabPreco.add(tab7 + " R$: " + Precop2);
                                         }
@@ -1557,7 +1588,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                                 String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                 Preco = Preco.replace('.', ',');
-                                info_txv_precoproduto.setText(Preco);
+                                edtprecovend.setText(Preco);
 
                                 Cursor cursor = DB.rawQuery("select CODITEMANUAL, CODIGOITEM, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "' AND CODIGOITEM = '" + item.getVendad_prd_codigoitem() + "' AND CODPERFIL = " + idPerfil, null);
                                 cursor.moveToFirst();
@@ -1584,6 +1615,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         //Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
                                         String qtdinformada = Util.removeZerosEsquerda(info_txt_quantidadecomprada.getText().toString());
                                         Double QUANTIDADE_DIGITADA = Double.parseDouble(qtdinformada);
+
                                         String COD_PRODUTO = info_txv_codproduto.getText().toString();
                                         String DESCRICAO = info_txv_descricaoproduto.getText().toString();
                                         String UNIDADE = info_txv_unmedida.getText().toString();
@@ -1593,7 +1625,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                 Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
                                                 return;
                                             }
-                                            if (habcontrolqtdmin.equals("S") && TAMANHO_TEXTO < qtdminvend) {
+                                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
                                                 Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
                                                 return;
                                             }
@@ -1618,9 +1650,16 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
 
                                             //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                                            String ValorItem = info_txv_precoproduto.getText().toString();
+                                            String ValorItem = edtprecovend.getText().toString();
                                             ValorItem = ValorItem.trim();
                                             if (!ValorItem.equals("0,0000")) {
+                                                if (habalteraprecovenda.equals("S")) {
+                                                    String validapreco = validaprecominimo(ValorItem);
+                                                    if (!validapreco.equals("ok")) {
+                                                        Util.msg_toast_personal(getBaseContext(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                        return;
+                                                    }
+                                                }
                                                 BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                                                 venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
                                                 itemBean1.setVendad_preco_venda(venda);
@@ -1710,6 +1749,75 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     }
 
+    private String validaprecominimo(String valorItem) {
+        String validaok = "ok";
+        DecimalFormat dfunit = new DecimalFormat("0.0000");
+        if (vlminimovend.equals(tab1)) {
+            String precomin = Preco1.replace(",", "");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",", "");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+        } else if (vlminimovend.equals(tab2)) {
+            String precomin = Preco2.replace(",", "");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",", "");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if (vlminimovend.equals(tab3)) {
+            String precomin = Preco3.replace(",", ".");
+            Double.parseDouble(precomin);
+            valorItem = valorItem.replace(",", ".");
+
+            if (Double.parseDouble(valorItem) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if (vlminimovend.equals(tab4)) {
+            String precomin = Preco4.replace(",", "");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",", "");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if (vlminimovend.equals(tab5)) {
+            String precomin = Preco5.replace(",", "");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",", "");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if (vlminimovend.equals(tab6)) {
+            String precomin = Precop1.replace(",", "");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",", "");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if (vlminimovend.equals(tab7)) {
+            String precomin = Precop2.replace(",", "");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",", "");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        }
+        return validaok;
+    }
+
     private BigDecimal calculaDesconto() {
         String VLDesconto = venda_txt_desconto.getText().toString();
         BigDecimal VALOR_DESCONTO = null;
@@ -1789,7 +1897,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
                                 final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
                                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-                                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                edtprecovend = (EditText) view.findViewById(R.id.edtprecovenda);
                                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
                                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
 
@@ -1821,7 +1929,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                             spreco = spreco.replace(tab7, "");
                                         }
                                         spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                                        info_txv_precoproduto.setText(spreco);
+                                        edtprecovend.setText(spreco);
                                     }
 
                                     @Override
@@ -1955,7 +2063,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                                 String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                 Preco = Preco.replace('.', ',');
-                                info_txv_precoproduto.setText(Preco);
+                                edtprecovend.setText(Preco);
 
                                 String qtd = String.valueOf(item.getVendad_quantidadeTEMP());
                                 info_txt_quantidadecomprada.setText(qtd);
@@ -1997,7 +2105,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                     itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
 
                                                     //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                                                    String ValorItem = info_txv_precoproduto.getText().toString();
+                                                    String ValorItem = edtprecovend.getText().toString();
                                                     ValorItem = ValorItem.trim();
                                                     if (!ValorItem.equals("0,0000")) {
                                                         BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -2064,7 +2172,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
                                 final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
                                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-                                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                                edtprecovend = (EditText) view.findViewById(R.id.edtprecovenda);
                                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
                                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
 
@@ -2096,7 +2204,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                             spreco = spreco.replace(tab7, "");
                                         }
                                         spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                                        info_txv_precoproduto.setText(spreco);
+                                        edtprecovend.setText(spreco);
                                     }
 
                                     @Override
@@ -2228,7 +2336,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                 BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                                 String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                                 Preco = Preco.replace('.', ',');
-                                info_txv_precoproduto.setText(Preco);
+                                edtprecovend.setText(Preco);
 
                                 Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "'", null);
                                 cursor.moveToFirst();
@@ -2275,7 +2383,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                 itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
 
                                                 //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                                String ValorItem = edtprecovend.getText().toString();
                                                 ValorItem = ValorItem.trim();
                                                 if (!ValorItem.equals("0,0000")) {
                                                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -2359,54 +2467,28 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     }
 
-
     @Override
     public void onBackPressed() {
         if (!NumPedido.equals("0")) {
-            //new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
             cancelarvenda();
             return;
-        }
-        /*itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
-        if (!itens_temp.isEmpty()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
-            builder.setTitle(R.string.app_namesair);
-            builder.setIcon(R.drawable.logo_ico);
-            builder.setMessage("Deseja realmente cancelar a venda?")
-                    .setCancelable(false)
-                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            Intent it = new Intent();
-                            it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
-                            setResult(1, it);
-                            new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
-
-                            SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
-                            editor.putString("dataentrega", "");
-                            editor.commit();
-
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("Não", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-            return;
-        }*/
-        else {
-            Intent it = new Intent();
-            it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
-            setResult(1, it);
+        } else {
             new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
+            new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
+            Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_datainicial),null);
+            params.putString(getString(R.string.intent_datafinal),null);
+            intent.putExtras(params);
+            startActivity(intent);
 
             SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
             editor.putString("dataentrega", "");
             editor.commit();
-
             finish();
         }
     }
@@ -2667,11 +2749,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        /*if(!hasFocus) {
-            if (venda_txt_desconto.getText().toString().isEmpty()) {
-                venda_txt_desconto.setText("0");
-              //  return;
-            }
-        }*/
+
     }
 }

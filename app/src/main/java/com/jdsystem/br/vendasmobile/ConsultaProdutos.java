@@ -105,6 +105,275 @@ public class ConsultaProdutos extends AppCompatActivity
         thread.start();
     }
 
+    public List<Produtos> carregarprodutos() {
+        ArrayList<Produtos> DadosLisProdutos = new ArrayList<Produtos>();
+        if (editQuery == null) {
+
+            DB = new ConfigDB(this).getReadableDatabase();
+            BigDecimal preco1 = null;
+            BigDecimal preco2 = null;
+            BigDecimal preco3 = null;
+            BigDecimal preco4 = null;
+            BigDecimal preco5 = null;
+            BigDecimal precoP1 = null;
+            BigDecimal precoP2 = null;
+
+            try {
+                Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABCONTROLQTDMINVEND, CODPERFIL, HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL =" + idPerfil, null);
+                CursorParametro.moveToFirst();
+                String habcontrolqtdmin = CursorParametro.getString(CursorParametro.getColumnIndex("HABCONTROLQTDMINVEND"));
+                String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+                String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
+                if (tabela1.equals("") && tabela1.equals("") && tabela1.equals("") && tabela1.equals("") && tabela1.equals("") &&
+                        tabela1.equals("") && tabela1.equals("") && tipoEstoque == null) {
+                    if (dialog.isShowing())
+                        dialog.dismiss();
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.setCancelable(false);
+                    alert.setIcon(R.drawable.logo_ico);
+                    alert.setTitle("Atenção!");
+                    alert.setMessage("Não foi possível realizar a consulta de produtos, pois não foram configurado os parâmetros. Entre em contato com a " + nomeEmpresa + ".");
+                    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                        }
+                    });
+                    alert.show();
+                    return DadosLisProdutos;
+                }
+
+
+                Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) ORDER BY DESCRICAO", null);
+                cursorProdutos.moveToFirst();
+                if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
+                    txvqtdregprod.setText("Quantidade de registro: " + cursorProdutos.getCount());
+                    do {
+                        int codigoexterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
+                        String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                        String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                        String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
+                        String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
+                        String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
+                        String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
+                        int codInterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
+                        String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
+                        String qtdminvend = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDMINVEND"));
+                  /*ppadrao = ppadrao.trim();
+                    BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
+
+                        if (!tabela1.equals("")) {
+                            String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
+                            p1 = p1.trim();
+                            if (!p1.equals("")) {
+                                preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
+                            }
+                        } else {
+                            tabela1 = "";
+                        }
+                        if (!tabela2.equals("")) {
+                            String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
+                            p2 = p2.trim();
+                            if (!p2.equals("")) {
+                                preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
+                            }
+                        } else {
+                            tabela2 = "";
+                        }
+                        if (!tabela3.equals("")) {
+                            String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
+                            p3 = p3.trim();
+                            if (!p3.equals("")) {
+                                preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
+                            }
+                        } else {
+                            tabela3 = "";
+                        }
+                        if (!tabela4.equals("")) {
+                            String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
+                            p4 = p4.trim();
+                            if (!p4.equals("")) {
+                                preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
+                            }
+                        } else {
+                            tabela4 = "";
+                        }
+                        if (!tabela5.equals("")) {
+                            String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
+                            p5 = p5.trim();
+                            if (!p5.equals("")) {
+                                preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
+                            }
+                        } else {
+                            tabela5 = "";
+                        }
+                        if (!tabpromo1.equals("")) {
+                            String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
+                            pp1 = pp1.trim();
+                            if (!pp1.equals("")) {
+                                precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
+                            }
+                        } else {
+                            tabpromo1 = "";
+                        }
+                        if (!tabpromo2.equals("")) {
+                            String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
+                            pp2 = pp2.trim();
+                            if (!pp2.equals("")) {
+                                precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
+                            }
+                        } else {
+                            tabpromo2 = "";
+                        }
+                        lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5,
+                                precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao,
+                                codigoexterno,habcontrolqtdmin,qtdminvend);
+                        DadosLisProdutos.add(lstprodutos);
+                    } while (cursorProdutos.moveToNext());
+                    cursorProdutos.close();
+                    CursorParametro.close();
+
+
+                } else {
+                    txvqtdregprod.setText("Quantidade de Registro: 0");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaProdutos.this);
+                    builder.setTitle(R.string.app_namesair);
+                    builder.setIcon(R.drawable.logo_ico);
+                    builder.setMessage(R.string.alertsyncproducts)
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+            } catch (Exception e) {
+                e.toString();
+                Toast.makeText(this, "Falha no SQL. Tente novamente!", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            BigDecimal preco1 = null;
+            BigDecimal preco2 = null;
+            BigDecimal preco3 = null;
+            BigDecimal preco4 = null;
+            BigDecimal preco5 = null;
+            BigDecimal precoP1 = null;
+            BigDecimal precoP2 = null;
+
+            try {
+
+                Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABCONTROLQTDMINVEND, CODPERFIL, HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL =" + idPerfil, null);
+                CursorParametro.moveToFirst();
+                String habcontrolqtdmin = CursorParametro.getString(CursorParametro.getColumnIndex("HABCONTROLQTDMINVEND"));
+                String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
+                String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
+                String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
+                String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
+                String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
+                String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
+                String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
+                String qtdminvend = CursorParametro.getString(CursorParametro.getColumnIndex("QTDMINVEND"));
+                String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
+
+                Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) AND ((DESCRICAO LIKE '%" + editQuery + "%') OR (CODITEMANUAL LIKE '%" + editQuery + "%') OR (CLASSE LIKE '%" + editQuery + "%')" +
+                        " OR (FABRICANTE LIKE '%" + editQuery + "%') OR (FORNECEDOR LIKE '%" + editQuery + "%') OR (MARCA LIKE '%" + editQuery + "%')) ORDER BY DESCRICAO", null);
+                cursorProdutos.moveToFirst();
+                if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
+                    txvqtdregprod.setText("Quantidade de registro: " + cursorProdutos.getCount());
+                    do {
+                        int codigoexterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
+                        String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
+                        String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
+                        String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
+                        String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
+                        String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
+                        String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
+                        int codInterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
+                        String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
+                  /*ppadrao = ppadrao.trim();
+                    BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
+
+                        if (!tabela1.equals("")) {
+                            String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
+                            p1 = p1.trim();
+                            if (!p1.equals("")) {
+                                preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
+                            }
+                        }
+                        if (!tabela2.equals("")) {
+                            String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
+                            p2 = p2.trim();
+                            if (!p2.equals("")) {
+                                preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
+                            }
+                        }
+                        if (!tabela3.equals("")) {
+                            String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
+                            p3 = p3.trim();
+                            if (!p3.equals("")) {
+                                preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
+                            }
+                        }
+                        if (!tabela4.equals("")) {
+                            String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
+                            p4 = p4.trim();
+                            if (!p4.equals("")) {
+                                preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
+                            }
+                        }
+                        if (!tabela5.equals("")) {
+                            String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
+                            p5 = p5.trim();
+                            if (!p5.equals("")) {
+                                preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
+                            }
+                        }
+                        if (!tabpromo1.equals("")) {
+                            String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
+                            pp1 = pp1.trim();
+                            if (!pp1.equals("")) {
+                                precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
+                            }
+                        }
+                        if (!tabpromo2.equals("")) {
+                            String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
+                            pp2 = pp2.trim();
+                            if (!pp2.equals("")) {
+                                precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
+                            }
+                        }
+
+                        lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5,
+                                precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao,
+                                codigoexterno,habcontrolqtdmin,qtdminvend);
+                        DadosLisProdutos.add(lstprodutos);
+                    } while (cursorProdutos.moveToNext());
+                    cursorProdutos.close();
+                    CursorParametro.close();
+
+                } else {
+                    txvqtdregprod.setText("Quantidade de Registro: 0");
+                    Toast.makeText(this, R.string.no_products_found, Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.toString();
+
+            }
+        }
+
+        if (dialog.isShowing())
+            dialog.dismiss();
+
+        return DadosLisProdutos;
+
+    }
+
     private void carregarobjetos() {
         txvqtdregprod = (TextView) findViewById(R.id.txvqtdregistroprod);
     }
@@ -184,7 +453,6 @@ public class ConsultaProdutos extends AppCompatActivity
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_sinc_cliente) {
@@ -199,6 +467,9 @@ public class ConsultaProdutos extends AppCompatActivity
                         dialog.setCancelable(false);
                         dialog.setMessage(getString(R.string.primeira_sync_itens));
                         dialog.setTitle(getString(R.string.wait));
+                        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        dialog.setProgress(0);
+                        dialog.setMax(0);
                         dialog.show();
 
                         Thread thread = new Thread(this);
@@ -211,6 +482,9 @@ public class ConsultaProdutos extends AppCompatActivity
                         dialog.setCancelable(false);
                         dialog.setMessage(getString(R.string.sync_products));
                         dialog.setTitle(getString(R.string.wait));
+                        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        dialog.setProgress(0);
+                        dialog.setMax(0);
                         dialog.show();
 
                         Thread thread = new Thread(this);
@@ -275,7 +549,7 @@ public class ConsultaProdutos extends AppCompatActivity
             }
         } else if (Flag == 1) {
             try {
-                sincprod = Sincronismo.SincronizarProdutosStatic(ConsultaProdutos.this, usuario, senha, 0, null, null, null);
+                sincprod = Sincronismo.SincronizarProdutosStatic(ConsultaProdutos.this, usuario, senha, 0, dialog, null, null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -553,7 +827,12 @@ public class ConsultaProdutos extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_exit) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             System.exit(1);
+            finish();
         } else if (id == R.id.nav_sobre) {
             Intent intent = new Intent(ConsultaProdutos.this, InfoJDSystem.class);
             Bundle params = new Bundle();
@@ -571,265 +850,4 @@ public class ConsultaProdutos extends AppCompatActivity
         return true;
     }
 
-    public List<Produtos> carregarprodutos() {
-        ArrayList<Produtos> DadosLisProdutos = new ArrayList<Produtos>();
-        if (editQuery == null) {
-
-            DB = new ConfigDB(this).getReadableDatabase();
-            BigDecimal preco1 = null;
-            BigDecimal preco2 = null;
-            BigDecimal preco3 = null;
-            BigDecimal preco4 = null;
-            BigDecimal preco5 = null;
-            BigDecimal precoP1 = null;
-            BigDecimal precoP2 = null;
-
-            try {
-                Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM, CODPERFIL, HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL =" + idPerfil, null);
-                CursorParametro.moveToFirst();
-                String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-                String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-                String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-                String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-                String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-                String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-                String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-                String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
-                if (tabela1.equals("") && tabela1.equals("") && tabela1.equals("") && tabela1.equals("") && tabela1.equals("") &&
-                        tabela1.equals("") && tabela1.equals("") && tipoEstoque == null) {
-                    if (dialog.isShowing())
-                        dialog.dismiss();
-                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                    alert.setCancelable(false);
-                    alert.setIcon(R.drawable.logo_ico);
-                    alert.setTitle("Atenção!");
-                    alert.setMessage("Não foi possível realizar a consulta de produtos, pois não foram configurado os parâmetros. Entre em contato com a " + nomeEmpresa + ".");
-                    alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-
-                        }
-                    });
-                    alert.show();
-                    return DadosLisProdutos;
-                }
-
-
-                Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) ORDER BY DESCRICAO", null);
-                cursorProdutos.moveToFirst();
-                if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
-                    txvqtdregprod.setText("Quantidade de registro: " + cursorProdutos.getCount());
-                    do {
-                        int codigoexterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
-                        String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
-                        String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
-                        String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
-                        String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
-                        String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
-                        String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
-                        int codInterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
-                        String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
-                  /*ppadrao = ppadrao.trim();
-                    BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
-
-                        if (!tabela1.equals("")) {
-                            String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
-                            p1 = p1.trim();
-                            if (!p1.equals("")) {
-                                preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
-                            }
-                        } else {
-                            tabela1 = "";
-                        }
-                        if (!tabela2.equals("")) {
-                            String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
-                            p2 = p2.trim();
-                            if (!p2.equals("")) {
-                                preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
-                            }
-                        } else {
-                            tabela2 = "";
-                        }
-                        if (!tabela3.equals("")) {
-                            String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
-                            p3 = p3.trim();
-                            if (!p3.equals("")) {
-                                preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
-                            }
-                        } else {
-                            tabela3 = "";
-                        }
-                        if (!tabela4.equals("")) {
-                            String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
-                            p4 = p4.trim();
-                            if (!p4.equals("")) {
-                                preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
-                            }
-                        } else {
-                            tabela4 = "";
-                        }
-                        if (!tabela5.equals("")) {
-                            String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
-                            p5 = p5.trim();
-                            if (!p5.equals("")) {
-                                preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
-                            }
-                        } else {
-                            tabela5 = "";
-                        }
-                        if (!tabpromo1.equals("")) {
-                            String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
-                            pp1 = pp1.trim();
-                            if (!pp1.equals("")) {
-                                precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
-                            }
-                        } else {
-                            tabpromo1 = "";
-                        }
-                        if (!tabpromo2.equals("")) {
-                            String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
-                            pp2 = pp2.trim();
-                            if (!pp2.equals("")) {
-                                precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
-                            }
-                        } else {
-                            tabpromo2 = "";
-                        }
-                        lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao, codigoexterno);
-                        DadosLisProdutos.add(lstprodutos);
-                    } while (cursorProdutos.moveToNext());
-                    cursorProdutos.close();
-                    CursorParametro.close();
-
-
-                } else {
-                    txvqtdregprod.setText("Quantidade de Registro: 0");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(ConsultaProdutos.this);
-                    builder.setTitle(R.string.app_namesair);
-                    builder.setIcon(R.drawable.logo_ico);
-                    builder.setMessage(R.string.alertsyncproducts)
-                            .setCancelable(false)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                }
-            } catch (Exception e) {
-                e.toString();
-                Toast.makeText(this, "Falha no SQL. Tente novamente!", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            BigDecimal preco1 = null;
-            BigDecimal preco2 = null;
-            BigDecimal preco3 = null;
-            BigDecimal preco4 = null;
-            BigDecimal preco5 = null;
-            BigDecimal precoP1 = null;
-            BigDecimal precoP2 = null;
-
-            try {
-
-                Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM, CODPERFIL, HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL =" + idPerfil, null);
-                CursorParametro.moveToFirst();
-                String tabela1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-                String tabela2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-                String tabela3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-                String tabela4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-                String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-                String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-                String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-
-                String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
-
-                Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) AND ((DESCRICAO LIKE '%" + editQuery + "%') OR (CODITEMANUAL LIKE '%" + editQuery + "%') OR (CLASSE LIKE '%" + editQuery + "%')" +
-                        " OR (FABRICANTE LIKE '%" + editQuery + "%') OR (FORNECEDOR LIKE '%" + editQuery + "%') OR (MARCA LIKE '%" + editQuery + "%')) ORDER BY DESCRICAO", null);
-                cursorProdutos.moveToFirst();
-                if (cursorProdutos.getCount() > 0 && CursorParametro.getCount() > 0) {
-                    txvqtdregprod.setText("Quantidade de registro: " + cursorProdutos.getCount());
-                    do {
-                        int codigoexterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
-                        String descricao = cursorProdutos.getString(cursorProdutos.getColumnIndex("DESCRICAO"));
-                        String codigoManual = cursorProdutos.getString(cursorProdutos.getColumnIndex("CODITEMANUAL"));
-                        String status = cursorProdutos.getString(cursorProdutos.getColumnIndex("ATIVO"));
-                        String unidVenda = cursorProdutos.getString(cursorProdutos.getColumnIndex("UNIVENDA"));
-                        String apresentacao = cursorProdutos.getString(cursorProdutos.getColumnIndex("APRESENTACAO"));
-                        String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
-                        int codInterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
-                        String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
-                  /*ppadrao = ppadrao.trim();
-                    BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
-
-                        if (!tabela1.equals("")) {
-                            String p1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA1"));
-                            p1 = p1.trim();
-                            if (!p1.equals("")) {
-                                preco1 = new BigDecimal(Double.parseDouble(p1.replace(',', '.')));
-                            }
-                        }
-                        if (!tabela2.equals("")) {
-                            String p2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA2"));
-                            p2 = p2.trim();
-                            if (!p2.equals("")) {
-                                preco2 = new BigDecimal(Double.parseDouble(p2.replace(',', '.')));
-                            }
-                        }
-                        if (!tabela3.equals("")) {
-                            String p3 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA3"));
-                            p3 = p3.trim();
-                            if (!p3.equals("")) {
-                                preco3 = new BigDecimal(Double.parseDouble(p3.replace(',', '.')));
-                            }
-                        }
-                        if (!tabela4.equals("")) {
-                            String p4 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA4"));
-                            p4 = p4.trim();
-                            if (!p4.equals("")) {
-                                preco4 = new BigDecimal(Double.parseDouble(p4.replace(',', '.')));
-                            }
-                        }
-                        if (!tabela5.equals("")) {
-                            String p5 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDA5"));
-                            p5 = p5.trim();
-                            if (!p5.equals("")) {
-                                preco5 = new BigDecimal(Double.parseDouble(p5.replace(',', '.')));
-                            }
-                        }
-                        if (!tabpromo1.equals("")) {
-                            String pp1 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP1"));
-                            pp1 = pp1.trim();
-                            if (!pp1.equals("")) {
-                                precoP1 = new BigDecimal(Double.parseDouble(pp1.replace(',', '.')));
-                            }
-                        }
-                        if (!tabpromo2.equals("")) {
-                            String pp2 = cursorProdutos.getString(cursorProdutos.getColumnIndex("VLVENDAP2"));
-                            pp2 = pp2.trim();
-                            if (!pp2.equals("")) {
-                                precoP2 = new BigDecimal(Double.parseDouble(pp2.replace(',', '.')));
-                            }
-                        }
-
-                        lstprodutos = new Produtos(descricao, codigoManual, status, unidVenda, apresentacao, preco1, preco2, preco3, preco4, preco5, precoP1, precoP2, quantidade, tabela1, tabela2, tabela3, tabela4, tabela5, tabpromo1, tabpromo2, tipoEstoque, taPadrao, codigoexterno);
-                        DadosLisProdutos.add(lstprodutos);
-                    } while (cursorProdutos.moveToNext());
-                    cursorProdutos.close();
-                    CursorParametro.close();
-
-                } else {
-                    txvqtdregprod.setText("Quantidade de Registro: 0");
-                    Toast.makeText(this, R.string.no_products_found, Toast.LENGTH_SHORT).show();
-                }
-            } catch (Exception e) {
-                e.toString();
-
-            }
-        }
-
-        if (dialog.isShowing())
-            dialog.dismiss();
-
-        return DadosLisProdutos;
-
-    }
 }

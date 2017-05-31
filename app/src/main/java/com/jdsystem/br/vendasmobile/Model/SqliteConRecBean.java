@@ -18,6 +18,9 @@ public class SqliteConRecBean {
     public static final String DATA_QUE_PAGOU = "rec_data_que_pagou";
     public static final String FORMATO_RECEBIMENTO = "rec_recebeu_com";
     public static final String REC_ENVIADO = "rec_enviado";
+    public static final String REC_CODFORMPGTO = "rec_codformpgto_ext";
+    public static final String REC_DIASVENCIMENTO = "rec_dias_vencimento";
+    public static final String REC_DESCFORMPGTO = "conf_descricao_formpgto";
 
     private Integer rec_codigo;
     private Integer rec_numparcela;
@@ -31,21 +34,32 @@ public class SqliteConRecBean {
     private String rec_data_que_pagou;
     private String rec_recebeu_com;
     private String rec_enviado;
+    private String rec_codformpgto;
+    private String rec_diasvencimento;
+    private String rec_descformpgto;
     private boolean selecionado = false;
+    private int rec_codperfil;
 
     public SqliteConRecBean() {
     }
 
-    public SqliteConRecBean(BigDecimal rec_valorpago, String rec_data_que_pagou, String rec_recebeu_com, String rec_enviado, String vendac_chave, Integer rec_numparcela) {
+    public SqliteConRecBean(BigDecimal rec_valorpago, String rec_data_que_pagou, String rec_recebeu_com, String rec_enviado, String vendac_chave,
+                            Integer rec_numparcela, String rec_codformpgtoext, String rec_diasvenc, String rec_descricaoformpgto,int rec_codigoperfil) {
         this.rec_valorpago = rec_valorpago;
         this.rec_data_que_pagou = rec_data_que_pagou;
         this.rec_recebeu_com = rec_recebeu_com;
         this.rec_enviado = rec_enviado;
         this.vendac_chave = vendac_chave;
         this.rec_numparcela = rec_numparcela;
+        this.rec_codformpgto = rec_codformpgtoext;
+        this.rec_diasvencimento = rec_diasvenc;
+        this.rec_descformpgto = rec_descricaoformpgto;
+        this.rec_codperfil = rec_codigoperfil;
     }
 
-    public SqliteConRecBean(Integer rec_numparcela, Integer rec_cli_codigo, String rec_cli_nome, String vendac_chave, String rec_datamovimento, BigDecimal rec_valor_receber, BigDecimal rec_valorpago, String rec_datavencimento, String rec_data_que_pagou, String rec_recebeu_com, String rec_enviado) {
+    public SqliteConRecBean(Integer rec_numparcela, Integer rec_cli_codigo, String rec_cli_nome, String vendac_chave, String rec_datamovimento,
+                            BigDecimal rec_valor_receber, BigDecimal rec_valorpago, String rec_datavencimento, String rec_data_que_pagou,
+                            String rec_recebeu_com, String rec_enviado,String rec_codformpgtoext, String rec_diasvenc, String rec_descricaoformpgto, int rec_codigoperfil) {
         this.rec_numparcela = rec_numparcela;
         this.rec_cli_codigo = rec_cli_codigo;
         this.rec_cli_nome = rec_cli_nome;
@@ -57,6 +71,10 @@ public class SqliteConRecBean {
         this.rec_data_que_pagou = rec_data_que_pagou;
         this.rec_recebeu_com = rec_recebeu_com;
         this.rec_enviado = rec_enviado;
+        this.rec_codformpgto = rec_codformpgtoext;
+        this.rec_diasvencimento = rec_diasvenc;
+        this.rec_descformpgto = rec_descricaoformpgto;
+        this.rec_codperfil = rec_codigoperfil;
     }
 
 
@@ -156,11 +174,42 @@ public class SqliteConRecBean {
         this.rec_enviado = rec_enviado;
     }
 
+    public String getRec_codformpgto() {
+        return rec_codformpgto;
+    }
+
+    public void setRec_codformpgto(String rec_codformpgto) {
+        this.rec_codformpgto = rec_codformpgto;
+    }
+    public String getRec_diasvencimento() {
+        return rec_diasvencimento;
+    }
+
+    public void setRec_diasvencimento(String rec_diasvencimento) {
+        this.rec_diasvencimento = rec_diasvencimento;
+    }
+    public String getRec_descformpgto() {
+        return rec_descformpgto;
+    }
+
+    public void setRec_descformpgto(String rec_descformpgto) {
+        this.rec_descformpgto = rec_descformpgto;
+    }
+
+
+
     public boolean isSelecionado() {
         return selecionado;
     }
 
     public void setSelecionado(boolean selecionado) {
         this.selecionado = selecionado;
+    }
+
+    public long getRec_codperfil() {
+        return rec_codperfil;
+    }
+    public void setRec_codperfil(int rec_codiperfil) {
+        this.rec_codperfil = rec_codiperfil;
     }
 }

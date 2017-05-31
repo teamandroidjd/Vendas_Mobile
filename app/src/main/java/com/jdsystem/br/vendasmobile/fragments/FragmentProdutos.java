@@ -44,6 +44,7 @@ import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,8 +61,10 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     private RecyclerView mRecyclerView;
     private int flag;
     private int CodProdExt;
-    private String numPedido, vendenegativo, habcontrolqtdmin, chavePedido, usuario, senha, codVendedor, urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7;
+    private String numPedido, vlminimovend, habalteraprecovenda, vendenegativo, habcontrolqtdmin, chavePedido, usuario, senha, codVendedor,
+            urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7, Preco1, Preco2, Preco3, Preco4, Preco5, Precop1, Precop2;
     private Spinner spntabpreco;
+    private EditText edtprecovend;
     private String PREFS_PRIVATE = "PREFS_PRIVATE", NomeCliente;
     private SharedPreferences prefs;
     private ListView prod_listview_itenstemp;
@@ -96,7 +99,9 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 CodContato = params.getInt(getString(R.string.intent_codcontato));
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
             }
+            declaraobjetos();
             carregarpreferencias();
+            carregarparametros();
 
 
             mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_list_Prod);
@@ -110,7 +115,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
             /*RecyclerView.Adapter adapter = new ColorfulAdapter(new ColorDataSet());
             mRecyclerView.setAdapter(adapter);*/
-            //termina aqui o codifo para o fast scroll
+            //termina aqui o código para o fast scroll
 
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -121,7 +126,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             adapter.setRecyclerViewOnClickListenerHack(this);
             mRecyclerView.setAdapter(adapter);
 
-            carregarparametros();
+
             return view;
         } catch (Exception E) {
             System.out.println("Error" + E);
@@ -129,14 +134,21 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
         return mRecyclerView;
     }
 
-    private void carregarparametros() {
+    private void declaraobjetos() {
         DB = new ConfigDB(getActivity()).getReadableDatabase();
+        //edtprecovend = (EditText) getActivity().findViewById(R.id.edtprecovenda);
+    }
+
+    private void carregarparametros() {
+
         try {
-            Cursor curosrparam = DB.rawQuery("SELECT DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6," +
+            Cursor curosrparam = DB.rawQuery("SELECT DESCRICAOTAB1,HABALTPRECOVENDA,VLMINVENDA, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6," +
                     " DESCRICAOTAB7, HABCONTROLQTDMINVEND,HABITEMNEGATIVO FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
             curosrparam.moveToFirst();
             if (curosrparam.getCount() > 0) {
                 habcontrolqtdmin = curosrparam.getString(curosrparam.getColumnIndex("HABCONTROLQTDMINVEND"));
+                habalteraprecovenda = curosrparam.getString(curosrparam.getColumnIndex("HABALTPRECOVENDA"));
+                vlminimovend = curosrparam.getString(curosrparam.getColumnIndex("VLMINVENDA"));
                 vendenegativo = curosrparam.getString(curosrparam.getColumnIndex("HABITEMNEGATIVO"));
                 tab1 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB1"));
                 tab2 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB2"));
@@ -145,6 +157,32 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 tab5 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB5"));
                 tab6 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB6"));
                 tab7 = curosrparam.getString(curosrparam.getColumnIndex("DESCRICAOTAB7"));
+                if(habalteraprecovenda.equals("S")) {
+                    switch (vlminimovend) {
+                        case "V1":
+                            vlminimovend = tab1;
+                            break;
+                        case "V2":
+                            vlminimovend = tab2;
+                            break;
+                        case "V3":
+                            vlminimovend = tab3;
+                            break;
+                        case "V4":
+                            vlminimovend = tab4;
+                            break;
+                        case "V5":
+                            vlminimovend = tab5;
+                            break;
+                        case "P1":
+                            vlminimovend = tab6;
+                            break;
+                        case "P2":
+                            vlminimovend = tab7;
+                            break;
+                    }
+                }
+
             }
         } catch (Exception e) {
             e.toString();
@@ -155,7 +193,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
         int scrollPosition = 0;
 
-        // If a layout manager has already been set, get current scroll position.
+        // If a form_pgto_listview_parcelas manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {
             scrollPosition =
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
@@ -177,10 +215,8 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             String CodProd = adapterProdutos.ChamaDados(position);
             int codIntItem = adapterProdutos.codInternoItem(position);
 
-            SQLiteDatabase db = new ConfigDB(getContext()).getReadableDatabase();
-
             try {
-                Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
+                Cursor cursor = DB.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
                         "from produtos_contatos_temp " +
                         "where cod_item = " + codIntItem + " and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd + "'", null);
                 cursor.moveToFirst();
@@ -220,11 +256,8 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
             String CodProd = adapterProdutos.ChamaDados(position);
             int codIntItem = adapterProdutos.codInternoItem(position);
-
-            SQLiteDatabase db = new ConfigDB(getContext()).getReadableDatabase();
-
             try {
-                Cursor cursor = db.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
+                Cursor cursor = DB.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
                         "from produtos_contatos " +
                         "where cod_item = '" + codIntItem + "' and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd + "'", null);
                 cursor.moveToFirst();
@@ -283,8 +316,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             String tabelaPadrao = null;
             Cursor cursoritem = null;
 
-            DB = new ConfigDB(getActivity()).getReadableDatabase();
-
             int sprecoprincipal;
             String sincprod;
             if (numPedido.equals("0")) {
@@ -337,7 +368,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
                 final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                //final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                edtprecovend = (EditText) view.findViewById(R.id.edtprecovenda);
+                if (habalteraprecovenda.equals("N")) {
+                    edtprecovend.setEnabled(false);
+                }
                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
 
                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
@@ -370,7 +405,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             spreco = spreco.replace(tab7, "");
                         }
                         spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
+                        edtprecovend.setText(spreco);
                     }
 
                     @Override
@@ -395,7 +430,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda1 = vlvenda1.trim();
                         if (!vlvenda1.equals("0,0000")) {
                             BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
-                            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco1 = Preco1.replace('.', ',');
                             DadosListTabPreco.add(tab1 + " R$: " + Preco1);
                         }
@@ -405,7 +440,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda2 = vlvenda2.trim();
                         if (!vlvenda2.equals("0,0000")) {
                             BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
-                            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco2 = Preco2.replace('.', ',');
                             DadosListTabPreco.add(tab2 + " R$: " + Preco2);
                         }
@@ -415,7 +450,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda3 = vlvenda3.trim();
                         if (!vlvenda3.equals("0,0000")) {
                             BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
-                            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco3 = Preco3.replace('.', ',');
                             DadosListTabPreco.add(tab3 + " R$: " + Preco3);
                         }
@@ -425,7 +460,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda4 = vlvenda4.trim();
                         if (!vlvenda4.equals("0,0000")) {
                             BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
-                            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco4 = Preco4.replace('.', ',');
                             DadosListTabPreco.add(tab4 + " R$: " + Preco4);
                         }
@@ -435,7 +470,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda5 = vlvenda5.trim();
                         if (!vlvenda5.equals("0,0000")) {
                             BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
-                            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco5 = Preco5.replace('.', ',');
                             DadosListTabPreco.add(tab5 + " R$: " + Preco5);
                         }
@@ -445,7 +480,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvendap1 = vlvendap1.trim();
                         if (!vlvendap1.equals("0,0000")) {
                             BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
-                            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Precop1 = Precop1.replace('.', ',');
                             DadosListTabPreco.add(tab6 + " R$: " + Precop1);
                         }
@@ -455,7 +490,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvendap2 = vlvendap2.trim();
                         if (!vlvendap2.equals("0,0000")) {
                             BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
-                            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Precop2 = Precop2.replace('.', ',');
                             DadosListTabPreco.add(tab7 + " R$: " + Precop2);
                         }
@@ -477,44 +512,44 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                 } else if (tabelaPadrao.equals(tab2)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA2"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                 } else if (tabelaPadrao.equals(tab3)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA3"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                 } else if (tabelaPadrao.equals(tab4)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA4"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                 } else if (tabelaPadrao.equals(tab5)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA5"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                 } else if (tabelaPadrao.equals(tab6)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDAP1"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                 } else if (tabelaPadrao.equals(tab7)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDAP2"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
 
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 }
                 cursoritem.close();
@@ -563,8 +598,20 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
                                 itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
 
-                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                String ValorItem = edtprecovend.getText().toString();
+                                /*BigDecimal vendaitem = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                vendaitem.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                ValorItem = String.valueOf(vendaitem);*/
+
+
                                 if (!ValorItem.equals("0,0000")) {
+                                    if(habalteraprecovenda.equals("S")) {
+                                        String validapreco = validaprecominimo(ValorItem);
+                                        if(!validapreco.equals("ok")){
+                                            Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                            return;
+                                        }
+                                    }
                                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                                     venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
                                     itemBean1.setVendad_preco_vendaTEMP(venda);
@@ -580,7 +627,9 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
                                 return;
                             }
-                        } else {
+                        } else
+
+                        {
                             Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
                             return;
                         }
@@ -658,7 +707,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
                 final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
                 final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-                final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
+                edtprecovend = (EditText) view.findViewById(R.id.edtprecovenda);
+                if (habalteraprecovenda.equals("N")) {
+                    edtprecovend.setEnabled(false);
+                }
+                //final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
 
                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
@@ -692,7 +745,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             spreco = spreco.replace(tab7, "");
                         }
                         spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                        info_txv_precoproduto.setText(spreco);
+                        edtprecovend.setText(spreco);
                     }
 
                     @Override
@@ -715,7 +768,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda1 = vlvenda1.trim();
                         if (!vlvenda1.equals("0,0000")) {
                             BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
-                            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco1 = Preco1.replace('.', ',');
                             DadosListTabPreco.add(tab1 + " R$: " + Preco1);
                         }
@@ -725,7 +778,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda2 = vlvenda2.trim();
                         if (!vlvenda2.equals("0,0000")) {
                             BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
-                            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco2 = Preco2.replace('.', ',');
                             DadosListTabPreco.add(tab2 + " R$: " + Preco2);
                         }
@@ -735,7 +788,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda3 = vlvenda3.trim();
                         if (!vlvenda3.equals("0,0000")) {
                             BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
-                            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco3 = Preco3.replace('.', ',');
                             DadosListTabPreco.add(tab3 + " R$: " + Preco3);
                         }
@@ -745,7 +798,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda4 = vlvenda4.trim();
                         if (!vlvenda4.equals("0,0000")) {
                             BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
-                            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco4 = Preco4.replace('.', ',');
                             DadosListTabPreco.add(tab4 + " R$: " + Preco4);
                         }
@@ -755,7 +808,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvenda5 = vlvenda5.trim();
                         if (!vlvenda5.equals("0,0000")) {
                             BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
-                            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Preco5 = Preco5.replace('.', ',');
                             DadosListTabPreco.add(tab5 + " R$: " + Preco5);
                         }
@@ -765,7 +818,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvendap1 = vlvendap1.trim();
                         if (!vlvendap1.equals("0,0000")) {
                             BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
-                            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Precop1 = Precop1.replace('.', ',');
                             DadosListTabPreco.add(tab6 + " R$: " + Precop1);
                         }
@@ -775,7 +828,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         vlvendap2 = vlvendap2.trim();
                         if (!vlvendap2.equals("0,0000")) {
                             BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
-                            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
+                            Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                             Precop2 = Precop2.replace('.', ',');
                             DadosListTabPreco.add(tab7 + " R$: " + Precop2);
                         }
@@ -796,49 +849,49 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 } else if (tabelaPadrao.equals(tab2)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA2"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 } else if (tabelaPadrao.equals(tab3)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA3"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 } else if (tabelaPadrao.equals(tab4)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA4"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 } else if (tabelaPadrao.equals(tab5)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDA5"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 } else if (tabelaPadrao.equals(tab6)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDAP1"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 } else if (tabelaPadrao.equals(tab7)) {
                     String ValorItem = cursoritem.getString(cursoritem.getColumnIndex("VLVENDAP2"));
                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                     String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
                     Preco = Preco.replace('.', ',');
-                    info_txv_precoproduto.setText(Preco);
+                    edtprecovend.setText(Preco);
                     info_txt_quantidadecomprada.setText("");
                 }
                 //info_txt_quantidadecomprada.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
@@ -890,9 +943,16 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 itemBean1.setvendad_prd_view("T");
 
                                 //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                                String ValorItem = info_txv_precoproduto.getText().toString();
+                                String ValorItem = edtprecovend.getText().toString();
                                 ValorItem = ValorItem.trim();
                                 if (!ValorItem.equals("0,0000")) {
+                                    if(habalteraprecovenda.equals("S")) {
+                                        String validapreco = validaprecominimo(ValorItem);
+                                        if (!validapreco.equals("ok")) {
+                                            Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                            return;
+                                        }
+                                    }
                                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
                                     venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
                                     itemBean1.setVendad_preco_venda(venda);
@@ -943,6 +1003,75 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             }
         }
 
+    }
+
+    private String validaprecominimo(String valorItem) {
+        String validaok = "ok";
+        DecimalFormat dfunit = new DecimalFormat("0.0000");
+        if (vlminimovend.equals(tab1)) {
+            String precomin = Preco1.replace(",","");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",","");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+        } else if(vlminimovend.equals(tab2)){
+            String precomin = Preco2.replace(",","");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",","");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if(vlminimovend.equals(tab3)){
+            String precomin = Preco3.replace(",",".");
+            Double.parseDouble(precomin);
+            valorItem = valorItem.replace(",",".");
+
+            if (Double.parseDouble(valorItem) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if(vlminimovend.equals(tab4)){
+            String precomin = Preco4.replace(",","");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",","");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if(vlminimovend.equals(tab5)){
+            String precomin = Preco5.replace(",","");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",","");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if(vlminimovend.equals(tab6)){
+            String precomin = Precop1.replace(",","");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",","");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        } else if (vlminimovend.equals(tab7)){
+            String precomin = Precop2.replace(",","");
+            Double.parseDouble(precomin);
+            String precovenda = valorItem.replace(",","");
+            Double.parseDouble(precovenda);
+            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+                validaok = "0";
+            }
+
+        }
+        return validaok;
     }
 
     @Override

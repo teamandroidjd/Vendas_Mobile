@@ -47,7 +47,7 @@ public class ConsultaClientes extends AppCompatActivity
     public SharedPreferences prefs;
     Clientes lstclientes;
     String codVendedor, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, nomeEmpresa, editQuery,
-            UsuarioLogado, telaInvocada, chavepedido, numPedido;
+            UsuarioLogado, telaInvocada, chavepedido, numPedido,cliexvend;
     SQLiteDatabase DB;
     MenuItem searchItem;
     SearchView searchView;
@@ -104,11 +104,13 @@ public class ConsultaClientes extends AppCompatActivity
 
     private void carregarparametros() {
         try {
-            Cursor curosrparam = DB.rawQuery("SELECT HABCADASTRO_CLIE FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
+            Cursor curosrparam = DB.rawQuery("SELECT HABCADASTRO_CLIE,HABCLIEXVEND FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
             curosrparam.moveToFirst();
             if (curosrparam.getCount() > 0) {
                 int habcadclie = curosrparam.getInt(curosrparam.getColumnIndex("HABCADASTRO_CLIE"));
+                cliexvend = curosrparam.getString(curosrparam.getColumnIndex("HABCLIEXVEND"));
                 switch (habcadclie){
+
                     case 1:// sem permissão para cadastrar clientes para todos os usuários
                         fabcadclie.setVisibility(View.GONE);
                         break;
@@ -129,8 +131,6 @@ public class ConsultaClientes extends AppCompatActivity
                             }
                         }
                 }
-            } else {
-
             }
         }catch (Exception e){
             e.toString();
@@ -141,9 +141,6 @@ public class ConsultaClientes extends AppCompatActivity
         ArrayList<Clientes> DadosLisClientes = new ArrayList<Clientes>();
         if (editQuery == null) {
             try {
-                Cursor cursorparametro = DB.rawQuery("SELECT HABCLIEXVEND FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-                cursorparametro.moveToFirst();
-                String cliexvend = cursorparametro.getString(cursorparametro.getColumnIndex("HABCLIEXVEND"));
                 if (cliexvend == null) {
                     if (dialog.isShowing())
                         dialog.dismiss();
@@ -151,7 +148,7 @@ public class ConsultaClientes extends AppCompatActivity
                     alert.setCancelable(false);
                     alert.setIcon(R.drawable.logo_ico);
                     alert.setTitle(R.string.msg_atention);
-                    alert.setMessage(getString(R.string.msg_errorconsultaclie) + nomeEmpresa + ".");
+                    alert.setMessage(getString(R.string.msg_errorconsultaclie)+" " + nomeEmpresa + ".");
                     alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
 
@@ -161,13 +158,12 @@ public class ConsultaClientes extends AppCompatActivity
                     return DadosLisClientes;
 
                 }
-                cursorparametro.close();
                 if (cliexvend.equals("S")) {
                     Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                            " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
-                            " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
-                            " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ATIVO = 'S' AND CODVENDEDOR = " + codVendedor + " AND CODPERFIL = " + idPerfil + " ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " CIDADES ON (CLIENTES.CODCIDADE = CIDADES.CODCIDADE) AND (CLIENTES.CODPERFIL = CIDADES.CODPERFIL) LEFT OUTER JOIN " +
+                            " ESTADOS ON (CLIENTES.UF = ESTADOS.UF) AND (CLIENTES.CODPERFIL = ESTADOS.CODPERFIL) LEFT OUTER JOIN " +
+                            " BAIRROS ON (CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO) AND (CLIENTES.CODPERFIL = BAIRROS.CODPERFIL) " +
+                            " WHERE (ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ") AND (CLIENTES.CODPERFIL = " + idPerfil + ") ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " " + cursorClientes.getCount());
@@ -205,10 +201,10 @@ public class ConsultaClientes extends AppCompatActivity
                     }
                 } else {
                     Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                            " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
-                            " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
-                            " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE (ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ") ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " CIDADES ON (CLIENTES.CODCIDADE = CIDADES.CODCIDADE) AND (CLIENTES.CODPERFIL = CIDADES.CODPERFIL) LEFT OUTER JOIN " +
+                            " ESTADOS ON (CLIENTES.UF = ESTADOS.UF) AND (CLIENTES.CODPERFIL = ESTADOS.CODPERFIL) LEFT OUTER JOIN " +
+                            " BAIRROS ON (CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO) AND (CLIENTES.CODPERFIL = BAIRROS.CODPERFIL) " +
+                            " WHERE (ATIVO = 'S') AND (CLIENTES.CODPERFIL = " + idPerfil + ") ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " " + cursorClientes.getCount());
@@ -259,10 +255,10 @@ public class ConsultaClientes extends AppCompatActivity
                 cursorparametro.close();
                 if (cliexvend.equals("S")) {
                     Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                            " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
-                            " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
-                            " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")AND (CODPERFIL = " + idPerfil + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " CIDADES ON (CLIENTES.CODCIDADE = CIDADES.CODCIDADE) AND (CLIENTES.CODPERFIL = CIDADES.CODPERFIL) LEFT OUTER JOIN " +
+                            " ESTADOS ON (CLIENTES.UF = ESTADOS.UF) AND (CLIENTES.CODPERFIL = ESTADOS.CODPERFIL) LEFT OUTER JOIN " +
+                            " BAIRROS ON (CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO) AND (CLIENTES.CODPERFIL = BAIRROS.CODPERFIL) " +
+                            " WHERE ((ATIVO = 'S') AND (CODVENDEDOR = " + codVendedor + ")AND (CLIENTES.CODPERFIL = " + idPerfil + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " " + cursorClientes.getCount());
@@ -290,10 +286,10 @@ public class ConsultaClientes extends AppCompatActivity
                     }
                 } else {
                     Cursor cursorClientes = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                            " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN " +
-                            " ESTADOS ON CLIENTES.UF = ESTADOS.UF LEFT OUTER JOIN " +
-                            " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO " +
-                            " WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
+                            " CIDADES ON (CLIENTES.CODCIDADE = CIDADES.CODCIDADE) AND (CLIENTES.CODPERFIL = CIDADES.CODPERFIL) LEFT OUTER JOIN " +
+                            " ESTADOS ON (CLIENTES.UF = ESTADOS.UF) AND (CLIENTES.CODPERFIL = ESTADOS.CODPERFIL) LEFT OUTER JOIN " +
+                            " BAIRROS ON (CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO) AND (CLIENTES.CODPERFIL = BAIRROS.CODPERFIL) " +
+                            " WHERE ((ATIVO = 'S') AND (CLIENTES.CODPERFIL = " + idPerfil + ")) AND ((CLIENTES.NOMERAZAO LIKE '%" + editQuery + "%') OR (CLIENTES.NOMEFAN LIKE '%" + editQuery + "%') OR (CLIENTES.CNPJ_CPF LIKE '%" + editQuery + "%') OR (CLIENTES.CODCLIE_EXT LIKE '%" + editQuery + "%')) ORDER BY NOMEFAN, NOMERAZAO ", null);
                     cursorClientes.moveToFirst();
                     if (cursorClientes.getCount() > 0) {
                         txvqtdregclie.setText(getString(R.string.text_qtdregistro) + " " + cursorClientes.getCount());
@@ -457,7 +453,9 @@ public class ConsultaClientes extends AppCompatActivity
                     dialog = new ProgressDialog(ConsultaClientes.this);
                     dialog.setTitle(R.string.wait);
                     dialog.setMessage(getString(R.string.primeira_sync_clientes));
-                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    dialog.setProgress(0);
+                    dialog.setMax(0);
                     dialog.setIcon(R.drawable.icon_sync);
                     dialog.setCancelable(false);
                     dialog.show();
@@ -472,6 +470,9 @@ public class ConsultaClientes extends AppCompatActivity
                     dialog.setCancelable(false);
                     dialog.setTitle(getString(R.string.wait));
                     dialog.setMessage(getString(R.string.sync_clients));
+                    dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                    dialog.setProgress(0);
+                    dialog.setMax(0);
                     dialog.show();
 
                     Thread thread = new Thread(this);
@@ -591,7 +592,12 @@ public class ConsultaClientes extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_exit) {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             System.exit(1);
+            finish();
         } else if (id == R.id.nav_sobre) {
             Intent intent = new Intent(ConsultaClientes.this, InfoJDSystem.class);
             Bundle params = new Bundle();
@@ -790,7 +796,7 @@ public class ConsultaClientes extends AppCompatActivity
                         Toast.makeText(getApplication(), sincclieenvio, Toast.LENGTH_SHORT).show();
                     }
                 });
-                sincclie = Sincronismo.SincronizarClientesStatic(codVendedor, this, usuario, senha, 0, null, null, null);
+                sincclie = Sincronismo.SincronizarClientesStatic(codVendedor, this, usuario, senha, 0, dialog, null, null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

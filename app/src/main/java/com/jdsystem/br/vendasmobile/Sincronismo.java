@@ -1,6 +1,5 @@
 package com.jdsystem.br.vendasmobile;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
@@ -59,8 +57,6 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class Sincronismo extends AppCompatActivity implements Runnable, NavigationView.OnNavigationItemSelectedListener {
@@ -135,6 +131,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             SincronizarClientesEnvioStatic("0", this, usuario, senha, Dialog, DialogECB, hd);
             SincronizarPedidosEnvioStatic(usuario, senha, this, "0", Dialog, DialogECB, hd);
             SincronizarContatosEnvioStatic(this, usuario, senha, DialogECB, Dialog, hd);
+            CarregarFormasPagamento(usuario, senha, this, Dialog, DialogECB, hd);
         } catch (Exception e) {
             e.toString();
             Dialog.dismiss();
@@ -666,6 +663,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         jumpTime += 1;
                         if (dialog != null) {
                             dialog.setProgress(jumpTime);
+                        }
+                        if (hd != null) {
                             hd.post(new Runnable() {
                                 public void run() {
                                     dialog.setMessage(ctxEnvClie.getString(R.string.sync_clients));
@@ -675,9 +674,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                         Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
                         cursor.moveToFirst();
-                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
-                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
-                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade);
+                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO), ctxEnvClie);
+                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado, ctxEnvClie);
+                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade, ctxEnvClie);
                         try {
                             if (cursor.getCount() > 0) {
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "''") +
@@ -759,19 +758,21 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                         "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
                                         "'  AND CODPERFIL = " + idPerfil + "");
                             }
+                            cursor.close();
+                        } catch (Exception E) {
+                            E.toString();
+                        }
 
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
+                        /*    Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
                             cursor1.moveToFirst();
                             CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
                             CodClieExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
 
-                            cursor.close();
+
                             cursor1.close();
 
-                        } catch (Exception E) {
-                            E.toString();
-                        }
-                        /*if (CodClieExt == null) {
+
+                        if (CodClieExt == null) {
                             Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
                             CursorContatosEnv.moveToFirst();
                             if ((CursorContatosEnv.getCount() > 0)) {
@@ -951,18 +952,16 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         } catch (Exception e) {
                             e.toString();
                         }*/
+                        sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
                     } catch (Exception E) {
                         E.toString();
                     }
                 }
             }
-        } catch (
-                JSONException e)
-
-        {
+        } catch (JSONException e) {
             e.toString();
         }
-        if (Codclie == 0) {
+        if (Codclie == 0 && sinccliestatic.equals(ctxEnvClie.getString(R.string.syn_clients_successfully))) {
             try {
                 DtUlt = Util.DataHojeComHorasMinSecBR();
                 DB.execSQL("UPDATE USUARIOS SET DT_ULT_ATU_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'");
@@ -1365,12 +1364,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             } catch (Exception e) {
                 e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ctxSincProd, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-                    }
-                });
+                if (hd != null) {
+                    hd.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ctxSincProd, R.string.failure_communicate, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
 
         } else {
@@ -1409,6 +1410,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         jumpTime += 1;
                         if (dialog != null) {
                             dialog.setProgress(jumpTime);
+                        }
+                        if (hd != null) {
                             hd.post(new Runnable() {
                                 public void run() {
                                     dialog.setMessage(ctxSincProd.getString(R.string.sync_products));
@@ -1516,7 +1519,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             sincprodstatic = "Falha no jsonObj";
             return sincprodstatic;
         }
-        if (codItem == 0) {
+        if (codItem == 0 && sincprodstatic.equals(ctxSincProd.getString(R.string.sync_products_successfully))) {
             try {
                 DtUltItem = Util.DataHojeComHorasMinSecBR();
                 DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "' WHERE CODPERFIL = " + idPerfil);
@@ -1917,21 +1920,31 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             });
                         }
                         Double PercDescMax = c.getDouble("percdescmaxped");
-                        String habitemnegativo = c.getString("habitemnegativo");
-                        String habcritsitclie = c.getString("habcritsitclie");
-                        String habcritqtditens = c.getString("habcritqtditens");
-                        String habcliexvend = c.getString("habcliexvend");
-                        String habqtdminvenda = c.getString("habqtdminvenda");
-                        if(habqtdminvenda.equals("true")){
+                        String habitemnegativo = c.getString("habitemnegativo").trim();
+                        String habcritsitclie = c.getString("habcritsitclie").trim();
+                        String habcritqtditens = c.getString("habcritqtditens").trim();
+                        String habcliexvend = c.getString("habcliexvend").trim();
+                        String habqtdminvenda = c.getString("habqtdminvenda").trim();
+                        if (habqtdminvenda.equals("True")) {
                             habqtdminvenda = "S";
-                        }else {
+                        } else {
                             habqtdminvenda = "N";
                         }
-                        String tipopermissaocadclie = c.getString("tipopermissaocadclie"); //1 - nenhum usuario pode cadastrar cliente. 2 - todos podem
+                        String habaltprecovenda = c.getString("habaltprecovenda").trim();
+                        if (habaltprecovenda.equals("False") || habaltprecovenda.equals("")) {
+                            habaltprecovenda = "N";
+                        } else {
+                            habaltprecovenda = "S";
+                        }
+                        String tbminvenda = c.getString("tbminvenda").trim();
+                        if (tbminvenda.equals(" ") || tbminvenda.equals("False")) {
+                            tbminvenda = "0";
+                        }
+                        String tipopermissaocadclie = c.getString("tipopermissaocadclie").trim(); //1 - nenhum usuario pode cadastrar cliente. 2 - todos podem
                         //cadastrar clientes 3 - verificar a permissão de usuário se pode ou não cadastrar.
 
 
-                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL,HABCLIEXVEND,HABCADASTRO_CLIE,HABCONTROLQTDMINVEND,PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
+                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL,HABALTPRECOVENDA,VLMINVENDA,HABCLIEXVEND,HABCADASTRO_CLIE,HABCONTROLQTDMINVEND,PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
                         CursorParam.moveToFirst();
                         if (CursorParam.getCount() > 0) {
                             DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
@@ -1942,11 +1955,23 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     "', HABCLIEXVEND = '" + habcliexvend.trim() +
                                     "', CODPERFIL = '" + idPerfil +
                                     "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
+                                    "', HABALTPRECOVENDA = '" + habaltprecovenda.trim() +
+                                    "', VLMINVENDA = '" + tbminvenda.trim() +
                                     "' WHERE CODPERFIL = " + idPerfil);
                         } else {
 
-                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC,HABCLIEXVEND,HABCADASTRO_CLIE,HABCONTROLQTDMINVEND,HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "', '" + habcliexvend.trim() + "', '"+tipopermissaocadclie.trim()+"', '"+habqtdminvenda.trim()+"', '" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
+                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC,HABALTPRECOVENDA,VLMINVENDA,HABCLIEXVEND,HABCADASTRO_CLIE," +
+                                    "HABCONTROLQTDMINVEND,HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
+                                    " VALUES(" + "'" + PercDescMax + "'," +
+                                    " '" + habaltprecovenda.trim() + "'," +
+                                    " '" + tbminvenda.trim() + "'," +
+                                    " '" + habcliexvend.trim() + "'," +
+                                    " '" + tipopermissaocadclie.trim() + "'," +
+                                    " '" + habqtdminvenda.trim() + "'," +
+                                    " '" + habitemnegativo.trim() + "'," +
+                                    " '" + habcritsitclie.trim() + "'," +
+                                    " '" + idPerfil + "'," +
+                                    " '" + habcritqtditens.trim() + "');");
                         }
                         sincparaetrosstatic = "OK";
                         CursorParam.close();
@@ -1962,6 +1987,160 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             return sincparaetrosstatic;
         }
         return sincparaetrosstatic;
+    }
+
+    public static String CarregarFormasPagamento(String sUsuario, String sSenha, final Context ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
+        String sincformpgto = null;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "CarregarFormasPagamento");
+        soap.addProperty("aUsuario", sUsuario);
+        soap.addProperty("aSenha", sSenha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS, 10000);
+        String RetFormpgto = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+            if (ConexOk) {
+
+                int i = 0;
+                do {
+
+                    try {
+                        if (i > 0) {
+                            Thread.sleep(500);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        if (ConexOk) {
+
+                            try {
+                                if (i == 0) {
+                                    Envio.call("", envelope);
+
+                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                    RetFormpgto = (String) envelope.getResponse();
+                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                                } else {
+                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "CarregarFormasPagamento");
+                                    newsoap.addProperty("aUsuario", usuario);
+                                    newsoap.addProperty("aSenha", senha);
+                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                    newenvelope.setOutputSoapObject(newsoap);
+                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                                    newEnvio.call("", newenvelope);
+
+                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                    RetFormpgto = (String) newenvelope.getResponse();
+                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                }
+                            } catch (Exception e) {
+                                e.toString();
+                                sincformpgto = ctxEnv.getString(R.string.failure_communicate);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+                    i = i + 1;
+                } while (RetFormpgto == null && i <= 6);
+            } else {
+                sincformpgto = ctxEnv.getString(R.string.no_connection);
+                return sincformpgto;
+            }
+            if (RetFormpgto == null) {
+                sincformpgto = ctxEnv.getString(R.string.failure_communicate);
+                return sincformpgto;
+            }
+        } catch (Exception e) {
+            e.toString();
+            sincformpgto = ctxEnv.getString(R.string.failure_communicate);
+            return sincformpgto;
+        }
+        try {
+            JSONObject jsonObj = new JSONObject(RetFormpgto);
+            JSONArray JParamApp = jsonObj.getJSONArray("formaspagamento");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JParamApp.length();
+            if (dialog != null) {
+                dialog.setProgress(jumpTime);
+                dialog.setMax(totalProgressTime);
+            }
+            DB = new ConfigDB(ctxEnv).getReadableDatabase();
+
+            for (int i = 0; i < JParamApp.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JParamApp.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        if (dialog != null) {
+                            dialog.setProgress(jumpTime);
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    dialog.setMessage(ctxEnv.getString(R.string.updating_parameters));
+                                }
+                            });
+                        }
+                        String cod_formapg = c.getString("cod_formapg").trim();
+                        String descricao = c.getString("descricao").trim();
+                        String status = "I";
+
+                        try {
+                            if(jumpTime == 1) {
+                                Cursor CursorFormpgto = DB.rawQuery(" SELECT * FROM FORMAPAGAMENTO WHERE CODPERFIL = " + idPerfil, null);
+                                CursorFormpgto.moveToFirst();
+                                if (CursorFormpgto.getCount() > 0) {
+                                    DB.execSQL("UPDATE FORMAPAGAMENTO SET STATUS = '" + status + "' WHERE CODPERFIL = " + idPerfil);
+                                }
+                            }
+                        } catch (Exception e){
+                            e.toString();
+                        }
+
+                        Cursor CursorFormpgto = DB.rawQuery(" SELECT CODPERFIL,DESCRICAO,CODEXTERNO FROM FORMAPAGAMENTO WHERE CODPERFIL = " + idPerfil + " AND CODEXTERNO = '" + cod_formapg + "'", null);
+                        CursorFormpgto.moveToFirst();
+                        if (CursorFormpgto.getCount() > 0) {
+                            status = "A";
+                            DB.execSQL(" UPDATE FORMAPAGAMENTO SET CODPERFIL = " + idPerfil +
+                                    " , DESCRICAO = '" + descricao.trim() +
+                                    "', CODEXTERNO = " + cod_formapg.trim() +
+                                    ", STATUS = '" + status +
+                                    "'  WHERE CODPERFIL = " + idPerfil + " AND CODEXTERNO = '" + cod_formapg + "'");
+                        } else {
+                            status = "A";
+                            DB.execSQL(" INSERT INTO FORMAPAGAMENTO (CODPERFIL,DESCRICAO,CODEXTERNO,STATUS)" +
+                                    " VALUES(" + "" + idPerfil + "," +
+                                    " '" + descricao.trim() + "'," +
+                                    " '" + cod_formapg.trim() + "'," +
+                                    " '" + status +"');");
+                        }
+                        sincformpgto = "OK";
+                        CursorFormpgto.close();
+
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.toString();
+            return sincformpgto;
+        }
+        return sincformpgto;
     }
 
     public static String SincronizarClientesEnvioStatic(String CodClie_Int, final Context ctxEnvClie, String user, String pass, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
@@ -1981,14 +2160,18 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         try {
             Cursor CursorClieEnv = null;
             if (CodClie_Int.equals("0")) {
-                CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE FLAGINTEGRADO = '1' AND CODPERFIL = " + idPerfil + " " +
+                CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                        " CIDADES ON (CLIENTES.CODCIDADE = CIDADES.CODCIDADE) AND (CLIENTES.CODPERFIL = CIDADES.CODPERFIL) LEFT OUTER JOIN " +
+                        " ESTADOS ON (CLIENTES.UF = ESTADOS.UF) AND (CLIENTES.CODPERFIL = ESTADOS.CODPERFIL) LEFT OUTER JOIN " +
+                        " BAIRROS ON (CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO) AND (CLIENTES.CODPERFIL = BAIRROS.CODPERFIL) " +
+                        " WHERE FLAGINTEGRADO = '1' AND CLIENTES.CODPERFIL = " + idPerfil + " " +
                         " ORDER BY NOMEFAN, NOMERAZAO ", null);
             } else {
-                CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE  CODCLIE_INT = " + CodClie_Int + " AND CODPERFIL = " + idPerfil, null);
+                CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CLIENTES.CODCLIE_EXT AS _id, TEL1, TEL2, CODCLIE_INT, BLOQUEIO, FLAGINTEGRADO, EMAIL, REGIDENT, CNPJ_CPF, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
+                        " CIDADES ON (CLIENTES.CODCIDADE = CIDADES.CODCIDADE) AND (CLIENTES.CODPERFIL = CIDADES.CODPERFIL) LEFT OUTER JOIN " +
+                        " ESTADOS ON (CLIENTES.UF = ESTADOS.UF) AND (CLIENTES.CODPERFIL = ESTADOS.CODPERFIL) LEFT OUTER JOIN " +
+                        " BAIRROS ON (CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO) AND (CLIENTES.CODPERFIL = BAIRROS.CODPERFIL) " +
+                        " WHERE  CODCLIE_INT = " + CodClie_Int + " AND CLIENTES.CODPERFIL = " + idPerfil, null);
             }
 
 
@@ -2224,9 +2407,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincclieenvstatic;
     }
 
-    public static void SincronizarContatosClientesStatic(final Context ctxEnvCont, String user, String pass,
-                                                         int Codclie, final ProgressDialog dialog,
-                                                         final ProgressDialog DialogECB, Handler hd){
+    public static void SincronizarContatosClientesStatic(final Context ctxEnvCont, String user, String pass,int Codclie, final ProgressDialog dialog,final ProgressDialog DialogECB, Handler hd) {
 
         SharedPreferences prefsHost = ctxEnvCont.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -2237,13 +2418,12 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         senha = prefs.getString("senha", null);
 
 
-
         SQLiteDatabase db = new ConfigDB(ctxEnvCont).getReadableDatabase();
         hd.post(new Runnable() {
             @Override
             public void run() {
 
-                if(DialogECB.isShowing()){
+                if (DialogECB.isShowing()) {
                     DialogECB.dismiss();
                 }
                 dialog.setTitle(R.string.wait);
@@ -2257,14 +2437,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
         String DtUlt = null;
         try {
-                Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ATU_CONT FROM USUARIOS WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'", null);
-                cursorparamapp.moveToFirst();
+            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ATU_CONT FROM USUARIOS WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'", null);
+            cursorparamapp.moveToFirst();
 
-                DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CONT"));
-                if (DtUlt == null) {
-                    DtUlt = "01/01/2000 10:00:00";
-                }
-                cursorparamapp.close();
+            DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CONT"));
+            if (DtUlt == null) {
+                DtUlt = "01/01/2000 10:00:00";
+            }
+            cursorparamapp.close();
         } catch (Exception e) {
             e.toString();
         }
@@ -2280,8 +2460,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             final Cursor cursor = db.rawQuery("SELECT NOMEFAN, CODCLIE_EXT FROM CLIENTES", null);
             cursor.moveToFirst();
             dialog.setMax(cursor.getCount());
-            int i=0;
-            if (cursor.getCount()>0) {
+            int i = 0;
+            if (cursor.getCount() > 0) {
                 do {
                     dialog.setProgress(i);
 
@@ -2290,16 +2470,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     i++;
                 } while (cursor.moveToNext());
             }
-        }catch(Exception E){
+        } catch (Exception E) {
             E.toString();
         }
 
     }
 
-
-    public static String retornaString(String nomeFan){
-        if(nomeFan.length()>30){
-            return nomeFan.substring(1,30);
+    public static String retornaString(String nomeFan) {
+        if (nomeFan.length() > 30) {
+            return nomeFan.substring(1, 30);
         }
         return nomeFan;
     }
@@ -2347,15 +2526,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         try {
             //if (Codclie == 0) {
 
-                Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ATU_CONT FROM USUARIOS WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'", null);
-                cursorparamapp.moveToFirst();
+            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ATU_CONT FROM USUARIOS WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'", null);
+            cursorparamapp.moveToFirst();
 
-                DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CONT"));
-                if (DtUlt == null) {
-                    DtUlt = "01/01/2000 10:00:00";
-                }
-                cursorparamapp.close();
-           // }
+            DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CONT"));
+            if (DtUlt == null) {
+                DtUlt = "01/01/2000 10:00:00";
+            }
+            cursorparamapp.close();
+            // }
         } catch (Exception e) {
             e.toString();
         }
@@ -2365,7 +2544,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
         if (senha != null) {
             if (Codclie == 0) {
-                soap.addProperty("aParam", "V" + CodVendedor + "%"+DtUlt);
+                soap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
                 soap.addProperty("aUsuario", usuario);
                 soap.addProperty("aSenha", senha);
             } else {
@@ -2535,7 +2714,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     }
                 } else {
                     int i = 0;
-                    if(Codclie==0) {
+                    if (Codclie == 0) {
                         if (hd != null) {
                             hd.post(new Runnable() {
                                 public void run() {
@@ -2717,10 +2896,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             JSONArray pedidosblq = jsonObj.getJSONArray(CONTATO_INFO);
 
 
-                int jumpTime = 0;
-                final int totalProgressTime = pedidosblq.length();
+            int jumpTime = 0;
+            final int totalProgressTime = pedidosblq.length();
 
-            if(Codclie==0) {
+            if (Codclie == 0) {
                 if (dialog != null) {
                     dialog.setProgress(jumpTime);
                     dialog.setMax(totalProgressTime);
@@ -2758,7 +2937,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         }
 
                         jumpTime += 1;
-                        if(Codclie == 0) {
+                        if (Codclie == 0) {
                             if (dialog != null) {
                                 dialog.setProgress(jumpTime);
                                 hd.post(new Runnable() {
@@ -2776,9 +2955,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                         int codContato = c.getInt(COD_CONTATO);
                         int codCargoContato = 0;
-                        if(c.getString(CODCARGO_CONTATO).equals("")) {
+                        if (c.getString(CODCARGO_CONTATO).equals("")) {
                             codCargoContato = 0;
-                        }else{
+                        } else {
                             codCargoContato = Integer.parseInt(c.getString(CODCARGO_CONTATO));
                         }
                         try {
@@ -2838,53 +3017,53 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             //-------------------CADASTRO E ATUALIZAÇÃO CARGOS----------------------------
 
                             //if(!c.getString(CODCARGO_CONTATO).equals("")) {
-                                try {
+                            try {
                                     /*Cursor cursor1 = DB.rawQuery(" SELECT CODCARGO_EXT, ATIVO, DES_CARGO FROM CARGOS WHERE DES_CARGO = '" + c.getString(CARGO_CONTATO) + "' " +
                                             " and CODCARGO_EXT = " + c.getInt(CODCARGO_CONTATO), null);
                                     cursor1.moveToFirst();*/
 
-                                    //if (cursor1.getCount() > 0) {
-                                        String desc_cargo = c.getString(CARGO_CONTATO);
-                                        String codCargo = c.getString(CODCARGO_CONTATO);
-                                        String ativCargo = c.getString(CARGOATIVO_CONTATO);
+                                //if (cursor1.getCount() > 0) {
+                                String desc_cargo = c.getString(CARGO_CONTATO);
+                                String codCargo = c.getString(CODCARGO_CONTATO);
+                                String ativCargo = c.getString(CARGOATIVO_CONTATO);
 
-                                        Util.atualizaCargoContato(desc_cargo, codCargo, ativCargo, ctxEnvCont);
-                                    //}
-                                    //cursor1.close();
-                                }catch (Exception E){
-                                    E.toString();
-                                }
+                                Util.atualizaCargoContato(desc_cargo, codCargo, ativCargo, ctxEnvCont);
+                                //}
+                                //cursor1.close();
+                            } catch (Exception E) {
+                                E.toString();
+                            }
                             //}
 
                             //-------------------CADASTRO DOS ITENS DO CONTATO----------------------------
 
-                                String Produtos = c.getString(PRODUTOS_INFO);
-                                Produtos = "{\"itens_contato\":" + Produtos + "\t}";
-                                JSONObject ObjProd = new JSONObject(Produtos);
-                                JSONArray Prod = ObjProd.getJSONArray("itens_contato");
+                            String Produtos = c.getString(PRODUTOS_INFO);
+                            Produtos = "{\"itens_contato\":" + Produtos + "\t}";
+                            JSONObject ObjProd = new JSONObject(Produtos);
+                            JSONArray Prod = ObjProd.getJSONArray("itens_contato");
 
 
-                                Cursor cursProd = null;
-                                for (int iProd = 0; iProd < Prod.length();iProd++) {
+                            Cursor cursProd = null;
+                            for (int iProd = 0; iProd < Prod.length(); iProd++) {
 
-                                    JSONObject pp = Prod.getJSONObject(iProd);
+                                JSONObject pp = Prod.getJSONObject(iProd);
 
-                                    int codProdCont = pp.getInt("codigoitem");
+                                int codProdCont = pp.getInt("codigoitem");
 
-                                    DB = new ConfigDB(ctxEnvCont).getReadableDatabase();
-                                    cursProd = DB.rawQuery("select cod_externo_contato, cod_item " +
-                                            "from produtos_contatos " +
-                                            "where cod_externo_contato = " + c.getString(COD_CONTATO) + ", and " +
-                                            "cod_item = " + codProdCont, null);
-                                    if (cursProd.getCount() == 0) {
-                                        DB.execSQL("insert into produtos_contatos (cod_externo_contato, cod_item) values (" +
-                                                c.getString(COD_CONTATO) + "," +
-                                                codProdCont);
-                                    }
-                                    cursProd.close();
+                                DB = new ConfigDB(ctxEnvCont).getReadableDatabase();
+                                cursProd = DB.rawQuery("select cod_externo_contato, cod_item " +
+                                        "from produtos_contatos " +
+                                        "where cod_externo_contato = " + c.getString(COD_CONTATO) + ", and " +
+                                        "cod_item = " + codProdCont, null);
+                                if (cursProd.getCount() == 0) {
+                                    DB.execSQL("insert into produtos_contatos (cod_externo_contato, cod_item) values (" +
+                                            c.getString(COD_CONTATO) + "," +
+                                            codProdCont);
                                 }
+                                cursProd.close();
+                            }
 
-                                //-------------------------------CADASTRO DE DIAS AGENDA-------------------------------
+                            //-------------------------------CADASTRO DE DIAS AGENDA-------------------------------
 
                             String Agenda = c.getString(PRODUTOS_INFO);
                             Agenda = "{\"dias_contato\":" + Agenda + "\t}";
@@ -2892,7 +3071,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             JSONArray Ag = ObjAg.getJSONArray("dias_contato");
 
                             Cursor cursAg = null;
-                            for (int iAg = 0; iAg < Ag.length();iAg++) {
+                            for (int iAg = 0; iAg < Ag.length(); iAg++) {
 
                                 JSONObject pp = Prod.getJSONObject(iAg);
 
@@ -2928,7 +3107,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     e.toString();
                 }
             }
-        }catch (Exception E){
+        } catch (Exception E) {
             E.toString();
         }
 
@@ -2956,7 +3135,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         try {
             Cursor cursorContatos = DB.rawQuery("select NOME, CARGO, TIPO, CODCLIE_EXT, CODVENDEDOR, BAIRRO, DOCUMENTO, DATA, " +
                     "ENDERECO, COMPLEMENTO, UF, OBS, CEP, DESC_CIDADE, EMAIL, TEL1, TEL2, CODCONTATO_INT, SETOR, CODCARGO " +
-                    "from CONTATO where FLAGINTEGRADO = 'N' AND CODPERFIL = " + idPerfil , null);
+                    "from CONTATO where FLAGINTEGRADO = 'N' AND CODPERFIL = " + idPerfil, null);
 
             String EnvioContato = "";
             int codContInt = 0;
@@ -3231,8 +3410,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 do {
                                     PedParcelas = PedParcelas + "{chavePedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
                                             "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
-                                            "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")) + "'," +
-                                            "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
+                                            "cod_formapg: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("conf_codformpgto_ext")) + "'," +
+                                            "valor_parcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")).replace(".", ",") + "'," +
+                                            "dias_parcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("conf_dias_vencimento")) + "'}";
 
                                     if (!CursorParcelasEnv.isLast()) {
                                         PedParcelas = PedParcelas + ",";
@@ -3438,11 +3618,18 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 Cursor CursorParcelasEnv = DB.rawQuery(" SELECT * FROM CONREC WHERE vendac_chave = '" +
                                         CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
                                 CursorParcelasEnv.moveToFirst();
+                                /*String teste1 = CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave"));
+                                String teste2 = CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela"));
+                                String teste3 = CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("conf_codformpgto_ext"));
+                                String teste4 = CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber"));
+                                String teste5 = CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("conf_dias_vencimento"));*/
+                                String teste3 = CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_codformpgto_ext"));
                                 do {
                                     PedParcelas = PedParcelas + "{chavePedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
                                             "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
-                                            "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")).replace(".", ",") + "'," +
-                                            "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
+                                            "cod_formapg: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_codformpgto_ext")) + "'," +
+                                            "valor_parcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")).replace(".", ",") + "'," +
+                                            "dias_parcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_dias_vencimento")) + "'}";
 
                                     if (!CursorParcelasEnv.isLast()) {
                                         PedParcelas = PedParcelas + ",";
@@ -3549,41 +3736,47 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincpedenviostatic;
     }
 
-    private static int RetornaBairro(String NomeBairro, int CodCidade) {
-        int Bairro = 0;
+    private static String RetornaEstado(String NomeEstado, Context ctxEnv) {
+        String Estado = null;
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
         try {
-            Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, CODCIDADE, DESCRICAO FROM BAIRROS WHERE CODCIDADE = '" + CodCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
-            if (CursorBairro.getCount() > 0) {
-                CursorBairro.moveToFirst();
-                Bairro = CursorBairro.getInt(CursorBairro.getColumnIndex("CODBAIRRO"));
+            Cursor CursosEstado = DB.rawQuery(" SELECT UF FROM ESTADOS WHERE UF = '" + NomeEstado + "' AND CODPERFIL = " + idPerfil, null);
+            if (CursosEstado.getCount() > 0) {
+                CursosEstado.moveToFirst();
+                Estado = CursosEstado.getString(CursosEstado.getColumnIndex("UF"));
             } else {
-                DB.execSQL(" INSERT INTO BAIRROS (CODCIDADE, DESCRICAO )" +
-                        " VALUES('" + CodCidade + "','" + NomeBairro + "');");
-                Cursor CursorBairro2 = DB.rawQuery(" SELECT CODBAIRRO, CODCIDADE, DESCRICAO FROM BAIRROS WHERE CODCIDADE = '" + CodCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
-                CursorBairro2.moveToFirst();
-                Bairro = CursorBairro2.getInt(CursorBairro2.getColumnIndex("CODBAIRRO"));
-                CursorBairro2.close();
+                DB.execSQL("INSERT INTO ESTADOS VALUES('" + NomeEstado + "','" + NomeEstado + "', " + idPerfil + ");");
+                Cursor cursor1 = DB.rawQuery(" SELECT UF FROM ESTADOS WHERE UF = '" + NomeEstado + "' AND CODPERFIL = " + idPerfil, null);
+                cursor1.moveToFirst();
+                Estado = cursor1.getString(cursor1.getColumnIndex("UF"));
+                cursor1.close();
             }
-            CursorBairro.close();
-            return Bairro;
+            CursosEstado.close();
+            return Estado;
         } catch (Exception E) {
-            return Bairro;
+            E.toString();
+            return Estado;
         }
     }
 
-    private static int RetornaCidade(String NomeCidade, String NomeEstado) {
+    private static int RetornaCidade(String NomeCidade, String NomeEstado, final Context ctxEnv) {
         int Cidade = 0;
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
 
         try {
-            Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE FROM CIDADES WHERE UF = '" + NomeEstado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+            Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE FROM CIDADES WHERE UF = '" + NomeEstado + "' AND DESCRICAO = '" + NomeCidade + "' AND CODPERFIL = " + idPerfil, null);
             if (CursorCidade.getCount() > 0) {
                 CursorCidade.moveToFirst();
                 Cidade = CursorCidade.getInt(CursorCidade.getColumnIndex("CODCIDADE"));
             } else {
 
-                DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF)" +
-                        " VALUES('" + NomeCidade + "','" + NomeEstado + "');");
-                Cursor CursorCidade2 = DB.rawQuery(" SELECT CODCIDADE FROM CIDADES WHERE UF = '" + NomeEstado + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODPERFIL)" +
+                        " VALUES('" + NomeCidade + "','" + NomeEstado + "', " + idPerfil + ");");
+                Cursor CursorCidade2 = DB.rawQuery(" SELECT CODCIDADE FROM CIDADES WHERE UF = '" + NomeEstado + "' AND DESCRICAO = '" + NomeCidade + "' AND CODPERFIL = " + idPerfil, null);
                 CursorCidade2.moveToFirst();
                 Cidade = CursorCidade2.getInt(CursorCidade2.getColumnIndex("CODCIDADE"));
                 CursorCidade2.close();
@@ -3592,6 +3785,31 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             return Cidade;
         } catch (Exception E) {
             return Cidade;
+        }
+    }
+
+    private static int RetornaBairro(String NomeBairro, int CodCidade, Context ctxEnv) {
+        int Bairro = 0;
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
+        try {
+            Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO FROM BAIRROS WHERE CODCIDADE = '" + CodCidade + "' AND DESCRICAO = '" + NomeBairro + "' AND CODPERFIL = " + idPerfil, null);
+            if (CursorBairro.getCount() > 0) {
+                CursorBairro.moveToFirst();
+                Bairro = CursorBairro.getInt(CursorBairro.getColumnIndex("CODBAIRRO"));
+            } else {
+                DB.execSQL(" INSERT INTO BAIRROS (CODCIDADE, DESCRICAO, CODPERFIL )" +
+                        " VALUES('" + CodCidade + "','" + NomeBairro + "', " + idPerfil + ");");
+                Cursor CursorBairro2 = DB.rawQuery(" SELECT CODBAIRRO FROM BAIRROS WHERE CODCIDADE = '" + CodCidade + "' AND DESCRICAO = '" + NomeBairro + "'AND CODPERFIL = " + idPerfil, null);
+                CursorBairro2.moveToFirst();
+                Bairro = CursorBairro2.getInt(CursorBairro2.getColumnIndex("CODBAIRRO"));
+                CursorBairro2.close();
+            }
+            CursorBairro.close();
+            return Bairro;
+        } catch (Exception E) {
+            return Bairro;
         }
     }
 
@@ -3739,34 +3957,102 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincempresastatic;
     }
 
-    private static String RetornaEstado(String NomeEstado) {
+    public static Boolean SincAtuEstado(final Context ctxEnv) {
         String Estado = null;
-        try {
-            Cursor CursosEstado = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + NomeEstado + "'", null);
-            if (CursosEstado.getCount() > 0) {
-                CursosEstado.moveToFirst();
-                Estado = CursosEstado.getString(CursosEstado.getColumnIndex("UF"));
-            } else {
-                DB.execSQL("INSERT INTO ESTADOS VALUES('" + NomeEstado + "','" + NomeEstado + "');");
-                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + NomeEstado + "'", null);
-                cursor1.moveToFirst();
-                Estado = cursor1.getString(cursor1.getColumnIndex("UF"));
-                cursor1.close();
-            }
-            CursosEstado.close();
+        String Cidade = null;
+        String Bairro = null;
+        Boolean AtualizaEst = true;
 
-            return Estado;
-        } catch (Exception E) {
-            return null;
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Estados");
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLDADOSCEP);
+        String RetEstados = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+            if (ConexOk) {
+                Envio.call("", envelope);
+                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                RetEstados = (String) envelope.getResponse();
+                System.out.println("Response :" + resultsRequestSOAP.toString());
+            }
+        } catch (Exception e) {
+            System.out.println("Error" + e);
         }
+
+        try {
+            JSONObject jsonObj = new JSONObject(RetEstados);
+            JSONArray JEstados = jsonObj.getJSONArray("estados");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JEstados.length();
+            DB = new ConfigDB(ctxEnv).getReadableDatabase();
+
+
+            Cursor CursorAtu = DB.rawQuery(" SELECT * FROM ESTADOS ", null);
+            if (CursorAtu.getCount() > 0) {
+                AtualizaEst = true;
+                CursorAtu.close();
+            }
+
+            if (AtualizaEst.equals(true)) {
+
+                for (int i = 0; i < JEstados.length(); i++) {
+                    while (jumpTime < totalProgressTime) {
+                        try {
+                            JSONObject c = JEstados.getJSONObject(jumpTime);
+                            jumpTime += 1;
+                            String SiglaEstado = c.getString("uf");
+                            String NomeEstado = c.getString("estado");
+
+                            Cursor CursosEstado = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
+
+                            if (CursosEstado.getCount() > 0) {
+                                DB.execSQL(" UPDATE ESTADOS SET UF = '" + SiglaEstado + "', DESCRICAO = '" + NomeEstado + "'" +
+                                        " WHERE UF = '" + SiglaEstado + "'");
+                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
+                                cursor1.moveToFirst();
+                                Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
+                                cursor1.close();
+                            } else {
+                                DB.execSQL("INSERT INTO ESTADOS VALUES('" + SiglaEstado + "','" + NomeEstado + "');");
+                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
+                                cursor1.moveToFirst();
+                                Estado = cursor1.getString(cursor1.getColumnIndex("UF"));
+                                cursor1.close();
+                            }
+                            CursosEstado.close();
+                            SincAtualizaCidade(Estado, ctxEnv, null);
+                        } catch (Exception E) {
+                            E.printStackTrace();
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return AtualizaEst;
     }
 
-    public static String SincAtualizaCidade(String UF, final Context ctxEnv) {
+    public static String SincAtualizaCidade(String UF, final Context ctxEnv, final ProgressDialog Dialog) {
         String sincatucidade = "0";
         if (UF.equals("")) {
             return sincatucidade;
         }
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
         int CodCidadeExt = 0;
+        int CodCidadeInt = 0;
         int CodCidade = 0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -3811,37 +4097,121 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             int jumpTime = 0;
             final int totalProgressTime = JCidades.length();
+            if (Dialog != null) {
+                Dialog.setMax(totalProgressTime);
+                Dialog.setProgress(jumpTime);
+            }
             DB = new ConfigDB(ctxEnv).getReadableDatabase();
 
 
             for (int i = 0; i < JCidades.length(); i++) {
                 while (jumpTime < totalProgressTime) {
+
                     try {
                         JSONObject c = JCidades.getJSONObject(jumpTime);
                         jumpTime += 1;
+                        if (Dialog != null) {
+                            Dialog.setProgress(jumpTime);
+                        }
                         String NomeCidade = c.getString("cidade");
                         CodCidadeExt = c.getInt("id_cidade");
                         NomeCidade = NomeCidade.replaceAll("'", "");
 
-                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade +
+                                "' AND CODPERFIL = " + idPerfil, null);
                         if (!(CursorCidade.getCount() > 0)) {
-                            DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODCIDADE_EXT)" +
-                                    " VALUES('" + NomeCidade + "','" + UF + "', '" + CodCidadeExt + "');");
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade + "'", null);
+                            DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODCIDADE_EXT,CODPERFIL)" +
+                                    " VALUES('" + NomeCidade + "','" + UF + "', '" + CodCidadeExt + "'," + idPerfil + ");");
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade +
+                                    "' AND CODPERFIL =" + idPerfil, null);
                             cursor1.moveToFirst();
                             CodCidadeExt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT"));
+                            CodCidadeInt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE"));
                             cursor1.close();
                             CursorCidade.close();
                             sincatucidade = "OK";
 
-                            final int finalCodCidadeExt = CodCidadeExt;
+                            /*final int finalCodCidadeExt = CodCidadeExt;
                             Handler handler = new Handler(Looper.getMainLooper());
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Sincronismo.SincAtualizaBairro(finalCodCidadeExt, ctxEnv);
+                                    Sincronismo.SincAtualizaBairro(finalCodCidadeExt, ctxEnv,Dialog);
                                 }
-                            });
+                            });*/
+
+                            StrictMode.ThreadPolicy policyBairro = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                            StrictMode.setThreadPolicy(policyBairro);
+
+                            SoapObject soapBaiiro = new SoapObject(ConfigConex.NAMESPACE, "Bairros");
+                            soapBaiiro.addProperty("aIdCidade", CodCidadeExt);
+                            SoapSerializationEnvelope envelopeBairro = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                            envelopeBairro.setOutputSoapObject(soapBaiiro);
+                            HttpTransportSE EnvioBaiiro = new HttpTransportSE(ConfigConex.URLDADOSCEP);
+                            String RetBairros = null;
+
+                            try {
+                                Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+                                if (ConexOk) {
+                                    EnvioBaiiro.call("", envelopeBairro);
+                                    SoapObject resultsRequestSOAPBairro = (SoapObject) envelopeBairro.bodyIn;
+                                    RetBairros = (String) envelopeBairro.getResponse();
+                                    System.out.println("Response :" + resultsRequestSOAPBairro.toString());
+                                }
+                            } catch (Exception e) {
+                                System.out.println("Error" + e);
+                            }
+
+                            try {
+                                JSONObject jsonObjBaiiro = new JSONObject(RetBairros);
+                                JSONArray JBairros = jsonObjBaiiro.getJSONArray("bairros");
+
+                                int jumpTimeBairro = 0;
+                                final int totalProgressTimeBaiiro = JBairros.length();
+                                DB = new ConfigDB(ctxEnv).getReadableDatabase();
+
+                                for (int k = 0; k < JBairros.length(); k++) {
+                                    while (jumpTimeBairro < totalProgressTimeBaiiro) {
+                                        try {
+                                            JSONObject cb = JBairros.getJSONObject(jumpTimeBairro);
+                                            jumpTimeBairro += 1;
+                                            String NomeBairro = cb.getString("bairro");
+                                            int CodBairroExt = cb.getInt("id_bairro");
+                                            NomeBairro = NomeBairro.replaceAll("'", " ");
+
+
+                                            Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODBAIRRO_EXT, CODCIDADE FROM BAIRROS WHERE CODCIDADE = '" + CodCidadeInt +
+                                                    "' AND DESCRICAO = '" + NomeBairro + "' AND CODPERFIL = " + idPerfil, null);
+                                            if (CursorBairro.getCount() > 0) {
+                                                DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = '" + CodCidadeInt + "', DESCRICAO = '" + NomeBairro + "', CODBAIRRO_EXT = '" + CodBairroExt + "'" +
+                                                        " WHERE DESCRICAO = '" + NomeBairro + "' AND CODCIDADE = '" + CodCidadeInt + "' AND CODPERFIL = " + idPerfil);
+                                                Cursor cursor2 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + CodCidadeInt +
+                                                        "' AND DESCRICAO = '" + NomeBairro + "' AND CODPERFIL = " + idPerfil, null);
+                                                cursor2.moveToFirst();
+                                                CodBairroExt = cursor2.getInt(cursor2.getColumnIndex("CODBAIRRO_EXT"));
+                                                cursor2.close();
+                                            } else {
+                                                DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODBAIRRO_EXT, CODCIDADE, CODPERFIL)" +
+                                                        " VALUES('" + NomeBairro + "','" + CodBairroExt + "', '" + CodCidadeInt +
+                                                        "', " + idPerfil + ");");
+                                                Cursor cursor2 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + CodCidadeInt +
+                                                        "' AND DESCRICAO =  '" + NomeBairro + "' AND CODPERFIL = " + idPerfil, null);
+                                                cursor2.moveToFirst();
+                                                CodBairroExt = cursor2.getInt(cursor2.getColumnIndex("CODBAIRRO_EXT"));
+                                                cursor2.close();
+                                            }
+                                            CursorBairro.close();
+
+                                        } catch (Exception E) {
+                                            E.toString();
+                                        }
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.toString();
+                            }
+
+
                         }
                     } catch (Exception E) {
                         E.toString();
@@ -3854,7 +4224,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincatucidade;
     }
 
-    private static void SincAtualizaBairro(int codCidade, Context ctxEnv) {
+    private static void SincAtualizaBairro(int codCidade, Context ctxEnv, ProgressDialog Dialog) {
         int CodBairro = 0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -3888,6 +4258,10 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             int jumpTime = 0;
             final int totalProgressTime = JBairros.length();
+            if (Dialog != null) {
+                Dialog.setMax(totalProgressTime);
+                Dialog.setProgress(jumpTime);
+            }
             DB = new ConfigDB(ctxEnv).getReadableDatabase();
 
             for (int i = 0; i < JBairros.length(); i++) {
@@ -3895,6 +4269,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     try {
                         JSONObject c = JBairros.getJSONObject(jumpTime);
                         jumpTime += 1;
+                        if (Dialog != null) {
+                            Dialog.setProgress(jumpTime);
+                        }
                         String NomeBairro = c.getString("bairro");
                         int CodBairroExt = c.getInt("id_bairro");
 
@@ -3961,7 +4338,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 CursPedAtu.moveToFirst();
                 if (CursPedAtu.getCount() > 0) {
                     String dataVenda = Util.DataHojeComHorasBR();
-                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5', DATAVENDA = '"+dataVenda+"' WHERE NUMPED = '" + numPedido + "' AND CODPERFIL = " + idPerfil);
+                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5', DATAVENDA = '" + dataVenda + "' WHERE NUMPED = '" + numPedido + "' AND CODPERFIL = " + idPerfil);
                 }
                 sincAtuPedido = "ok";
                 CursPedAtu.close();
@@ -4331,92 +4708,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         }
         return pedenviado;
 
-    }
-
-    public static Boolean SincAtuEstado(final Context ctxEnv) {
-        String Estado = null;
-        String Cidade = null;
-        String Bairro = null;
-        Boolean AtualizaEst = true;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Estados");
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLDADOSCEP);
-        String RetEstados = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                RetEstados = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetEstados);
-            JSONArray JEstados = jsonObj.getJSONArray("estados");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JEstados.length();
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-
-            Cursor CursorAtu = DB.rawQuery(" SELECT * FROM ESTADOS ", null);
-            if (CursorAtu.getCount() > 0) {
-                AtualizaEst = true;
-                CursorAtu.close();
-            }
-
-            if (AtualizaEst.equals(true)) {
-
-                for (int i = 0; i < JEstados.length(); i++) {
-                    while (jumpTime < totalProgressTime) {
-                        try {
-                            JSONObject c = JEstados.getJSONObject(jumpTime);
-                            jumpTime += 1;
-                            String SiglaEstado = c.getString("uf");
-                            String NomeEstado = c.getString("estado");
-
-                            Cursor CursosEstado = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-
-                            if (CursosEstado.getCount() > 0) {
-                                DB.execSQL(" UPDATE ESTADOS SET UF = '" + SiglaEstado + "', DESCRICAO = '" + NomeEstado + "'" +
-                                        " WHERE UF = '" + SiglaEstado + "'");
-                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-                                cursor1.moveToFirst();
-                                Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
-                                cursor1.close();
-                            } else {
-                                DB.execSQL("INSERT INTO ESTADOS VALUES('" + SiglaEstado + "','" + NomeEstado + "');");
-                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-                                cursor1.moveToFirst();
-                                Estado = cursor1.getString(cursor1.getColumnIndex("UF"));
-                                cursor1.close();
-                            }
-                            CursosEstado.close();
-                            SincAtualizaCidade(Estado, ctxEnv);
-                        } catch (Exception E) {
-                            E.printStackTrace();
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return AtualizaEst;
     }
 
     public static boolean CancelarPedidoAberto(String NumPedido, Context ctxCanc) {
@@ -5827,9 +6118,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                         Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
                         cursor.moveToFirst();
-                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
-                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
-                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade);
+                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO), ctxEnvClie);
+                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado, ctxEnvClie);
+                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade, ctxEnvClie);
                         try {
                             if (cursor.getCount() > 0) {
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
@@ -6199,7 +6490,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 String Totalitem = totvendaitem.toString().replace('.', ',');
 
                 createContent(cb, 30, y, Util.AcrescentaZeros(String.valueOf(item), 3), PdfContentByte.ALIGN_CENTER);
-                createContent(cb, 52, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")), PdfContentByte.ALIGN_CENTER);
+                createContent(cb, 43, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")), PdfContentByte.ALIGN_LEFT);
                 createContent(cb, 102, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")), PdfContentByte.ALIGN_LEFT);
                 createContent(cb, 430, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")), PdfContentByte.ALIGN_RIGHT);
                 createContent(cb, 460, y, CursorItensEnv.getString(CursorItensEnv.getColumnIndex("UNIDADE")), PdfContentByte.ALIGN_LEFT);
@@ -6252,7 +6543,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             cb.setLineWidth(1f);
 
-            // Invoice Detail box layout
+            // Invoice Detail box form_pgto_listview_parcelas
             //cb.rectangle(20, 50, 550, 600);
             cb.rectangle(20, 200, 570, 500);
 
@@ -6896,9 +7187,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                         Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
                         cursor.moveToFirst();
-                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO));
-                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado);
-                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade);
+                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO), this);
+                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado, this);
+                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade, this);
                         try {
                             if (cursor.getCount() > 0) {
                                 DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
