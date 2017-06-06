@@ -33,7 +33,7 @@ public class ListAdapterProdutos extends RecyclerView.Adapter<ListAdapterProduto
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        View v = mLayoutInflater.inflate(R.layout.lstprodutos_card, viewGroup, false);
+        View v = mLayoutInflater.inflate(R.layout.card_produtos, viewGroup, false);
         return new MyViewHolder(v);
     }
 

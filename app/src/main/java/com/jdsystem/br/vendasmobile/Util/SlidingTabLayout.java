@@ -35,7 +35,7 @@ import com.jdsystem.br.vendasmobile.R;
  * which color is used for any individual position.
  * <p>
  * The views used as tabs can be customized by calling {@link #setCustomTabView(int, int)},
- * providing the form_pgto_listview_parcelas ID of your custom form_pgto_listview_parcelas.
+ * providing the listview_parcelas ID of your custom listview_parcelas.
  */
 public class SlidingTabLayout extends HorizontalScrollView {
     private static final int TITLE_OFFSET_DIPS = 24;

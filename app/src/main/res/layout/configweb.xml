@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.jdsystem.br.vendasmobile.ConfigWeb">
+
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/img_fundo_splash"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:id="@+id/act_configweb"
+        android:layout_marginTop="55dp"
+        android:background="@drawable/img_fundo_splash"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="Configuração de Acesso"
+            android:layout_marginTop="10dp"
+            android:textAlignment="center"
+            android:textColor="@color/colorCardClie"
+            android:textSize="20sp"
+            android:textStyle="normal|bold" />
+
+        <EditText
+            android:id="@+id/edthost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView4"
+            android:layout_alignStart="@+id/textView4"
+            android:layout_below="@+id/textView4"
+            android:layout_marginTop="5dp"
+            android:ems="10"
+            android:hint="Digite a chave"
+            android:textColorHint="@color/colorCardClie"
+            android:inputType="textCapCharacters"
+            android:textAllCaps="true"
+            android:textColor="@color/colorCardClie" />
+
+        <Button
+            android:id="@+id/btsalvhost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/edthost"
+            android:layout_marginEnd="19dp"
+            android:layout_marginRight="19dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/colorPrimary"
+            android:onClick="SalvarHost"
+            android:text="Salvar"
+            android:textColor="@color/colorCardClie"
+            android:textSize="15sp"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView3"
+            android:layout_marginLeft="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="10dp"
+            android:text="Chave de acesso:"
+            android:textColor="@color/colorCardClie"
+            android:textSize="16sp" />
+
+        <RelativeLayout
+            android:id="@+id/tabela"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/imageView4"
+            android:layout_below="@+id/btsalvhost"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            tools:ignore="InconsistentLayout">
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <View
+                    android:id="@+id/view0"
+                    android:layout_height="2dip"
+                    android:background="@color/colorPrimary"
+                    tools:ignore="InconsistentLayout" />
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Empresa"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Licença"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/txtexcluir"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Excluir"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold"
+                        tools:ignore="InconsistentLayout" />
+                </TableRow>
+
+                <View
+                    android:id="@+id/view1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="2dip"
+                    android:background="@color/colorPrimary"
+                    tools:ignore="InconsistentLayout" />
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dip">
+
+                    <TextView
+                        android:id="@+id/txtempresa1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Empresa 1"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold"
+                        tools:ignore="InconsistentLayout" />
+
+                    <TextView
+                        android:id="@+id/txtlicenca1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Licença 1"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold" />
+
+                    <Button
+                        android:id="@+id/excluir1"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="X"
+                        android:textColor="@color/colorCardClie"
+                        tools:ignore="InconsistentLayout" />
+                </TableRow>
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_height="2dip"
+                    android:background="@color/colorPrimary"
+                    tools:ignore="InconsistentLayout" />
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dip">
+
+                    <TextView
+                        android:id="@+id/txtempresa2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Empresa 2"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold"
+                        tools:ignore="InconsistentLayout" />
+
+                    <TextView
+                        android:id="@+id/txtlicenca2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Licença 2"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold" />
+
+                    <Button
+                        android:id="@+id/excluir2"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="X"
+                        android:textColor="@color/colorCardClie"
+                        tools:ignore="InconsistentLayout" />
+                </TableRow>
+
+                <View
+                    android:id="@+id/view3"
+                    android:layout_height="2dip"
+                    android:background="@color/colorPrimary"
+                    tools:ignore="InconsistentLayout" />
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dip">
+
+                    <TextView
+                        android:id="@+id/txtempresa3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Empresa 3"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold"
+                        tools:ignore="InconsistentLayout" />
+
+                    <TextView
+                        android:id="@+id/txtlicenca3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dip"
+                        android:text="Licença 3"
+                        android:textColor="@color/colorCardClie"
+                        android:textSize="15sp"
+                        android:textStyle="normal|bold" />
+
+                    <Button
+                        android:id="@+id/excluir3"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="X"
+                        android:textColor="@color/colorCardClie"
+                        tools:ignore="InconsistentLayout" />
+                </TableRow>
+
+                <View
+                    android:id="@+id/view4"
+                    android:layout_height="2dip"
+                    android:background="@color/colorPrimary"
+                    tools:ignore="InconsistentLayout" />
+
+            </TableLayout>
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="match_parent"
+            android:layout_height="145dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            app:srcCompat="@drawable/criptografia"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

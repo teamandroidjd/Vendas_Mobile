@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@color/colorCardClie"
+    android:orientation="vertical"
+    tools:context=".Pagamento.ConfPagamento">
+
+
+    <TextView
+        android:id="@+id/txvdescparcela"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cálculo de parcelas"
+        android:textAlignment="center"
+        android:textColor="@color/colordescClie"
+        android:textSize="15sp"
+        android:textStyle="normal|bold" />
+
+
+    <LinearLayout
+        android:id="@+id/lnrparcelaformpgto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txvdescricaonumparcela"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Parcela: "
+            android:textSize="15sp"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:id="@+id/txvnumparcelaformpgto"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="12"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spnformpgtopercela"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="10sp"></Spinner>
+
+    <LinearLayout
+        android:id="@+id/lnrdiasformpgto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txvdiasparcelaformpgto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Informe os dias para o vencimento: "
+            android:textSize="15sp"
+            android:textStyle="normal|bold" />
+
+
+        <EditText
+            android:id="@+id/edtdiasvencimento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="3" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lnrdataformpgto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txvdescricaodatavencimento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Informe a data do vencimento: "
+            android:textSize="15sp"
+            android:textStyle="normal|bold" />
+
+        <TextView
+            android:id="@+id/txvdatavencimento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="01/01/2017"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lnrvalorparcela"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10sp"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txvdescricaovlparcela"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Informe o valor da parcela: "
+            android:textSize="15sp"
+            android:textStyle="normal|bold" />
+
+        <EditText
+            android:id="@+id/edtvalorparcela"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal" />
+    </LinearLayout>
+</LinearLayout>
+

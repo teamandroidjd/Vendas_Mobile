@@ -29,7 +29,7 @@ public class ListAdapterPedidos extends RecyclerView.Adapter<ListAdapterPedidos.
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Log.i("LOG", "onCreateViewHolder()");
-        View v = mLayoutInflater.inflate(R.layout.lstpedidos_card, viewGroup, false);
+        View v = mLayoutInflater.inflate(R.layout.card_pedidos, viewGroup, false);
         return new MyViewHolder(v);
     }
 

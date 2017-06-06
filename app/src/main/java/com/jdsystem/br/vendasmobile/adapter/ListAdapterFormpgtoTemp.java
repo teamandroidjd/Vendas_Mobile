@@ -45,7 +45,7 @@ public class ListAdapterFormpgtoTemp extends BaseAdapter {
 
         SqliteConfPagamentoBean item = (SqliteConfPagamentoBean) getItem(posicao);
         LayoutInflater layout = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        @SuppressLint("InflateParams") View v = layout.inflate(R.layout.form_pgto_listview_parcelas, null);
+        @SuppressLint("InflateParams") View v = layout.inflate(R.layout.listview_parcelas, null);
 
         TextView parcela = (TextView) v.findViewById(R.id.pgto_lisview_parcela);
         TextView descricaoformpgto = (TextView) v.findViewById(R.id.pgto_lisview_descformpgto);

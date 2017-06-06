@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -173,9 +172,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cad_contatos);
+        setContentView(R.layout.cad_contatos);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         declaraobjetos();
         carregarpreferencias();
 
@@ -1131,9 +1130,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                         } while (cursor.moveToNext());
                         cursor.close();
 
-                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.form_pgto_listview_parcelas.simple_spinner_dropdown_item, DadosList);
+                        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.listview_parcelas.simple_spinner_dropdown_item, DadosList);
                         ArrayAdapter<String> spinnerArrayAdapter = arrayAdapter;
-                        spinnerArrayAdapter.setDropDownViewResource(android.R.form_pgto_listview_parcelas.simple_selectable_list_item);
+                        spinnerArrayAdapter.setDropDownViewResource(android.R.listview_parcelas.simple_selectable_list_item);
                         spCidade.setAdapter(spinnerArrayAdapter);
                     }
                 } catch (Exception E) {
@@ -1562,8 +1561,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
             List<String> DadosListEstado = new ArrayList<String>();
             DadosListEstado.add(Estado);
             sUF = Estado;
-            ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroContatos.this, android.R.form_pgto_listview_parcelas.simple_spinner_dropdown_item, DadosListEstado);
-            arrayAdapterUF.setDropDownViewResource(android.R.form_pgto_listview_parcelas.simple_selectable_list_item);
+            ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroContatos.this, android.R.listview_parcelas.simple_spinner_dropdown_item, DadosListEstado);
+            arrayAdapterUF.setDropDownViewResource(android.R.listview_parcelas.simple_selectable_list_item);
             spUF.setAdapter(arrayAdapterUF);
             spUF.setSelection(ufPosition);
         }catch (Exception E){
@@ -1614,9 +1613,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable {
                 }while(cursor1.moveToNext());
             }
 
-            ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(CadastroContatos.this, android.R.form_pgto_listview_parcelas.simple_spinner_dropdown_item, DadosListCidade);
+            ArrayAdapter<String> arrayAdapterCidade = new ArrayAdapter<String>(CadastroContatos.this, android.R.listview_parcelas.simple_spinner_dropdown_item, DadosListCidade);
             ArrayAdapter<String> spinnerArrayAdapterCidade = arrayAdapterCidade;
-            spinnerArrayAdapterCidade.setDropDownViewResource(android.R.form_pgto_listview_parcelas.simple_selectable_list_item);
+            spinnerArrayAdapterCidade.setDropDownViewResource(android.R.listview_parcelas.simple_selectable_list_item);
             spCidade.setAdapter(spinnerArrayAdapterCidade);
             //spCidade.setSelection(cidadePos);
         }catch (Exception E){

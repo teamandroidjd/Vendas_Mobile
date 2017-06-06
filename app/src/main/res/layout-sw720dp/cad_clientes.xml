@@ -22,7 +22,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp">
+                android:layout_height="60dp">
 
                 <Spinner
                     android:id="@+id/spnTipoPessoa"
@@ -42,8 +42,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Nome Completo"
                     android:inputType="textCapCharacters"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -57,8 +56,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Razão Social"
                     android:inputType="textCapCharacters"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -72,8 +70,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Nome Fantasia"
                     android:inputType="textCapCharacters"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -84,11 +81,11 @@
                     android:id="@+id/EdtCnpjCpf"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
                     android:hint="CNPJ"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLength="19"
+                    android:maxLines="1" />
+
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -102,9 +99,10 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Registro de Identidade"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLength="15"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -118,8 +116,8 @@
                     android:layout_weight="1"
                     android:hint="CPF"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLength="15"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
 
@@ -134,8 +132,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -149,8 +146,8 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Inscrição Estadual"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLines="1" />
+
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
@@ -161,37 +158,34 @@
                 <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    tools:ignore="ExtraText">
+                    android:layout_weight="3">
 
                     <android.support.design.widget.TextInputLayout
                         android:id="@+id/textInputLayout2"
-                        android:layout_width="450dp"
-                        android:layout_height="80dp">
+                        android:layout_width="680dp"
+                        android:layout_height="wrap_content">
 
                         <EditText
                             android:id="@+id/EdtCep"
-                            android:layout_width="400dp"
-                            android:layout_height="70dp"
-                            android:elevation="1dp"
+                            android:layout_width="680dp"
+                            android:layout_height="wrap_content"
+                            android:elevation="1sp"
                             android:hint="CEP"
                             android:inputType="number"
                             android:maxLines="1"
-                            android:textSize="30sp"
                             tools:ignore="UnusedAttribute" />
                     </android.support.design.widget.TextInputLayout>
 
                     <ImageButton
                         android:id="@+id/btnBuscaCep"
-                        android:layout_width="75dp"
-                        android:layout_height="65dp"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/textInputLayout2"
                         android:layout_toRightOf="@+id/textInputLayout2"
                         android:background="@drawable/busca_cep"
                         android:onClick="buscacepclie"
                         tools:ignore="ContentDescription" />
-                    />
                 </RelativeLayout>
 
             </LinearLayout>
@@ -207,8 +201,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Endereço"
                     android:inputType="textCapCharacters"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -222,8 +215,7 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Número"
                     android:inputType="number"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -236,35 +228,59 @@
                     android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:hint="Complemento"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:inputType="textCapCharacters"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp">
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <Spinner
                     android:id="@+id/spnUF"
-                    android:layout_width="match_parent"
+                    android:layout_width="680dp"
                     android:layout_height="match_parent"
                     android:entries="@array/uf"></Spinner>
+
+                <ImageView
+                    android:id="@+id/imgdowncidade"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5sp"
+                    android:layout_marginStart="5sp"
+                    android:onClick="atualizacidades"
+                    android:src="@drawable/download" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp">
+                android:layout_height="60dp"
+                android:id="@+id/lnrcidade"
+                android:orientation="horizontal"
+                android:weightSum="1">
 
                 <Spinner
                     android:id="@+id/spnCidade"
-                    android:layout_width="match_parent"
+                    android:layout_width="680dp"
                     android:layout_height="match_parent"></Spinner>
+
+                <ImageView
+                    android:id="@+id/imgdownbairro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5sp"
+                    android:layout_marginStart="5sp"
+                    android:onClick="atualizabairros"
+
+                    android:src="@drawable/download" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp">
+                android:layout_height="60dp">
 
                 <Spinner
                     android:id="@+id/spnBairro"
@@ -283,8 +299,8 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Telefone"
                     android:inputType="phone"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLength="15"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -298,8 +314,8 @@
                     android:layout_centerHorizontal="true"
                     android:hint="Telefone 2"
                     android:inputType="phone"
-                    android:maxLines="1"
-                    android:textSize="30sp" />
+                    android:maxLength="15"
+                    android:maxLines="1" />
             </android.support.design.widget.TextInputLayout>
 
 
@@ -313,8 +329,7 @@
                     android:layout_height="250dp"
                     android:gravity="start"
                     android:hint="Observação"
-                    android:inputType="textMultiLine"
-                    android:textSize="30sp" />
+                    android:inputType="textMultiLine" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
@@ -323,8 +338,7 @@
                 android:background="@color/colorPrimary"
                 android:onClick="btnsalvar"
                 android:text="Salvar"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
-                android:textSize="35sp" />
+                android:textColor="@color/common_google_signin_btn_text_dark_default" />
         </LinearLayout>
     </ScrollView>
 

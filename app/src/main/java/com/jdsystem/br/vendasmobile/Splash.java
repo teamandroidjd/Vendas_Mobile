@@ -27,7 +27,7 @@ public class Splash extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_ct_splash);
+        setContentView(R.layout.splash);
         StartAnimations();
     }
 
@@ -51,7 +51,7 @@ public class Splash extends Activity {
                 try {
                     int waited = 0;
                     // Splash screen pause time
-                    while (waited < 3000) {
+                    while (waited < 5000) {
                         sleep(100);
                         waited += 100;
                     }

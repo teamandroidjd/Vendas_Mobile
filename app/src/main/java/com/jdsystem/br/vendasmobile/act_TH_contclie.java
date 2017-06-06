@@ -121,7 +121,7 @@ public class act_TH_contclie extends Fragment {
                 String[] colunas = new String[]{"NOME", "CARGO", "EMAIL", "TEL1", "TEL2"};
                 int[] para = new int[]{R.id.lblNomeContato, R.id.lblCargoContato, R.id.lblEmailContato, R.id.lblTel1Contato, R.id.lblTel2Contato};
 
-                SimpleCursorAdapter Adapter = new SimpleCursorAdapter(ctx, R.layout.lstclie_contatos_card, CursorClie, colunas, para, 0);
+                SimpleCursorAdapter Adapter = new SimpleCursorAdapter(ctx, R.layout.card_contatos, CursorClie, colunas, para, 0);
                 lstContatos = (ListView) v.findViewById(R.id.lstcontatos);
                 lstContatos.setAdapter(Adapter);
                 CursorClie.close();

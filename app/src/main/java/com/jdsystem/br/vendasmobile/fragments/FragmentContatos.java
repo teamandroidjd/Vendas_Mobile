@@ -40,7 +40,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_contatos, container, false);
+        View view = inflater.inflate(R.layout.fragment_contatos, container, false);
 
         Bundle params = getArguments();
         if (params != null) {
@@ -77,7 +77,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
         int scrollPosition = 0;
 
-        // If a form_pgto_listview_parcelas manager has already been set, get current scroll position.
+        // If a listview_parcelas manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {
             scrollPosition =
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();

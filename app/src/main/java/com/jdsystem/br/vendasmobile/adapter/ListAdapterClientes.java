@@ -32,7 +32,7 @@ public class ListAdapterClientes extends RecyclerView.Adapter<ListAdapterCliente
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Log.i("LOG", "onCreateViewHolder()");
-        View v = mLayoutInflater.inflate(R.layout.lstclientes_card, viewGroup, false);
+        View v = mLayoutInflater.inflate(R.layout.card_clientes, viewGroup, false);
         return new MyViewHolder(v);
     }
 

@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -47,11 +48,18 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
     private Button btnsalvhost, btnexcluir1, btnexcluir2, btnexcluir3;
     private SQLiteDatabase DB;
     private Handler hd = new Handler();
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_configweb);
+        setContentView(R.layout.configweb);
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        } catch (Exception e) {
+
+        }
 
         declaraobjetos();
         carregarpreferencias();

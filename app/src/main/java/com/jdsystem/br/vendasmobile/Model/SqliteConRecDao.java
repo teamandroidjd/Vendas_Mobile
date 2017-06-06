@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile.Model;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
@@ -68,6 +69,7 @@ public class SqliteConRecDao {
         }
         return gravou;
     }
+
 
     public void excluir_Parcela_Chave(String ChavePedido) {
         db = new ConfigDB(ctx).getWritableDatabase();
@@ -185,7 +187,6 @@ public class SqliteConRecDao {
         return parcelas_geradas;
     }
 
-
     public List<SqliteConRecBean> busca_parcelas_do_cliente(Integer cli_codigo, String vendac_chave) {
         List<SqliteConRecBean> lista_de_pacelas = new ArrayList<SqliteConRecBean>();
 
@@ -295,7 +296,6 @@ public class SqliteConRecDao {
         return lista_de_pacelas;
     }
 
-
     public void atualiza_parcela_enviada_S_N(String enviada_S_N, String vendac_chave, int rec_num_parcela) {
 
         try {
@@ -317,7 +317,6 @@ public class SqliteConRecDao {
         }
 
     }
-
 
     public Cursor busca_parcelas_do_cliente() {
         SqliteConRecBean rec = new SqliteConRecBean();

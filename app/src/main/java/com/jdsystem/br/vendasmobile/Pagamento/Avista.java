@@ -16,7 +16,7 @@ public class Avista implements iPagamento {
 
 
     @Override
-    public void gerar_parcela(SqliteConfPagamentoBean pagamento, SqliteVendaCBean vendaCBean, Context ctx) {
+    public void gerar_parcela(SqliteConfPagamentoBean pagamento, SqliteVendaCBean vendaCBean, Context ctx,Boolean Atupedido) {
 
         String chavePedido = vendaCBean.getVendac_chave();
         new SqliteConRecDao(ctx).excluir_Parcela_Chave(chavePedido);

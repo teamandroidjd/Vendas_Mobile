@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/img_fundo_splash"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -20,12 +21,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_marginBottom="13dp"
         android:background="@color/colorAccent"
         android:onClick="sincronizar"
         android:text="Sincronizar"
         android:textAllCaps="false"
         android:textColor="#fff"
-        android:textSize="20sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textView5"
@@ -37,7 +39,7 @@
         android:gravity="center"
         android:text="Sincronização"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/colorCardClie" />
 
     <RelativeLayout
         android:layout_width="match_parent"

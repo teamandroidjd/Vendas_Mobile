@@ -31,7 +31,7 @@
         <activity
             android:name=".Login"
             android:label="Força de Vendas"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity
@@ -72,6 +72,7 @@
         <activity
             android:name=".ConfigWeb"
             android:label="Configuração da licença"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ConsultaProdutos"

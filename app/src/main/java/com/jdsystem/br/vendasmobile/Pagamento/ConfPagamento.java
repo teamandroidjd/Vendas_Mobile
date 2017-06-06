@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +23,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -52,14 +52,9 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
     private EditText conf_txtqtdparcelas, conf_txtvalorrecebido, edtdiasvenc;
-    private TextView conf_txvvalorvenda, txvdatavenc, conf_valorparcela, conf_valorparcela2, conf_valorparcela3,
-            conf_valorparcela4, conf_valorparcela5, conf_valorparcela6, conf_valorparcela7, conf_valorparcela8, conf_valorparcela9, conf_valorparcela10,
-            conf_valorparcela11, conf_valorparcela12, conf_txvlabelvalorrecebido, conf_txvlabelparcelas;
+    private TextView conf_txvvalorvenda, txvdatavenc, conf_txvlabelparcelas, txvValorRestante;
     private Spinner conf_spfpgto;
     FloatingActionButton btnincluirpagamento;
-    //private List<String> array_forma_pagamento = new ArrayList<String>();
-    //private ArrayAdapter<String> arrayAdapter;
-    private String RECEBIMENTO_DIN_CAR_CHQ = "";
     private String TIPO_PAGAMENTO = "";
     private String ChavePedido = "";
     private Double SUBTOTAL_VENDA;
@@ -68,8 +63,6 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     private HorizontalScrollView hScroll;
     private float mx, my;
     private float curX, curY;
-    private String din_boleto, avista_parcelado, qtdparcelas;
-    private RadioButton conf_rbdinheiro, conf_rbboleto;
     private SqliteConfPagamentoDao confDao;
     private SqliteConfPagamentoBean confBean;
     private List<SqliteConfPagamentoBean> itens_temp = new ArrayList<>();
@@ -88,7 +81,6 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         carregarpreferencias();
         //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
-
         Intent INTENT_SOBTOTAL_VENDA = getIntent();
         SUBTOTAL_VENDA = INTENT_SOBTOTAL_VENDA.getDoubleExtra("SUBTOTAL_VENDA", 0);
         Intent INTENT_CLI_CODIGO = getIntent();
@@ -97,12 +89,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         AtuPedido = INTENT_CLI_CODIGO.getBooleanExtra("AtuPedido", false);
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
         conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-        //BigDecimal VALORRECEBIDO = new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, BigDecimal.ROUND_UP);
-        /*array_forma_pagamento.add(getString(R.string.confpagamento_avista));
-        array_forma_pagamento.add(getString(R.string.confpagamento_parcelado));
-        arrayAdapter = new ArrayAdapter<String>(this, simple_spinner_dropdown_item, array_forma_pagamento);
-        conf_spfpgto.setAdapter(arrayAdapter);*/
-
+        txvValorRestante.setVisibility(View.GONE);
 
         carregaformapagamento();
         atualizalistviewparcelas();
@@ -114,19 +101,29 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         idPerfil = prefs.getInt("idperfil", 0);
     }
 
-    public void incluirformapagamento(View view) {
+    public void incluirformapagamento(final View view) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Atenção");
         builder.setCancelable(true);
         builder.setMessage("Deseja incluir parcela?");
         builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
+                        carregarparcelas();
+                        int parcelas = 0;
+                        if (qtdparcela == null) {
+                            parcelas += 1;
+                            //qtdparcela = String.valueOf(1);
+                        } else {
+                            parcelas = Integer.parseInt(qtdparcela);
+                            parcelas += 1;
+                        }
 
                         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.info_form_pgto, null);
-                        AlertDialog.Builder alerta = new AlertDialog.Builder(ConfPagamento.this);
+                        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.input_form_pgto, null);
+                        final AlertDialog.Builder alerta = new AlertDialog.Builder(ConfPagamento.this);
                         alerta.setCancelable(false);
                         alerta.setView(v);
+
 
                         TextView desctotalvend = (TextView) v.findViewById(R.id.txvdescparcela);
                         TextView numparcela = (TextView) v.findViewById(R.id.txvnumparcelaformpgto);
@@ -135,10 +132,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                         txvdatavenc = (TextView) v.findViewById(R.id.txvdatavencimento);
                         final EditText edtvlparcela = (EditText) v.findViewById(R.id.edtvalorparcela);
 
+                        numparcela.setText(String.valueOf(parcelas));
+
                         Cursor cursorformpgto = DB.rawQuery("SELECT DESCRICAO FROM FORMAPAGAMENTO WHERE STATUS = 'A' AND CODPERFIL = " + idPerfil, null);
                         cursorformpgto.moveToFirst();
                         List<String> DadosList = new ArrayList<String>();
-                        DadosList.add("Selecione a forma de pagamento");
                         if (cursorformpgto.getCount() > 0) {
                             do {
                                 DadosList.add(cursorformpgto.getString(cursorformpgto.getColumnIndex("DESCRICAO")));
@@ -200,42 +198,63 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                             }
                         });
 
+                        final int finalParcelas = parcelas;
                         alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (AtuPedido) {
                                     String vlparcela = edtvlparcela.getText().toString();
+                                    if (vlparcela.equals("0") || vlparcela.equals("")) {
+                                        Util.msg_toast_personal(getBaseContext(), "Informe o valor da parcela", Util.ALERTA);
+                                        return;
+
+                                    } else if (Double.parseDouble(vlparcela) > SUBTOTAL_VENDA) {
+                                        Util.msg_toast_personal(getBaseContext(), "Valor superior ao total do pedido. Verifique!", Util.ALERTA);
+                                        return;
+                                    }
                                     BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.')));
                                     vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
                                     try {
-                                            DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
-                                                    "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
-                                                    "'" + String.valueOf(codformpgto) +
-                                                    "','" + edtdiasvenc +
-                                                    "','" + TIPO_PAGAMENTO +
-                                                    "','" + vlparcela +
-                                                    "'," + qtdparcela +
-                                                    ",'" + ChavePedido +
-                                                    "','" + TIPO_PAGAMENTO +
-                                                    "','S'" +
-                                                    ", " + idPerfil +
-                                                    ", '" + txvdatavenc.getText().toString() + "');");
+                                        DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
+                                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                                "'" + String.valueOf(codformpgto) +
+                                                "','" + edtdiasvenc.getText().toString() +
+                                                "','" + TIPO_PAGAMENTO +
+                                                "','" + vlparcela +
+                                                "'," + finalParcelas +
+                                                ",'" + ChavePedido +
+                                                "','" + TIPO_PAGAMENTO +
+                                                "','S'" +
+                                                ", " + idPerfil +
+                                                ", '" + txvdatavenc.getText().toString() + "');");
 
                                     } catch (Exception e) {
                                         e.toString();
                                     }
+                                    flag = 1;
+                                    conf_txtqtdparcelas.setText(String.valueOf(finalParcelas));
+                                    atualizalistviewparcelas();
                                 } else {
+                                    ChavePedido = "";
                                     String vlparcela = edtvlparcela.getText().toString();
+                                    if (vlparcela.equals("0") || vlparcela.equals("")) {
+                                        Util.msg_toast_personal(getBaseContext(), "Informe o valor da parcela", Util.ALERTA);
+                                        return;
+
+                                    } else if (Double.parseDouble(vlparcela) > SUBTOTAL_VENDA) {
+                                        Util.msg_toast_personal(getBaseContext(), "Valor superior ao total do pedido. Verifique!", Util.ALERTA);
+                                        return;
+                                    }
                                     BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.')));
                                     vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                                     try {
                                         DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
                                                 "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
                                                 "'" + String.valueOf(codformpgto) +
-                                                "','" + edtdiasvenc +
+                                                "','" + edtdiasvenc.getText().toString() +
                                                 "','" + TIPO_PAGAMENTO +
                                                 "','" + vlparcela +
-                                                "'," + qtdparcela +
+                                                "'," + finalParcelas +
                                                 ",'" + ChavePedido +
                                                 "','" + TIPO_PAGAMENTO +
                                                 "','S'" +
@@ -245,18 +264,21 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                                         e.toString();
                                     }
                                 }
+                                flag = 1;
+                                conf_txtqtdparcelas.setText(String.valueOf(finalParcelas));
                                 atualizalistviewparcelas();
-
                             }
                         });
 
                         alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                atualizalistviewparcelas();
                             }
                         });
 
                         alerta.show();
+
                     }
                 }
         );
@@ -267,8 +289,9 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 }
         );
         builder.create().show();
-    }
 
+
+    }
 
     private void carregaformapagamento() {
         SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
@@ -293,15 +316,18 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         if (AtuPedido) {
             confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
             if (confBean != null) {
+                carregarparcelas();
+                //if (qtdparcela.equals("1")) {
                 TIPO_PAGAMENTO = confBean.getConf_descformpgto();
                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ConfPagamento.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
                 arrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                 int pos = arrayAdapter.getPosition(TIPO_PAGAMENTO);
                 conf_spfpgto.setSelection(pos);
-                carregarparcelas();
+                //}
                 //confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
-                conf_txtqtdparcelas.setText(qtdparcela);
                 flag = 1;
+                conf_txtqtdparcelas.setText(qtdparcela);
+                atualizalistviewparcelas();
             }
 
         } else {
@@ -438,55 +464,16 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         return true;
     }
 
-
     public void salvar_fpgto(View v) {
 
         if (validar_forma_de_pagamento()) {
-
-            /*if (ChavePedido == null) {
-                new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
-            } else {
-                new SqliteConfPagamentoDao(this).excluir_FormaPgto_Chave(ChavePedido);
-            }
-
-
-            Util.log("TIPO_PAGAMENTO :" + TIPO_PAGAMENTO);
-            Util.log("PARCELAS :" + conf_txtqtdparcelas.getText().toString());
-            String COMENTRADA_SEMENTRADA = "";
-            Util.log("COM_ENTRADA :" + COMENTRADA_SEMENTRADA);
-            Util.log("VALOR_RECEBIDO :" + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-            Util.log("COMO_RECEBEU :" + TIPO_PAGAMENTO);
-
-            String rec = conf_txtvalorrecebido.getText().toString();
-
-            new SqliteConfPagamentoDao(this).gravar_CONFPAGAMENTO(
-                    new SqliteConfPagamentoBean(
-                            COMENTRADA_SEMENTRADA,
-                            TIPO_PAGAMENTO,
-                            TIPO_PAGAMENTO,
-                            new BigDecimal(conf_txtvalorrecebido.getText().toString().trim()).setScale(2, RoundingMode.HALF_EVEN),
-                            Integer.parseInt(conf_txtqtdparcelas.getText().toString()),
-                            "",
-                            "N",
-                            String.valueOf(codformpgto),
-                            "30",
-                            descformpgto,
-                            "30/05/2017"
-                    ), AtuPedido, ChavePedido
-            );
-
-            SharedPreferences.Editor editor = getSharedPreferences(DADOS_PG, MODE_PRIVATE).edit();
-            editor.putString("avista_parcelado", TIPO_PAGAMENTO);
-            editor.putString("din_boleto", RECEBIMENTO_DIN_CAR_CHQ);
-            editor.commit();*/
-
             finish();
         }
     }
 
     private boolean validar_forma_de_pagamento() {
         boolean fechar = true;
-        if (TIPO_PAGAMENTO.equals("Selecione a forma de pagamento")) {
+        if (itens_temp.isEmpty()) {
             fechar = false;
             Util.msg_toast_personal(getBaseContext(), "Informe a forma de pagamento", Util.ALERTA);
         }
@@ -497,7 +484,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         }
         if (AtuPedido) {
             try {
-                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '" + ChavePedido + "' AND CODPERFIL = " + idPerfil, null);
+                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '" + ChavePedido + "' AND conf_temp = 'N' AND CODPERFIL = " + idPerfil, null);
                 cursorconfpagamento.moveToFirst();
                 if (cursorconfpagamento.getCount() > 0) {
                     double vltotal = 0;
@@ -510,7 +497,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                     vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
                     if (vltotal != SUBTOTAL_VENDA) {
                         fechar = false;
-                        Util.msg_toast_personal(getBaseContext(), "Valor total das parcelas defere do valor total do pedido. Verifique!", Util.ALERTA);
+                        Util.msg_toast_personal(getBaseContext(), "Valor total das parcelas difere do valor total do pedido. Verifique!", Util.ALERTA);
                     }
                 }
             } catch (Exception e) {
@@ -520,7 +507,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             }
         } else {
             try {
-                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '' AND CODPERFIL = " + idPerfil, null);
+                Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '' AND conf_temp = 'N' AND CODPERFIL = " + idPerfil, null);
                 cursorconfpagamento.moveToFirst();
                 if (cursorconfpagamento.getCount() > 0) {
                     double vltotal = 0;
@@ -597,11 +584,14 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         }
         if (TIPO_PAGAMENTO.equals("Selecione a forma de pagamento")) {
             Util.msg_toast_personal(getBaseContext(), "Informe a forma de pagamento", Util.ALERTA);
+            flag = 1;
+            conf_txtqtdparcelas.setText("");
             return;
         }
         if (valor_digitado.toString().equals("")) {
             if (AtuPedido) {
-                confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
+                //confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
+                new SqliteConfPagamentoDao(this).excluir_FormaPgto_Chave(ChavePedido);
 
             } else {
                 new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
@@ -613,7 +603,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             return;
         }
         if (AtuPedido) {
-            confBean = confDao.busca_CONFPAGAMENTO_Pedido(ChavePedido);
+            new SqliteConfPagamentoDao(this).excluir_FormaPgto_Chave(ChavePedido);
             String date = Util.DataHojeSemHorasBR();
             SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy");
             Calendar newCalendar = Calendar.getInstance();
@@ -640,7 +630,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                     date = dateFormatterBR.format(newCalendar.getTime());
                     if (qtdparcela == 1) {
                         DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
-                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL, conf_temp,CONF_DATA_VENCIMENTO)VALUES(" +
                                 "'" + String.valueOf(codformpgto) +
                                 "','" + dias +
                                 "','" + TIPO_PAGAMENTO +
@@ -650,10 +640,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                                 "','" + TIPO_PAGAMENTO +
                                 "','S'" +
                                 ", " + idPerfil +
+                                ", 'N'" +
                                 ", '" + date + "');");
                     } else {
                         DB.execSQL("INSERT INTO CONFPAGAMENTO(CONF_CODFORMPGTO_EXT,CONF_DIAS_VENCIMENTO,conf_descricao_formpgto,conf_valor_recebido,conf_parcelas," +
-                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,CONF_DATA_VENCIMENTO)VALUES(" +
+                                "vendac_chave,conf_tipo_pagamento,conf_sementrada_comentrada,CODPERFIL,conf_temp,CONF_DATA_VENCIMENTO)VALUES(" +
                                 "'" + String.valueOf(codformpgto) +
                                 "','" + dias +
                                 "','" + TIPO_PAGAMENTO +
@@ -663,12 +654,13 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                                 "','" + TIPO_PAGAMENTO +
                                 "','S'" +
                                 ", " + idPerfil +
+                                ", 'N'" +
                                 ", '" + date + "');");
                     }
 
 
                 } while (qtdparcela < Integer.parseInt(String.valueOf(valor_digitado)));
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
             }
 
@@ -730,29 +722,16 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
 
                 } while (qtdparcela < Integer.parseInt(String.valueOf(valor_digitado)));
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
             }
 
             atualizalistviewparcelas();
         }
-
-
-        /*String vl = valor_digitado.toString();
-        if (!vl.equals("0") && !vl.equals("")) {
-            String QUANTIDADE_PARCELAS = conf_txtqtdparcelas.getText().toString();
-            BigDecimal divisor = new BigDecimal(Integer.parseInt(QUANTIDADE_PARCELAS));
-            BigDecimal valor_venda = new BigDecimal(SUBTOTAL_VENDA.toString());
-            BigDecimal valor_parcela = valor_venda.divide(divisor, 2, BigDecimal.ROUND_DOWN);
-            BigDecimal recalculo = valor_parcela.multiply(divisor);
-            BigDecimal diferenca = valor_venda.subtract(recalculo);
-            BigDecimal parc_1 = valor_parcela.add(diferenca);
-        }*/
-
     }
 
     private void atualizalistviewparcelas() {
-        if(AtuPedido) {
+        if (AtuPedido) {
             itens_temp = new SqliteConfPagamentoDao(getApplicationContext()).busca_todos_CONFPAGAMENTO_nao_enviados(ChavePedido);
             ListView_formapgto.setAdapter(new ListAdapterFormpgtoTemp(getApplicationContext(), itens_temp));
             ListView_formapgto.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -773,6 +752,66 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             });
 
         }
+        if(!itens_temp.isEmpty()){
+            if (AtuPedido) {
+                try {
+                    Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '" + ChavePedido + "' AND conf_temp = 'N' AND CODPERFIL = " + idPerfil, null);
+                    cursorconfpagamento.moveToFirst();
+                    if (cursorconfpagamento.getCount() > 0) {
+                        double vltotal = 0;
+                        do {
+                            double vlparcela = cursorconfpagamento.getDouble(cursorconfpagamento.getColumnIndex("conf_valor_recebido"));
+                            vltotal = vltotal + vlparcela;
+                        } while (cursorconfpagamento.moveToNext());
+                        cursorconfpagamento.close();
+                        BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
+                        BigDecimal subtotal = new BigDecimal(SUBTOTAL_VENDA).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        if (vltotal != SUBTOTAL_VENDA) {
+                            BigDecimal vlrestante = subtotal.subtract(BigDecimal.valueOf(vltotal));
+                            txvValorRestante.setVisibility(View.VISIBLE);
+                            txvValorRestante.setText(String.valueOf("Valor restante: "+vlrestante));
+                            txvValorRestante.setTextColor(Color.RED);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.toString();
+
+                }
+            } else {
+                try {
+                    Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '' AND conf_temp = 'N' AND CODPERFIL = " + idPerfil, null);
+                    cursorconfpagamento.moveToFirst();
+                    if (cursorconfpagamento.getCount() > 0) {
+                        double vltotal = 0;
+                        do {
+                            double vlparcela = cursorconfpagamento.getDouble(cursorconfpagamento.getColumnIndex("conf_valor_recebido"));
+                            BigDecimal VALORRECEBIDO = new BigDecimal(vlparcela).setScale(2, BigDecimal.ROUND_HALF_UP);
+                            vlparcela = Double.parseDouble(String.valueOf(VALORRECEBIDO));
+                            vltotal = vltotal + vlparcela;
+                        } while (cursorconfpagamento.moveToNext());
+                        cursorconfpagamento.close();
+                        BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
+                        BigDecimal subtotal = new BigDecimal(SUBTOTAL_VENDA).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        SUBTOTAL_VENDA = Double.parseDouble(String.valueOf(subtotal));
+                        if (vltotal != SUBTOTAL_VENDA) {
+                            BigDecimal vlrestante = subtotal.subtract(BigDecimal.valueOf(vltotal));
+                            txvValorRestante.setVisibility(View.VISIBLE);
+                            txvValorRestante.setText(String.valueOf("Valor restante: "+vlrestante).replace(".",","));
+                            txvValorRestante.setTextColor(Color.RED);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.toString();
+
+                }
+
+            }
+
+        } else {
+            txvValorRestante.setVisibility(View.GONE);
+        }
     }
 
     private void alteraexcluiparcela(final AdapterView<?> listview1, final int posicao) {
@@ -787,7 +826,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
 
                         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.info_form_pgto, null);
+                        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.input_form_pgto, null);
                         AlertDialog.Builder alerta = new AlertDialog.Builder(ConfPagamento.this);
                         alerta.setCancelable(false);
                         alerta.setView(v);
@@ -878,13 +917,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                                         descricaoformpgto[0] = descformpgto;
                                     }
                                     String vlparcela = edtvlparcela.getText().toString();
-                                    BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.')));
-                                    vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                    BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.'))).setScale(2, BigDecimal.ROUND_HALF_UP);
                                     try {
                                         DB.execSQL("UPDATE CONFPAGAMENTO SET CONF_CODFORMPGTO_EXT = '" + codformpgto +
                                                 "',CONF_DIAS_VENCIMENTO = '" + edtdiasvenc.getText().toString() +
                                                 "',conf_descricao_formpgto = '" + descricaoformpgto[0] +
-                                                "',conf_valor_recebido = '" + vlparcela +
+                                                "',conf_valor_recebido = '" + valorparcela +
                                                 "',conf_parcelas = '" + parc.getConf_parcelas().toString() +
                                                 "',vendac_chave = '" + ChavePedido +
                                                 "',conf_tipo_pagamento = '" + TIPO_PAGAMENTO +
@@ -899,13 +937,13 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                                         descricaoformpgto[0] = descformpgto;
                                     }
                                     String vlparcela = edtvlparcela.getText().toString();
-                                    BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.')));
-                                    vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                                    BigDecimal valorparcela = new BigDecimal(Double.parseDouble(vlparcela.replace(',', '.'))).setScale(2, BigDecimal.ROUND_HALF_UP);
+                                    //vlparcela = valorparcela.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                                     try {
                                         DB.execSQL("UPDATE CONFPAGAMENTO SET CONF_CODFORMPGTO_EXT = '" + codformpgto +
                                                 "',CONF_DIAS_VENCIMENTO = '" + edtdiasvenc.getText().toString() +
                                                 "',conf_descricao_formpgto = '" + descricaoformpgto[0] +
-                                                "',conf_valor_recebido = '" + vlparcela +
+                                                "',conf_valor_recebido = '" + valorparcela +
                                                 "',conf_parcelas = '" + parc.getConf_parcelas().toString() +
                                                 "',vendac_chave = ''" +
                                                 ",conf_tipo_pagamento = '" + TIPO_PAGAMENTO +
@@ -936,13 +974,25 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                         if (AtuPedido) {
                             BigDecimal qtdparcela = new BigDecimal(conf_txtqtdparcelas.getText().toString());
                             qtdparcela = qtdparcela.subtract(BigDecimal.valueOf(1));
-                            new SqliteConfPagamentoDao(getApplicationContext()).excluir_CONFPAGAMENTO();
-                            conf_txtqtdparcelas.setText(qtdparcela.toString());
+                            new SqliteConfPagamentoDao(getApplicationContext()).exluiparcela(parc.getConf_codigo());
+                            if (qtdparcela.equals("0")) {
+                                flag = 1;
+                                conf_txtqtdparcelas.setText("");
+                            } else {
+                                flag = 1;
+                                conf_txtqtdparcelas.setText(qtdparcela.toString());
+                            }
                         } else {
                             BigDecimal qtdparcela = new BigDecimal(conf_txtqtdparcelas.getText().toString());
                             qtdparcela = qtdparcela.subtract(BigDecimal.valueOf(1));
-                            new SqliteConfPagamentoDao(getApplicationContext()).excluir_CONFPAGAMENTO();
-                            conf_txtqtdparcelas.setText(qtdparcela.toString());
+                            new SqliteConfPagamentoDao(getApplicationContext()).exluiparcela(parc.getConf_codigo());
+                            if (qtdparcela.equals("0")) {
+                                flag = 1;
+                                conf_txtqtdparcelas.setText("");
+                            } else {
+                                flag = 1;
+                                conf_txtqtdparcelas.setText(qtdparcela.toString());
+                            }
                         }
                         atualizalistviewparcelas();
                     }
@@ -973,7 +1023,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
     private String calcular_data_parcela(CharSequence char_digitado) throws ParseException {
         if (char_digitado.toString().equals("") || char_digitado.toString().equals("0")) {
-            txvdatavenc.setText(Util.DataHojeSemHorasBR());
+            txvdatavenc.setText(Util.DataHojeSemHorasBR().toString());
+            return Util.DataHojeSemHorasBR().toString();
         }
         String date = Util.DataHojeSemHorasBR();
         SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy");
@@ -986,11 +1037,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         return date;
     }
 
-
     private void declaraObjetosListeners() {
         confDao = new SqliteConfPagamentoDao(this);
         confBean = new SqliteConfPagamentoBean();
         DB = new ConfigDB(this).getReadableDatabase();
+        txvValorRestante = (TextView) findViewById(R.id.txvvalortotalrestante);
         conf_txvvalorvenda = (TextView) findViewById(R.id.conf_txvvalorvenda);
         conf_txvlabelparcelas = (TextView) findViewById(R.id.conf_txvlabelparcelas);
         conf_spfpgto = (Spinner) findViewById(R.id.conf_spfpgto);
@@ -1022,58 +1073,10 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             public void afterTextChanged(Editable s) {
             }
         });
-
-
-
-        /*mostraCalendario();
-
-        conf_txtvalorrecebido = (EditText) findViewById(R.id.conf_txtvalorrecebido);
-        conf_txvlabelvalorrecebido = (TextView) findViewById(R.id.conf_txvlabelvalorrecebido);
-        conf_valorparcela = (TextView) findViewById(R.id.conf_valorparcela);
-        conf_valorparcela2 = (TextView) findViewById(R.id.conf_valorparcela2);
-        conf_valorparcela3 = (TextView) findViewById(R.id.conf_valorparcela3);
-        conf_valorparcela4 = (TextView) findViewById(R.id.conf_valorparcela4);
-        conf_valorparcela5 = (TextView) findViewById(R.id.conf_valorparcela5);
-        conf_valorparcela6 = (TextView) findViewById(R.id.conf_valorparcela6);
-        conf_valorparcela7 = (TextView) findViewById(R.id.conf_valorparcela7);
-        conf_valorparcela8 = (TextView) findViewById(R.id.conf_valorparcela8);
-        conf_valorparcela9 = (TextView) findViewById(R.id.conf_valorparcela9);
-        conf_valorparcela10 = (TextView) findViewById(R.id.conf_valorparcela10);
-        conf_valorparcela11 = (TextView) findViewById(R.id.conf_valorparcela11);
-        conf_valorparcela12 = (TextView) findViewById(R.id.conf_valorparcela12);
-        conf_spfpgto = (Spinner) findViewById(R.id.conf_spfpgto);
-        conf_rgPagamentos = (RadioGroup) findViewById(R.id.conf_rgPagamentos);
-
-
-        vScroll = (ScrollView) findViewById(R.id.scrollView);
-        hScroll = (HorizontalScrollView) findViewById(R.id.scrollViewh);
-
-        conf_spfpgto.setOnItemSelectedListener(this);
-        conf_rgPagamentos.setOnCheckedChangeListener(this);
-
-        conf_rbdinheiro = (RadioButton) findViewById(R.id.conf_rbdinheiro);
-        conf_rbboleto = (RadioButton) findViewById(R.id.conf_rbboleto);
-
-
-        conf_txtqtdparcelas.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence char_digitado, int start, int before, int count) {
-                calcular_valor_parcela(char_digitado);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });*/
     }
 
-
     private void mostraCalendario() {
-        /*SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+        SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
         SimpleDateFormat dateFormatterUSA = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Calendar newCalendar = Calendar.getInstance();
         DatePickerDialog datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -1081,13 +1084,15 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
             }
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));*/
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
     }
-
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
+        if (!AtuPedido) {
+            new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
+        }
+
     }
 }

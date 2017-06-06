@@ -270,7 +270,7 @@ public class ConsultaPedidos extends AppCompatActivity
                                     params.putString(getString(R.string.intent_senha), senha);
                                     params.putInt(getString(R.string.intent_flag), 2);
                                     intent.putExtras(params);
-                                    startActivityForResult(intent, 1);
+                                    startActivity(intent);
                                 } catch (Exception E) {
                                     System.out.println("Error" + E);
                                 }
@@ -300,7 +300,7 @@ public class ConsultaPedidos extends AppCompatActivity
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
                 intent.putExtras(params);
-                startActivityForResult(intent, 1);
+                startActivity(intent);
             }
         } catch (Exception E) {
             E.toString();

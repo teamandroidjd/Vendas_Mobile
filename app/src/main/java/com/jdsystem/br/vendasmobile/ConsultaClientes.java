@@ -489,6 +489,9 @@ public class ConsultaClientes extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        if(telaInvocada != null && telaInvocada.equals("CadastroPedidos")){
+            finish();
+        }
         switch (flag) {
             case 0:
                 Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);

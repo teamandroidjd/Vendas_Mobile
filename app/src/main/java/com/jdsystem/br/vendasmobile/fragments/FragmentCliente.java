@@ -301,7 +301,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
         if (CodigoClienteExterno == null) {
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            @SuppressLint("InflateParams") final View formElementsView = inflater.inflate(R.layout.alterar_cliente, null, false);
+            @SuppressLint("InflateParams") final View formElementsView = inflater.inflate(R.layout.input_alterar_cliente, null, false);
             final RadioGroup genderRadioGroup = (RadioGroup) formElementsView.findViewById(R.id.genderRadioGroup);
             new AlertDialog.Builder(getActivity()).setView(formElementsView)
                     .setTitle("Cliente: " + nomeRazao)

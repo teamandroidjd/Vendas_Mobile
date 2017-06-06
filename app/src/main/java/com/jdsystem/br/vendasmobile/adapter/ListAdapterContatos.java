@@ -32,7 +32,7 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Log.i("LOG", "onCreateViewHolder()");
-        View v = mLayoutInflater.inflate(R.layout.lstclie_contatos_card, viewGroup, false);
+        View v = mLayoutInflater.inflate(R.layout.card_contatos, viewGroup, false);
         return new MyViewHolder(v);
     }
 

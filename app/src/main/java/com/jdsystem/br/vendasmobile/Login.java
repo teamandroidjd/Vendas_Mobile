@@ -26,6 +26,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -63,7 +64,7 @@ public class Login extends AppCompatActivity implements Runnable {
     private static final int REQUEST_READ_PHONE_STATE = 0;
     public String Retorno = "0";
     public SharedPreferences prefs;
-    public String usuario, senha, URLPrincipal, sCodVend, UFVendedor, qtdperfil,habcadclie;
+    public String usuario, senha, URLPrincipal, sCodVend, UFVendedor, qtdperfil, habcadclie;
     public TextView txvcopyright, txvversao, txvempresa;
     Spinner spPerfilInput;
     Boolean ConexOk;
@@ -74,6 +75,7 @@ public class Login extends AppCompatActivity implements Runnable {
     private ProgressDialog Dialogo;
     private Handler handler = new Handler();
     private String codVendedor = "0";
+    Toolbar toolbar;
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -84,7 +86,13 @@ public class Login extends AppCompatActivity implements Runnable {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_act_login);
+        setContentView(R.layout.login);
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        } catch (Exception e) {
+
+        }
 
         declaraobjetos();
         carregarpreferencias();
@@ -355,11 +363,11 @@ public class Login extends AppCompatActivity implements Runnable {
                 UFVendedor = user.getString("uf");
 
                 String permissao = user.getString("permissoes");
-                permissao = "{\"codpermissao\":"+permissao+"}";
+                permissao = "{\"codpermissao\":" + permissao + "}";
                 JSONObject jsonObjpermissap = new JSONObject(permissao);
                 JSONArray JPermissao = jsonObjpermissap.getJSONArray("codpermissao");
                 JSONObject tt = JPermissao.getJSONObject(0);
-                habcadclie =  tt.getString("codpermissao"); // 1= permite cadastrar clientes
+                habcadclie = tt.getString("codpermissao"); // 1= permite cadastrar clientes
 
 
             } catch (Exception e) {
@@ -442,7 +450,7 @@ public class Login extends AppCompatActivity implements Runnable {
                         return;
                     }
                 } while (HabUsuarioApp == null && j <= 20);
-                if(HabUsuarioApp.equals("True")){
+                if (HabUsuarioApp.equals("True")) {
                     SharedPreferences.Editor edtEmp = getSharedPreferences(COD_EMPRESA, MODE_PRIVATE).edit();
                     edtEmp.putString("codempresa", CodEmpresa);
                     edtEmp.apply();
@@ -460,11 +468,11 @@ public class Login extends AppCompatActivity implements Runnable {
                         } else {
                             CadastrarLogin(usuario, pass, codVendedor, CodEmpresa, habcadclie); // Cadastra usuário.
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.toString();
                     }
 
-                }else {
+                } else {
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
@@ -532,7 +540,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.updating_contacts));
                         }
                     });
-                    Sincronismo.SincronizarContatosEnvioStatic(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(),null,null,null);
+                    Sincronismo.SincronizarContatosEnvioStatic(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -548,7 +556,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             }
                         }
                     });
-                    Sincronismo.SincAtualizaCidade(UFVendedor, Login.this,Dialogo);
+                    Sincronismo.SincAtualizaCidadeBairro(UFVendedor, Login.this, Dialogo);
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
@@ -604,14 +612,14 @@ public class Login extends AppCompatActivity implements Runnable {
                         }
                     });
 
-                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(),null,null,null);
+                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_contacts));
                         }
                     });
-                    Sincronismo.SincronizarContatosEnvioStatic(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(),null,null,null);
+                    Sincronismo.SincronizarContatosEnvioStatic(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -782,7 +790,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 CursorLogin.moveToFirst();
                 CodVend = CursorLogin.getInt(CursorLogin.getColumnIndex("CODVEND"));
             } else {
-                DB.execSQL("INSERT INTO USUARIOS (CODVEND, USUARIO, SENHA, CODEMPRESA, CODPERFIL, HABCADCLIE) VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + "," + idPerfil + ", '"+habcadclie+"');");
+                DB.execSQL("INSERT INTO USUARIOS (CODVEND, USUARIO, SENHA, CODEMPRESA, CODPERFIL, HABCADCLIE) VALUES(" + CodVendedor + ",'" + NomeUsuario + "','" + Senha + "'," + CodEmpresa + "," + idPerfil + ", '" + habcadclie + "');");
                 Cursor cursor1 = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODVEND = " + CodVendedor + " AND CODEMPRESA = " + CodEmpresa, null);
                 cursor1.moveToFirst();
                 CodVend = cursor1.getInt(cursor1.getColumnIndex("CODVEND"));

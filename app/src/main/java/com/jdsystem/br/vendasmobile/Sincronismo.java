@@ -2099,14 +2099,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         String status = "I";
 
                         try {
-                            if(jumpTime == 1) {
+                            if (jumpTime == 1) {
                                 Cursor CursorFormpgto = DB.rawQuery(" SELECT * FROM FORMAPAGAMENTO WHERE CODPERFIL = " + idPerfil, null);
                                 CursorFormpgto.moveToFirst();
                                 if (CursorFormpgto.getCount() > 0) {
                                     DB.execSQL("UPDATE FORMAPAGAMENTO SET STATUS = '" + status + "' WHERE CODPERFIL = " + idPerfil);
                                 }
                             }
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             e.toString();
                         }
 
@@ -2125,7 +2125,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     " VALUES(" + "" + idPerfil + "," +
                                     " '" + descricao.trim() + "'," +
                                     " '" + cod_formapg.trim() + "'," +
-                                    " '" + status +"');");
+                                    " '" + status + "');");
                         }
                         sincformpgto = "OK";
                         CursorFormpgto.close();
@@ -2407,7 +2407,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincclieenvstatic;
     }
 
-    public static void SincronizarContatosClientesStatic(final Context ctxEnvCont, String user, String pass,int Codclie, final ProgressDialog dialog,final ProgressDialog DialogECB, Handler hd) {
+    public static void SincronizarContatosClientesStatic(final Context ctxEnvCont, String user, String pass, int Codclie, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
 
         SharedPreferences prefsHost = ctxEnvCont.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -4030,7 +4030,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 cursor1.close();
                             }
                             CursosEstado.close();
-                            SincAtualizaCidade(Estado, ctxEnv, null);
+                            SincAtualizaCidadeBairro(Estado, ctxEnv, null);
                         } catch (Exception E) {
                             E.printStackTrace();
                         }
@@ -4043,7 +4043,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return AtualizaEst;
     }
 
-    public static String SincAtualizaCidade(String UF, final Context ctxEnv, final ProgressDialog Dialog) {
+    public static String SincAtualizaCidadeBairro(String UF, final Context ctxEnv, final ProgressDialog Dialog) {
         String sincatucidade = "0";
         if (UF.equals("")) {
             return sincatucidade;
@@ -4224,8 +4224,17 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincatucidade;
     }
 
-    private static void SincAtualizaBairro(int codCidade, Context ctxEnv, ProgressDialog Dialog) {
-        int CodBairro = 0;
+    public static String SincAtualizaCidade(String UF, final Context ctxEnv, final ProgressDialog Dialog, Handler handler) {
+        String sincatucidade = "0";
+        if (UF.equals("")) {
+            return sincatucidade;
+        }
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
+        int CodCidadeExt = 0;
+        int CodCidadeInt = 0;
+        int CodCidade = 0;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -4233,8 +4242,124 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
 
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Cidades");
+        soap.addProperty("aUF", UF);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
+        String RetCidades = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+            if (ConexOk) {
+                int i = 0;
+                do {
+                    if (i > 0) {
+                        Thread.sleep(500);
+                    }
+                    try {
+                        Envio.call("", envelope);
+                    } catch (Exception e) {
+                        e.toString();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ctxEnv, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    try {
+                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                        RetCidades = (String) envelope.getResponse();
+                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                    } catch (Exception e) {
+                        e.toString();
+                        sincatucidade = ctxEnv.getString(R.string.failed_return);
+                        return sincatucidade;
+                    }
+                    i = i + 1;
+                } while (RetCidades == null && i <= 6);
+
+            } else {
+                sincatucidade = ctxEnv.getString(R.string.no_connection);
+                return sincatucidade;
+            }
+        } catch (Exception e) {
+            e.toString();
+            sincatucidade = ctxEnv.getString(R.string.failure_communicate);
+            return sincatucidade;
+        }
+        if (RetCidades == null) {
+            sincatucidade = ctxEnv.getString(R.string.failure_communicate);
+            return sincatucidade;
+        }
+
+        try {
+            JSONObject jsonObj = new JSONObject(RetCidades);
+            JSONArray JCidades = jsonObj.getJSONArray("cidades");
+
+            int jumpTime = 0;
+            final int totalProgressTime = JCidades.length();
+            if (Dialog != null) {
+                Dialog.setMax(totalProgressTime);
+                Dialog.setProgress(jumpTime);
+            }
+            DB = new ConfigDB(ctxEnv).getReadableDatabase();
+
+
+            for (int i = 0; i < JCidades.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+
+                    try {
+                        JSONObject c = JCidades.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        if (Dialog != null) {
+                            Dialog.setProgress(jumpTime);
+                        }
+                        String NomeCidade = c.getString("cidade");
+                        CodCidadeExt = c.getInt("id_cidade");
+                        NomeCidade = NomeCidade.replaceAll("'", "");
+
+                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade +
+                                "' AND CODPERFIL = " + idPerfil, null);
+                        if (!(CursorCidade.getCount() > 0)) {
+                            DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODCIDADE_EXT,CODPERFIL)" +
+                                    " VALUES('" + NomeCidade + "','" + UF + "', '" + CodCidadeExt + "'," + idPerfil + ");");
+                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + UF + "' AND DESCRICAO = '" + NomeCidade +
+                                    "' AND CODPERFIL =" + idPerfil, null);
+                            cursor1.moveToFirst();
+                            CodCidadeExt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE_EXT"));
+                            CodCidadeInt = cursor1.getInt(cursor1.getColumnIndex("CODCIDADE"));
+                            cursor1.close();
+                            CursorCidade.close();
+                        }
+                        sincatucidade = "OK";
+
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.toString();
+
+        }
+        return sincatucidade;
+    }
+
+    public static String SincAtualizaBairro(int codCidadeExt, final Context ctxEnv, ProgressDialog Dialog, int codCidadeInt, Handler handler) {
+        String atuBairro = "0";
+        int CodBairro = 0;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Bairros");
-        soap.addProperty("aIdCidade", codCidade);
+        soap.addProperty("aIdCidade", codCidadeExt);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
         HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
@@ -4243,13 +4368,46 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         try {
             Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
             if (ConexOk) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                RetBairros = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
+                int i = 0;
+                do {
+                    if (i > 0) {
+                        Thread.sleep(500);
+                    }
+                    try {
+                        Envio.call("", envelope);
+                    } catch (Exception e) {
+                        e.toString();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ctxEnv, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    try {
+                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                        RetBairros = (String) envelope.getResponse();
+                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                    } catch (Exception e) {
+                        e.toString();
+                        atuBairro = ctxEnv.getString(R.string.failed_return);
+                        return atuBairro;
+                    }
+                    i = i + 1;
+                } while (RetBairros == null && i <= 6);
+
+            } else {
+                atuBairro = ctxEnv.getString(R.string.no_connection);
+                return atuBairro;
             }
         } catch (Exception e) {
-            System.out.println("Error" + e);
+            e.toString();
+            atuBairro = ctxEnv.getString(R.string.failure_communicate);
+            return atuBairro;
+        }
+        if (RetBairros == null) {
+            atuBairro = ctxEnv.getString(R.string.failure_communicate);
+            return atuBairro;
         }
 
         try {
@@ -4277,21 +4435,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                         NomeBairro = NomeBairro.replaceAll("'", " ");
 
-                        Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODBAIRRO_EXT, CODCIDADE FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
+                        Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODBAIRRO_EXT, CODCIDADE FROM BAIRROS WHERE CODCIDADE = '" + codCidadeInt +
+                                "' AND DESCRICAO = '" + NomeBairro + "' AND CODPERFIL = " + idPerfil, null);
                         if (CursorBairro.getCount() > 0) {
-                            DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = '" + codCidade + "', DESCRICAO = '" + NomeBairro + "', CODBAIRRO_EXT = '" + CodBairroExt + "'" +
-                                    " WHERE DESCRICAO = '" + NomeBairro + "' AND CODCIDADE = '" + codCidade + "'");
-                            Cursor cursor1 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO = '" + NomeBairro + "'", null);
-                            cursor1.moveToFirst();
-                            CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
-                            cursor1.close();
+                            DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = '" + codCidadeInt + "', DESCRICAO = '" + NomeBairro + "', CODBAIRRO_EXT = '" + CodBairroExt + "'" +
+                                    " WHERE DESCRICAO = '" + NomeBairro + "' AND CODCIDADE = '" + codCidadeInt + "' AND CODPERFIL = " + idPerfil);
                         } else {
-                            DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODBAIRRO_EXT, CODCIDADE)" +
-                                    " VALUES('" + NomeBairro + "','" + CodBairroExt + "', '" + codCidade + "');");
-                            Cursor cursor1 = DB.rawQuery(" SELECT DESCRICAO, CODCIDADE, CODBAIRRO_EXT FROM BAIRROS WHERE CODCIDADE = '" + codCidade + "' AND DESCRICAO =  '" + NomeBairro + "'", null);
-                            cursor1.moveToFirst();
-                            CodBairroExt = cursor1.getInt(cursor1.getColumnIndex("CODBAIRRO_EXT"));
-                            cursor1.close();
+                            DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODBAIRRO_EXT, CODCIDADE, CODPERFIL)" +
+                                    " VALUES('" + NomeBairro + "','" + CodBairroExt + "', '" + codCidadeInt + "', " + idPerfil + ");");
                         }
                         CursorBairro.close();
 
@@ -4300,9 +4451,14 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                     }
                 }
             }
-        } catch (JSONException e) {
+            atuBairro = "ok";
+        } catch (
+                JSONException e)
+
+        {
             e.toString();
         }
+        return atuBairro;
     }
 
     public static String AtualizaPedido(String numPedido, Context ctxAtu, String tipoAtu) {
@@ -6543,7 +6699,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             cb.setLineWidth(1f);
 
-            // Invoice Detail box form_pgto_listview_parcelas
+            // Invoice Detail box listview_parcelas
             //cb.rectangle(20, 50, 550, 600);
             cb.rectangle(20, 200, 570, 500);
 

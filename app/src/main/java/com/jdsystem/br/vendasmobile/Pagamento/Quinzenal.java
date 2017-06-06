@@ -23,7 +23,7 @@ public class Quinzenal implements iPagamento {
 
 
     @Override
-    public void gerar_parcela(SqliteConfPagamentoBean pagamento, SqliteVendaCBean vendaCBean, Context ctx) {
+    public void gerar_parcela(SqliteConfPagamentoBean pagamento, SqliteVendaCBean vendaCBean, Context ctx,Boolean Atupedido) {
 
         Calendar calendar_default = Calendar.getInstance(new Locale("pt", "BR"));
         calendar_default.set(Calendar.YEAR, 2000);

@@ -44,7 +44,6 @@ import com.jdsystem.br.vendasmobile.domain.Produtos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -193,7 +192,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
         int scrollPosition = 0;
 
-        // If a form_pgto_listview_parcelas manager has already been set, get current scroll position.
+        // If a listview_parcelas manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {
             scrollPosition =
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
@@ -360,7 +359,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 }
 
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.info_produto_venda, null);
+                @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.input_produto_venda, null);
                 AlertDialog.Builder alerta = new AlertDialog.Builder(getActivity());
                 alerta.setCancelable(false);
                 alerta.setView(view);
@@ -699,7 +698,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 }
 
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.info_produto_venda, null);
+                @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.input_produto_venda, null);
                 AlertDialog.Builder alerta = new AlertDialog.Builder(getActivity());
                 alerta.setCancelable(false);
                 alerta.setView(view);
@@ -1007,66 +1006,39 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     private String validaprecominimo(String valorItem) {
         String validaok = "ok";
-        DecimalFormat dfunit = new DecimalFormat("0.0000");
         if (vlminimovend.equals(tab1)) {
-            String precomin = Preco1.replace(",","");
-            Double.parseDouble(precomin);
-            String precovenda = valorItem.replace(",","");
-            Double.parseDouble(precovenda);
-            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+            if (Double.parseDouble(valorItem.replace(",",".")) < Double.parseDouble(Preco1.replace(",","."))) {
                 validaok = "0";
             }
         } else if(vlminimovend.equals(tab2)){
-            String precomin = Preco2.replace(",","");
-            Double.parseDouble(precomin);
-            String precovenda = valorItem.replace(",","");
-            Double.parseDouble(precovenda);
-            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+            if (Double.parseDouble(valorItem.replace(",",".")) < Double.parseDouble(Preco2.replace(",","."))) {
                 validaok = "0";
             }
 
         } else if(vlminimovend.equals(tab3)){
-            String precomin = Preco3.replace(",",".");
-            Double.parseDouble(precomin);
-            valorItem = valorItem.replace(",",".");
-
-            if (Double.parseDouble(valorItem) < Double.parseDouble(precomin)) {
+            if (Double.parseDouble(valorItem.replace(",",".")) < Double.parseDouble(Preco3.replace(",","."))) {
                 validaok = "0";
             }
 
         } else if(vlminimovend.equals(tab4)){
-            String precomin = Preco4.replace(",","");
-            Double.parseDouble(precomin);
-            String precovenda = valorItem.replace(",","");
-            Double.parseDouble(precovenda);
-            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+            valorItem = valorItem.replace(",",".");
+
+            if (Double.parseDouble(valorItem.replace(",",".")) < Double.parseDouble(Preco4.replace(",","."))) {
                 validaok = "0";
             }
 
         } else if(vlminimovend.equals(tab5)){
-            String precomin = Preco5.replace(",","");
-            Double.parseDouble(precomin);
-            String precovenda = valorItem.replace(",","");
-            Double.parseDouble(precovenda);
-            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+            if (Double.parseDouble(valorItem.replace(",",".")) < Double.parseDouble(Preco5.replace(",","."))) {
                 validaok = "0";
             }
 
         } else if(vlminimovend.equals(tab6)){
-            String precomin = Precop1.replace(",","");
-            Double.parseDouble(precomin);
-            String precovenda = valorItem.replace(",","");
-            Double.parseDouble(precovenda);
-            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+            if (Double.parseDouble(valorItem.replace(",",".")) < Double.parseDouble(Precop1.replace(",","."))) {
                 validaok = "0";
             }
 
         } else if (vlminimovend.equals(tab7)){
-            String precomin = Precop2.replace(",","");
-            Double.parseDouble(precomin);
-            String precovenda = valorItem.replace(",","");
-            Double.parseDouble(precovenda);
-            if (Double.parseDouble(precovenda) < Double.parseDouble(precomin)) {
+            if (Double.parseDouble(valorItem.replace(",",".")) < Double.parseDouble(Precop2.replace(",","."))) {
                 validaok = "0";
             }
 

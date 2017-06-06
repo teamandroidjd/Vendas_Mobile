@@ -45,7 +45,7 @@ public class ListAdapterItensVenda extends BaseAdapter {
 
         SqliteVendaDBean item = (SqliteVendaDBean) getItem(posicao);
         LayoutInflater layout = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        @SuppressLint("InflateParams") View v = layout.inflate(R.layout.prod_listview_itenstemp_item, null);
+        @SuppressLint("InflateParams") View v = layout.inflate(R.layout.listview_itenstemp_item, null);
 
         TextView descriacao = (TextView) v.findViewById(R.id.prod_lisview_descricao);
         TextView quantidade = (TextView) v.findViewById(R.id.prod_lisview_quantidade);

@@ -80,25 +80,19 @@
 
     <LinearLayout
         android:id="@+id/lnrfloataction"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/btnsalvarformpgto"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <android.support.design.widget.FloatingActionButton
-
-            android:id="@+id/btnincluirpagamento"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_above="@+id/btnsalvarformpgto"
-            android:layout_below="@+id/lstparcelas"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:onClick="incluirformapagamento"
-            android:src="@drawable/fab_add" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/txvvalortotalrestante"
+            android:gravity="center"
+            android:text="Valor restante: "
+            android:textSize="20sp"/>
 
     </LinearLayout>
 
@@ -130,5 +124,18 @@
         android:onClick="salvar_fpgto"
         android:text="Salvar Forma de Pagamento"
         android:textColor="@color/colorCardClie" />
+
+    <android.support.design.widget.FloatingActionButton
+
+        android:id="@+id/btnincluirpagamento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="incluirformapagamento"
+        android:src="@drawable/fab_add"
+        android:layout_above="@+id/btnsalvarformpgto"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="11dp"
+        android:layout_marginEnd="11dp" />
 
 </RelativeLayout>
