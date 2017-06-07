@@ -38,7 +38,7 @@
             android:text="Configuração de Acesso"
             android:layout_marginTop="10dp"
             android:textAlignment="center"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:textSize="20sp"
             android:textStyle="normal|bold" />
 
@@ -52,10 +52,10 @@
             android:layout_marginTop="5dp"
             android:ems="10"
             android:hint="Digite a chave"
-            android:textColorHint="@color/colorCardClie"
+            android:textColorHint="@color/branco"
             android:inputType="textCapCharacters"
             android:textAllCaps="true"
-            android:textColor="@color/colorCardClie" />
+            android:textColor="@color/branco" />
 
         <Button
             android:id="@+id/btsalvhost"
@@ -70,7 +70,7 @@
             android:background="@color/colorPrimary"
             android:onClick="SalvarHost"
             android:text="Salvar"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:textSize="15sp"
             android:textStyle="normal|bold" />
 
@@ -85,7 +85,7 @@
             android:layout_marginStart="13dp"
             android:layout_marginTop="10dp"
             android:text="Chave de acesso:"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:textSize="16sp" />
 
         <RelativeLayout
@@ -118,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Empresa"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold" />
 
@@ -128,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Licença"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold" />
 
@@ -138,7 +138,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Excluir"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold"
                         tools:ignore="InconsistentLayout" />
@@ -162,7 +162,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Empresa 1"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold"
                         tools:ignore="InconsistentLayout" />
@@ -173,7 +173,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Licença 1"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold" />
 
@@ -183,7 +183,7 @@
                         android:layout_height="30dp"
                         android:background="@color/colorPrimary"
                         android:text="X"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         tools:ignore="InconsistentLayout" />
                 </TableRow>
 
@@ -204,7 +204,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Empresa 2"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold"
                         tools:ignore="InconsistentLayout" />
@@ -215,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Licença 2"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold" />
 
@@ -225,7 +225,7 @@
                         android:layout_height="30dp"
                         android:background="@color/colorPrimary"
                         android:text="X"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         tools:ignore="InconsistentLayout" />
                 </TableRow>
 
@@ -246,7 +246,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Empresa 3"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold"
                         tools:ignore="InconsistentLayout" />
@@ -257,7 +257,7 @@
                         android:layout_height="wrap_content"
                         android:padding="5dip"
                         android:text="Licença 3"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="15sp"
                         android:textStyle="normal|bold" />
 
@@ -267,7 +267,7 @@
                         android:layout_height="30dp"
                         android:background="@color/colorPrimary"
                         android:text="X"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         tools:ignore="InconsistentLayout" />
                 </TableRow>
 

@@ -6,8 +6,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:layout_height="110dp"
+        android:background="@drawable/img_fundo_splash"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -190,7 +190,7 @@
             android:gravity="right"
             android:paddingRight="10dp"
             android:text="Total da venda = 0,00"
-            android:textColor="@color/ColorText"
+            android:textColor="@color/preto"
             android:textSize="25dp"
             android:textStyle="bold" />
 

@@ -41,7 +41,7 @@
             android:textSize="35dp"
             android:text="www.jdsystem.com.br"
             android:textAlignment="center"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:textStyle="bold"></TextView>
     </RelativeLayout>
 

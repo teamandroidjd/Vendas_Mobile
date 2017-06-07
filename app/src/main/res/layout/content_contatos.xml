@@ -12,7 +12,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.jdsystem.br.vendasmobile.ConsultaContatos"
-    tools:showIn="@layout/app_contatos">
+    tools:showIn="@layout/app_bar_contatos">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:text="Quantidade de registro:" />
 
     </RelativeLayout>

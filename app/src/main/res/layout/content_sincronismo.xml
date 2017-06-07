@@ -39,7 +39,7 @@
         android:gravity="center"
         android:text="Sincronização"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/colorCardClie" />
+        android:textColor="@color/branco" />
 
     <RelativeLayout
         android:layout_width="match_parent"

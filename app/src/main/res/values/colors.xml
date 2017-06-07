@@ -4,10 +4,9 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#04a3b6</color>
     <color name="ColorFundo">#79ccd7</color>
-    <color name="ColorText">#000000</color>
+    <color name="preto">#000000</color>
     <color name="colordescClie">#024149</color>
-    <color name="colorCardClie">#ffffff</color>
-    <color name="colorCardProdQtdMinVend">#ff0000</color>
-    <color name="ColorFundoSplash">#d5fbff</color>
+    <color name="branco">#ffffff</color>
+    <color name="vermelho">#ff0000</color>
     <color name="fastScrollBarColor">#ffcecece</color>
 </resources>

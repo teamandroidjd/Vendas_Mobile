@@ -59,7 +59,7 @@ public class ConsultaClientes extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_act_listclientes);
+        setContentView(R.layout.consulta_clientes);
         try {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);

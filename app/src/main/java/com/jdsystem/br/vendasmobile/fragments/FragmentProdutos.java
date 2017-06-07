@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -576,10 +577,12 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         if (QUANTIDADE_DIGITADA > 0) {
                             if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > finalQtdestoque) {
                                 Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                 return;
                             }
                             if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
                                 Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                 return;
                             }
                             SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
@@ -608,6 +611,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         String validapreco = validaprecominimo(ValorItem);
                                         if(!validapreco.equals("ok")){
                                             Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                             return;
                                         }
                                     }

@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -53,18 +54,25 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             chavepedido, numPedido, atuok, sCEP;
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
     int CodCidade, CodCidadeInt, CodBairro, telaInvocada, idPerfil, flag, posicao, codClieExt, codClieInt;
-    Boolean PesqCEP;
+    Boolean PesqCEP, atuBairro, atuCidade;
     ImageButton BtnPesqCep;
     ImageView imgdowncidade, imgdownbairro;
     EditText nomerazao, nomefan, nomecompleto, cnpjcpf, Edtcpf, EdtRG, ie, endereco, numero, cep, tel1, tel2, email, edtOBS, Complemento;
     SQLiteDatabase DB;
     private Handler handler = new Handler();
     private GoogleApiClient client;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cad_clientes);
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        } catch (Exception e) {
+
+        }
 
         declaraobjetos();
         carregarpreferencias();
@@ -91,6 +99,8 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         spBairro.setOnItemSelectedListener(CadastroClientes.this);
 
         PesqCEP = false;
+        atuCidade = false;
+        atuBairro = false;
         NomeBairro = null;
         NomeCidade = null;
 
@@ -916,9 +926,9 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
     @Override
     public void run() {
         if (flag == 1) {
-            try{
-                Sincronismo.SincAtualizaCidade(sUF, CadastroClientes.this, DialogECB,handler);
-            }catch (Exception e){
+            try {
+                Sincronismo.SincAtualizaCidade(sUF, CadastroClientes.this, DialogECB, handler);
+            } catch (Exception e) {
                 e.toString();
             }
             if (DialogECB != null && flag != 0) {
@@ -928,15 +938,16 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             }
         } else if (flag == 2) {
             try {
-                Sincronismo.SincAtualizaBairro(CodCidade, this, DialogECB, CodCidadeInt,handler);
-            }catch (Exception e){
+                Sincronismo.SincAtualizaBairro(CodCidade, this, DialogECB, CodCidadeInt, handler);
+                atuBairro = true;
+            } catch (Exception e) {
                 e.toString();
             }
 
             if (DialogECB != null && flag != 0) {
                 DialogECB.dismiss();
                 flag = 0;
-                onItemSelected(spUF, null, posicao, 0);
+                onItemSelected(spCidade, null, posicao, 0);
             }
         } else if (flag == 3) {
             String end = null;
@@ -1104,7 +1115,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
                         int pos = arrayAdapterUF.getPosition(ufconvert[0]);
                         spUF.setSelection(pos);
-                        onItemSelected(spUF,null,pos,0);
+                        onItemSelected(spUF, null, pos, 0);
                     }
                 });
             } catch (JSONException e) {
@@ -1235,8 +1246,8 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             }
         } else if (cep.getText().length() == 0 && !hasFocus && v == cep) {
             atualizaspinner();
-            spCidade.setAdapter(null);
-            spBairro.setAdapter(null);
+            //spCidade.setAdapter(null);
+            //spBairro.setAdapter(null);
             onItemSelected(spUF, null, 0, 0);
             PesqCEP = false;
         }
@@ -1252,84 +1263,111 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                     break;
                 case 1:
                     sUF = "AC"; //Acre
+                    posicao = position;
                     break;
                 case 2:
                     sUF = "AL"; // Alagoas
+                    posicao = position;
                     break;
                 case 3:
                     sUF = "AP"; //Amapá
+                    posicao = position;
                     break;
                 case 4:
                     sUF = "AM";//Amazonas
+                    posicao = position;
                     break;
                 case 5:
                     sUF = "BA";//Bahia
+                    posicao = position;
                     break;
                 case 6:
                     sUF = "CE";//Ceará
+                    posicao = position;
                     break;
                 case 7:
                     sUF = "DF";//Distrito Federal
+                    posicao = position;
                     break;
                 case 8:
                     sUF = "ES";//Espírito Santo
+                    posicao = position;
                     break;
                 case 9:
                     sUF = "GO";//Goiás
+                    posicao = position;
                     break;
                 case 10:
                     sUF = "MA";//Maranhão
+                    posicao = position;
                     break;
                 case 11:
                     sUF = "MT";//Mato Grosso
+                    posicao = position;
                     break;
                 case 12:
                     sUF = "MS";//Mato Grosso do Sul
+                    posicao = position;
                     break;
                 case 13:
                     sUF = "MG";//Minas Gerais
+                    posicao = position;
                     break;
                 case 14:
                     sUF = "PA";//Pará
+                    posicao = position;
                     break;
                 case 15:
                     sUF = "PB";//Paraíba
+                    posicao = position;
                     break;
                 case 16:
                     sUF = "PR";//Paraná
+                    posicao = position;
                     break;
                 case 17:
                     sUF = "PE";//Pernambuco
+                    posicao = position;
                     break;
                 case 18:
                     sUF = "PI";//Piauí
+                    posicao = position;
                     break;
                 case 19:
                     sUF = "RJ";//Rio de Janeiro
+                    posicao = position;
                     break;
                 case 20:
                     sUF = "RN"; //Rio Grande do Norte
+                    posicao = position;
                     break;
                 case 21:
                     sUF = "RS";//Rio Grande do Sul
+                    posicao = position;
                     break;
                 case 22:
                     sUF = "RO"; //Rondônia
+                    posicao = position;
                     break;
                 case 23:
                     sUF = "RR"; //Roraima
+                    posicao = position;
                     break;
                 case 24:
                     sUF = "SC";//Santa Catarina
+                    posicao = position;
                     break;
                 case 25:
                     sUF = "SP";//São Paulo
+                    posicao = position;
                     break;
                 case 26:
                     sUF = "SE";//Sergipe
+                    posicao = position;
                     break;
                 case 27:
                     sUF = "TO";//Tocantins
+                    posicao = position;
                     break;
             }
 
@@ -1341,7 +1379,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                 } else {
                     cursor = DB.rawQuery(" SELECT CODCIDADE_EXT, DESCRICAO FROM CIDADES WHERE UF = '" + sUF + "' AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
                 }
-                List<String> DadosList = new ArrayList<String>();
+                final List<String> DadosList = new ArrayList<String>();
                 DadosList.clear();
                 if (cursor.getCount() > 0) {
                     cursor.moveToFirst();
@@ -1376,12 +1414,26 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         });
                         return;
                     }
-                } else if (position == 0) {
+                } else {
+                    CodCidadeInt = 0;
+                    DadosList.clear();
+                    DadosList.add("Selecione a Cidade");
+                    final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                    spCidade.setAdapter(spinnerArrayAdapter);
+                }
+                if (position == 0) {
                     try {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                spCidade.setAdapter(null);
+                                CodCidadeInt = 0;
+                                DadosList.clear();
+                                DadosList.add("Selecione a Cidade");
+                                final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosList);
+                                spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                                spCidade.setAdapter(spinnerArrayAdapter);
+                                //spCidade.setAdapter(null);
                                 spBairro.setAdapter(null);
                             }
                         });
@@ -1390,56 +1442,173 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         e.toString();
 
                     }
-                } else {
+                } /*else {
                     spCidade.setAdapter(null);
                     spBairro.setAdapter(null);
-                }
+                }*/
             } catch (Exception E) {
                 System.out.println("Error" + E);
             }
-            posicao = position;
             Thread thread = new Thread(CadastroClientes.this);
             thread.start();
 
         } else if (parent.getId() == R.id.spnCidade) {
-            if (!PesqCEP) {
-                NomeCidade = spCidade.getSelectedItem().toString();
-            }
-            try {
-                Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE_EXT, CODCIDADE FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '" + sUF + "' AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
-                if (CurCidade.getCount() > 0) {
-                    CurCidade.moveToFirst();
-                    CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
-                    CodCidadeInt = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
+            if (atuBairro) {
+                try {
+                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE_EXT, CODCIDADE FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '" + sUF + "' AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
+                    if (CurCidade.getCount() > 0) {
+                        CurCidade.moveToFirst();
+                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
+                        CodCidadeInt = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
+                    }
+
+                    CurCidade.close();
+                } catch (Exception e) {
+                    e.toString();
+                }
+                Cursor CurBairro = null;
+                try {
+                    CurBairro = DB.rawQuery(" SELECT DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidadeInt + " AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
+                } catch (Exception e) {
+                    e.toString();
+                }
+                final List<String> DadosListBairro = new ArrayList<String>();
+                DadosListBairro.clear();
+                if (CurBairro.getCount() > 0) {
+                    CurBairro.moveToFirst();
+                    do {
+                        String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
+                        DadosListBairro.add(Bairro);
+                    } while (CurBairro.moveToNext());
+                } else {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            DadosListBairro.clear();
+                            DadosListBairro.add("Selecione o Bairro");
+                            new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                            spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
+                        }
+                    });
+                }
+                CurBairro.close();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                        spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
+                    }
+                });
+
+                if (PesqCEP) {
+                    int pos = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).getPosition(NomeBairro);
+                    spBairro.setSelection(pos);
+                }
+                atuBairro = false;
+            } else {
+
+                if (!PesqCEP) {
+                    NomeCidade = spCidade.getSelectedItem().toString();
                 }
 
-                CurCidade.close();
-            } catch (Exception e) {
-                e.toString();
-            }
-            Cursor CurBairro = null;
-            try {
-                CurBairro = DB.rawQuery(" SELECT DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidadeInt + " AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
-            } catch (Exception e) {
-                e.toString();
-            }
-            List<String> DadosListBairro = new ArrayList<String>();
-            DadosListBairro.clear();
-            if (CurBairro.getCount() > 0) {
-                CurBairro.moveToFirst();
-                do {
-                    String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
-                    DadosListBairro.add(Bairro);
-                } while (CurBairro.moveToNext());
-            }
-            CurBairro.close();
+                try {
+                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE_EXT, CODCIDADE FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '" + sUF + "' AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
+                    if (CurCidade.getCount() > 0) {
+                        CurCidade.moveToFirst();
+                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
+                        CodCidadeInt = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
+                    } else {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                List<String> DadosListBairro = new ArrayList<String>();
+                                DadosListBairro.clear();
+                                DadosListBairro.add("Selecione o Bairro");
+                                new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                                spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
+                            }
+                        });
+                    }
 
-            new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-            spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
-            if (PesqCEP) {
-                int pos = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).getPosition(NomeBairro);
-                spBairro.setSelection(pos);
+                    CurCidade.close();
+                } catch (Exception e) {
+                    e.toString();
+                }
+                Cursor CurBairro = null;
+                try {
+                    CurBairro = DB.rawQuery(" SELECT DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidadeInt + " AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
+                } catch (Exception e) {
+                    e.toString();
+                }
+                final List<String> DadosListBairro = new ArrayList<String>();
+                DadosListBairro.clear();
+                if (CurBairro.getCount() > 0) {
+                    CurBairro.moveToFirst();
+                    do {
+                        String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
+                        DadosListBairro.add(Bairro);
+                    } while (CurBairro.moveToNext());
+                } else {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            DadosListBairro.clear();
+                            DadosListBairro.add("Selecione o Bairro");
+                            new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                            spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
+                        }
+                    });
+                }
+                CurBairro.close();
+
+                new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
+                if (PesqCEP) {
+                    int pos = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).getPosition(NomeBairro);
+                    spBairro.setSelection(pos);
+                }
             }
+            /*} else {
+                try {
+                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE_EXT, CODCIDADE FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '" + sUF + "' AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
+                    if (CurCidade.getCount() > 0) {
+                        CurCidade.moveToFirst();
+                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
+                        CodCidadeInt = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
+                    }
+
+                    CurCidade.close();
+                } catch (Exception e) {
+                    e.toString();
+                }
+                Cursor CurBairro = null;
+                try {
+                    CurBairro = DB.rawQuery(" SELECT DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidadeInt + " AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
+                } catch (Exception e) {
+                    e.toString();
+                }
+                List<String> DadosListBairro = new ArrayList<String>();
+                DadosListBairro.clear();
+                if (CurBairro.getCount() > 0) {
+                    CurBairro.moveToFirst();
+                    do {
+                        String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
+                        DadosListBairro.add(Bairro);
+                    } while (CurBairro.moveToNext());
+                } else {
+
+                }
+                CurBairro.close();
+
+                new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
+                spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
+                if (PesqCEP) {
+                    int pos = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).getPosition(NomeBairro);
+                    spBairro.setSelection(pos);
+                }
+            }*/
+
         } else if (parent.getId() == R.id.spnBairro) {
             NomeBairro = spBairro.getSelectedItem().toString();
             try {
@@ -1489,7 +1658,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             DialogECB.setMax(0);
             DialogECB.setIcon(R.drawable.icon_sync);
             DialogECB.setTitle(getString(R.string.wait));
-            DialogECB.setMessage("Atualizando cidades de " + NomeCidade + "... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
+            DialogECB.setMessage("Atualizando bairros da cidade de " + NomeCidade + "... Esse processo pode demorar alguns instantes caso seja a primeira consulta" +
                     " a esse estado.");
             DialogECB.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             DialogECB.show();

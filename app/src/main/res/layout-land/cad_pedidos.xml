@@ -6,8 +6,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:layout_height="98dp"
+        android:background="@drawable/img_fundo_splash"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -42,17 +42,16 @@
                 android:text="Data/Hora Venda : 03/09/2015 19:32:00"
                 android:textColor="#ffffff"
                 android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/venda_txv_dataentrega"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="Data da Entrega: "
-                android:textColor="#ffffff"
-                android:textSize="15sp" />
-
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/venda_txv_dataentrega"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Data da Entrega: "
+            android:textColor="#ffffff"
+            android:textSize="15sp" />
+
 
     </LinearLayout>
 
@@ -191,7 +190,7 @@
             android:gravity="right"
             android:paddingRight="6dp"
             android:text="Total da venda = 9999,99"
-            android:textColor="@color/ColorText"
+            android:textColor="@color/preto"
             android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>

@@ -25,7 +25,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorCardClie"
+            android:background="@color/branco"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -159,7 +159,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="80dp"
-                    android:background="@color/colorCardClie"
+                    android:background="@color/branco"
                     android:orientation="vertical">
 
                     <RelativeLayout
@@ -492,7 +492,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Quantidade mínima para venda: "
-                        android:textColor="@color/colorCardProdQtdMinVend"
+                        android:textColor="@color/vermelho"
                         android:textSize="22sp"
                         android:textStyle="normal|bold"/>
                     <TextView

@@ -6,8 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:background="@color/colorPrimary"
+    android:layout_height="60dp"
+    android:background="@drawable/img_fundo_splash"
     local:theme="@style/Theme.AppCompat.Light">
 
 
@@ -17,15 +17,15 @@
 
         <ImageView
             android:id="@+id/finalizar_venda"
-            android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
             android:src="@drawable/salvar"
             tools:ignore="ContentDescription" />
 
         <ImageView
             android:id="@+id/cancel_venda"
-            android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
             android:layout_marginLeft="20dp"
             android:layout_toEndOf="@+id/finalizar_venda"
             android:src="@drawable/cancelar"
@@ -34,8 +34,8 @@
 
         <ImageView
             android:id="@+id/item_obspedido"
-            android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
             android:layout_marginRight="30dp"
             android:layout_toLeftOf="@+id/item_formapgto"
             android:src="@drawable/observacao"
@@ -43,8 +43,8 @@
 
         <ImageView
             android:id="@+id/item_formapgto"
-            android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
             android:layout_marginRight="30dp"
             android:layout_toLeftOf="@+id/item_dtentrega"
             android:src="@drawable/pagamento"
@@ -52,8 +52,8 @@
 
         <ImageView
             android:id="@+id/item_dtentrega"
-            android:layout_width="40sp"
-            android:layout_height="40sp"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="5dp"

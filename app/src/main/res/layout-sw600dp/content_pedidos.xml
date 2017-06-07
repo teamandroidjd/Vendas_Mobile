@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:text="Orçamento"
-                    android:textColor="@color/colorCardClie"
+                    android:textColor="@color/branco"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:text="Cancelado"
-                    android:textColor="@color/colorCardClie"
+                    android:textColor="@color/branco"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -81,7 +81,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:text="Faturado"
-                    android:textColor="@color/colorCardClie"
+                    android:textColor="@color/branco"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -114,7 +114,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:text="Sincronizado"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -136,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="2dp"
                         android:text="Gerar Venda"
-                        android:textColor="@color/colorCardClie"
+                        android:textColor="@color/branco"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -158,7 +158,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:textColor="@color/colorCardClie"
+                android:textColor="@color/branco"
                 android:text="Nenhum pedido cadastrado!"
                 android:textAlignment="center"
                 android:textSize="30sp" />
