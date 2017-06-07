@@ -46,7 +46,7 @@
         <activity
             android:name=".CadastroClientes"
             android:label="Cadastro de cliente"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".DadosCliente"
             android:label="Dados do cliente"
@@ -90,6 +90,7 @@
         <activity
             android:name=".Pagamento.ConfPagamento"
             android:label="Formas de pagamento"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".actFiltroPeriodoPedidos"
