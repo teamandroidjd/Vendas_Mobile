@@ -1458,6 +1458,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
 
             }
         });
+    }
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()

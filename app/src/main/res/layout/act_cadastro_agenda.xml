@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Datas e horários sugeridos pelo contato: "
-            android:textColor="@color/ColorText"
+            android:textColor="@color/preto"
             android:textStyle="bold"
             android:textSize="16sp" />
 
@@ -126,7 +126,7 @@
             android:background="@color/colorAccent"
             android:text="Cancelar"
             android:textSize="20dp"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:gravity="center"
             android:layout_gravity="center"/>
 
@@ -139,7 +139,7 @@
             android:background="@color/colorAccent"
             android:text="Salvar"
             android:textSize="20dp"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:gravity="center"
             android:layout_gravity="center"/>
     </LinearLayout>

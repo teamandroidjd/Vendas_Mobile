@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:text="Datas e horários sugeridos pelo contato: "
-            android:textColor="@color/ColorText"
+            android:textColor="@color/preto"
             android:textSize="25sp" />
 
             <ListView
@@ -126,7 +126,7 @@
             android:background="@color/colorAccent"
             android:text="Cancelar"
             android:textSize="30dp"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:gravity="center"
             android:layout_gravity="center"/>
 
@@ -139,7 +139,7 @@
             android:background="@color/colorAccent"
             android:text="Salvar"
             android:textSize="30dp"
-            android:textColor="@color/colorCardClie"
+            android:textColor="@color/branco"
             android:gravity="center"
             android:layout_gravity="center"/>
     </LinearLayout>

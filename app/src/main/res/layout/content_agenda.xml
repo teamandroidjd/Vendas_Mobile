@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:text="Não sincronizado"
-                    android:textColor="@color/ColorText"
+                    android:textColor="@color/preto"
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:text="Sincronizado"
-                    android:textColor="@color/ColorText"
+                    android:textColor="@color/preto"
                     android:textSize="15sp"
                     android:textStyle="bold" />
         </LinearLayout>
