@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class act_TH_produtos_contatos extends Fragment {
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
-    int sCodContato;
+    int sCodContato, sCodContatoExt;
     SQLiteDatabase DB;
     String codVendedor, usuario, senha, URLPrincipal, NomeCliente, telaInvocada;
     int CodCliente;
@@ -59,6 +59,8 @@ public class act_TH_produtos_contatos extends Fragment {
                 NomeCliente = params.getString(getString(R.string.intent_nomerazao));
                 telaInvocada = params.getString(getString(R.string.intent_telainvocada));
                 sCodContato = params.getInt(getString(R.string.intent_codcontato));
+                sCodContato = params.getInt(getString(R.string.intent_codcontato));
+                sCodContatoExt = params.getInt(getString(R.string.intent_codcontato_externo));
             }
         }
 
@@ -166,7 +168,7 @@ public class act_TH_produtos_contatos extends Fragment {
             cursor.moveToFirst();
             if (cursor.getCount() > 0) {
                 do {
-                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_produto_manual"));
+                    String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_item"));
                     int codProd = cursor.getInt(cursor.getColumnIndex("produtos_contatos.cod_item"));
                     String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
                     String itemLista;
@@ -179,11 +181,48 @@ public class act_TH_produtos_contatos extends Fragment {
                     produtosRelacionados.add(itemLista);
 
                 } while (cursor.moveToNext());
-                cursor.close();
+
+            } else if(cursor.getCount()==0){
+                try {
+                    Cursor cursorDois = DB.rawQuery("select produtos_contatos.cod_produto_manual, produtos_contatos.cod_item, " +
+                            "produtos_contatos.cod_interno_contato, produtos_contatos.cod_externo_contato, " +
+                            "ITENS.DESCRICAO as desc " +
+                            "from produtos_contatos " +
+                            "left outer join ITENS on produtos_contatos.cod_item = ITENS.CODIGOITEM " +
+                            "where produtos_contatos.cod_externo_contato = " + sCodContatoExt, null);
+                    cursorDois.moveToFirst();
+                    if (cursorDois.getCount()>0) {
+                        do {
+                            String codProdutoCont = cursorDois.getString(cursorDois.getColumnIndex("cod_item"));
+                            int codProd = cursorDois.getInt(cursorDois.getColumnIndex("produtos_contatos.cod_item"));
+                            String descProdCont = cursorDois.getString(cursorDois.getColumnIndex("desc"));
+                            String itemLista;
+                            if (descProdCont.length() <= 26) {
+                                itemLista = codProdutoCont + " - " + descProdCont;
+                            } else {
+                                itemLista = codProdutoCont + " - " + descProdCont.substring(0, 26);
+                            }
+
+                            produtosRelacionados.add(itemLista);
+
+                        } while (cursorDois.moveToNext());
+                    } else{
+                        return produtosRelacionados;
+                    }
+                    cursor.close();
+                    cursorDois.close();
+                }catch(Exception E){
+                    E.toString();
+                }
+
+            }else{
+                return produtosRelacionados;
             }
+            cursor.close();
         } catch (Exception E) {
             E.toString();
         }
+
         return produtosRelacionados;
 
     }

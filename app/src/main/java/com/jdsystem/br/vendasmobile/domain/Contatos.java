@@ -25,13 +25,15 @@ public class Contatos {
     private int CODCLIENTE;
     private int CODCLIE_EXT;
     private String NOMERAZAO;
+    private String FLAGINTEGRADO;
+    private String CODCONTATO_EXT;
 
     public Contatos() {
     }
 
     public Contatos(String nmcont, String cargo, String email, String telefone1, String telefone2, String doc, String data, String cep, String endereco,
                     String num, String compl, int cidade, int bairro, String uf, int codvend, int codclieint, int codClieExt, String nomeCliente,
-                    int codContato) {
+                    int codContato, String flagIntegrado, String codContatoExt) {
 
         NOME = nmcont;
         //Cnpj = nCnpj;
@@ -55,6 +57,8 @@ public class Contatos {
         CODCLIE_EXT = codClieExt;
         NOMERAZAO = nomeCliente;
         CODCONTATO = codContato;
+        FLAGINTEGRADO = flagIntegrado;
+        CODCONTATO_EXT = codContatoExt;
 
 
     }
@@ -211,4 +215,19 @@ public class Contatos {
         this.CODCONTATO = codContato;
     }
 
+    public String getFLAGINTEGRADO() {
+        return FLAGINTEGRADO;
+    }
+
+    public void setFLAGINTEGRADO(String flagIntegrado) {
+        this.FLAGINTEGRADO = flagIntegrado;
+    }
+
+    public String getCODCONTATO_EXT() {
+        return CODCONTATO_EXT;
+    }
+
+    public void setCODCONTATO_EXT(String codcontato_ext) {
+        this.CODCONTATO_EXT = codcontato_ext;
+    }
 }

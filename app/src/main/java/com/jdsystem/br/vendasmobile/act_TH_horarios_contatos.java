@@ -44,7 +44,7 @@ import static java.lang.Integer.parseInt;
 public class act_TH_horarios_contatos extends Fragment {
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
-    int sCodContato;
+    int sCodContato, sCodContatoExt;
     String sCodVend, URLPrincipal, usuario, senha, DOMINGO = "Domingo",
             SEGUNDA = "Segunda-feira",
             TERCA = "Terça-feira",
@@ -189,6 +189,7 @@ public class act_TH_horarios_contatos extends Fragment {
             Bundle params = intent.getExtras();
             if (params != null) {
                 sCodContato = params.getInt(getString(R.string.intent_codcontato));
+                sCodContatoExt = params.getInt(getString(R.string.intent_codcontato_externo));
                 sCodVend = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
@@ -366,12 +367,41 @@ public class act_TH_horarios_contatos extends Fragment {
                     String minutoFinal = converteZero(Integer.toString(CursorCont.getInt(CursorCont.getColumnIndex("dias_contatos.minuto_final"))));
                     String diaVisita = mDiaSemana + ", de " + horaInicio + ":" + minutoInicio + " às " + horaFinal + ":" + minutoFinal;
 
-
                     diasMarcadosVisita.add(diaVisita);
                 } while (CursorCont.moveToNext());
 
                 CursorCont.close();
-            } else {
+            } else if(CursorCont.getCount()==0){
+                try {
+                    Cursor CursorContDois = DB.rawQuery(" SELECT dias_contatos.cod_dia_semana, dias_contatos.codcontatoint, " +
+                            "dias_contatos.hora_inicio, dias_contatos.minuto_inicio, dias_contatos.hora_final, " +
+                            "dias_contatos.minuto_final " +
+                            "FROM dias_contatos " +
+                            "LEFT OUTER JOIN contato ON CONTATO.CODCONTATO_EXT = dias_contatos.codcontatoext " +
+                            "WHERE codcontatoext = '" + sCodContatoExt + "' " +
+                            "order by cod_dia_semana", null);
+                    if(CursorContDois.getCount()>0){
+                        CursorContDois.moveToFirst();
+                        do {
+                            int codSemana = CursorContDois.getInt(CursorContDois.getColumnIndex("dias_contatos.cod_dia_semana"));
+                            String mDiaSemana = Util.diaSemana(codSemana);
+                            String horaInicio = converteZero(Integer.toString(CursorContDois.getInt(CursorContDois.getColumnIndex("dias_contatos.hora_inicio"))));
+                            String minutoInicio = converteZero(Integer.toString(CursorContDois.getInt(CursorContDois.getColumnIndex("dias_contatos.minuto_inicio"))));
+                            String horaFinal = converteZero(Integer.toString(CursorContDois.getInt(CursorContDois.getColumnIndex("dias_contatos.hora_final"))));
+                            String minutoFinal = converteZero(Integer.toString(CursorContDois.getInt(CursorContDois.getColumnIndex("dias_contatos.minuto_final"))));
+                            String diaVisita = mDiaSemana + ", de " + horaInicio + ":" + minutoInicio + " às " + horaFinal + ":" + minutoFinal;
+
+                            diasMarcadosVisita.add(diaVisita);
+                        } while (CursorContDois.moveToNext());
+                    }else{
+                        TAG_HORARIOS_CONTATOS.setText("Nenhum contato agendado!");
+                    }
+
+                }catch (Exception e){
+                    e.toString();
+                }
+                CursorCont.close();
+            }else {
                 TAG_HORARIOS_CONTATOS.setText("Nenhum contato agendado!");
             }
         } catch (Exception E) {

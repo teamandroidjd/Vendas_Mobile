@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jdsystem.br.vendasmobile.R;
@@ -48,6 +49,7 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
         myViewHolder.EMAIL.setText(mList.get(position).getEMAIL());
         myViewHolder.TEL1.setText(mList.get(position).getTEL1());
         myViewHolder.TEL2.setText(mList.get(position).getTEL2());
+        //myViewHolder.FLAGINTEGRADO.setText(mList.get(position).getTEL2());
        /* myViewHolder.telefone.setText(mList.get(position).getTelefone());
         myViewHolder.telefone2.setText(mList.get(position).getTelefone2());
         myViewHolder.email.setText(mList.get(position).getEmail());*/
@@ -57,8 +59,18 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
 
         String nomeContato = mList.get(position).getNomeCont();
         String nomeCliente = mList.get(position).getNOMECLIENTE();
+        String flagIntegrado = mList.get(position).getFLAGINTEGRADO();
         if (nomeCliente == null){
             nomeCliente = "";
+        }
+        if(flagIntegrado ==null){
+            flagIntegrado = "";
+        }
+
+        if (flagIntegrado.equals("S")){
+            myViewHolder.FLAGINTEGRADO.setVisibility(View.GONE);
+        }else{
+            myViewHolder.FLAGINTEGRADO.setVisibility(View.VISIBLE);
         }
 
         /*if((nomeContato.isEmpty())&&(nomeCliente.isEmpty())){
@@ -104,6 +116,10 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
         return mList.get(position).getCODCONTATO();
     }
 
+    public String CodigoContatoExterno(int position){
+        return mList.get(position).getCODCONTATO_EXT();
+    }
+
 
     public void removeListItem(int position) {
         mList.remove(position);
@@ -114,8 +130,12 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
         return mList.get(position).getNomeCont();
     }
 
+    public String flagIntegrado(int position) {
+        return mList.get(position).getFLAGINTEGRADO();
+    }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         private TextView NOME;
         private TextView CARGO;
         private TextView EMAIL;
@@ -134,6 +154,8 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
         private int CODCLIENTE;
         private int CODCLIE_EXT;
         private TextView NOMERAZAO;
+        private LinearLayout FLAGINTEGRADO;
+        private String CODCONTATO_EXT;
 
 
         public MyViewHolder(View itemView) {
@@ -149,11 +171,14 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
             TEL1 = (TextView) itemView.findViewById(R.id.lblTel1Contato);
             TEL2 = (TextView) itemView.findViewById(R.id.lblTel2Contato);
             NOMERAZAO = (TextView) itemView.findViewById(R.id.lbl_nome_cliente_contato);
+            FLAGINTEGRADO = (LinearLayout) itemView.findViewById(R.id.flag_integrado_cont);
             /*telefone = (TextView) itemView.findViewById(R.id.lblTel);
             telefone2 = (TextView) itemView.findViewById(R.id.lblTel2);
             email = (TextView) itemView.findViewById(R.id.lblEmail);*/
 
+
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
         @Override
@@ -163,6 +188,13 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
             }
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            if (mRecyclerViewOnClickListenerHack != null) {
+                mRecyclerViewOnClickListenerHack.onLongClickListener(v, getPosition());
+            }
+            return true;
+        }
 
     }
 }

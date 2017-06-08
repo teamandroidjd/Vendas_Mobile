@@ -94,6 +94,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             "    CODCLIENTE                   INTEGER,                  " +
             "    CODCLIE_EXT                  INTEGER,                  " +
             "    CODCONTATO_EXT               VARCHAR (7),              " +
+            "    CODCLIENTE_EXT               VARCHAR (7),              " +
             "    NOME                         VARCHAR (60)  NOT NULL,   " +
             "    CARGO                        VARCHAR (30),             " +
             "    CODCARGO                     INTEGER,                  " +
@@ -317,6 +318,7 @@ public class ConfigDB extends SQLiteOpenHelper {
             " CODCLIENTE                   INTEGER,                  " +
             " CODCLIE_EXT                  INTEGER,                  " +
             " CODCONTATO_EXT               VARCHAR (7),              " +
+            "CODCLIENTE_EXT                VARCHAR (7),              " +
             " NOME                         VARCHAR (60)  NOT NULL,   " +
             " CARGO                        VARCHAR (30),             " +
             " SETOR                        VARCHAR (30),             " +
@@ -346,10 +348,10 @@ public class ConfigDB extends SQLiteOpenHelper {
             " CARGO_POS                    INTEGER                   " +
             ");");
     private static String SQL_CARGOS = ("CREATE TABLE IF NOT EXISTS CARGOS (" +
-            " DES_CARGO           VARCHAR(30),                         " +
-            " CODCARGO_EXT        INTEGER,                             " +
-            " ATIVO               CHAR(1),                             " +
-            " CODCARGO            INTEGER PRIMAY KEY AAUTOINCREMENT); ");
+            "   DES_CARGO           VARCHAR(30),                         " +
+            "   CODCARGO_EXT        INTEGER,                             " +
+            "   ATIVO               CHAR(1),                             " +
+            "   CODCARGO            INTEGER PRIMARY KEY AUTOINCREMENT); ");
 
     private static String SQL_FORMAPAGAMENTOS = ("CREATE TABLE IF NOT EXISTS FORMAPAGAMENTO (" +
             " CODIGO           INTEGER PRIMAY KEY AAUTOINCREMENT, " +
@@ -672,6 +674,16 @@ public class ConfigDB extends SQLiteOpenHelper {
                 e.toString();
             }
 
+            try{
+                db.execSQL("ALTER TABLE CONTATO ADD CODCLIENTE_EXT VARCHAR(7)");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("ALTER TABLE CONTATO_TEMPORARIO ADD CODCLIENTE_EXT VARCHAR(7)");
+            }catch (Exception e){
+                e.toString();
+            }
         }
     }
 }

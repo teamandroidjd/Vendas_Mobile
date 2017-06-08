@@ -320,13 +320,14 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
 
             try {
-                Cursor cursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_INT, CONTATO.CODPERFIL, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+                Cursor cursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.CODCONTATO_INT, CONTATO.CODPERFIL, CONTATO.NOME, " +
+                        "CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
                         "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
                         "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
                         "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
-                        "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT " +
+                        "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.FLAGINTEGRADO " +
                         "FROM CONTATO " +
-                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_EXT WHERE CONTATO.CODPERFIL = "+idPerfil+" "+
+                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_EXT WHERE CONTATO.CODPERFIL = " + idPerfil + " " +
                         "ORDER BY NOME ", null);
                 cursorContatos.moveToFirst();
                 if (cursorContatos.getCount() > 0) {
@@ -344,6 +345,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         String Num = cursorContatos.getString(cursorContatos.getColumnIndex("NUMERO"));
                         String Compl = cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO"));
                         String uf = cursorContatos.getString(cursorContatos.getColumnIndex("UF"));
+                        String flagIntegrado = cursorContatos.getString(cursorContatos.getColumnIndex("CONTATO.FLAGINTEGRADO"));
 
                         int codClieExt = cursorContatos.getInt(cursorContatos.getColumnIndex("CLIENTES.CODCLIE_EXT"));
                         String nomeCliente;
@@ -356,9 +358,10 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                             nomeCliente = cursorContatos.getString(cursorContatos.getColumnIndex("CLIENTES.NOMERAZAO"));
                         }
                         int codContato = cursorContatos.getInt(cursorContatos.getColumnIndex("CONTATO.CODCONTATO_INT"));
+                        String codContatoExt = cursorContatos.getString(cursorContatos.getColumnIndex("CONTATO.CODCONTATO_EXT"));
 
                         lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
-                                0, 0, codClieExt, nomeCliente, codContato);
+                                0, 0, codClieExt, nomeCliente, codContato, flagIntegrado, codContatoExt);
                         DadosListContatos.add(lstcontatos);
                     } while (cursorContatos.moveToNext());
                     cursorContatos.close();
@@ -375,14 +378,15 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                 pDialog.dismiss();
             }
         } else {
-            Cursor CursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.CODPERFIL, CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+            Cursor CursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.CODCONTATO_EXT, CONTATO.CODPERFIL, " +
+                    "CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
                     "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
                     "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
                     "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
-                    "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT " +
+                    "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT, CONTATO.FLAGINTEGRADO " +
                     "FROM CONTATO " +
                     "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_EXT " +
-                    "WHERE (CONTATO.CODPERFIL = "+idPerfil+") AND CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
+                    "WHERE (CONTATO.CODPERFIL = " + idPerfil + ") AND CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
                     "LIKE '%" + editQuery + "%'" +
                     " order by CONTATO.NOME ", null);
 
@@ -402,6 +406,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     String Num = CursorContatos.getString(CursorContatos.getColumnIndex("NUMERO"));
                     String Compl = CursorContatos.getString(CursorContatos.getColumnIndex("COMPLEMENTO"));
                     String uf = CursorContatos.getString(CursorContatos.getColumnIndex("UF"));
+                    String flagIntegrado = CursorContatos.getString(CursorContatos.getColumnIndex("CONTATO.FLAGINTEGRADO"));
                     int codClieExt = CursorContatos.getInt(CursorContatos.getColumnIndex("CLIENTES.CODCLIE_EXT"));
 
                     String nomeCliente;
@@ -415,10 +420,10 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     }
 
                     int codContato = CursorContatos.getInt(CursorContatos.getColumnIndex("CONTATO.CODCONTATO_INT"));
-
+                    String codContatoExt = CursorContatos.getString(CursorContatos.getColumnIndex("CONTATO.CODCONTATO_EXT"));
 
                     lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
-                            0, 0, codClieExt, nomeCliente, codContato);
+                            0, 0, codClieExt, nomeCliente, codContato, flagIntegrado, codContatoExt);
                     DadosListContatos.add(lstcontatos);
                 } while (CursorContatos.moveToNext());
             } else {

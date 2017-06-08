@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.CadastroClientes;
 import com.jdsystem.br.vendasmobile.CadastroContatos;
@@ -45,7 +47,7 @@ import java.util.List;
 public class FragmentCliente extends Fragment implements RecyclerViewOnClickListenerHack {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
-    int flag, cadContato;
+    int flag, cadContato, CodContato;
     String numPedido, chavePedido, usuario, senha, codVendedor, CodEmpresa, dataEntrega, telaInvocada, urlPrincipal;
     boolean consultaPedido;
     SQLiteDatabase DB;
@@ -75,6 +77,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             senha = params.getString(getString(R.string.intent_senha));
             codVendedor = params.getString(getString(R.string.intent_codvendedor));
             cadContato = params.getInt(getString(R.string.intent_cad_contato));
+            CodContato = params.getInt(getString(R.string.intent_codcontato));
             consultaPedido = params.getBoolean("consultapedido");
         }
 
@@ -155,15 +158,18 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
         } else if (flag == 0 && cadContato == 1) {
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
             String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
-
+            String codClieExt = adapter.ChamaCodigoClienteExterno(position);
             Intent intent = new Intent(getActivity(), CadastroContatos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
             params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
-            params.putInt(getString(R.string.intent_codcliente), Integer.parseInt(CodigoClienteInterno));
+            params.putInt(getString(R.string.intent_codcliente), Integer.parseInt(codClieExt));
+            params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+            //params.putString(getString(R.string.intent_codcliente), codClieExt);
             params.putString(getString(R.string.intent_nomerazao), nomeRazao);
+            params.putInt(getString(R.string.intent_codcontato), CodContato);
             //params.putString("C",TipoContato);
             intent.putExtras(params);
             startActivity(intent);
@@ -255,7 +261,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                         getActivity().finish();
                     }
                 } else {
-                    Util.msg_toast_personal(getActivity(), getString(R.string.customer_without_purchase_permission), Util.ALERTA);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        Util.msg_toast_personal(getActivity(), getString(R.string.customer_without_purchase_permission), Util.ALERTA);
+                    }else{
+                        Toast.makeText(getActivity(),getString(R.string.customer_without_purchase_permission), Toast.LENGTH_SHORT).show();
+                    }
                     return;
                 }
             }

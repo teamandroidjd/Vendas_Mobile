@@ -43,7 +43,7 @@ public class ConsultaClientes extends AppCompatActivity
     public ListAdapterClientes adapter;
     public ProgressDialog dialog;
     public Boolean ConsultaPedido;
-    public int CadastroContato, flag, idPerfil;
+    public int CadastroContato, flag, idPerfil, CodContato;
     public SharedPreferences prefs;
     Clientes lstclientes;
     String codVendedor, URLPrincipal, codClie, codEmpresa, sincclieenvio, usuario, senha, sincclie, nomeEmpresa, editQuery,
@@ -82,6 +82,7 @@ public class ConsultaClientes extends AppCompatActivity
                 telaInvocada = params.getString(getString(R.string.intent_telainvocada));
                 flag = params.getInt(getString(R.string.intent_flag));
                 numPedido = params.getString(getString(R.string.intent_numpedido));
+                CodContato = params.getInt(getString(R.string.intent_codcontato));
             }
         }
         declaraobjetos();
@@ -494,8 +495,8 @@ public class ConsultaClientes extends AppCompatActivity
         }
         switch (flag) {
             case 0:
-                Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);
                 Bundle params = new Bundle();
+                Intent intent = new Intent(ConsultaClientes.this, CadastroContatos.class);
                 params.putInt(getString(R.string.intent_flag), flag);
                 params.putString(getString(R.string.intent_numpedido), numPedido);
                 params.putString(getString(R.string.intent_chavepedido), chavepedido);
@@ -504,6 +505,9 @@ public class ConsultaClientes extends AppCompatActivity
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                params.putInt(getString(R.string.intent_codcontato), CodContato);
+                params.putString(getString(R.string.intent_telainvocada), "backPressed");
+                //params.putInt(getString(R.string.intent_codcliente),Integer.parseInt(codClie));
                 intent.putExtras(params);
                 startActivity(intent);
                 finish();
@@ -637,6 +641,7 @@ public class ConsultaClientes extends AppCompatActivity
                     params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putInt(getString(R.string.intent_codcontato), CodContato);
                     if (telaInvocada != null) {
                         if (telaInvocada.equals("ConsultaPedidos")) {
                             params.putBoolean("consultapedido", true);
@@ -767,6 +772,7 @@ public class ConsultaClientes extends AppCompatActivity
                 params.putString(getString(R.string.intent_codvendedor), codVendedor);
                 params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putInt(getString(R.string.intent_codcontato), CodContato);
                 frag.setArguments(params);
                 ft.commit();
             } else {

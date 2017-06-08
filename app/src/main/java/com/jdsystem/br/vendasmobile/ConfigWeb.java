@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -166,7 +167,11 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 dbclientes.close();
             } catch (Exception e) {
                 e.toString();
-                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os clientes desse perfil", Toast.LENGTH_SHORT).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    Util.msg_toast_personal(ConfigWeb.this, "Falha ao tentar excluir os clientes desse perfil", Toast.LENGTH_SHORT);
+                }else {
+                    Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os clientes desse perfil", Toast.LENGTH_SHORT).show();
+                }
             }
 
             try {
@@ -363,7 +368,11 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                         hd.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(ConfigWeb.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(ConfigWeb.this, "Falha de comunicação com o servidor. Tente novamente!", Toast.LENGTH_SHORT);
+                                }else {
+                                    Toast.makeText(ConfigWeb.this, "Falha de comunicação com o servidor. Tente novamente!", Toast.LENGTH_SHORT).show();
+                                }
                                 return;
                             }
                         });
@@ -510,7 +519,11 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         gravarpreferencias();
         hd.post(new Runnable() {
             public void run() {
-                Toast.makeText(ConfigWeb.this, R.string.license_validated, Toast.LENGTH_SHORT).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    Util.msg_toast_personal(ConfigWeb.this, "Licença validada com sucesso!", Toast.LENGTH_SHORT);
+                }else{
+                    Toast.makeText(ConfigWeb.this, "Licença validada com sucesso!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         Intent intent = new Intent(getApplicationContext(), Login.class);
