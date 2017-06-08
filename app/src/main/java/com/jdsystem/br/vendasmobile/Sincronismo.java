@@ -65,6 +65,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public static final String METHOD_CONTATOENVIO = "CadastrarContato";
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
+    public static final String METHOD_NAME_AGENDA = "ENVIAR_AGENDA";
     public static String DataUltSt2 = null;
     private static SQLiteDatabase DB;
     private static String usuario;
@@ -3538,7 +3539,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
 
-        String sincpedenviostatic = "0";
+        String sincpedenviostatic = "";
         if (NumPedido.equals("0")) {
 
             String JPedidos = null;
@@ -7186,7 +7187,18 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             startActivity(i);
             finish();
 
-        } else if (id == R.id.nav_sincronismo) {
+        } else if (id == R.id.nav_agenda) {
+            Intent i = new Intent(Sincronismo.this, ConsultaAgenda.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            i.putExtras(params);
+            startActivity(i);
+            finish();
+
+        }else if (id == R.id.nav_sincronismo) {
 
         } else if (id == R.id.nav_logout) {
             Intent intent = new Intent(Sincronismo.this, Login.class);
@@ -9400,6 +9412,118 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         } catch (Exception E) {
             System.out.println("Error" + E);
         }
+    }
+
+    private void SincAgendas() {
+
+    }
+
+    public static String SincronizarAgendaEnvio (final Context ctxAgEnv, String NumAgenda, final ProgressDialog dialog) {
+
+        SharedPreferences prefsHost = ctxAgEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+        int idPerfil = prefsHost.getInt("idperfil", 0);
+
+        SharedPreferences prefs = ctxAgEnv.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString("usuario", null);
+        senha = prefs.getString("senha", null);
+
+        String sincagendaenviostatic = null;
+            String JAgenda = null;
+            DB = new ConfigDB(ctxAgEnv).getReadableDatabase();
+            Cursor CursorAgenda;
+            String RetClieEnvio = null;
+            try {
+                CursorAgenda = DB.rawQuery(" SELECT * FROM AGENDA WHERE CODIGO = " + NumAgenda + " AND CODPERFIL = " + idPerfil, null);
+                int jumpTime = 0;
+                final int totalProgressTime = CursorAgenda.getCount();
+                CursorAgenda.moveToFirst();
+                if (dialog != null) {
+                    dialog.setProgress(jumpTime);
+                    dialog.setMax(totalProgressTime);
+                }
+
+                if (CursorAgenda.getCount() > 0) {
+                    CursorAgenda.moveToFirst();
+                    do {
+                        for (int i = 0; i < CursorAgenda.getCount(); i++) {
+
+                            try {
+                                jumpTime += 1;
+                                if (dialog != null) {
+                                    dialog.setProgress(jumpTime);
+                                }
+
+                                int CodContato = CursorAgenda.getInt(CursorAgenda.getColumnIndex("CODCONTATO"));
+
+                                String Observacao = CursorAgenda.getString(CursorAgenda.getColumnIndex("DESCRICAO"));
+                                String line_separator = System.getProperty("line.separator");
+                                String OBS = Observacao.replaceAll("\n|" + line_separator, "");
+
+                                JAgenda = "{codcont_ext: '" + CodContato + "'," +
+                                        "nome_contato: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("NOMECONTATO")) + "'," +
+                                        "data_geracao: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("DATAAGEND")) + "'," +
+                                        "cod_agenda: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("CODIGO"))+ "'," +
+                                        "obs_pedido: '" + OBS + "'," +
+                                        "situacao: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("SITUACAO")) + "',";
+
+                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                                StrictMode.setThreadPolicy(policy);
+
+                                SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME_AGENDA);
+                                soap.addProperty("aJson", JAgenda);
+                                soap.addProperty("aUsuario", usuario);
+                                soap.addProperty("aSenha", senha);
+                                soap.addProperty("aNumAgenda", NumAgenda);
+                                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                envelope.setOutputSoapObject(soap);
+                                HttpTransportSE Envio = new HttpTransportSE(URLPrincipal);
+                                String RetEnvio = "0";
+
+                                try {
+                                    Boolean ConexOk = Util.checarConexaoCelular(ctx);
+                                    if (ConexOk) {
+                                        Envio.call("", envelope);
+                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+
+                                        RetEnvio = (String) envelope.getResponse();
+                                        System.out.println("Response :" + resultsRequestSOAP.toString());
+                                    } else {
+                                        sincagendaenviostatic = ctxAgEnv.getString(R.string.no_connection);
+                                        return sincagendaenviostatic;
+                                    }
+                                } catch (Exception e) {
+                                    e.toString();
+                                    sincagendaenviostatic = ctxAgEnv.getString(R.string.failure_communicate);
+                                    Toast.makeText(ctxAgEnv, "Não foi possível enviar a agenda! Verifique.", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            } catch (Exception e) {
+                                e.toString();
+                            }
+                        }
+                    } while (CursorAgenda.moveToNext());
+                    try {
+                        DB = new ConfigDB(ctx).getReadableDatabase();
+                        Cursor CursAgAtu = DB.rawQuery(" SELECT * FROM AGENDA WHERE CODIGO = '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("CODIGO")) + "' AND CODPERFIL = " + idPerfil, null);
+                        CursAgAtu.moveToFirst();
+                        if (CursAgAtu.getCount() > 0) {
+                            DB.execSQL(" UPDATE AGENDA SET STATUS = 'S' WHERE CODIGO = '" + CursAgAtu.getString(CursAgAtu.getColumnIndex("CODIGO")) + "' AND CODPERFIL = " + idPerfil);
+                        }
+                        sincagendaenviostatic = "OK";
+                        CursAgAtu.close();
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                    CursorAgenda.close();
+                } else {
+                    sincagendaenviostatic = "Nenhum agendamento a ser enviado.";
+                    return sincagendaenviostatic;
+                }
+            } catch (Exception e) {
+                e.toString();
+            }
+        return sincagendaenviostatic;
     }
 
     public Action getIndexApiAction() {

@@ -354,11 +354,22 @@ public class ConfigDB extends SQLiteOpenHelper {
             "   CODCARGO            INTEGER PRIMARY KEY AUTOINCREMENT); ");
 
     private static String SQL_FORMAPAGAMENTOS = ("CREATE TABLE IF NOT EXISTS FORMAPAGAMENTO (" +
-            " CODIGO           INTEGER PRIMAY KEY AAUTOINCREMENT, " +
+            " CODIGO           INTEGER PRIMARY KEY AUTOINCREMENT, " +
             " DESCRICAO        VARCHAR(30),                       " +
             " STATUS           CHAR(1),                           " +
             " CODPERFIL        INTEGER,                           " +
             " CODEXTERNO       INTEGER" +
+            ");");
+
+    private static String SQL_AGENDA = ("CREATE TABLE IF NOT EXISTS AGENDA (" +
+            " CODIGO           INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " NOMECONTATO      VARCHAR(30),                       " +
+            " CODCONTATO        INTEGER,                           " +
+            " STATUS           CHAR(1),                           " +
+            " SITUACAO           CHAR(1),                           " +
+            " CODPERFIL        INTEGER,                           " +
+            " DATAAGEND        DATETIME        NOT NULL,          " +
+            " DESCRICAO        TEXT                              " +
             ");");
 
     public ConfigDB(Context ctx) {
@@ -368,29 +379,34 @@ public class ConfigDB extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CLIENTE);
-        db.execSQL(SQL_BAIRROS);
-        db.execSQL(SQL_CIDADES);
-        db.execSQL(SQL_CONTATOS);
-        db.execSQL(SQL_ESTADOS);
-        db.execSQL(SQL_ITENS);
-        db.execSQL(SQL_PARAMAPP);
-        db.execSQL(SQL_PEDOPER);
-        db.execSQL(SQL_PEDITENS);
-        db.execSQL(SQL_CONFPAGAMENTO);
-        db.execSQL(SQL_VENDA_D_TEMP);
-        db.execSQL(SQL_RECEBER);
-        db.execSQL(SQL_EMPRESA);
-        db.execSQL(SQL_USUARIOS);
-        db.execSQL(SQL_BLOQUEIOS);
-        db.execSQL(SQL_PERFIL);
-        db.execSQL(SQL_DIAS_CONTATOS);
-        db.execSQL(SQL_DIAS_CONTATOS_FINAL);
-        db.execSQL(SQL_PRODUTOS_CONTATOS);
-        db.execSQL(SQL_CONTATOS_TEMPORARIOS);
-        db.execSQL(SQL_PRODUTOS_CONTATOS_TEMP);
-        db.execSQL(SQL_CARGOS);
-        db.execSQL(SQL_FORMAPAGAMENTOS);
+        try {
+            db.execSQL(SQL_CLIENTE);
+            db.execSQL(SQL_BAIRROS);
+            db.execSQL(SQL_CIDADES);
+            db.execSQL(SQL_CONTATOS);
+            db.execSQL(SQL_ESTADOS);
+            db.execSQL(SQL_ITENS);
+            db.execSQL(SQL_PARAMAPP);
+            db.execSQL(SQL_PEDOPER);
+            db.execSQL(SQL_PEDITENS);
+            db.execSQL(SQL_CONFPAGAMENTO);
+            db.execSQL(SQL_VENDA_D_TEMP);
+            db.execSQL(SQL_RECEBER);
+            db.execSQL(SQL_EMPRESA);
+            db.execSQL(SQL_USUARIOS);
+            db.execSQL(SQL_BLOQUEIOS);
+            db.execSQL(SQL_PERFIL);
+            db.execSQL(SQL_DIAS_CONTATOS);
+            db.execSQL(SQL_DIAS_CONTATOS_FINAL);
+            db.execSQL(SQL_PRODUTOS_CONTATOS);
+            db.execSQL(SQL_CONTATOS_TEMPORARIOS);
+            db.execSQL(SQL_PRODUTOS_CONTATOS_TEMP);
+            db.execSQL(SQL_CARGOS);
+            db.execSQL(SQL_FORMAPAGAMENTOS);
+            db.execSQL(SQL_AGENDA);
+        } catch (Exception e) {
+            e.toString();
+        }
     }
 
     @Override

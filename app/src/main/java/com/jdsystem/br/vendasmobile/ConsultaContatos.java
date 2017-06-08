@@ -35,7 +35,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public SharedPreferences prefs;
-    String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, editQuery;
+    String codVendedor, URLPrincipal, usuario, senha, UsuarioLogado, editQuery, telaInvocada;
     SQLiteDatabase DB;
     Contatos lstcontatos;
     //Contatos lstfiltrocontatos;
@@ -68,6 +68,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
+                telaInvocada = params.getString(getString(R.string.intent_telainvocada));
             }
         }
 
@@ -92,6 +93,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                 params.putString(getString(R.string.intent_usuario), usuario);
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                 i.putExtras(params);
                 startActivity(i);
                 finish();
@@ -205,7 +207,6 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
             @Override
             public boolean onClose() {
-
                 // flag = 1;
                 editQuery = null;
                 searchView.onActionViewCollapsed();
@@ -272,6 +273,17 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
             finish();
 
         } else if (id == R.id.nav_contatos) {
+
+        } else if (id == R.id.nav_agenda) {
+            Intent i = new Intent(ConsultaContatos.this, ConsultaAgenda.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            i.putExtras(params);
+            startActivity(i);
+            finish();
 
         } else if (id == R.id.nav_sincronismo) {
             Intent isinc = new Intent(ConsultaContatos.this, Sincronismo.class);
@@ -455,6 +467,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     params.putString(getString(R.string.intent_senha), senha);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                     frag.setArguments(params);
                     ft.commit();
                 } else {
@@ -469,6 +482,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         newparams.putString(getString(R.string.intent_senha), senha);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                         newfrag.setArguments(newparams);
                         newft.commit();
                     }
@@ -490,6 +504,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     params.putString(getString(R.string.intent_senha), senha);
                     params.putString(getString(R.string.intent_codvendedor), codVendedor);
                     params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                     frag.setArguments(params);
                     ft.commit();
                 } else {
@@ -504,6 +519,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         newparams.putString(getString(R.string.intent_senha), senha);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                         newfrag.setArguments(newparams);
                         newft.commit();
                     }

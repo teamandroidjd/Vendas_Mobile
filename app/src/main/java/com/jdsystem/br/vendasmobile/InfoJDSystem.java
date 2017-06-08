@@ -99,7 +99,6 @@ public class InfoJDSystem extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         if (id == R.id.nav_clientes) {
-
             Intent intent = new Intent(InfoJDSystem.this, ConsultaClientes.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), codVendedor);
@@ -109,7 +108,6 @@ public class InfoJDSystem extends AppCompatActivity implements NavigationView.On
             intent.putExtras(params);
             startActivity(intent);
             finish();
-
         } else if (id == R.id.nav_produtos) {
             Intent intent = new Intent(InfoJDSystem.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
@@ -120,7 +118,6 @@ public class InfoJDSystem extends AppCompatActivity implements NavigationView.On
             intent.putExtras(params);
             startActivity(intent);
             finish();
-
         } else if (id == R.id.nav_pedidos) {
             Intent intent = new Intent(InfoJDSystem.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
@@ -131,7 +128,6 @@ public class InfoJDSystem extends AppCompatActivity implements NavigationView.On
             intent.putExtras(params);
             startActivity(intent);
             finish();
-
         } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(InfoJDSystem.this, ConsultaContatos.class);
             Bundle params = new Bundle();
@@ -142,7 +138,16 @@ public class InfoJDSystem extends AppCompatActivity implements NavigationView.On
             i.putExtras(params);
             startActivity(i);
             finish();
-
+        } else if (id == R.id.nav_agenda) {
+            Intent i = new Intent(InfoJDSystem.this, ConsultaAgenda.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            i.putExtras(params);
+            startActivity(i);
+            finish();
         } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(InfoJDSystem.this, Sincronismo.class);
             Bundle params = new Bundle();
@@ -172,7 +177,6 @@ public class InfoJDSystem extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     @Override
     public void onBackPressed() {

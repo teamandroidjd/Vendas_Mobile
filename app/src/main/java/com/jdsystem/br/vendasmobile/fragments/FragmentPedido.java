@@ -48,7 +48,7 @@ import java.util.List;
  * Created by WKS22 on 29/11/2016.
  */
 
-public class FragmentPedido extends Fragment implements RecyclerViewOnClickListenerHack, Runnable {
+public class FragmentPedido extends Fragment implements RecyclerViewOnClickListenerHack {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int codclie_ext;
@@ -426,12 +426,6 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             E.toString();
         }
     }
-
-    @Override
-    public void run() {
-
-    }
-
     private void carregarpreferencias() {
         SharedPreferences prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);

@@ -1324,7 +1324,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
                 finish();
             }
         } else {
-
             final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CadastroContatos.this);
             builder.setMessage(R.string.cancel_add_contact)
                     //builder.setIcon(R.drawable.logo_ico);
@@ -1459,9 +1458,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
 
             }
         });
-
-
-    }
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()

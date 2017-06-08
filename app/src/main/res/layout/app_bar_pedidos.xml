@@ -69,6 +69,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:onClick="novopedido"
+            fab:fab_colorNormal="@color/colordescClie"
             android:src="@drawable/compra"
             fab:fab_label="Novo Pedido"
             fab:fab_size="mini" />
@@ -119,6 +120,7 @@
             android:layout_height="wrap_content"
             android:onClick="filtrositped"
             android:src="@drawable/sit"
+            fab:fab_colorNormal="@color/colordescClie"
             fab:fab_label="Situação"
             fab:fab_size="mini" />
 
@@ -127,6 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="filtrocliped"
+            fab:fab_colorNormal="@color/colordescClie"
             android:src="@drawable/user"
             fab:fab_label="Cliente"
             fab:fab_size="mini" />
@@ -136,6 +139,7 @@
             android:layout_width="31dp"
             android:layout_height="28dp"
             android:onClick="filtroemissaoped"
+            fab:fab_colorNormal="@color/colordescClie"
             android:src="@drawable/calendar"
             fab:fab_label="Emissão"
             fab:fab_size="mini" />

@@ -41,7 +41,7 @@
         fab:menu_colorNormal="@color/colorPrimary"
         fab:menu_colorPressed="@color/colorPrimary"
         fab:menu_fab_size="normal"
-        fab:menu_icon="@drawable/fab_add"
+        fab:menu_icon="@drawable/add"
         fab:menu_labels_colorNormal="#333"
         fab:menu_labels_colorPressed="#444"
         fab:menu_labels_colorRipple="#66efecec"
@@ -68,6 +68,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:onClick="novopedido"
+            fab:fab_colorNormal="@color/colordescClie"
             android:src="@drawable/compra"
             fab:fab_label="Novo Pedido"
             fab:fab_size="mini" />
@@ -118,6 +119,7 @@
             android:layout_height="wrap_content"
             android:onClick="filtrositped"
             android:src="@drawable/sit"
+            fab:fab_colorNormal="@color/colordescClie"
             fab:fab_label="Situação"
             fab:fab_size="mini" />
 
@@ -126,6 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="filtrocliped"
+            fab:fab_colorNormal="@color/colordescClie"
             android:src="@drawable/user"
             fab:fab_label="Cliente"
             fab:fab_size="mini" />
@@ -135,6 +138,7 @@
             android:layout_width="31dp"
             android:layout_height="28dp"
             android:onClick="filtroemissaoped"
+            fab:fab_colorNormal="@color/colordescClie"
             android:src="@drawable/calendar"
             fab:fab_label="Emissão"
             fab:fab_size="mini" />

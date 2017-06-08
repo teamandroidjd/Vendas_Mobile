@@ -140,7 +140,6 @@ public class ListAdapterPedidos extends RecyclerView.Adapter<ListAdapterPedidos.
             lblEmpresa = (TextView) itemView.findViewById(R.id.lblEmpresa);
             imgStatus = (ImageView) itemView.findViewById(R.id.imgStatus);
 
-
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }

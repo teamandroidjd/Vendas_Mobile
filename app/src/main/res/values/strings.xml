@@ -106,6 +106,7 @@
     <string name="checking_user_password">Verificando usuário e senha...</string>
     <string name="valid_license">Validando licença...</string>
     <string name="loading_orders">Carregando pedidos...</string>
+    <string name="carregando_agendas">Carregando agendamentos...</string>
     <string name="loadingcontacts">Carregando contatos...</string>
     <string name="searchingcontacts">Buscando contatos...</string>
     <string name="searchingclients">Buscando clientes...</string>
@@ -129,15 +130,21 @@
     <string name="intent_datainicial">datainicial</string>
     <string name="intent_datafinal">datafinal</string>
     <string name="intent_situacaopedido">SitPedido</string>
+    <string name="intent_situacaoagenda">SitAgenda</string>
+    <string name="intent_nomesitagenda">NomeSitAgenda</string>
     <string name="intent_codigoempresa">codempresa</string>
     <string name="intent_flag">flag</string>
     <string name="intent_numpedido">numpedido</string>
     <string name="intent_chavepedido">chave</string>
     <string name="intent_telainvocada">telainvocada</string>
     <string name="intent_consultapedido">consultapedido</string>
+    <string name="intent_consultaagenda">consultaagenda</string>
     <string name="intent_codcontato">codContato</string>
+    <string name="intent_nomecontato">nomecontato</string>
+    <string name="intent_numagenda">numagenda</string>
     <string name="intent_codcontato_ext">codContatoExt</string>
     <string name="intent_codcontato_externo">codContatoExterno</string>
+
 
     <!-- Utilizado somente nas preferências-->
 

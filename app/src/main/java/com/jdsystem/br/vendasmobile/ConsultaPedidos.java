@@ -423,7 +423,6 @@ public class ConsultaPedidos extends AppCompatActivity
                 super.onBackPressed();
             }
         }
-
     }
 
     @Override
@@ -545,7 +544,18 @@ public class ConsultaPedidos extends AppCompatActivity
             startActivity(i);
             finish();
 
-        } else if (id == R.id.nav_sincronismo) {
+        } else if (id == R.id.nav_agenda) {
+            Intent i = new Intent(ConsultaPedidos.this, ConsultaAgenda.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            i.putExtras(params);
+            startActivity(i);
+            finish();
+
+        }else if (id == R.id.nav_sincronismo) {
             Intent intent = new Intent(ConsultaPedidos.this, Sincronismo.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), codVendedor);

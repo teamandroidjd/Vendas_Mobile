@@ -104,6 +104,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -111,7 +112,19 @@
         <activity
             android:name=".CadastroContatos"
             android:label="Cadastro de contato"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".ConsultaAgenda"
+            android:label="Consulta de agendamentos"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".FiltroPeriodoAgenda"
+            android:label="Filtro de data do agendamento"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".CadastroAgenda"
+            android:label="Cadastro de agendamento"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"
+        />
     </application>
 
 </manifest>

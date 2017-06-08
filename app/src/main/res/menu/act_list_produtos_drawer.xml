@@ -18,6 +18,11 @@
             android:id="@+id/nav_contatos"
             android:icon="@drawable/contatos"
             android:title="Contatos" />
+
+        <item
+            android:id="@+id/nav_agenda"
+            android:icon="@drawable/agenda"
+            android:title="Agenda" />
     </group>
 
     <item android:title="Comunicação">

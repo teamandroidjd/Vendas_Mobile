@@ -93,6 +93,7 @@ public class Util extends Activity {
     }
 
     public static String FormataDataDDMMAAAA(String dataAmericanaString) {
+        //20170806 00:00:00
         String retorno = "";
         String vc = dataAmericanaString.replace("-", "");
         retorno = vc.substring(6, 8) + "/" + vc.substring(4, 6) + "/" + vc.substring(0, 4);
@@ -107,9 +108,21 @@ public class Util extends Activity {
     }
 
     public static String FormataDataDDMMAAAA_ComHoras(String dataAmericanaString) {
+        //20170806 00:00:00
         String retorno = "";
         String vc = dataAmericanaString.replace("-", "");
         retorno = vc.substring(6, 8) + "/" + vc.substring(4, 6) + "/" + vc.substring(0, 4) + vc.substring(8, 14);
+        return retorno;
+    }
+    public static String FormataDataAAAAMMDD_ComHoras(String dataSQLString) {
+        String retorno = "";
+        //10122017 09:05:30
+        try {
+            String vc = dataSQLString.replace("/", "");
+            retorno = vc.substring(4, 8) + "-" + vc.substring(2, 4) + "-" + vc.substring(0, 2) + vc.substring(8, 17);
+        } catch (Exception e) {
+            e.toString();
+        }
         return retorno;
     }
 

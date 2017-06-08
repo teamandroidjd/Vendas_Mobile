@@ -1,0 +1,153 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
+        <TextView
+            android:id="@+id/txv_contato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Contato: 005 - PAULO ROBERTO DOS SANTOS COUITNHO PINHEIRO FERNANDES DA SILVA SAURO SANTOS DA ROCHA"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:padding="5dp"
+            android:background="#afd8de"
+            android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txv1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Datas e horários sugeridos pelo contato: "
+            android:textColor="@color/ColorText"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+            <ListView
+                android:id="@+id/lv_horarios_contatos"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/colordescClie"
+                android:textSize="15sp"
+                android:textStyle="normal" />
+
+    </LinearLayout>
+
+
+    <RadioGroup
+        android:id="@+id/rgsituacao"
+        android:layout_marginTop="15dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+        <RadioButton
+            android:id="@+id/rbagendando"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Agendando"
+            android:textColor="@color/colordescClie"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/rbfinalizando"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Finalizando"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/colordescClie"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Data e hora"
+            android:inputType="datetime"
+            android:focusable="false"
+            android:padding="10dp"
+            android:textColor="@color/colordescClie"
+            android:textSize="18sp"
+            android:textStyle="normal|bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <EditText
+        android:id="@+id/EdtOBS"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:textSize="18sp"
+        android:textColor="@color/colordescClie"
+        android:hint="Observação"
+        android:textStyle="normal|bold"
+        android:inputType="textMultiLine" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_gravity="bottom"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btncancelar"
+            android:layout_weight="1"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:text="Cancelar"
+            android:textSize="20dp"
+            android:textColor="@color/colorCardClie"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+        <Button
+            android:id="@+id/btnsalvar"
+            android:layout_weight="1"
+            android:layout_width="220dp"
+            android:layout_marginLeft="2dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:text="Salvar"
+            android:textSize="20dp"
+            android:textColor="@color/colorCardClie"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+
+
+

@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/venda_txv_codigo_cliente"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cliente: 005 - PAULO ROBERTO DOS SANTOS COUITNHO PINHEIRO FERNANDES DA SILVA SAURO SANTOS DA ROCHA"
             android:textColor="#ffffff"
@@ -23,7 +23,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal">
 
             <TextView
