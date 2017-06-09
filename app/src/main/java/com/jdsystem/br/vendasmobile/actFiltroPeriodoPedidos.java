@@ -51,7 +51,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
                     //MesInicio = MesInicio + 1;
                 }
 
-                DataInicial = Util.AcrescentaZeros(String.valueOf(diaInicio), 2) + "/" + Util.AcrescentaZeros(String.valueOf(mesInicio + 1), 2) + "/" + anoInicio;
+                DataInicial = anoInicio + "-" + Util.AcrescentaZeros(String.valueOf(mesInicio + 1), 2) + "-" + Util.AcrescentaZeros(String.valueOf(diaInicio), 2);
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 try {
                     DataIni = (Date) formatter.parse(diaInicio + "/" + (mesInicio + 1) + "/" + anoInicio);
@@ -72,7 +72,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
                     mesFim = mesFim + 1;
                 }
 
-                DataFinal = Util.AcrescentaZeros(String.valueOf(diaFim), 2) + "/" + Util.AcrescentaZeros(String.valueOf((mesFim)), 2) + "/" + anoFim;
+                DataFinal =  anoFim + "-" + Util.AcrescentaZeros(String.valueOf((mesFim)), 2) + "-" + Util.AcrescentaZeros(String.valueOf(diaFim), 2);
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 try {
                     DataFim = (Date) formatter.parse(diaFim + "/" + mesFim + "/" + anoFim);

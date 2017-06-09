@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -49,11 +50,18 @@ public class DadosProduto extends AppCompatActivity {
     private TextView TAG_QTDMINVENDA;
     private RelativeLayout TAG_LINEAR1, TAG_LINEAR2, TAG_LINEAR3, TAG_LINEAR4, TAG_LINEAR5, TAG_LINEAR6, TAG_LINEAR7;
     private LinearLayout TAG_LINEARESTOQUE, TAG_LINEARQTDMINVEND;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_dados_produtos);
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        } catch (Exception e) {
+
+        }
 
 
         carregarpreferencias();
@@ -272,14 +280,14 @@ public class DadosProduto extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(DadosProduto.this, ConsultaProdutos.class);
+        /*Intent intent = new Intent(DadosProduto.this, ConsultaProdutos.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), codVendedor);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
         intent.putExtras(params);
-        startActivity(intent);
+        startActivity(intent);*/
         finish();
 
     }

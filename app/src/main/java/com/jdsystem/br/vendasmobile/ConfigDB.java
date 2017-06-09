@@ -7,9 +7,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 
 public class ConfigDB extends SQLiteOpenHelper {
+    public ConfigDB(Context ctx) {
+
+        super(ctx, Dbname, null, versao);
+    }
 
     public static String Dbname = "WSGEDB.db";
     public static int versao = 3;
+
     private static String SQL_CLIENTE = (" CREATE TABLE IF NOT EXISTS CLIENTES (" +
             " CNPJ_CPF      VARCHAR (14) NOT NULL,             " +
             " NOMERAZAO     VARCHAR (60) NOT NULL,             " +
@@ -88,7 +93,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             " HABALTPRECOVENDA                 CHAR(1),            " +
             " VLMINVENDA                       VARCHAR(30),        " +
             " p_trabalhar_com_estoque_negativo CHAR DEFAULT 1,     " +
-            " p_desconto_do_vendedor INTEGER);");
+            " p_desconto_do_vendedor INTEGER" +
+            ");");
     private static String SQL_CONTATOS = (" CREATE TABLE IF NOT EXISTS CONTATO (" +
             "    CODCONTATO_INT INTEGER       PRIMARY KEY AUTOINCREMENT," +
             "    CODCLIENTE                   INTEGER,                  " +
@@ -362,20 +368,17 @@ public class ConfigDB extends SQLiteOpenHelper {
             ");");
 
     private static String SQL_AGENDA = ("CREATE TABLE IF NOT EXISTS AGENDA (" +
-            " CODIGO           INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            " NOMECONTATO      VARCHAR(30),                       " +
-            " CODCONTATO        INTEGER,                           " +
-            " STATUS           CHAR(1),                           " +
-            " SITUACAO           CHAR(1),                           " +
-            " CODPERFIL        INTEGER,                           " +
-            " DATAAGEND        DATETIME        NOT NULL,          " +
-            " DESCRICAO        TEXT                              " +
+            " CODIGO      INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " NOMECONTATO VARCHAR(30),                       " +
+            " CODCONTATO  INTEGER,                           " +
+            " STATUS      CHAR(1),                           " +
+            " SITUACAO    CHAR(1),                           " +
+            " CODPERFIL   INTEGER,                           " +
+            " DATAAGEND   DATETIME NOT NULL,                 " +
+            " DESCRICAO   TEXT                               " +
             ");");
 
-    public ConfigDB(Context ctx) {
 
-        super(ctx, Dbname, null, versao);
-    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -697,6 +700,20 @@ public class ConfigDB extends SQLiteOpenHelper {
             }
             try{
                 db.execSQL("ALTER TABLE CONTATO_TEMPORARIO ADD CODCLIENTE_EXT VARCHAR(7)");
+            }catch (Exception e){
+                e.toString();
+            }
+            try{
+                db.execSQL("CREATE TABLE IF NOT EXISTS AGENDA (" +
+                        " CODIGO      INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        " NOMECONTATO VARCHAR(30),                       " +
+                        " CODCONTATO  INTEGER,                           " +
+                        " STATUS      CHAR(1),                           " +
+                        " SITUACAO    CHAR(1),                           " +
+                        " CODPERFIL   INTEGER,                           " +
+                        " DATAAGEND   DATETIME NOT NULL,                 " +
+                        " DESCRICAO   TEXT                               " +
+                        ");");
             }catch (Exception e){
                 e.toString();
             }

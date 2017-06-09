@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -90,6 +91,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
     TimePickerDialog timePickerDialog;
     ImageView bolaVermelha;
     Localizacao localizacao = new Localizacao();
+    Toolbar toolbar;
 
     private Handler handler = new Handler();
     private GoogleApiClient client;
@@ -169,6 +171,12 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cad_contatos);
+        try {
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        } catch (Exception e) {
+
+        }
 
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         declaraobjetos();
@@ -1358,7 +1366,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
     public void run() {
 
         if (flag == 1) {
-            Sincronismo.SincAtualizaCidade(sUF, CadastroContatos.this, DialogECB, handler);
+            Sincronismo.sincronizaCidade(sUF, CadastroContatos.this, DialogECB, handler);
         }
         if (DialogECB != null && flag == 1) {
             flag = 0;
@@ -1370,7 +1378,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
                 if (VerificaConexao()) {
                     if (sUF != null) {
                         if (!PesqCEP)
-                            Sincronismo.SincAtualizaCidade(sUF, CadastroContatos.this, DialogECB, handler);
+                            Sincronismo.sincronizaCidade(sUF, CadastroContatos.this, DialogECB, handler);
                     }
                 }
                 final ArrayAdapter<String> spinnerArrayAdapter = localizacao.Cidades(CadastroContatos.this, sUF, spCidade, DialogECB);
@@ -1401,7 +1409,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
                 if (VerificaConexao()) {
                     if (NomeBairro != null) {
                         if (!PesqCEP)
-                            Sincronismo.SincAtualizaBairro(localizacao.retornaCodContatoExt(CadastroContatos.this, NomeCidade, sUF),
+                            Sincronismo.sincronizaBairro(localizacao.retornaCodContatoExt(CadastroContatos.this, NomeCidade, sUF),
                                     CadastroContatos.this, DialogECB, codCidadeInt, handler);
                     }
                 }

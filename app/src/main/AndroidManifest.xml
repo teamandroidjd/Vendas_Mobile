@@ -81,7 +81,8 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".DadosProduto"
-            android:label="Dados do produto" />
+            android:label="Dados do produto"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".CadastroPedidos"
             android:label="Cadastrar pedido"
@@ -112,7 +113,8 @@
         <activity
             android:name=".CadastroContatos"
             android:label="Cadastro de contato"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ConsultaAgenda"
             android:label="Consulta de agendamentos"
             android:theme="@style/AppTheme.NoActionBar"

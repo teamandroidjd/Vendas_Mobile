@@ -25,7 +25,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +40,6 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jdsystem.br.vendasmobile.Util.Util;
-import com.jdsystem.br.vendasmobile.domain.Contatos;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,9 +53,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class Sincronismo extends AppCompatActivity implements Runnable, NavigationView.OnNavigationItemSelectedListener {
@@ -66,19 +64,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     public static final String METHOD_CONTATOENVIO = "CadastrarContato";
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public static final String METHOD_NAME_AGENDA = "ENVIAR_AGENDA";
-    public static String DataUltSt2 = null;
     private static SQLiteDatabase DB;
-    private static String usuario;
-    private static String senha;
-    private static String sCodVend;
-    private static String URLPrincipal;
-    private static Context ctx;
+    private static String usuario,senha,codVendedor,URLPrincipal;
+    //private static Context ctx;
     private static BaseFont bfBold;
     private static BaseFont bf;
     private static int pageNumber = 0;
     public SharedPreferences prefs;
     Handler hd;
-    Button btnSinc;
+    //Button btnSinc;
     Toolbar toolbar;
     private int idPerfil;
     private ProgressDialog Dialog, DialogECB;
@@ -88,28 +82,26 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sincronismo);
+        declaraObjetos();
+        carregaPreferencias();
+        carregaUsuarioLogado();
 
-        carregarpreferencias();
-        carregausuariologado();
-        declaraobjetos();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(Sincronismo.this);
 
         Intent intent = getIntent();
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodVend = params.getString(getString(R.string.intent_codvendedor));
+                codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
                 usuario = params.getString(getString(R.string.intent_usuario));
                 senha = params.getString(getString(R.string.intent_senha));
             }
         }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //drawer.setDrawerListener(toggle);
-        toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(Sincronismo.this);
     }
 
     @Override
@@ -125,16 +117,16 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         }
 
         try {
-            SincronizarClientesStatic(sCodVend, this, usuario, senha, 0, Dialog, DialogECB, hd);
-            SincronizarContatosOutrosStatic(this,usuario,senha,0,Dialog,DialogECB,hd);
-            SincronizarProdutosStatic(this, usuario, senha, 0, Dialog, DialogECB, hd);
-            SincDescricaoTabelasStatic(usuario, senha, this, Dialog, DialogECB, hd);
-            SincBloqueiosStatic(usuario, senha, this, Dialog, DialogECB, hd);
-            SincParametrosStatic(usuario, senha, this, Dialog, DialogECB, hd);
-            SincronizarClientesEnvioStatic("0", this, usuario, senha, Dialog, DialogECB, hd);
-            SincronizarPedidosEnvioStatic(usuario, senha, this, "0", Dialog, DialogECB, hd);
-            SincronizarContatosEnvioStatic(this, usuario, senha, DialogECB, Dialog, hd);
-            CarregarFormasPagamento(usuario, senha, this, Dialog, DialogECB, hd);
+            sincronizaParametros(usuario, senha, this, Dialog, DialogECB, hd);
+            sincronizaClientes(codVendedor, this, usuario, senha, 0, Dialog, DialogECB, hd);
+            sincronizaContatosOutros(this,usuario,senha,0,Dialog,DialogECB,hd);
+            sincronizaProdutos(this, usuario, senha, 0, Dialog, DialogECB, hd);
+            sincronizaDescricaoTabelas(usuario, senha, this, Dialog, DialogECB, hd);
+            sincronizaBloqueios(usuario, senha, this, Dialog, DialogECB, hd);
+            sincronizaClientesEnvio("0", this, usuario, senha, Dialog, DialogECB, hd);
+            sincronizaPedidosEnvio(usuario, senha, this, "0", Dialog, DialogECB, hd);
+            sincronizaContatosEnvio(this, usuario, senha, DialogECB, Dialog, hd);
+            sincronizaFormasPagamento(usuario, senha, this, Dialog, DialogECB, hd);
         } catch (Exception e) {
             e.toString();
             Dialog.dismiss();
@@ -148,7 +140,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         }
         Intent i = new Intent(Sincronismo.this, ConsultaPedidos.class);
         Bundle params = new Bundle();
-        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_codvendedor), codVendedor);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
@@ -157,7 +149,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         finish();
     }
 
-    public void sincronizar(View view) {
+    protected void sincronizar(View view) {
         hd = new Handler();
         DialogECB = new ProgressDialog(Sincronismo.this);
         Dialog = new ProgressDialog(Sincronismo.this);
@@ -200,26 +192,195 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     }
 
-    public static boolean verificaconexaoservidor(Context context) { // verifica se há conexão com o servidor de dados no clientes.
-        boolean ConexOK = Util.checarConexaoCelular(context);
-        if (ConexOK) {
-            try {
-                HttpURLConnection urlc = (HttpURLConnection) (new URL(URLPrincipal).openConnection());
-                urlc.setRequestProperty("User-Agent", "Test");
-                urlc.setRequestProperty("Connection", "close");
-                urlc.setConnectTimeout(1500);
-                urlc.connect();
-                return urlc.getResponseCode() == 200;
-            } catch (IOException e) {
-                e.toString();
+    public static String sincronizaParametros(String sUsuario, String sSenha, final Context ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString("host", null);
+        int idPerfil = prefs.getInt("idperfil", 0);
+        String sincparaetrosstatic = null;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefsHost.getString("host", null);
+
+        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
+        soap.addProperty("aUsuario", sUsuario);
+        soap.addProperty("aSenha", sSenha);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.setOutputSoapObject(soap);
+        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 10000);
+        String RetParamApp = null;
+
+        try {
+            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
+            if (ConexOk) {
+
+                int i = 0;
+                do {
+
+                    try {
+                        if (i > 0) {
+                            Thread.sleep(500);
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        if (ConexOk) {
+
+                            try {
+                                if (i == 0) {
+                                    Envio.call("", envelope);
+
+                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
+                                    RetParamApp = (String) envelope.getResponse();
+                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                                } else {
+                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
+                                    newsoap.addProperty("aUsuario", usuario);
+                                    newsoap.addProperty("aSenha", senha);
+                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                                    newenvelope.setOutputSoapObject(newsoap);
+                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
+                                    newEnvio.call("", newenvelope);
+
+                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
+                                    RetParamApp = (String) newenvelope.getResponse();
+                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
+                                }
+                            } catch (Exception e) {
+                                e.toString();
+                                sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+                    i = i + 1;
+                } while (RetParamApp == null && i <= 6);
+            } else {
+                sincparaetrosstatic = ctxEnv.getString(R.string.no_connection);
+                return sincparaetrosstatic;
             }
-        } else {
-            return false;
+            if (RetParamApp == null) {
+                sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
+                return sincparaetrosstatic;
+            }
+        } catch (Exception e) {
+            e.toString();
+            sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
+            return sincparaetrosstatic;
         }
-        return false;
+        try {
+            JSONObject jsonObj = new JSONObject(RetParamApp);
+            JSONArray JParamApp = jsonObj.getJSONArray("param_app");
+
+            int jumpTime = 0;
+            int totalProgressTime = JParamApp.length();
+            if (dialog != null) {
+                dialog.setProgress(jumpTime);
+                dialog.setMax(totalProgressTime);
+            }
+            DB = new ConfigDB(ctxEnv).getReadableDatabase();
+
+            for (int i = 0; i < JParamApp.length(); i++) {
+                while (jumpTime < totalProgressTime) {
+                    try {
+                        JSONObject c = JParamApp.getJSONObject(jumpTime);
+                        jumpTime += 1;
+                        if (dialog != null) {
+                            dialog.setProgress(jumpTime);
+                            hd.post(new Runnable() {
+                                public void run() {
+                                    dialog.setMessage(ctxEnv.getString(R.string.updating_parameters));
+                                }
+                            });
+                        }
+                        Double PercDescMax = c.getDouble("percdescmaxped");
+                        String habitemnegativo = c.getString("habitemnegativo").trim();
+                        String habcritsitclie = c.getString("habcritsitclie").trim();
+                        String habcritqtditens = c.getString("habcritqtditens").trim();
+                        String habcliexvend = c.getString("habcliexvend").trim();
+                        String habqtdminvenda = c.getString("habqtdminvenda").trim();
+                        if (habqtdminvenda.equals("True")) {
+                            habqtdminvenda = "S";
+                        } else {
+                            habqtdminvenda = "N";
+                        }
+                        String habaltprecovenda = c.getString("habaltprecovenda").trim();
+                        if (habaltprecovenda.equals("False") || habaltprecovenda.equals("")) {
+                            habaltprecovenda = "N";
+                        } else {
+                            habaltprecovenda = "S";
+                        }
+                        String tbminvenda = c.getString("tbminvenda").trim();
+                        if (tbminvenda.equals(" ") || tbminvenda.equals("False")) {
+                            tbminvenda = "0";
+                        }
+                        String tipopermissaocadclie = c.getString("tipopermissaocadclie").trim(); //1 - nenhum usuario pode cadastrar cliente. 2 - todos podem
+                        //cadastrar clientes 3 - verificar a permissão de usuário se pode ou não cadastrar.
+
+
+                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL,HABALTPRECOVENDA,VLMINVENDA,HABCLIEXVEND,HABCADASTRO_CLIE,HABCONTROLQTDMINVEND,PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
+                        CursorParam.moveToFirst();
+                        if (CursorParam.getCount() > 0) {
+                            if(!habcliexvend.equals(CursorParam.getString(CursorParam.getColumnIndex("HABCLIEXVEND")))){
+                                try {
+                                    DB.execSQL("UPDATE USUARIOS SET DT_ULT_ATU_CLIE = "+null+" WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + usuario + "' AND SENHA = '" + senha + "'");
+                                } catch (Exception e) {
+                                    e.toString();
+                                }
+                            }
+                            DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
+                                    "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
+                                    "', HABCADASTRO_CLIE = '" + tipopermissaocadclie.trim() +
+                                    "', HABCONTROLQTDMINVEND = '" + habqtdminvenda.trim() +
+                                    "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
+                                    "', HABCLIEXVEND = '" + habcliexvend.trim() +
+                                    "', CODPERFIL = '" + idPerfil +
+                                    "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
+                                    "', HABALTPRECOVENDA = '" + habaltprecovenda.trim() +
+                                    "', VLMINVENDA = '" + tbminvenda.trim() +
+                                    "' WHERE CODPERFIL = " + idPerfil);
+                        } else {
+
+                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC,HABALTPRECOVENDA,VLMINVENDA,HABCLIEXVEND,HABCADASTRO_CLIE," +
+                                    "HABCONTROLQTDMINVEND,HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
+                                    " VALUES(" + "'" + PercDescMax + "'," +
+                                    " '" + habaltprecovenda.trim() + "'," +
+                                    " '" + tbminvenda.trim() + "'," +
+                                    " '" + habcliexvend.trim() + "'," +
+                                    " '" + tipopermissaocadclie.trim() + "'," +
+                                    " '" + habqtdminvenda.trim() + "'," +
+                                    " '" + habitemnegativo.trim() + "'," +
+                                    " '" + habcritsitclie.trim() + "'," +
+                                    " '" + idPerfil + "'," +
+                                    " '" + habcritqtditens.trim() + "');");
+                        }
+                        sincparaetrosstatic = "OK";
+                        CursorParam.close();
+
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+                }
+                if (dialog != null) {
+                    jumpTime = 0;
+                    totalProgressTime = 0;
+                    dialog.setProgress(jumpTime);
+                    dialog.setMax(totalProgressTime);
+                }
+            }
+        } catch (JSONException e) {
+            e.toString();
+            return sincparaetrosstatic;
+        }
+        return sincparaetrosstatic;
     }
 
-    public static String SincronizarClientesStatic(String sCodVend, final Context ctxEnvClie, String user, String pass, int Codclie, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+    public static String sincronizaClientes(String sCodVend, final Context ctxEnvClie, String user, String pass, int Codclie, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -235,7 +396,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         String METHOD_NAME = "Carregar";
         String TAG_CLIENTESINFO = "clientes";
         String TAG_TELEFONESINFO = "telefones";
-        String TAG_CONTATOSINFO = "contatos";
         String TAG_CODIGO = "codigo";
         String TAG_RAZAOSOCIAL = "razao_social";
         String TAG_NOMEFANTASIA = "nome_fantasia";
@@ -263,7 +423,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 cursorparamapp.moveToFirst();
 
                 DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CLIE"));
-                if (DtUlt == null) {
+                if (DtUlt == null || DtUlt.equals("null")) {
                     DtUlt = "01/01/2000 10:00:00";
                 }
                 cursorparamapp.close();
@@ -778,7 +938,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             E.toString();
                         }
 
-                        SincronizarContatosStatic(ctxEnvClie, user, pass, RetClientes, Integer.parseInt(CodCliente), jumpTime);
+                        //sincronizaContatos(ctxEnvClie, user, pass, RetClientes, Integer.parseInt(CodCliente), jumpTime);
                         /*if (CodClieExt == null) {
                             Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
                             CursorContatosEnv.moveToFirst();
@@ -940,7 +1100,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                                 "',' " + emailContato.trim() + "',' " + tel1Contato + "',' " + tel2Contato + "'" +
                                                 "," + CodCliente + ", '" + CodClieExt + "', '" + codExtContato + "', '" + documentoContato + "', '" +
                                                 dataAnivContato + "', '" + cepContato + "', '" + endContato + "', '" + complContato + "', '" +
-                                                ufContato + "', " + sCodVend + ", '" + bairroContato + "', '" + cidadeContato + "', '" +
+                                                ufContato + "', " + codVendedor + ", '" + bairroContato + "', '" + cidadeContato + "', '" +
                                                 tipoContato + "', '" + obsContato + "', " + idPerfil + ", " + Integer.parseInt(codCargoContato) + ", '" + setorContato + "');");
                                     }
                                     try{
@@ -976,7 +1136,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sinccliestatic;
     }
 
-    public static String SincronizarContatosStatic(final Context ctxContato, String user, String pass, String result, int codCliente, int jumpTime) {
+    public static String sincronizaContatos(final Context ctxContato, String user, String pass, String result, int codCliente, int jumpTime) {
 
         SharedPreferences prefsHost = ctxContato.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -1206,7 +1366,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincContatoEnvio;
     }
 
-    public static String SincronizarProdutosStatic(final Context ctxSincProd, String user, String pass, int codItem, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+    public static String sincronizaProdutos(final Context ctxSincProd, String user, String pass, int codItem, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefsHost = ctxSincProd.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -1764,7 +1924,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincprodstatic;
     }
 
-    public static String SincDescricaoTabelasStatic(String sUsuario, String sSenha, final Context
+    public static String sincronizaDescricaoTabelas(String sUsuario, String sSenha, final Context
             ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
@@ -1905,7 +2065,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sinctabelasstatic;
     }
 
-    public static String SincBloqueiosStatic(String sUsuario, String sSenha, final Context ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+    public static String sincronizaBloqueios(String sUsuario, String sSenha, final Context ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         int idPerfil = prefs.getInt("idperfil", 0);
@@ -2048,182 +2208,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincbloqstatic;
     }
 
-    public static String SincParametrosStatic(String sUsuario, String sSenha, final Context ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
-        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString("host", null);
-        int idPerfil = prefs.getInt("idperfil", 0);
-        String sincparaetrosstatic = null;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
-        soap.addProperty("aUsuario", sUsuario);
-        soap.addProperty("aSenha", sSenha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 10000);
-        String RetParamApp = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk) {
-
-                int i = 0;
-                do {
-
-                    try {
-                        if (i > 0) {
-                            Thread.sleep(500);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        if (ConexOk) {
-
-                            try {
-                                if (i == 0) {
-                                    Envio.call("", envelope);
-
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                    RetParamApp = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                } else {
-                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
-                                    newsoap.addProperty("aUsuario", usuario);
-                                    newsoap.addProperty("aSenha", senha);
-                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                    newenvelope.setOutputSoapObject(newsoap);
-                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-                                    newEnvio.call("", newenvelope);
-
-                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                    RetParamApp = (String) newenvelope.getResponse();
-                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                }
-                            } catch (Exception e) {
-                                e.toString();
-                                sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.toString();
-                    }
-                    i = i + 1;
-                } while (RetParamApp == null && i <= 6);
-            } else {
-                sincparaetrosstatic = ctxEnv.getString(R.string.no_connection);
-                return sincparaetrosstatic;
-            }
-            if (RetParamApp == null) {
-                sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
-                return sincparaetrosstatic;
-            }
-        } catch (Exception e) {
-            e.toString();
-            sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
-            return sincparaetrosstatic;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetParamApp);
-            JSONArray JParamApp = jsonObj.getJSONArray("param_app");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JParamApp.length();
-            if (dialog != null) {
-                dialog.setProgress(jumpTime);
-                dialog.setMax(totalProgressTime);
-            }
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-            for (int i = 0; i < JParamApp.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JParamApp.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        if (dialog != null) {
-                            dialog.setProgress(jumpTime);
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    dialog.setMessage(ctxEnv.getString(R.string.updating_parameters));
-                                }
-                            });
-                        }
-                        Double PercDescMax = c.getDouble("percdescmaxped");
-                        String habitemnegativo = c.getString("habitemnegativo").trim();
-                        String habcritsitclie = c.getString("habcritsitclie").trim();
-                        String habcritqtditens = c.getString("habcritqtditens").trim();
-                        String habcliexvend = c.getString("habcliexvend").trim();
-                        String habqtdminvenda = c.getString("habqtdminvenda").trim();
-                        if (habqtdminvenda.equals("True")) {
-                            habqtdminvenda = "S";
-                        } else {
-                            habqtdminvenda = "N";
-                        }
-                        String habaltprecovenda = c.getString("habaltprecovenda").trim();
-                        if (habaltprecovenda.equals("False") || habaltprecovenda.equals("")) {
-                            habaltprecovenda = "N";
-                        } else {
-                            habaltprecovenda = "S";
-                        }
-                        String tbminvenda = c.getString("tbminvenda").trim();
-                        if (tbminvenda.equals(" ") || tbminvenda.equals("False")) {
-                            tbminvenda = "0";
-                        }
-                        String tipopermissaocadclie = c.getString("tipopermissaocadclie").trim(); //1 - nenhum usuario pode cadastrar cliente. 2 - todos podem
-                        //cadastrar clientes 3 - verificar a permissão de usuário se pode ou não cadastrar.
-
-
-                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL,HABALTPRECOVENDA,VLMINVENDA,HABCLIEXVEND,HABCADASTRO_CLIE,HABCONTROLQTDMINVEND,PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
-                        CursorParam.moveToFirst();
-                        if (CursorParam.getCount() > 0) {
-                            DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
-                                    "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
-                                    "', HABCADASTRO_CLIE = '" + tipopermissaocadclie.trim() +
-                                    "', HABCONTROLQTDMINVEND = '" + habqtdminvenda.trim() +
-                                    "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
-                                    "', HABCLIEXVEND = '" + habcliexvend.trim() +
-                                    "', CODPERFIL = '" + idPerfil +
-                                    "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
-                                    "', HABALTPRECOVENDA = '" + habaltprecovenda.trim() +
-                                    "', VLMINVENDA = '" + tbminvenda.trim() +
-                                    "' WHERE CODPERFIL = " + idPerfil);
-                        } else {
-
-                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC,HABALTPRECOVENDA,VLMINVENDA,HABCLIEXVEND,HABCADASTRO_CLIE," +
-                                    "HABCONTROLQTDMINVEND,HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "'," +
-                                    " '" + habaltprecovenda.trim() + "'," +
-                                    " '" + tbminvenda.trim() + "'," +
-                                    " '" + habcliexvend.trim() + "'," +
-                                    " '" + tipopermissaocadclie.trim() + "'," +
-                                    " '" + habqtdminvenda.trim() + "'," +
-                                    " '" + habitemnegativo.trim() + "'," +
-                                    " '" + habcritsitclie.trim() + "'," +
-                                    " '" + idPerfil + "'," +
-                                    " '" + habcritqtditens.trim() + "');");
-                        }
-                        sincparaetrosstatic = "OK";
-                        CursorParam.close();
-
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-            return sincparaetrosstatic;
-        }
-        return sincparaetrosstatic;
-    }
-
-    public static String CarregarFormasPagamento(String sUsuario, String sSenha, final Context ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+    public static String sincronizaFormasPagamento(String sUsuario, String sSenha, final Context ctxEnv, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         int idPerfil = prefs.getInt("idperfil", 0);
@@ -2268,7 +2253,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                     RetFormpgto = (String) envelope.getResponse();
                                     System.out.println("Response :" + resultsRequestSOAP.toString());
                                 } else {
-                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "CarregarFormasPagamento");
+                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "sincronizaFormasPagamento");
                                     newsoap.addProperty("aUsuario", usuario);
                                     newsoap.addProperty("aSenha", senha);
                                     SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -2377,7 +2362,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincformpgto;
     }
 
-    public static String SincronizarClientesEnvioStatic(String CodClie_Int, final Context ctxEnvClie, String user, String pass, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+    public static String sincronizaClientesEnvio(String CodClie_Int, final Context ctxEnvClie, String user, String pass, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -2641,84 +2626,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincclieenvstatic;
     }
 
-    public static void SincronizarContatosClientesStatic(final Context ctxEnvCont, String user, String pass, int Codclie, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
-
-        SharedPreferences prefsHost = ctxEnvCont.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-        int idPerfil = prefsHost.getInt("idperfil", 0);
-
-        SharedPreferences prefs = ctxEnvCont.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString("usuario", null);
-        senha = prefs.getString("senha", null);
-
-
-        SQLiteDatabase db = new ConfigDB(ctxEnvCont).getReadableDatabase();
-        hd.post(new Runnable() {
-            @Override
-            public void run() {
-
-                if (DialogECB.isShowing()) {
-                    DialogECB.dismiss();
-                }
-                dialog.setTitle(R.string.wait);
-                dialog.setMessage("Sincronizando contatos dos clientes cadastrados");
-                dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                dialog.setIcon(R.drawable.icon_sync);
-                dialog.setCancelable(false);
-                dialog.show();
-            }
-        });
-
-        String DtUlt = null;
-        try {
-            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ATU_CONT FROM USUARIOS WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + user + "' AND SENHA = '" + pass + "'", null);
-            cursorparamapp.moveToFirst();
-
-            DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ATU_CONT"));
-            if (DtUlt == null) {
-                DtUlt = "01/01/2000 10:00:00";
-            }
-            cursorparamapp.close();
-        } catch (Exception e) {
-            e.toString();
-        }
-
-        try {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    dialog.setMessage("Sincronizando contatos...");
-                }
-            });
-
-            final Cursor cursor = db.rawQuery("SELECT NOMEFAN, CODCLIE_EXT FROM CLIENTES", null);
-            cursor.moveToFirst();
-            dialog.setMax(cursor.getCount());
-            int i = 0;
-            if (cursor.getCount() > 0) {
-                do {
-                    dialog.setProgress(i);
-
-                    int codigoCliente = cursor.getInt(cursor.getColumnIndex("CODCLIE_EXT"));
-                    //TODO A função não está sendo usada;
-                    //SincronizarContatosStatic(ctxEnvCont, user, pass, codigoCliente, dialog, DialogECB, hd);
-                    i++;
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception E) {
-            E.toString();
-        }
-
-    }
-
-    public static String retornaString(String nomeFan) {
-        if (nomeFan.length() > 30) {
-            return nomeFan.substring(1, 30);
-        }
-        return nomeFan;
-    }
-
-    public static String SincronizarContatosOutrosStatic(final Context ctxEnvCont, String user, String pass, int Codclie, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+    public static String sincronizaContatosOutros(final Context ctxEnvCont, String user, String pass, int Codclie, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
 
         SharedPreferences prefsHost = ctxEnvCont.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -2756,7 +2664,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 OBS_CONTATO = "observacao",
                 CODITEM_CONTATO = "codigoitem";
 
-        String CodVendedor = sCodVend;
+        String CodVendedor = codVendedor;
         String DtUlt = null;
         try {
             //if (Codclie == 0) {
@@ -3351,7 +3259,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     }
 
-    public static String SincronizarContatosEnvioStatic(final Context ctxEnvClie, String user, String pass, final ProgressDialog DialogoECB, final ProgressDialog dialog, Handler hd) {
+    public static String sincronizaContatosEnvio(final Context ctxEnvClie, String user, String pass, final ProgressDialog DialogoECB, final ProgressDialog dialog, Handler hd) {
 
         SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -3530,7 +3438,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincclieenvstatic;
     }
 
-    public static String SincronizarPedidosEnvioStatic(String sUsuario, String sSenha, final Context ctxPedEnv, String NumPedido, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
+    public static String sincronizaPedidosEnvio(String sUsuario, String sSenha, final Context ctxPedEnv, String NumPedido, final ProgressDialog dialog, final ProgressDialog DialogECB, Handler hd) {
         SharedPreferences prefsHost = ctxPedEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -3607,10 +3515,15 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 } else {
                                     vldesconto = vldesconto.replace(".", ",");
                                 }
+                                String dataEmUmFormato = CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS"));
+                                SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+                                Date data = formato.parse(dataEmUmFormato);
+                                formato.applyPattern("dd/MM/yyyy");
+                                String sDataVenda = formato.format(data);
 
 
                                 JPedidos = "{codclie_ext: '" + CodClie_Ext + "'," +
-                                        "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
+                                        "data_emissao: '" + sDataVenda + "'," +
                                         "data_geracao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAVENDA")) + "'," +
                                         "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
                                         "valor_frete: '" + ValorFrete + "'," +
@@ -3669,7 +3582,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                                 JPedidos = JPedidos + '}';
 
-                                String sitcliexvend = Sincronismo.SituacaodoClientexPed(vltotalvenda, ctxPedEnv, usuario, senha, CodClie_Ext);
+                                String sitcliexvend = Sincronismo.sincronizaSitClieXPed(vltotalvenda, ctxPedEnv, usuario, senha, CodClie_Ext);
                                 if (sitcliexvend.equals("OK")) {
 
                                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -3819,8 +3732,12 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 } else {
                                     vldesconto = vldesconto.replace(".", ",");
                                 }
+
+                                String dataEmUmFormato = CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS"));
+                                dataEmUmFormato = Util.FormataDataDDMMAAAA_ComHoras(dataEmUmFormato);
+
                                 JPedidos = "{codclie_ext: '" + CodClie_Ext + "'," +
-                                        "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
+                                        "data_emissao: '" + dataEmUmFormato + "'," +
                                         "data_geracao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAVENDA")) + "'," +
                                         "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
                                         "valor_frete: '" + ValorFrete + "'," +
@@ -4056,7 +3973,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         }
     }
 
-    public static String SincEmpresas(String sUsuario, String sSenha, final Context ctxEnv) {
+    public static String sincronizaEmpresas(String sUsuario, String sSenha, final Context ctxEnv) {
         SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         int idPerfil = prefs.getInt("idperfil", 0);
@@ -4200,93 +4117,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincempresastatic;
     }
 
-    public static Boolean SincAtuEstado(final Context ctxEnv) {
-        String Estado = null;
-        String Cidade = null;
-        String Bairro = null;
-        Boolean AtualizaEst = true;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "Estados");
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLDADOSCEP);
-        String RetEstados = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                RetEstados = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetEstados);
-            JSONArray JEstados = jsonObj.getJSONArray("estados");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JEstados.length();
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-
-            Cursor CursorAtu = DB.rawQuery(" SELECT * FROM ESTADOS ", null);
-            if (CursorAtu.getCount() > 0) {
-                AtualizaEst = true;
-                CursorAtu.close();
-            }
-
-            if (AtualizaEst.equals(true)) {
-
-                for (int i = 0; i < JEstados.length(); i++) {
-                    while (jumpTime < totalProgressTime) {
-                        try {
-                            JSONObject c = JEstados.getJSONObject(jumpTime);
-                            jumpTime += 1;
-                            String SiglaEstado = c.getString("uf");
-                            String NomeEstado = c.getString("estado");
-
-                            Cursor CursosEstado = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-
-                            if (CursosEstado.getCount() > 0) {
-                                DB.execSQL(" UPDATE ESTADOS SET UF = '" + SiglaEstado + "', DESCRICAO = '" + NomeEstado + "'" +
-                                        " WHERE UF = '" + SiglaEstado + "'");
-                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-                                cursor1.moveToFirst();
-                                Estado = cursor1.getString(CursosEstado.getColumnIndex("UF"));
-                                cursor1.close();
-                            } else {
-                                DB.execSQL("INSERT INTO ESTADOS VALUES('" + SiglaEstado + "','" + NomeEstado + "');");
-                                Cursor cursor1 = DB.rawQuery(" SELECT UF, DESCRICAO FROM ESTADOS WHERE UF = '" + SiglaEstado + "'", null);
-                                cursor1.moveToFirst();
-                                Estado = cursor1.getString(cursor1.getColumnIndex("UF"));
-                                cursor1.close();
-                            }
-                            CursosEstado.close();
-                            SincAtualizaCidadeBairro(Estado, ctxEnv, null);
-                        } catch (Exception E) {
-                            E.printStackTrace();
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return AtualizaEst;
-    }
-
-    public static String SincAtualizaCidadeBairro(String UF, final Context ctxEnv, final ProgressDialog Dialog) {
+    public static String sincronizaCidadeBairro(String UF, final Context ctxEnv, final ProgressDialog Dialog) {
         String sincatucidade = "0";
         if (UF.equals("")) {
             return sincatucidade;
@@ -4379,7 +4210,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Sincronismo.SincAtualizaBairro(finalCodCidadeExt, ctxEnv,Dialog);
+                                    Sincronismo.sincronizaBairro(finalCodCidadeExt, ctxEnv,Dialog);
                                 }
                             });*/
 
@@ -4467,7 +4298,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincatucidade;
     }
 
-    public static String SincAtualizaCidade(String UF, final Context ctxEnv, final ProgressDialog Dialog, Handler handler) {
+    public static String sincronizaCidade(String UF, final Context ctxEnv, final ProgressDialog Dialog, Handler handler) {
         String sincatucidade = "0";
         if (UF.equals("")) {
             return sincatucidade;
@@ -4590,7 +4421,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincatucidade;
     }
 
-    public static String SincAtualizaBairro(int codCidadeExt, final Context ctxEnv, ProgressDialog Dialog, int codCidadeInt, Handler handler) {
+    public static String sincronizaBairro(int codCidadeExt, final Context ctxEnv, ProgressDialog Dialog, int codCidadeInt, Handler handler) {
         String atuBairro = "0";
         int CodBairro = 0;
 
@@ -4704,7 +4535,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return atuBairro;
     }
 
-    public static String AtualizaPedido(String numPedido, Context ctxAtu, String tipoAtu) {
+    public static String sincronizaAtualizaPedido(String numPedido, Context ctxAtu, String tipoAtu) {
         SharedPreferences prefsHost = ctxAtu.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
         int idPerfil = prefsHost.getInt("idperfil", 0);
@@ -4836,7 +4667,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sincAtuPedido;
     }
 
-    public static String SituacaodoClientexPed(String vltotalped, Context ctxEnvClie, String user, String pass, int CodClie) {
+    public static String sincronizaSitClieXPed(String vltotalped, Context ctxEnvClie, String user, String pass, int CodClie) {
 
         String situacao = null;
 
@@ -4849,8 +4680,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         SharedPreferences prefs = ctxEnvClie.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
         usuario = prefs.getString("usuario", null);
         senha = prefs.getString("senha", null);
-
-        String DtUlt = DataUltSt2;
 
         SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -4935,1830 +4764,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
         return situacao;
 
-    }
-
-    public static boolean SincronizarPedidosEnvio(String NumPedido, Context ctxEnv) {
-        Boolean pedenviado = false;
-
-        String JPedidos = null;
-        String METHOD_NAMEENVIO = "CadastrarPedidos";
-        DB = new ConfigDB(ctxEnv).getReadableDatabase();
-        Cursor CursorPedido;
-        Cursor CursorCliente;
-        int CodClie_Ext = 0;
-        int CodClie_Int;
-
-        try {
-            CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "' ", null);
-            CursorPedido.moveToFirst();
-            CodClie_Int = CursorPedido.getInt(CursorPedido.getColumnIndex("CODCLIE"));
-
-            CursorCliente = DB.rawQuery("SELECT CODCLIE_EXT FROM CLIENTES WHERE CODCLIE_INT = " + CodClie_Int + "", null);
-            CursorCliente.moveToFirst();
-            CodClie_Ext = CursorCliente.getInt(CursorCliente.getColumnIndex("CODCLIE_EXT"));
-            CursorCliente.close();
-
-            SharedPreferences prefs = ctxEnv.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-            usuario = prefs.getString("usuario", null);
-            senha = prefs.getString("senha", null);
-
-            SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-            URLPrincipal = prefsHost.getString("host", null);
-            String RetClieEnvio = null;
-
-            int jumpTime = 0;
-            final int totalProgressTime = CursorPedido.getCount();
-
-            if (CursorPedido.getCount() > 0) {
-                CursorPedido.moveToFirst();
-                do {
-                    for (int i = 0; i < CursorPedido.getCount(); i++) {
-                        do try {
-                            jumpTime += 1;
-
-                            String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
-                            if (Util.isNullOrEmpty(ValorFrete)) {
-                                ValorFrete = "0";
-                            }
-                            String ValorSeguro = CursorPedido.getString(CursorPedido.getColumnIndex("VALORSEGURO"));
-                            if (Util.isNullOrEmpty(ValorSeguro)) {
-                                ValorSeguro = "0";
-                            }
-                            String OBS = CursorPedido.getString(CursorPedido.getColumnIndex("OBS"));
-                            String line_separator = System.getProperty("line.separator");
-                            String Observacao = OBS.replaceAll("\n|" + line_separator, " ");
-                            String vldesconto = CursorPedido.getString(CursorPedido.getColumnIndex("VLDESCONTO"));
-                            if (vldesconto == null) {
-                                vldesconto = "0";
-                            } else {
-                                vldesconto = vldesconto.replace(".", ",");
-                            }
-                            JPedidos = "{codclie_ext: '" + CodClie_Ext + "'," +
-                                    "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
-                                    "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
-                                    "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
-                                    "valor_frete: '" + ValorFrete + "'," +
-                                    "valor_seguro: '" + ValorSeguro + "'," +
-                                    "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
-                                    "valor_desconto: '" + vldesconto + "'," +
-                                    "obs_pedido: '" + OBS + "'," +
-                                    "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
-                                    "chavePedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
-                                    "codempresa: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODEMPRESA")) + "'," +
-                                    "cod_vendedor: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODVENDEDOR")) + "',";
-
-
-                            String PedItems = "";
-                            Cursor CursorItensEnv = DB.rawQuery(" SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" +
-                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-
-                            CursorItensEnv.moveToFirst();
-                            do {
-                                PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
-                                        "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
-                                        "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
-                                        "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
-                                        "vlunit: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ",") + "'," +
-                                        "valortotal: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ",") + "'}";
-
-                                if (!CursorItensEnv.isLast()) {
-                                    PedItems = PedItems + ",";
-                                }
-
-                            } while (CursorItensEnv.moveToNext());
-                            CursorItensEnv.close();
-
-                            if (PedItems != "") {
-                                JPedidos = JPedidos + "produtos: " + "[" + PedItems + "]";
-                            }
-                            String PedParcelas = "";
-                            Cursor CursorParcelasEnv = DB.rawQuery(" SELECT * FROM CONREC WHERE vendac_chave = '" +
-                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                            CursorParcelasEnv.moveToFirst();
-                            do {
-                                PedParcelas = PedParcelas + "{chavePedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
-                                        "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
-                                        "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")).replace(".", ",") + "'," +
-                                        "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
-
-                                if (!CursorParcelasEnv.isLast()) {
-                                    PedParcelas = PedParcelas + ",";
-                                }
-                            } while (CursorParcelasEnv.moveToNext());
-                            CursorParcelasEnv.close();
-
-                            if (PedParcelas != "") {
-                                JPedidos = JPedidos + ",formapgto: " + "[" + PedParcelas + "]";
-                            }
-
-                            JPedidos = JPedidos + '}';
-
-                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                            StrictMode.setThreadPolicy(policy);
-
-                            SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                            soap.addProperty("aJson", JPedidos);
-                            soap.addProperty("aUsuario", usuario);
-                            soap.addProperty("aSenha", senha);
-                            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                            envelope.setOutputSoapObject(soap);
-                            HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
-
-                            try {
-                                Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-                                if (ConexOk) {
-                                    Envio.call("", envelope);
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                                    RetClieEnvio = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                }
-                            } catch (Exception e) {
-                                System.out.println("Error envio do pedido" + e);
-                            }
-                        } catch (Exception E) {
-                            System.out.println("Error montar envio pedido" + E);
-
-
-                        }
-                        while (jumpTime < totalProgressTime);
-                    }
-                    try {
-                        DB = new ConfigDB(ctxEnv).getReadableDatabase();
-                        if (!RetClieEnvio.equals("0")) {
-                            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                            CursPedAtu.moveToFirst();
-                            if (CursPedAtu.getCount() > 0) {
-                                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
-                            }
-                            pedenviado = true;
-                            CursPedAtu.close();
-                        }
-                    } catch (Exception E) {
-                        Toast.makeText(ctxEnv, E.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                    JPedidos = "";
-                }
-                while (CursorPedido.moveToNext());
-                CursorPedido.close();
-            }
-        } catch (Exception E) {
-            System.out.println("Error" + E);
-        }
-        return pedenviado;
-
-    }
-
-    public static boolean CancelarPedidoAberto(String NumPedido, Context ctxCanc) {
-
-        DB = new ConfigDB(ctxCanc).getReadableDatabase();
-
-        try {
-            DB = new ConfigDB(ctxCanc).getReadableDatabase();
-            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "'", null);
-            CursPedAtu.moveToFirst();
-            if (CursPedAtu.getCount() > 0) {
-                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '4' WHERE NUMPED = '" + NumPedido + "'");
-            }
-            CursPedAtu.close();
-        } catch (Exception E) {
-            E.toString();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean AutorizaPedidoAberto(String NumPedido, Context ctxCanc) {
-
-        DB = new ConfigDB(ctxCanc).getReadableDatabase();
-
-        try {
-            DB = new ConfigDB(ctxCanc).getReadableDatabase();
-            Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPED = '" + NumPedido + "'", null);
-            CursPedAtu.moveToFirst();
-            if (CursPedAtu.getCount() > 0) {
-                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '5' WHERE NUMPED = '" + NumPedido + "'");
-            }
-            CursPedAtu.close();
-        } catch (Exception E) {
-            E.toString();
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean AtualizaStatusPedido(String NumPedido, Context ctxEnv) {
-        Boolean statusatualizado = false;
-
-        String JPedidos = null;
-        ProgressDialog Dialog = null;
-        String METHOD_NAMEENVIO = "RetornaStatusPedidos";
-        DB = new ConfigDB(ctxEnv).getReadableDatabase();
-        Cursor CursorPedido;
-        String NumFiscal = "";
-
-        try {
-            CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPEDIDOERP = " + NumPedido, null);
-
-            Dialog = new ProgressDialog(ctxEnv);
-            Dialog.setTitle("Aguarde...");
-            Dialog.setMessage("Atualizando Pedido Nº: " + NumPedido);
-            Dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            Dialog.setProgress(0);
-            Dialog.setIcon(R.drawable.icon_sync);
-            Dialog.setMax(0);
-            Dialog.show();
-
-            SharedPreferences prefs = ctxEnv.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-            usuario = prefs.getString("usuario", null);
-            senha = prefs.getString("senha", null);
-
-            SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-            URLPrincipal = prefsHost.getString("host", null);
-            String RetStatusPedido = null;
-
-            int jumpTime = 0;
-            final int totalProgressTime = CursorPedido.getCount();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            CursorPedido.moveToFirst();
-            if (CursorPedido.getCount() > 0) {
-                CursorPedido.moveToFirst();
-                do {
-                    for (int i = 0; i < CursorPedido.getCount(); i++) {
-                        do try {
-                            jumpTime += 1;
-                            Dialog.setProgress(jumpTime);
-                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                            StrictMode.setThreadPolicy(policy);
-
-                            SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                            soap.addProperty("aNumPedido", NumPedido);
-                            soap.addProperty("aUsuario", usuario);
-                            soap.addProperty("aSenha", senha);
-                            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                            envelope.setOutputSoapObject(soap);
-                            HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
-
-                            try {
-                                Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-                                if (ConexOk) {
-                                    Envio.call("", envelope);
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                                    RetStatusPedido = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                }
-                            } catch (Exception e) {
-                                System.out.println("Error" + e);
-                            }
-                        } catch (Exception E) {
-                            E.printStackTrace();
-                        }
-                        while (jumpTime < totalProgressTime);
-                    }
-                    try {
-                        DB = new ConfigDB(ctxEnv).getReadableDatabase();
-                        Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE NUMPEDIDOERP = " + NumPedido, null);
-                        CursPedAtu.moveToFirst();
-                        if (CursPedAtu.getCount() > 0) {
-                            if (!RetStatusPedido.equals("Orçamento")) {
-                                DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '3', NUMFISCAL = " + RetStatusPedido + " WHERE NUMPEDIDOERP = '" + NumPedido + "'");
-                            }
-                        }
-                        statusatualizado = true;
-                        CursPedAtu.close();
-                    } catch (Exception E) {
-                        Toast.makeText(ctxEnv, E.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                while (CursorPedido.moveToNext());
-                CursorPedido.close();
-            }
-            if (Dialog.isShowing())
-                Dialog.dismiss();
-        } catch (Exception E) {
-            System.out.println("Error" + E);
-        }
-
-        return statusatualizado;
-    }
-
-    public static String RetornaqtdClientes(String CodVend, Context ctxEnv) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaQtdClie");
-        soap.addProperty("iCodVend", CodVend);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
-        String RetQtdClie = null;
-
-        try {
-            //Boolean ConexOk = true;
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk) {
-                Envio.call("", envelope);
-                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                RetQtdClie = (String) envelope.getResponse();
-                System.out.println("Response :" + resultsRequestSOAP.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
-        return RetQtdClie;
-    }
-
-    public static String SincParametrosStatic(String sUsuario, String sSenha, Context ctxEnv) {
-        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString("host", null);
-        int idPerfil = prefs.getInt("idperfil", 0);
-        String sincparaetrosstatic = null;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
-        soap.addProperty("aUsuario", sUsuario);
-        soap.addProperty("aSenha", sSenha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 10000);
-        String RetParamApp = null;
-
-        try {
-            Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-            if (ConexOk) {
-
-                int i = 0;
-                do {
-
-                    try {
-                        if (i > 0) {
-                            Thread.sleep(500);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        if (ConexOk) {
-
-                            try {
-                                if (i == 0) {
-                                    Envio.call("", envelope);
-
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                    RetParamApp = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                } else {
-                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
-                                    newsoap.addProperty("aUsuario", usuario);
-                                    newsoap.addProperty("aSenha", senha);
-                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                    newenvelope.setOutputSoapObject(newsoap);
-                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-                                    newEnvio.call("", newenvelope);
-
-                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                    RetParamApp = (String) newenvelope.getResponse();
-                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                }
-                            } catch (Exception e) {
-                                e.toString();
-                                sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.toString();
-                    }
-                    i = i + 1;
-                } while (RetParamApp == null && i <= 6);
-            } else {
-                sincparaetrosstatic = ctxEnv.getString(R.string.no_connection);
-                return sincparaetrosstatic;
-            }
-            if (RetParamApp == null) {
-                sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
-                return sincparaetrosstatic;
-            }
-        } catch (Exception e) {
-            e.toString();
-            sincparaetrosstatic = ctxEnv.getString(R.string.failure_communicate);
-            return sincparaetrosstatic;
-        }
-        try {
-            SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-            RetParamApp = (String) envelope.getResponse();
-            System.out.println("Response :" + resultsRequestSOAP.toString());
-        } catch (Exception e) {
-            e.toString();
-            sincparaetrosstatic = ctxEnv.getString(R.string.failed_return);
-            return sincparaetrosstatic;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetParamApp);
-            JSONArray JParamApp = jsonObj.getJSONArray("param_app");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JParamApp.length();
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-            for (int i = 0; i < JParamApp.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JParamApp.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        Double PercDescMax = c.getDouble("percdescmaxped");
-                        String habitemnegativo = c.getString("habitemnegativo");
-                        String habcritsitclie = c.getString("habcritsitclie");
-                        String habcritqtditens = c.getString("habcritqtditens");
-
-                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL, PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
-                        CursorParam.moveToFirst();
-                        if (CursorParam.getCount() > 0) {
-                            DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
-                                    "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
-                                    "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
-                                    "', CODPERFIL = '" + idPerfil +
-                                    "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
-                                    "' WHERE CODPERFIL = " + idPerfil);
-                        } else {
-
-                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', '" + idPerfil + "', '" + habcritqtditens.trim() + "');");
-                        }
-                        sincparaetrosstatic = "OK";
-                        CursorParam.close();
-
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-            return sincparaetrosstatic;
-        }
-        return sincparaetrosstatic;
-    }
-
-    public static String SincDescricaoTabelasStatic(String sUsuario, String sSenha, Context
-            ctxEnv) {
-        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString("host", null);
-        int idPerfil = prefs.getInt("idperfil", 0);
-        String sinctabelasstatic = null;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
-        soap.addProperty("aUsuario", sUsuario);
-        soap.addProperty("aSenha", sSenha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 10000);
-        String RetDescTabelas = null;
-
-        Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-        if (ConexOk) {
-
-            int i = 0;
-            do {
-
-                try {
-                    if (i > 0) {
-                        Thread.sleep(500);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    if (ConexOk) {
-
-                        try {
-                            if (i == 0) {
-                                Envio.call("", envelope);
-
-                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                RetDescTabelas = (String) envelope.getResponse();
-                                System.out.println("Response :" + resultsRequestSOAP.toString());
-                            } else {
-                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
-                                newsoap.addProperty("aUsuario", usuario);
-                                newsoap.addProperty("aSenha", senha);
-                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                newenvelope.setOutputSoapObject(newsoap);
-                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
-                                newEnvio.call("", newenvelope);
-
-                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                RetDescTabelas = (String) newenvelope.getResponse();
-                                System.out.println("Response :" + newresultsRequestSOAP.toString());
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                            sinctabelasstatic = ctxEnv.getString(R.string.failure_communicate);
-                        }
-                    } else {
-                        sinctabelasstatic = ctxEnv.getString(R.string.no_connection);
-                    }
-                } catch (Exception e) {
-                    System.out.println("Error na solicitação" + e);
-                }
-                i = i + 1;
-            } while (RetDescTabelas == null && i <= 6);
-
-        } else {
-            sinctabelasstatic = ctxEnv.getString(R.string.no_connection);
-            return sinctabelasstatic;
-        }
-        if (RetDescTabelas == null) {
-            sinctabelasstatic = ctxEnv.getString(R.string.failure_communicate);
-            return sinctabelasstatic;
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetDescTabelas);
-            JSONArray JParamApp = jsonObj.getJSONArray("tabelas");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JParamApp.length();
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-            for (int i = 0; i < JParamApp.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JParamApp.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        String DescTab1 = c.getString("nometab1");
-                        String DescTab2 = c.getString("nometab2");
-                        String DescTab3 = c.getString("mometab3");
-                        String DescTab4 = c.getString("nometab4");
-                        String DescTab5 = c.getString("nometab5");
-                        String DescTab6 = c.getString("nometabp1");
-                        String DescTab7 = c.getString("nometabp2");
-
-                        Cursor CursorTabela = DB.rawQuery(" SELECT CODPERFIL, DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
-                        CursorTabela.moveToFirst();
-                        if (CursorTabela.getCount() > 0) {
-                            DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
-                                    "', DESCRICAOTAB2 = '" + DescTab2.trim() +
-                                    "', DESCRICAOTAB3 = '" + DescTab3.trim() +
-                                    "', DESCRICAOTAB4 = '" + DescTab4.trim() +
-                                    "', DESCRICAOTAB5 = '" + DescTab5.trim() +
-                                    "', DESCRICAOTAB6 = '" + DescTab6.trim() +
-                                    "', DESCRICAOTAB7 = '" + DescTab7.trim() +
-                                    "' WHERE CODPERFIL = " + idPerfil);
-                        } else {
-
-                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,CODPERFIL)" +
-                                    " VALUES(" + "'" + DescTab1.trim() + "','" + DescTab2.trim() + "','" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "', " + idPerfil + " );");
-                        }
-                        sinctabelasstatic = "OK";
-                        CursorTabela.close();
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-        }
-        return sinctabelasstatic;
-    }
-
-    public static String SincBloqueiosStatic(String sUsuario, String sSenha, Context ctxEnv) {
-        SharedPreferences prefs = ctxEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString("host", null);
-        int idPerfil = prefs.getInt("idperfil", 0);
-        String sincbloqstatic = null;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = ctxEnv.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
-        soap.addProperty("aUsuario", sUsuario);
-        soap.addProperty("aSenha", sSenha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 10000);
-        String RetBloqueios = null;
-
-        Boolean ConexOk = Util.checarConexaoCelular(ctxEnv);
-        if (ConexOk) {
-
-            int i = 0;
-            do {
-
-                try {
-                    if (i > 0) {
-                        Thread.sleep(500);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    if (ConexOk) {
-
-                        try {
-                            if (i == 0) {
-                                Envio.call("", envelope);
-
-                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                RetBloqueios = (String) envelope.getResponse();
-                                System.out.println("Response :" + resultsRequestSOAP.toString());
-                            } else {
-                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
-                                newsoap.addProperty("aUsuario", usuario);
-                                newsoap.addProperty("aSenha", senha);
-                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                newenvelope.setOutputSoapObject(newsoap);
-                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-                                newEnvio.call("", newenvelope);
-
-                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                RetBloqueios = (String) newenvelope.getResponse();
-                                System.out.println("Response :" + newresultsRequestSOAP.toString());
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                            sincbloqstatic = ctxEnv.getString(R.string.failure_communicate);
-                        }
-
-                    } else {
-                        sincbloqstatic = ctxEnv.getString(R.string.no_connection);
-                    }
-                } catch (Exception e) {
-                    System.out.println("Error na solicitação" + e);
-                }
-                i = i + 1;
-            } while (RetBloqueios == null && i <= 6);
-
-
-        } else {
-            sincbloqstatic = ctxEnv.getString(R.string.no_connection);
-            return sincbloqstatic;
-        }
-        if (RetBloqueios == null) {
-            sincbloqstatic = ctxEnv.getString(R.string.failure_communicate);
-            return sincbloqstatic;
-        }
-
-        try {
-            JSONObject jsonObj = new JSONObject(RetBloqueios);
-            JSONArray JBloqueios = jsonObj.getJSONArray("bloqueios");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JBloqueios.length();
-            DB = new ConfigDB(ctxEnv).getReadableDatabase();
-
-            for (int i = 0; i < JBloqueios.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JBloqueios.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        String codblq = c.getString("codblq");
-                        String descricao = c.getString("descricao");
-                        String bloquear = c.getString("bloquear");
-                        String liberar = c.getString("liberar");
-                        String fpavista = c.getString("fpavista");
-
-
-                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, CODPERFIL, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq + " AND CODPERFIL = " + idPerfil, null);
-                        if (CursorBloqueio.getCount() > 0) {
-                            DB.execSQL(" UPDATE BLOQCLIE SET CODBLOQ = '" + codblq +
-                                    "', DESCRICAO = '" + descricao +
-                                    "', BLOQUEAR = '" + bloquear +
-                                    "', LIBERAR = '" + liberar +
-                                    "', FPAVISTA = '" + fpavista + "'" +
-                                    " WHERE CODBLOQ = " + codblq + " AND CODPERFIL = " + idPerfil);
-                        } else {
-                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, CODPERFIL, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA)" +
-                                    " VALUES(" + codblq +
-                                    "," + idPerfil +
-                                    ",'" + descricao +
-                                    "','" + bloquear +
-                                    "','" + liberar +
-                                    "','" + fpavista + "' );");
-                        }
-                        sincbloqstatic = "OK";
-                        CursorBloqueio.close();
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-        }
-        return sincbloqstatic;
-    }
-
-    public static String SincronizarClientesEnvioStatic(String CodClie_Int, Context ctxEnvClie, String user, String pass) {
-        SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-        int idPerfil = prefsHost.getInt("idperfil", 0);
-
-        SharedPreferences prefs = ctxEnvClie.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString("usuario", null);
-        senha = prefs.getString("senha", null);
-
-        String sincclieenvstatic = null;
-        String Jcliente = null;
-        String METHOD_NAMEENVIO = "Cadastrar";
-        String METHOD_CONTATOENVIO = "CadastrarContato";
-        DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
-
-        try {
-            Cursor CursorClieEnv = null;
-            if (CodClie_Int.equals("0")) {
-                CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE FLAGINTEGRADO = '1' AND CODPERFIL = " + idPerfil + " " +
-                        " ORDER BY NOMEFAN, NOMERAZAO ", null);
-            } else {
-                CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                        " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                        " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE  CODCLIE_INT = " + CodClie_Int + " AND CODPERFIL = " + idPerfil, null);
-            }
-
-            String RetClieEnvio = null;
-
-            int jumpTime = 0;
-            String CodClie_ext = null;
-            String sexo = null;
-            final int totalProgressTime = CursorClieEnv.getCount();
-
-            CursorClieEnv.moveToFirst();
-            if (CursorClieEnv.getCount() > 0) {
-                CursorClieEnv.moveToFirst();
-                do {
-                    for (int i = 0; i < CursorClieEnv.getCount(); i++) {
-                        //String OBS = CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")).trim().replaceAll("\n"," ");
-                        //OBS = OBS.replaceAll("\n"," ");
-                        do {
-                            try {
-                                jumpTime += 1;
-
-                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")).trim() + "'," +
-                                        "nome_fantasia: '" + (CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN"))).trim() + "'," +
-                                        "tipo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) + "'," +
-                                        "cnpj_cpf: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'," +
-                                        "inscricao_estadual: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")) + "'," +
-                                        "Logradouro: '" + (CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ENDERECO"))).trim() + "'," +
-                                        "numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NUMERO")) + "'," +
-                                        "codvendedor: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODVENDEDOR")) + "'," +
-                                        "complemento: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("COMPLEMENT")) + "'," +
-                                        "bairro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("BAIRRO")) + "'," +
-                                        "cidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) + "'," +
-                                        "estado: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) + "'," +
-                                        "cep: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) + "'," +
-                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")).trim().replaceAll("\n", " ") + "'," +
-                                        "identidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) + "'," +
-                                        "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")) + "'}," +
-                                        "{email: ''}]," +
-                                        "ativo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ATIVO")) + "'," +
-                                        "sexo: '" + "" + "'," +
-                                        "estadocivil: '" + "" + "'," +
-                                        "tipoplano: '" + "" + "'," +
-                                        "telefones: [{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL1")) + "'}," +
-                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL2")) + "'}," +
-                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TELFAX")) + "'}]";
-
-                                String Contatos = "";
-                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " +
-                                        CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODCLIE_INT")), null);
-
-                                CursorContatosEnv.moveToFirst();
-                                while (CursorContatosEnv.moveToNext()) {
-
-                                    String NOME = CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("NOME"));
-                                    String DATA = CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("DATA"));
-                                    if (DATA.equals("")) {
-                                        DATA = "01/01/2000";
-                                    }
-                                    Contatos = Contatos + "{nome: '" + NOME + "'," +
-                                            "cargo: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CARGO")) + "'," +
-                                            "tipo: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TIPO")) + "'," +
-                                            "codclie: '" + CursorContatosEnv.getInt(CursorContatosEnv.getColumnIndex("CODCLIE_EXT")) + "'," +
-                                            "codvend: '" + CursorContatosEnv.getInt(CursorContatosEnv.getColumnIndex("CODVENDEDOR")) + "'," +
-                                            "bairro: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("BAIRRO")) + "'," +
-                                            "Documento: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("DOCUMENTO")) + "'," +
-                                            "DataAniversario: '" + DATA + "'," +
-                                            "Logradouro: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("ENDERECO")) + "'," +
-                                            "complemento: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("COMPLEMENTO")) + "'," +
-                                            "uf: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("UF")) + "'," +
-                                            "observacao: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("OBS")) + "'," +
-                                            "cep: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CEP")) + "'," +
-                                            "Cidade: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("DESC_CIDADE")) + "'," +
-                                            "emails: [{email: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("EMAIL")) + "'}]," +
-                                            "telefones: [{numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL1")) + "'," +
-                                            "numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL2")) + "'}]," +
-                                            "dias_contato: [" + retornaJsonHorariosAgenda(CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CODCONTATO_INT")), ctxEnvClie) + "]," +
-                                            "itens_contato: [" + retornaItens(CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CODCONTATO_INT")), ctxEnvClie) + "]},";
-                                }
-                                CursorContatosEnv.close();
-                                if (Contatos != "") {
-                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
-                                } else {
-                                    Contatos = "{nome: ''," +
-                                            "cargo: ''," +
-                                            "emails: [{email: ''}]," +
-                                            "telefones: [{numero: ''," +
-                                            "numero: ''}]}";
-                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
-                                }
-                                String Dependentes = "{nome: ''," +
-                                        "datanascimento: ''," +
-                                        "redident: ''," +
-                                        "codclie: ''}";
-                                Jcliente = Jcliente + ",dependentes: " + "[" + Dependentes + "]}";
-
-                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                                StrictMode.setThreadPolicy(policy);
-
-                                SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                                if (senha != null) {
-                                    soap.addProperty("aJson", Jcliente);
-                                    soap.addProperty("aUsuario", usuario);
-                                    soap.addProperty("aSenha", senha);
-                                } else {
-                                    soap.addProperty("aJson", Jcliente);
-                                    soap.addProperty("aUsuario", user);
-                                    soap.addProperty("aSenha", pass);
-                                }
-                                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                envelope.setOutputSoapObject(soap);
-                                HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
-
-                                int j = 0;
-                                do {
-                                    try {
-                                        if (j > 0) {
-                                            Thread.sleep(1000);
-                                        }
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    try {
-                                        Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
-                                        if (ConexOk) {
-                                            if (j == 0) {
-                                                Envio.call("", envelope);
-
-                                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                                RetClieEnvio = (String) envelope.getResponse();
-                                                System.out.println("Response :" + resultsRequestSOAP.toString());
-                                            } else {
-                                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                                                if (senha != null) {
-                                                    newsoap.addProperty("aJson", Jcliente);
-                                                    newsoap.addProperty("aUsuario", usuario);
-                                                    newsoap.addProperty("aSenha", senha);
-                                                } else {
-                                                    newsoap.addProperty("aJson", Jcliente);
-                                                    newsoap.addProperty("aUsuario", user);
-                                                    newsoap.addProperty("aSenha", pass);
-                                                }
-                                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                                newenvelope.setOutputSoapObject(newsoap);
-                                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
-
-                                                newEnvio.call("", newenvelope);
-
-                                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                                RetClieEnvio = (String) envelope.getResponse();
-                                                System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                            }
-
-                                        } else {
-                                            sincclieenvstatic = ctxEnvClie.getString(R.string.no_connection);
-                                            return sincclieenvstatic;
-                                        }
-                                    } catch (Exception e) {
-                                        e.toString();
-                                        sincclieenvstatic = ctxEnvClie.getString(R.string.failure_communicate);
-                                    }
-                                } while (RetClieEnvio == null && j <= 20);
-                                if (RetClieEnvio == null) {
-                                    sincclieenvstatic = ctxEnvClie.getString(R.string.failure_communicate);
-                                    return sincclieenvstatic;
-                                }
-                                try {
-
-                                } catch (Exception e) {
-                                    sincclieenvstatic = ctxEnvClie.getString(R.string.failed_return);
-                                    return sincclieenvstatic;
-                                }
-                            } catch (Exception E) {
-                                E.toString();
-                                return sincclieenvstatic;
-                            }
-                        }
-                        while (jumpTime < totalProgressTime);
-                    }
-                    try {
-                        if (!RetClieEnvio.equals("0")) {
-                            Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "' AND CODPERFIL = " + idPerfil, null);
-                            CursClieAtu.moveToFirst();
-                            if (CursClieAtu.getCount() > 0) {
-                                DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + RetClieEnvio + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'AND CODPERFIL = " + idPerfil);
-                            }
-                            sincclieenvstatic = ctxEnvClie.getString(R.string.newcustomers_successfully);
-                            CursClieAtu.close();
-                        }
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-                while (CursorClieEnv.moveToNext());
-                CursorClieEnv.close();
-            } else if (CursorClieEnv.getCount() == 0) {
-                DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
-                try {
-                    Cursor cursorContatos = DB.rawQuery("select NOME, CARGO, TIPO, CODCLIE_EXT, CODVENDEDOR, BAIRRO, DOCUMENTO, DATA, " +
-                            "ENDERECO, COMPLEMENTO, UF, OBS, CEP, DESC_CIDADE, EMAIL, TEL1, TEL2, CODCONTATO_INT " +
-                            "from CONTATO where FLAGINTEGRADO = 'N'", null);
-
-                    String EnvioContato = "";
-
-                    if (cursorContatos.getCount() > 0) {
-                        cursorContatos.moveToFirst();
-
-                        do {
-                            String NOME = cursorContatos.getString(cursorContatos.getColumnIndex("NOME"));
-                            String DATA = cursorContatos.getString(cursorContatos.getColumnIndex("DATA"));
-
-
-                            EnvioContato = EnvioContato + "{nome: '" + NOME + "'," +
-                                    "cargo: '" + cursorContatos.getString(cursorContatos.getColumnIndex("CARGO")) + "'," +
-                                    "tipo: '" + cursorContatos.getString(cursorContatos.getColumnIndex("TIPO")) + "'," +
-                                    "codclie: '" + cursorContatos.getInt(cursorContatos.getColumnIndex("CODCLIE_EXT")) + "'," +
-                                    "codvend: '" + cursorContatos.getInt(cursorContatos.getColumnIndex("CODVENDEDOR")) + "'," +
-                                    "bairro: '" + cursorContatos.getString(cursorContatos.getColumnIndex("BAIRRO")) + "'," +
-                                    "Documento: '" + cursorContatos.getString(cursorContatos.getColumnIndex("DOCUMENTO")) + "'," +
-                                    "DataAniversario: '" + cursorContatos.getString(cursorContatos.getColumnIndex("DATA")) + "'," +
-                                    "Logradouro: '" + cursorContatos.getString(cursorContatos.getColumnIndex("ENDERECO")) + "'," +
-                                    "complemento: '" + cursorContatos.getString(cursorContatos.getColumnIndex("COMPLEMENTO")) + "'," +
-                                    "uf: '" + cursorContatos.getString(cursorContatos.getColumnIndex("UF")) + "'," +
-                                    "observacao: '" + cursorContatos.getString(cursorContatos.getColumnIndex("OBS")) + "'," +
-                                    "cep: '" + cursorContatos.getString(cursorContatos.getColumnIndex("CEP")) + "'," +
-                                    "Cidade: '" + cursorContatos.getString(cursorContatos.getColumnIndex("DESC_CIDADE")) + "'," +
-                                    "emails: [{email: '" + cursorContatos.getString(cursorContatos.getColumnIndex("EMAIL")) + "'}]," +
-                                    "telefones: [{numero: '" + cursorContatos.getString(cursorContatos.getColumnIndex("TEL1")) + "'," +
-                                    "numero: '" + cursorContatos.getString(cursorContatos.getColumnIndex("TEL2")) + "'}]," +
-                                    "dias_contato: [" + retornaJsonHorariosAgenda(cursorContatos.getString(cursorContatos.getColumnIndex("CODCONTATO_INT")), ctxEnvClie) + "]," +
-                                    "itens_contato: [" + retornaItens(cursorContatos.getString(cursorContatos.getColumnIndex("CODCONTATO_INT")), ctxEnvClie) + "]},";
-                        } while (cursorContatos.moveToNext());
-                        cursorContatos.close();
-                        //EnvioContato = "contatos: " + "[" + EnvioContato + "]";
-
-                        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                        StrictMode.setThreadPolicy(policy);
-
-                        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_CONTATOENVIO);
-                        if (senha != null) {
-                            soap.addProperty("aJson", EnvioContato);
-                            soap.addProperty("aUsuario", usuario);
-                            soap.addProperty("aSenha", senha);
-                        } else {
-                            soap.addProperty("aJson", EnvioContato);
-                            soap.addProperty("aUsuario", user);
-                            soap.addProperty("aSenha", pass);
-                        }
-                        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                        envelope.setOutputSoapObject(soap);
-                        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
-
-                        int j = 0;
-                        do {
-                            try {
-                                if (j > 0) {
-                                    Thread.sleep(1000);
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
-                                if (ConexOk) {
-                                    if (j == 0) {
-                                        Envio.call("", envelope);
-
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                        RetClieEnvio = (String) envelope.getResponse();
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    } else {
-                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_CONTATOENVIO);
-                                        if (senha != null) {
-                                            newsoap.addProperty("aJson", EnvioContato);
-                                            newsoap.addProperty("aUsuario", usuario);
-                                            newsoap.addProperty("aSenha", senha);
-                                        } else {
-                                            newsoap.addProperty("aJson", EnvioContato);
-                                            newsoap.addProperty("aUsuario", user);
-                                            newsoap.addProperty("aSenha", pass);
-                                        }
-                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                        newenvelope.setOutputSoapObject(newsoap);
-                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
-
-                                        newEnvio.call("", newenvelope);
-
-                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                        RetClieEnvio = (String) envelope.getResponse();
-                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                    }
-
-                                } else {
-                                    sincclieenvstatic = ctxEnvClie.getString(R.string.no_connection);
-                                    return sincclieenvstatic;
-                                }
-                            } catch (Exception e) {
-                                e.toString();
-                                sincclieenvstatic = ctxEnvClie.getString(R.string.failure_communicate);
-                            }
-                        } while (RetClieEnvio == null && j <= 20);
-                        if (RetClieEnvio == null) {
-                            sincclieenvstatic = ctxEnvClie.getString(R.string.failure_communicate);
-                            return sincclieenvstatic;
-                        }
-                        try {
-
-                        } catch (Exception e) {
-                            sincclieenvstatic = ctxEnvClie.getString(R.string.failed_return);
-                            return sincclieenvstatic;
-                        }
-
-                    }
-                } catch (Exception E) {
-                    sincclieenvstatic = ctxEnvClie.getString(R.string.failed_return);
-                    return sincclieenvstatic;
-                }
-            } else {
-                sincclieenvstatic = ctxEnvClie.getString(R.string.no_new_clients);
-                return sincclieenvstatic;
-            }
-
-
-        } catch (Exception E) {
-            System.out.println("Error" + E);
-        }
-
-        return sincclieenvstatic;
-    }
-
-    public static String SincronizarProdutosStatic(Context ctxSincProd, String user, String
-            pass, int codItem) {
-        SharedPreferences prefsHost = ctxSincProd.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-        int idPerfil = prefsHost.getInt("idperfil", 0);
-
-        SharedPreferences prefs = ctxSincProd.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString("usuario", null);
-        senha = prefs.getString("senha", null);
-
-        String sincparaetrosstatic = null;
-        String sincprodstatic = null;
-        String DtUltItem = null;
-
-        DB = new ConfigDB(ctxSincProd).getReadableDatabase();
-
-        String METHOD_NAME = "Carregar";
-        String TAG_PRODUTOSINFO = "produtos";
-        String TAG_CODIGOITEM = "codigoitem";
-        String TAG_CODMANUAL = "coditemanual";
-        String TAG_DESCRICAO = "descricao";
-        String TAG_UNIVENDA = "univenda";
-        String TAG_VLVENDA1 = "vlvenda1";
-        String TAG_VLVENDA2 = "vlvenda2";
-        String TAG_VLVENDA3 = "vlvenda3";
-        String TAG_VLVENDA4 = "vlvenda4";
-        String TAG_VLVENDA5 = "vlvenda5";
-        String TAG_VLVENDAP1 = "vlvendap1";
-        String TAG_VLVENDAP2 = "vlvendap2";
-        String TAG_TABELAPADRAO = "tabelapadrao";
-        String TAG_MARCA = "marca";
-        String TAG_CLASSE = "classe";
-        String TAG_FABRICANTE = "fabricante";
-        String TAG_FORNECEDOR = "fornecedor";
-        String TAG_APRESENTACAO = "apresentacao";
-        String TAG_ATIVO = "ativo";
-        String TAG_QTDESTOQUE = "qtd_disponivel";
-
-        if (codItem == 0) {
-            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ITENS, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-            cursorparamapp.moveToFirst();
-            DtUltItem = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ITENS"));
-            if (DtUltItem == null) {
-                DtUltItem = "01/01/2000 10:00:00";
-            }
-            cursorparamapp.close();
-        }
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        if (senha != null) {
-            if (codItem == 0) {
-                soap.addProperty("aParam", "D" + DtUltItem);
-                soap.addProperty("aUsuario", usuario);
-                soap.addProperty("aSenha", senha);
-            } else {
-                soap.addProperty("aParam", "I" + codItem);
-                soap.addProperty("aUsuario", usuario);
-                soap.addProperty("aSenha", senha);
-            }
-        } else {
-            if (codItem == 0) {
-                soap.addProperty("aParam", "D" + DtUltItem);
-                soap.addProperty("aUsuario", user);
-                soap.addProperty("aSenha", pass);
-            } else {
-                soap.addProperty("aParam", "I" + codItem);
-                soap.addProperty("aUsuario", user);
-                soap.addProperty("aSenha", pass);
-            }
-        }
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
-        String RetProdutos = null;
-
-        int i = 0;
-        do {
-
-            try {
-                if (i > 0) {
-                    Thread.sleep(1000);
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            try {
-                Boolean ConexOk = Util.checarConexaoCelular(ctxSincProd);
-                if (ConexOk) {
-
-                    try {
-                        if (i == 0) {
-                            Envio.call("", envelope);
-
-                            SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                            RetProdutos = (String) envelope.getResponse();
-                            System.out.println("Response :" + resultsRequestSOAP.toString());
-                        } else {
-                            SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-                            if (senha != null) {
-                                if (codItem == 0) {
-                                    newsoap.addProperty("aParam", "D" + DtUltItem);
-                                    newsoap.addProperty("aUsuario", usuario);
-                                    newsoap.addProperty("aSenha", senha);
-                                } else {
-                                    newsoap.addProperty("aParam", "I" + codItem);
-                                    newsoap.addProperty("aUsuario", usuario);
-                                    newsoap.addProperty("aSenha", senha);
-                                }
-                            } else {
-                                if (codItem == 0) {
-                                    newsoap.addProperty("aParam", "D" + DtUltItem);
-                                    newsoap.addProperty("aUsuario", user);
-                                    newsoap.addProperty("aSenha", pass);
-                                } else {
-                                    newsoap.addProperty("aParam", "I" + codItem);
-                                    newsoap.addProperty("aUsuario", user);
-                                    newsoap.addProperty("aSenha", pass);
-                                }
-                            }
-                            SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                            newenvelope.setOutputSoapObject(newsoap);
-                            HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
-                            newEnvio.call("", newenvelope);
-
-                            SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                            RetProdutos = (String) newenvelope.getResponse();
-                            System.out.println("Response :" + newresultsRequestSOAP.toString());
-                        }
-                    } catch (Exception e) {
-                        e.toString();
-                        sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
-                        return sincprodstatic;
-                    }
-                } else {
-                    sincprodstatic = ctxSincProd.getString(R.string.no_connection);
-                    return sincprodstatic;
-                }
-            } catch (Exception e) {
-                System.out.println("Error na solicitação" + e);
-            }
-            i = i + 1;
-        } while (RetProdutos == null && i <= 20);
-
-        if (RetProdutos.equals("0")) {
-            sincprodstatic = ctxSincProd.getString(R.string.sync_products_successfully);
-            return sincprodstatic;
-        } else if (RetProdutos == null) {
-            sincprodstatic = ctxSincProd.getString(R.string.failure_communicate);
-            return sincprodstatic;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetProdutos);
-            JSONArray ProdItens = jsonObj.getJSONArray(TAG_PRODUTOSINFO);
-
-            if (codItem == 0) {
-                try {
-                    DtUltItem = Util.DataHojeComHorasMinSecBR();
-                    DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "' WHERE CODPERFIL = " + idPerfil);
-                } catch (Exception e) {
-                    e.toString();
-                }
-            }
-
-            int jumpTime = 0;
-
-            final int totalProgressTime = ProdItens.length();
-            for (int k = 0; k < ProdItens.length(); k++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject CItens = ProdItens.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        String Ativo = CItens.getString(TAG_ATIVO);
-                        if (Ativo.equals("true")) {
-                            Ativo = "S";
-                        } else {
-                            Ativo = "N";
-                        }
-
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) + " AND CODPERFIL = " + idPerfil + "", null);
-                        try {
-                            if (CursItens.getCount() > 0) {
-                                CursItens.moveToFirst();
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim() +
-                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim() +
-                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim() +
-                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim() +
-                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
-                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
-                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
-                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
-                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
-                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
-                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', ATIVO = '" + Ativo +
-                                        "', CODPERFIL = " + idPerfil +
-                                        ", QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() + "'" +
-                                        "   WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
-                                        "   AND CODPERFIL = " + idPerfil + "");
-                            } else {
-                                DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
-                                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, TABELAPADRAO, " +
-                                        "ATIVO,CODPERFIL, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
-                                        "',' " + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "',' " + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "',' " + CItens.getString(TAG_FABRICANTE).trim() +
-                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim() +
-                                        "',' " + CItens.getString(TAG_CLASSE).trim() +
-                                        "',' " + CItens.getString(TAG_MARCA).trim() +
-                                        "',' " + CItens.getString(TAG_UNIVENDA).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA1).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA2).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA3).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA4).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA5).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "',' " + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "',' " + Ativo +
-                                        "',  " + idPerfil +
-                                        " ,' " + CItens.getString(TAG_QTDESTOQUE) +
-                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
-
-                                //está tendo que atualizar cadas item que é incluso para tirar os espaçõs em alguns campos, pois somente na inserção não tira.
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
-                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
-                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim().replace("'", "") +
-                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim().replace("'", "") +
-                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
-                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
-                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
-                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
-                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
-                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
-                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "', ATIVO = '" + Ativo +
-                                        "', CODPERFIL = " + idPerfil +
-                                        " , QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
-                                        "'  WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
-                                        "   AND CODPERFIL = " + idPerfil + "");
-                            }
-                            CursItens.close();
-
-                        } catch (Exception E) {
-                            E.toString();
-                            sincprodstatic = "Falha no insert ou update do SQL (CursItens)";
-                            return sincprodstatic;
-                        }
-
-                    } catch (Exception E) {
-                        E.toString();
-                        sincprodstatic = "Falha no SQL (CursItens)";
-                        return sincprodstatic;
-                    }
-                }
-
-            }
-            sincprodstatic = ctxSincProd.getString(R.string.sync_products_successfully);
-        } catch (Exception E) {
-            E.toString();
-            sincprodstatic = "Falha no jsonObj";
-            return sincprodstatic;
-        }
-        return sincprodstatic;
-    }
-
-    public static String SincronizarClientesStatic(String sCodVend, Context
-            ctxEnvClie, String user, String pass, int Codclie) {
-        SharedPreferences prefsHost = ctxEnvClie.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-        int idPerfil = prefsHost.getInt("idperfil", 0);
-
-        SharedPreferences prefs = ctxEnvClie.getSharedPreferences(Login.NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString("usuario", null);
-        senha = prefs.getString("senha", null);
-
-        String sinccliestatic = null;
-
-        String METHOD_NAME = "Carregar";
-        String TAG_CLIENTESINFO = "clientes";
-        String TAG_TELEFONESINFO = "telefones";
-        String TAG_CONTATOSINFO = "contatos";
-        String TAG_CODIGO = "codigo";
-        String TAG_RAZAOSOCIAL = "razao_social";
-        String TAG_NOMEFANTASIA = "nome_fantasia";
-        String TAG_TIPO = "tipo";
-        String TAG_CNPJCPF = "cnpj_cpf";
-        String TAG_INSCESTADUAL = "inscricao_estadual";
-        String TAG_LOGRADOURO = "Logradouro";
-        String TAG_NUMERO = "numero";
-        String TAG_COMPLEMENTO = "complemento";
-        String TAG_BAIRRO = "bairro";
-        String TAG_CIDADE = "cidade";
-        String TAG_ESTADO = "estado";
-        String TAG_CEP = "cep";
-        String TAG_RG = "identidade";
-        String TAG_OBS = "observacao";
-        String TAG_EMAILS = "emails";
-        String TAG_ATIVO = "ativo";
-        String TAG_BLOQUEIO = "bloqueio";
-        String TAG_LIMITECRED = "limitecredito";
-
-        String DtUlt = null;
-
-        if (Codclie == 0) {
-            Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-            cursorparamapp.moveToFirst();
-
-            DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_CLIE"));
-            if (DtUlt == null) {
-                DtUlt = "01/01/2000 10:00:00";
-            }
-            cursorparamapp.close();
-        }
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        if (senha != null) {
-            if (Codclie == 0) {
-                soap.addProperty("aParam", "V" + sCodVend + "%" + DtUlt);
-                soap.addProperty("aUsuario", usuario);
-                soap.addProperty("aSenha", senha);
-            } else {
-                soap.addProperty("aParam", "C" + Codclie);
-                soap.addProperty("aUsuario", usuario);
-                soap.addProperty("aSenha", senha);
-            }
-        } else {
-            if (Codclie == 0) {
-                soap.addProperty("aParam", "V" + sCodVend + "%" + DtUlt);
-                soap.addProperty("aUsuario", user);
-                soap.addProperty("aSenha", pass);
-            } else {
-                soap.addProperty("aParam", "C" + Codclie);
-                soap.addProperty("aUsuario", user);
-                soap.addProperty("aSenha", pass);
-            }
-        }
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
-        String RetClientes = null;
-
-        Boolean ConexOk = Util.checarConexaoCelular(ctxEnvClie);
-        if (ConexOk) {
-            try {
-                int i = 0;
-                do {
-
-                    try {
-                        if (i > 0) {
-                            Thread.sleep(1000);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        if (ConexOk) {
-
-                            try {
-                                if (i == 0) {
-                                    Envio.call("", envelope);
-
-                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                    RetClientes = (String) envelope.getResponse();
-                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                } else {
-                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-                                    if (senha != null) {
-                                        if (Codclie == 0) {
-                                            newsoap.addProperty("aParam", "V" + sCodVend + "%" + DtUlt);
-                                            newsoap.addProperty("aUsuario", usuario);
-                                            newsoap.addProperty("aSenha", senha);
-                                        } else {
-                                            newsoap.addProperty("aParam", "C" + Codclie);
-                                            newsoap.addProperty("aUsuario", usuario);
-                                            newsoap.addProperty("aSenha", senha);
-                                        }
-                                    } else {
-                                        if (Codclie == 0) {
-                                            newsoap.addProperty("aParam", "V" + sCodVend + "%" + DtUlt);
-                                            newsoap.addProperty("aUsuario", user);
-                                            newsoap.addProperty("aSenha", pass);
-                                        } else {
-                                            newsoap.addProperty("aParam", "C" + Codclie);
-                                            newsoap.addProperty("aUsuario", user);
-                                            newsoap.addProperty("aSenha", pass);
-                                        }
-                                    }
-                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                    newenvelope.setOutputSoapObject(newsoap);
-                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
-                                    newEnvio.call("", newenvelope);
-
-                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                    RetClientes = (String) newenvelope.getResponse();
-                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                }
-                            } catch (Exception e) {
-                                e.toString();
-                                sinccliestatic = ctxEnvClie.getString(R.string.failure_communicate);
-                            }
-
-                        } else {
-                            Toast.makeText(ctxEnvClie, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        System.out.println("Error na solicitação" + e);
-                    }
-                    i = i + 1;
-                } while (RetClientes == null && i <= 20);
-
-            } catch (Exception e) {
-                e.toString();
-                Toast.makeText(ctxEnvClie, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-            }
-
-        } else {
-            sinccliestatic = ctxEnvClie.getString(R.string.no_connection);
-            return sinccliestatic;
-        }
-        if (RetClientes.equals("0")) {
-            sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
-            return sinccliestatic;
-        } else if (RetClientes == null) {
-            sinccliestatic = ctxEnvClie.getString(R.string.failure_communicate);
-            return sinccliestatic;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetClientes);
-            JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
-
-            if (Codclie == 0) {
-                try {
-                    DtUlt = Util.DataHojeComHorasMinSecBR();
-                    DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil);
-                } catch (Exception e) {
-                    e.toString();
-                }
-            }
-
-            int jumpTime = 0;
-            final int totalProgressTime = pedidosblq.length();
-
-            String CodCliente = null;
-            String CodClieExt = null;
-
-            DB = new ConfigDB(ctxEnvClie).getReadableDatabase();
-
-            for (int i = 0; i < pedidosblq.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = pedidosblq.getJSONObject(jumpTime);
-
-                        String Telefone = c.getString(TAG_TELEFONESINFO);
-                        Telefone = "{\"telefones\":" + Telefone + "\t}";
-                        JSONObject ObjTel = new JSONObject(Telefone);
-                        JSONArray Telef = ObjTel.getJSONArray("telefones");
-                        String Tel1 = null;
-                        String Tel2 = null;
-                        String Tel3 = null;
-
-                        for (int t = 0; t < Telef.length(); t++) {
-                            JSONObject tt = Telef.getJSONObject(t);
-                            if (t == 0) {
-                                Tel1 = tt.getString("numero");
-                            }
-                            if (t == 1) {
-                                Tel2 = tt.getString("numero");
-                            }
-                            if (t == 2) {
-                                Tel3 = tt.getString("numero");
-                            }
-                        }
-
-                        jumpTime += 1;
-
-                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
-                        cursor.moveToFirst();
-                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO), ctxEnvClie);
-                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado, ctxEnvClie);
-                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade, ctxEnvClie);
-                        try {
-                            if (cursor.getCount() > 0) {
-                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
-                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
-                                        "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) +
-                                        "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) +
-                                        "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 +
-                                        "', TEL2 = '" + Tel2 +
-                                        "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) +
-                                        "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
-                                        "', CODBAIRRO = '" + CodBairro +
-                                        "', OBS = '" + c.getString(TAG_OBS) +
-                                        "', CODCIDADE = '" + CodCidade +
-                                        "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) +
-                                        "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
-                                        "', TIPOPESSOA = '" + c.getString(TAG_TIPO) +
-                                        "', ATIVO = '" + c.getString(TAG_ATIVO) +
-                                        "', CODPERFIL = " + idPerfil +
-                                        ",  CODVENDEDOR = " + sCodVend +
-                                        ",  FLAGINTEGRADO = '2' " +
-                                        "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
-                                        "'  AND CODPERFIL = " + idPerfil + "");
-                            } else {
-                                DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, REGIDENT, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
-                                        "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED,BLOQUEIO, ATIVO, CODPERFIL, FLAGINTEGRADO) VALUES(" +
-                                        "'" + c.getString(TAG_CNPJCPF) + "'" +
-                                        ",'" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
-                                        "','" + c.getString(TAG_RG).trim() +
-                                        "',' " + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "',' " + c.getString(TAG_INSCESTADUAL) +
-                                        "',' " + c.getString(TAG_EMAILS) +
-                                        "',' " + Tel1 +
-                                        "', '" + Tel2 +
-                                        "', '" + c.getString(TAG_LOGRADOURO).trim() +
-                                        "',' " + c.getString(TAG_NUMERO).trim() +
-                                        "', '" + c.getString(TAG_COMPLEMENTO).trim() +
-                                        "',' " + CodBairro +
-                                        "','" + c.getString(TAG_OBS) +
-                                        "','" + CodCidade +
-                                        "','" + CodEstado +
-                                        "',' " + c.getString(TAG_CEP) +
-                                        "', '" + c.getString(TAG_CODIGO) +
-                                        "',' " + sCodVend +
-                                        "','" + c.getString(TAG_TIPO) +
-                                        "','" + c.getString(TAG_LIMITECRED) +
-                                        "','" + c.getString(TAG_BLOQUEIO) +
-                                        "','" + c.getString(TAG_ATIVO) +
-                                        "', '" + idPerfil +
-                                        "',' " + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
-                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
-                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
-                                        "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) +
-                                        "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) +
-                                        "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 +
-                                        "', TEL2 = '" + Tel2 +
-                                        "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) +
-                                        "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
-                                        "', CODBAIRRO = '" + CodBairro +
-                                        "', OBS = '" + c.getString(TAG_OBS) +
-                                        "', CODCIDADE = '" + CodCidade +
-                                        "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) +
-                                        "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
-                                        "', TIPOPESSOA = '" + c.getString(TAG_TIPO) +
-                                        "', ATIVO = '" + c.getString(TAG_ATIVO) +
-                                        "', CODPERFIL = " + idPerfil +
-                                        ",  CODVENDEDOR = " + sCodVend +
-                                        ",  FLAGINTEGRADO = '2' " +
-                                        "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
-                                        "'  AND CODPERFIL = " + idPerfil + "");
-                            }
-
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
-                            cursor1.moveToFirst();
-                            CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
-                            CodClieExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
-
-                            cursor.close();
-                            cursor1.close();
-
-                        } catch (Exception E) {
-                            E.toString();
-                        }
-                        if (CodClieExt == null) {
-                            Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
-                            CursorContatosEnv.moveToFirst();
-                            if ((CursorContatosEnv.getCount() > 0)) {
-                                DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente);
-                                CursorContatosEnv.close();
-                            }
-                        } else {
-                            Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIE_EXT = " + CodClieExt, null);
-                            CursorContatosEnv.moveToFirst();
-                            if ((CursorContatosEnv.getCount() > 0)) {
-                                DB.execSQL("DELETE FROM CONTATO WHERE CODCLIE_EXT = " + CodClieExt);
-                                CursorContatosEnv.close();
-                            }
-                        }
-                        String Contatos = c.getString(TAG_CONTATOSINFO);
-                        Contatos = "{\"contatos\":" + Contatos + "\t}";
-                        JSONObject ObjCont = new JSONObject(Contatos);
-                        JSONArray Cont = ObjCont.getJSONArray("contatos");
-                        String nomeContato = null,
-                                cargoContato = null,
-                                emailContato = null,
-                                tel1Contato = null,
-                                tel2Contato = null,
-                                codExtContato = null,
-                                bairroContato = null,
-                                documentoContato = null,
-                                dataAnivContato = null,
-                                endContato = null,
-                                complContato = null,
-                                ufContato = null,
-                                obsContato = null,
-                                cepContato = null,
-                                cidadeContato = null,
-                                tipoContato = null;
-
-                        try {
-                            for (int co = 0; co < Cont.length(); co++) {
-                                JSONObject cc = Cont.getJSONObject(co);
-                                if (co == 0) {
-                                    nomeContato = cc.getString("nome");
-                                    cargoContato = cc.getString("cargo");
-                                    emailContato = cc.getString("email");
-                                    codExtContato = cc.getString("CodContato");
-                                    documentoContato = cc.getString("Documento");
-                                    dataAnivContato = cc.getString("DataAniversario");
-                                    endContato = cc.getString("Logradouro");
-                                    complContato = cc.getString("complemento");
-                                    bairroContato = cc.getString("Bairro");
-                                    cidadeContato = cc.getString("Cidade");
-                                    cepContato = cc.getString("cep");
-                                    ufContato = cc.getString("uf");
-                                    obsContato = cc.getString("observacao");
-                                    tipoContato = "C";
-
-                                    String TelCont1 = c.getString("telefones");
-                                    TelCont1 = "{\"telefones\":" + TelCont1 + "\t}";
-                                    JSONObject ObjTelC1 = new JSONObject(TelCont1);
-                                    JSONArray TelefC1 = ObjTelC1.getJSONArray("telefones");
-
-                                    for (int tc1 = 0; tc1 < TelefC1.length(); tc1++) {
-                                        JSONObject tt1 = TelefC1.getJSONObject(tc1);
-                                        if (tc1 == 0) {
-                                            tel1Contato = tt1.getString("numero");
-                                        }
-                                        if (tc1 == 1) {
-                                            tel2Contato = tt1.getString("numero");
-                                        }
-                                    }
-                                }
-                                if (co == 1) {
-                                    nomeContato = cc.getString("nome");
-                                    cargoContato = cc.getString("cargo");
-                                    emailContato = cc.getString("email");
-
-                                    String TelCont2 = c.getString("telefones");
-                                    TelCont2 = "{\"telefones\":" + TelCont2 + "\t}";
-                                    JSONObject ObjTelC2 = new JSONObject(TelCont2);
-                                    JSONArray TelefC2 = ObjTelC2.getJSONArray("telefones");
-
-                                    for (int tc2 = 0; tc2 < TelefC2.length(); tc2++) {
-                                        JSONObject tt2 = Telef.getJSONObject(tc2);
-                                        if (tc2 == 0) {
-                                            tel1Contato = tt2.getString("numero");
-                                        }
-                                        if (tc2 == 1) {
-                                            tel2Contato = tt2.getString("numero");
-                                        }
-                                    }
-                                }
-                                if (co == 2) {
-                                    nomeContato = cc.getString("nome");
-                                    cargoContato = cc.getString("cargo");
-                                    emailContato = cc.getString("email");
-
-                                    String TelCont3 = c.getString("telefones");
-                                    TelCont3 = "{\"telefones\":" + TelCont3 + "\t}";
-                                    JSONObject ObjTelC3 = new JSONObject(TelCont3);
-                                    JSONArray TelefC3 = ObjTelC3.getJSONArray("telefones");
-
-                                    for (int tc3 = 0; tc3 < TelefC3.length(); tc3++) {
-                                        JSONObject tt3 = Telef.getJSONObject(tc3);
-                                        if (tc3 == 0) {
-                                            tel1Contato = tt3.getString("numero");
-                                        }
-                                        if (tc3 == 1) {
-                                            tel2Contato = tt3.getString("numero");
-                                        }
-                                    }
-                                }
-
-
-                                try {
-                                    if (!nomeContato.equals("0") || !cargoContato.equals("0") || !emailContato.equals("0") ||
-                                            !tel1Contato.equals("0") || !tel2Contato.equals("0")) {
-                                        DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT, codcontato_ext, documento, " +
-                                                "data, cep, endereco, complemento, uf, codvendedor, bairro, desc_cidade, tipo, obs, codperfil) VALUES(" +
-                                                "'" + nomeContato.trim() + "','" + cargoContato.trim() +
-                                                "',' " + emailContato.trim() + "',' " + tel1Contato + "',' " + tel2Contato + "'" +
-                                                "," + CodCliente + ", '" + CodClieExt + "', '" + codExtContato + "', '" + documentoContato + "', '" +
-                                                dataAnivContato + "', '" + cepContato + "', '" + endContato + "', '" + complContato + "', '" +
-                                                ufContato + "', " + sCodVend + ", '" + bairroContato + "', '" + cidadeContato + "', '" +
-                                                tipoContato + "', '" + obsContato + "', " + idPerfil + ");");
-                                    }
-
-                                    //}
-                                    sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
-                                } catch (Exception E) {
-                                    System.out.println("Error" + E);
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                        }
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (
-                JSONException e)
-
-        {
-            e.toString();
-        }
-        return sinccliestatic;
     }
 
     //Começa daqui para baixo as funções que gerar arquivo de pedido em formato .PDF
@@ -7101,19 +5106,19 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return retorno;
     }
 
-    private void declaraobjetos() {
+    private void declaraObjetos() {
         try {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
         } catch (Exception e) {
-
+            e.toString();
         }
         DB = new ConfigDB(this).getReadableDatabase();
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        btnSinc = (Button) findViewById(R.id.btnSincronizar);
+        //Button btnSinc = (Button) findViewById(R.id.btnSincronizar);
     }
 
-    public void carregarpreferencias() {
+    private void carregaPreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
@@ -7121,7 +5126,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
     }
 
-    private void carregausuariologado() {
+    private void carregaUsuarioLogado() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(Sincronismo.this);
         View header = navigationView.getHeaderView(0);
@@ -7146,7 +5151,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
             Intent intent = new Intent(Sincronismo.this, ConsultaClientes.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -7157,7 +5162,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         } else if (id == R.id.nav_produtos) {
             Intent intent = new Intent(Sincronismo.this, ConsultaProdutos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
+            params.putString("codvendedor", codVendedor);
             params.putString("urlPrincipal", URLPrincipal);
             params.putString("usuario", usuario);
             params.putString("senha", senha);
@@ -7168,7 +5173,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         } else if (id == R.id.nav_pedidos) {
             Intent intent = new Intent(Sincronismo.this, ConsultaPedidos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
+            params.putString("codvendedor", codVendedor);
             params.putString("urlPrincipal", URLPrincipal);
             params.putString("usuario", usuario);
             params.putString("senha", senha);
@@ -7179,7 +5184,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         } else if (id == R.id.nav_contatos) {
             Intent i = new Intent(Sincronismo.this, ConsultaContatos.class);
             Bundle params = new Bundle();
-            params.putString("codvendedor", sCodVend);
+            params.putString("codvendedor", codVendedor);
             params.putString("urlPrincipal", URLPrincipal);
             params.putString("usuario", usuario);
             params.putString("senha", senha);
@@ -7190,7 +5195,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         } else if (id == R.id.nav_agenda) {
             Intent i = new Intent(Sincronismo.this, ConsultaAgenda.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -7209,7 +5214,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         } else if (id == R.id.nav_sobre) {
             Intent intent = new Intent(Sincronismo.this, InfoJDSystem.class);
             Bundle params = new Bundle();
-            params.putString(getString(R.string.intent_codvendedor), sCodVend);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
             params.putString(getString(R.string.intent_usuario), usuario);
             params.putString(getString(R.string.intent_senha), senha);
@@ -7221,2201 +5226,6 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    public void SincronizarClientes(String sCodVend, String nUsuario, String nSenha) throws JSONException {
-
-        String METHOD_NAME = "Carregar";
-        String TAG_CLIENTESINFO = "clientes";
-        String TAG_TELEFONESINFO = "telefones";
-        String TAG_CONTATOSINFO = "contatos";
-        String TAG_CODIGO = "codigo";
-        String TAG_RAZAOSOCIAL = "razao_social";
-        String TAG_NOMEFANTASIA = "nome_fantasia";
-        String TAG_TIPO = "tipo";
-        String TAG_CNPJCPF = "cnpj_cpf";
-        String TAG_INSCESTADUAL = "inscricao_estadual";
-        String TAG_LOGRADOURO = "Logradouro";
-        String TAG_NUMERO = "numero";
-        String TAG_COMPLEMENTO = "complemento";
-        String TAG_BAIRRO = "bairro";
-        String TAG_CIDADE = "cidade";
-        String TAG_ESTADO = "estado";
-        String TAG_CEP = "cep";
-        String TAG_RG = "identidade";
-        String TAG_OBS = "observacao";
-        String TAG_EMAILS = "emails";
-        String TAG_ATIVO = "ativo";
-        String TAG_BLOQUEIO = "bloqueio";
-        String TAG_LIMITECRED = "limitecredito";
-
-        String CodVendedor = sCodVend;
-
-
-        Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_CLIE,CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-        cursorparamapp.moveToFirst();
-
-        String DtUlt = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_CLIE"));
-        if (DtUlt == null) {
-            DtUlt = "01/01/2000 10:00:00";
-        }
-
-        cursorparamapp.close();
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        soap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
-        soap.addProperty("aUsuario", nUsuario);
-        soap.addProperty("aSenha", nSenha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
-        String RetClientes = null;
-
-
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (ConexOk) {
-            try {
-                Cursor cursorVerificaClie = DB.rawQuery("SELECT * FROM CLIENTES WHERE CODPERFIL =" + idPerfil, null);
-                if (cursorVerificaClie.getCount() == 0) {
-                    hd.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            DialogECB = new ProgressDialog(Sincronismo.this);
-                            DialogECB.setTitle(R.string.wait);
-                            DialogECB.setMessage(getString(R.string.primeira_sync_clientes));
-                            DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                            DialogECB.setIcon(R.drawable.icon_sync);
-                            DialogECB.setCancelable(false);
-                            DialogECB.show();
-                        }
-                    });
-                    int i = 0;
-                    do {
-                        try {
-                            if (i > 0) {
-                                hd.post(new Runnable() {
-                                    public void run() {
-                                        DialogECB.setMessage(getString(R.string.primeira_sync_clientes));
-                                    }
-                                });
-                                Thread.sleep(500);
-                            }
-                            final int y = i;
-                            switch (i) {
-                                case 1:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 2:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 3:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 4:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 5:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 6:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            if (ConexOk) {
-
-                                try {
-                                    if (i == 0) {
-                                        Envio.call("", envelope);
-
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                        RetClientes = (String) envelope.getResponse();
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    } else {
-                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-                                        newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
-                                        newsoap.addProperty("aUsuario", nUsuario);
-                                        newsoap.addProperty("aSenha", nSenha);
-                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                        envelope.setOutputSoapObject(soap);
-                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
-                                        newEnvio.call("", newenvelope);
-
-                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                        RetClientes = (String) newenvelope.getResponse();
-                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                    }
-                                } catch (Exception e) {
-                                    e.toString();
-                                    hd.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                                cursorVerificaClie.close();
-                            } else {
-                                hd.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        } catch (Exception e) {
-                            System.out.println("Error na solicitação" + e);
-                        }
-                        i = i + 1;
-                    } while (RetClientes == null && i <= 6);
-                    if (DialogECB.isShowing()) {
-                        DialogECB.dismiss();
-                    }
-                } else {
-                    int i = 0;
-                    hd.post(new Runnable() {
-                        public void run() {
-                            Dialog.setMessage("Por favor aguarde, realizando conexão com o servidor...");
-                        }
-                    });
-                    do {
-                        try {
-                            if (i > 0) {
-                                Thread.sleep(500);
-                            }
-                            final int y = i;
-                            switch (i) {
-                                case 1:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 2:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 3:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 4:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 5:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 6:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            if (ConexOk) {
-
-                                try {
-                                    if (i == 0) {
-                                        Envio.call("", envelope);
-
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                        RetClientes = (String) envelope.getResponse();
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    } else {
-                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-                                        newsoap.addProperty("aParam", "V" + CodVendedor + "%" + DtUlt);
-                                        newsoap.addProperty("aUsuario", nUsuario);
-                                        newsoap.addProperty("aSenha", nSenha);
-                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                        newenvelope.setOutputSoapObject(newsoap);
-                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES, 900000);
-                                        newEnvio.call("", newenvelope);
-
-                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                        RetClientes = (String) newenvelope.getResponse();
-                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                    }
-                                } catch (Exception e) {
-                                    e.toString();
-                                    hd.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-
-                                cursorVerificaClie.close();
-
-                            } else {
-                                hd.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        } catch (Exception e) {
-                            System.out.println("Error na solicitação" + e);
-                        }
-                        i = i + 1;
-                    } while (RetClientes == null && i <= 6);
-                }
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-        } else {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        }
-        if (RetClientes == null) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        } else if (RetClientes.equals("0")) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.syn_clients_successfully, Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        }
-        JSONObject jsonObj = new JSONObject(RetClientes);
-        JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);
-        try {
-            DtUlt = Util.DataHojeComHorasMinSecBR();
-            DB.execSQL("UPDATE PARAMAPP SET DT_ULT_CLIE = '" + DtUlt + "' WHERE CODPERFIL = " + idPerfil);
-        } catch (Exception e) {
-            e.toString();
-        }
-        try {
-
-            int jumpTime = 0;
-            Dialog.setProgress(jumpTime);
-            final int totalProgressTime = pedidosblq.length();
-            Dialog.setMax(totalProgressTime);
-
-            String CodCliente = null;
-            String CodClienteExt = null;
-
-            for (int i = 0; i < pedidosblq.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = pedidosblq.getJSONObject(jumpTime);
-
-                        String Telefone = c.getString(TAG_TELEFONESINFO);
-                        Telefone = "{\"telefones\":" + Telefone + "\t}";
-                        JSONObject ObjTel = new JSONObject(Telefone);
-                        JSONArray Telef = ObjTel.getJSONArray("telefones");
-                        String Tel1 = null;
-                        String Tel2 = null;
-                        String Tel3 = null;
-
-                        for (int t = 0; t < Telef.length(); t++) {
-                            JSONObject tt = Telef.getJSONObject(t);
-                            if (t == 0) {
-                                Tel1 = tt.getString("numero");
-                            }
-                            if (t == 1) {
-                                Tel2 = tt.getString("numero");
-                            }
-                            if (t == 2) {
-                                Tel3 = tt.getString("numero");
-                            }
-                        }
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-                        hd.post(new Runnable() {
-                            public void run() {
-                                Dialog.setMessage(getString(R.string.sync_clients));
-                            }
-                        });
-
-                        Cursor cursor = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
-                        cursor.moveToFirst();
-                        String CodEstado = RetornaEstado(c.getString(TAG_ESTADO), this);
-                        int CodCidade = RetornaCidade(c.getString(TAG_CIDADE), CodEstado, this);
-                        int CodBairro = RetornaBairro(c.getString(TAG_BAIRRO), CodCidade, this);
-                        try {
-                            if (cursor.getCount() > 0) {
-                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
-                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
-                                        "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) +
-                                        "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) +
-                                        "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 +
-                                        "', TEL2 = '" + Tel2 +
-                                        "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) +
-                                        "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
-                                        "', CODBAIRRO = '" + CodBairro +
-                                        "', OBS = '" + c.getString(TAG_OBS) +
-                                        "', CODCIDADE = '" + CodCidade +
-                                        "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) +
-                                        "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
-                                        "', TIPOPESSOA = '" + c.getString(TAG_TIPO) +
-                                        "', ATIVO = '" + c.getString(TAG_ATIVO) +
-                                        "', CODPERFIL = " + idPerfil +
-                                        ",  CODVENDEDOR = " + CodVendedor +
-                                        ",  FLAGINTEGRADO = '2' " +
-                                        "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
-                                        "'  AND CODPERFIL = " + idPerfil + "");
-                            } else {
-                                DB.execSQL("INSERT INTO CLIENTES (CNPJ_CPF, NOMERAZAO, REGIDENT, NOMEFAN, INSCREST, EMAIL, TEL1, TEL2, " +
-                                        "ENDERECO, NUMERO, COMPLEMENT, CODBAIRRO, OBS, CODCIDADE, UF, " +
-                                        "CEP, CODCLIE_EXT, CODVENDEDOR, TIPOPESSOA,LIMITECRED,BLOQUEIO, ATIVO, CODPERFIL, FLAGINTEGRADO) VALUES(" +
-                                        "'" + c.getString(TAG_CNPJCPF) + "'" +
-                                        ",'" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
-                                        "','" + c.getString(TAG_RG).trim() +
-                                        "',' " + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "',' " + c.getString(TAG_INSCESTADUAL) +
-                                        "',' " + c.getString(TAG_EMAILS) +
-                                        "',' " + Tel1 +
-                                        "', '" + Tel2 +
-                                        "', '" + c.getString(TAG_LOGRADOURO).trim() +
-                                        "',' " + c.getString(TAG_NUMERO).trim() +
-                                        "', '" + c.getString(TAG_COMPLEMENTO).trim() +
-                                        "',' " + CodBairro +
-                                        "','" + c.getString(TAG_OBS) +
-                                        "','" + CodCidade +
-                                        "','" + CodEstado +
-                                        "',' " + c.getString(TAG_CEP) +
-                                        "', '" + c.getString(TAG_CODIGO) +
-                                        "',' " + CodVendedor +
-                                        "','" + c.getString(TAG_TIPO) +
-                                        "','" + c.getString(TAG_LIMITECRED) +
-                                        "','" + c.getString(TAG_BLOQUEIO) +
-                                        "','" + c.getString(TAG_ATIVO) +
-                                        "', '" + idPerfil +
-                                        "',' " + "2" + "');"); // FLAGINTEGRADO = 2, Significa que o cliente já está integrado e existe na base da retaguarda.
-                                DB.execSQL(" UPDATE CLIENTES SET NOMERAZAO = '" + c.getString(TAG_RAZAOSOCIAL).trim().replace("'", "") +
-                                        "', NOMEFAN = '" + c.getString(TAG_NOMEFANTASIA).trim().replace("'", "") +
-                                        "', REGIDENT = '" + c.getString(TAG_RG).trim() +
-                                        "', LIMITECRED = '" + c.getString(TAG_LIMITECRED) +
-                                        "', BLOQUEIO = '" + c.getString(TAG_BLOQUEIO) +
-                                        "', INSCREST = '" + c.getString(TAG_INSCESTADUAL) +
-                                        "', EMAIL = '" + c.getString(TAG_EMAILS) +
-                                        "', TEL1 = '" + Tel1 +
-                                        "', TEL2 = '" + Tel2 +
-                                        "', ENDERECO = '" + c.getString(TAG_LOGRADOURO).trim().replace("'", "") +
-                                        "', NUMERO = '" + c.getString(TAG_NUMERO) +
-                                        "', COMPLEMENT = '" + c.getString(TAG_COMPLEMENTO).trim().replace("'", "") +
-                                        "', CODBAIRRO = '" + CodBairro +
-                                        "', OBS = '" + c.getString(TAG_OBS) +
-                                        "', CODCIDADE = '" + CodCidade +
-                                        "', UF = '" + CodEstado +
-                                        "', CEP = '" + c.getString(TAG_CEP) +
-                                        "', CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
-                                        "', TIPOPESSOA = '" + c.getString(TAG_TIPO) +
-                                        "', ATIVO = '" + c.getString(TAG_ATIVO) +
-                                        "', CODPERFIL = " + idPerfil +
-                                        ",  CODVENDEDOR = " + CodVendedor +
-                                        ",  FLAGINTEGRADO = '2' " +
-                                        "   WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) +
-                                        "'  AND CODPERFIL = " + idPerfil + "");
-                            }
-
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "' AND CODPERFIL = " + idPerfil + "", null);
-                            cursor1.moveToFirst();
-                            CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
-                            CodClienteExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
-
-                            cursor.close();
-                            cursor1.close();
-
-                        } catch (Exception E) {
-                            System.out.println("Sincronismo Clientes, falha na atualização ou inclusão de clientes. Tente novamente");
-                        }
-                        try {
-                            if (CodClienteExt == null) {
-                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND CODPERFIL = " + idPerfil + "", null);
-                                CursorContatosEnv.moveToFirst();
-                                if ((CursorContatosEnv.getCount() > 0)) {
-                                    DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente + " AND CODPERFIL = " + idPerfil + "");
-                                    CursorContatosEnv.close();
-                                }
-                            } else {
-                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIE_EXT = " + CodClienteExt + " AND CODPERFIL = " + idPerfil + "", null);
-                                CursorContatosEnv.moveToFirst();
-                                if ((CursorContatosEnv.getCount() > 0)) {
-                                    DB.execSQL("DELETE FROM CONTATO WHERE CODCLIE_EXT = " + CodClienteExt + " AND CODPERFIL = " + idPerfil + "");
-                                    CursorContatosEnv.close();
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                        }
-
-                        String Contatos = c.getString(TAG_CONTATOSINFO);
-                        Contatos = "{\"contatos\":" + Contatos + "\t}";
-                        JSONObject ObjCont = new JSONObject(Contatos);
-                        JSONArray Cont = ObjCont.getJSONArray("contatos");
-                        String NomeContato = null;
-                        String CargoContato = null;
-                        String EmailContato = null;
-                        String Tel1Contato = null;
-                        String Tel2Contato = null;
-                        String codExtContato = null;
-                        String documentoContato = null;
-                        String dataAniversario = null;
-                        String cep = null;
-                        String endNumCont = null;
-                        String uf = null;
-                        String bairro = null;
-                        String cidade = null;
-
-                        try {
-                            for (int co = 0; co < Cont.length(); co++) {
-                                JSONObject cc = Cont.getJSONObject(co);
-                                if (co == 0) {
-                                    NomeContato = cc.getString("nome");
-                                    CargoContato = cc.getString("cargo");
-                                    EmailContato = cc.getString("email");
-                                    codExtContato = cc.getString("CodContato");
-                                    documentoContato = cc.getString("Documento");
-                                    dataAniversario = cc.getString("DataAniversario");
-                                    cep = cc.getString("cep");
-                                    endNumCont = cc.getString("Logradouro");
-                                    uf = cc.getString("uf");
-                                    bairro = cc.getString("Bairro");
-                                    cidade = cc.getString("Cidade");
-
-                                    String TelCont1 = cc.getString("telefones");
-                                    TelCont1 = "{\"telefones\":" + TelCont1 + "\t}";
-                                    JSONObject ObjTelC1 = new JSONObject(TelCont1);
-                                    JSONArray TelefC1 = ObjTelC1.getJSONArray("telefones");
-
-                                    for (int tc1 = 0; tc1 < TelefC1.length(); tc1++) {
-                                        JSONObject tt1 = TelefC1.getJSONObject(tc1);
-                                        if (tc1 == 0) {
-                                            Tel1Contato = tt1.getString("numero");
-                                        }
-                                        if (tc1 == 1) {
-                                            Tel2Contato = tt1.getString("numero");
-                                        }
-                                    }
-                                }
-                                if (co == 1) {
-                                    NomeContato = cc.getString("nome");
-                                    CargoContato = cc.getString("cargo");
-                                    EmailContato = cc.getString("email");
-                                    codExtContato = cc.getString("CodContato");
-                                    documentoContato = cc.getString("Documento");
-                                    dataAniversario = cc.getString("DataAniversario");
-                                    cep = cc.getString("cep");
-                                    endNumCont = cc.getString("Logradouro");
-                                    uf = cc.getString("uf");
-                                    bairro = cc.getString("Bairro");
-                                    cidade = cc.getString("Cidade");
-
-                                    String TelCont2 = cc.getString("telefones");
-                                    TelCont2 = "{\"telefones\":" + TelCont2 + "\t}";
-                                    JSONObject ObjTelC2 = new JSONObject(TelCont2);
-                                    JSONArray TelefC2 = ObjTelC2.getJSONArray("telefones");
-
-                                    for (int tc2 = 0; tc2 < TelefC2.length(); tc2++) {
-                                        JSONObject tt2 = TelefC2.getJSONObject(tc2);
-                                        if (tc2 == 0) {
-                                            Tel1Contato = tt2.getString("numero");
-                                        }
-                                        if (tc2 == 1) {
-                                            Tel2Contato = tt2.getString("numero");
-                                        }
-                                    }
-                                }
-                                if (co == 2) {
-                                    NomeContato = cc.getString("nome");
-                                    CargoContato = cc.getString("cargo");
-                                    EmailContato = cc.getString("email");
-                                    codExtContato = cc.getString("CodContato");
-                                    documentoContato = cc.getString("Documento");
-                                    dataAniversario = cc.getString("DataAniversario");
-                                    cep = cc.getString("cep");
-                                    endNumCont = cc.getString("Logradouro");
-                                    uf = cc.getString("uf");
-                                    bairro = cc.getString("Bairro");
-                                    cidade = cc.getString("Cidade");
-
-                                    String TelCont3 = cc.getString("telefones");
-                                    TelCont3 = "{\"telefones\":" + TelCont3 + "\t}";
-                                    JSONObject ObjTelC3 = new JSONObject(TelCont3);
-                                    JSONArray TelefC3 = ObjTelC3.getJSONArray("telefones");
-
-                                    for (int tc3 = 0; tc3 < TelefC3.length(); tc3++) {
-                                        JSONObject tt3 = TelefC3.getJSONObject(tc3);
-                                        if (tc3 == 0) {
-                                            Tel1Contato = tt3.getString("numero");
-                                        }
-                                        if (tc3 == 1) {
-                                            Tel2Contato = tt3.getString("numero");
-                                        }
-                                    }
-                                }
-
-                                try {
-                                    if (!NomeContato.equals("0") || !CargoContato.equals("0") || !EmailContato.equals("0") || !Tel1Contato.equals("0") ||
-                                            !Tel2Contato.equals("0")) {
-                                        DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT, CODCONTATO_EXT," +
-                                                "DOCUMENTO, DATA, CEP, ENDERECO, UF, CODPERFIL, BAIRRO, DESC_CIDADE ) VALUES(" +
-                                                "'" + NomeContato.trim() + "', '" + CargoContato.trim() +
-                                                "', '" + EmailContato.trim() + "', '" + Tel1Contato.trim() + "', '" + Tel2Contato.trim() +
-                                                "', " + CodCliente.trim() + ", '" + CodClienteExt.trim() + "', '" + codExtContato.trim() +
-                                                "', '" + documentoContato.trim() + "', '" + dataAniversario.trim() + "', '" + cep.trim() +
-                                                "', '" + endNumCont.trim() + "', '" + uf.trim() + "', '" + idPerfil + "', '" + bairro.trim() +
-                                                "', '" + cidade.trim() + "');");
-                                    }
-
-                                } catch (Exception E) {
-                                    System.out.println("Sincronismo Clientes, falha na inclusão dos contatos.");
-                                }
-
-                            }
-                        } catch (Exception e) {
-                            System.out.println("Sincronismo Clientes, falha no carregamento dos contatos ou inclusão.");
-                        }
-
-                    } catch (Exception E) {
-                        System.out.println("Sincronismo Clientes, falha no carregamento. Tente novamente");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Sincronismo Clientes, falha no carregamento. Tente novamente");
-        }
-    }
-
-    private void SincronizarProdutos(String nUsuario, String nSenha) {
-
-        String METHOD_NAME = "Carregar";
-        String TAG_PRODUTOSINFO = "produtos";
-        String TAG_CODIGOITEM = "codigoitem";
-        String TAG_CODMANUAL = "coditemanual";
-        String TAG_DESCRICAO = "descricao";
-        String TAG_UNIVENDA = "univenda";
-        String TAG_VLVENDA1 = "vlvenda1";
-        String TAG_VLVENDA2 = "vlvenda2";
-        String TAG_VLVENDA3 = "vlvenda3";
-        String TAG_VLVENDA4 = "vlvenda4";
-        String TAG_VLVENDA5 = "vlvenda5";
-        String TAG_VLVENDAP1 = "vlvendap1";
-        String TAG_VLVENDAP2 = "vlvendap2";
-        String TAG_TABELAPADRAO = "tabelapadrao";
-        String TAG_MARCA = "marca";
-        String TAG_CLASSE = "classe";
-        String TAG_FABRICANTE = "fabricante";
-        String TAG_FORNECEDOR = "fornecedor";
-        String TAG_APRESENTACAO = "apresentacao";
-        String TAG_ATIVO = "ativo";
-        String TAG_QTDESTOQUE = "qtd_disponivel";
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        Cursor cursorparamapp = DB.rawQuery("SELECT DT_ULT_ITENS, CODPERFIL FROM PARAMAPP WHERE CODPERFIL = " + idPerfil, null);
-        cursorparamapp.moveToFirst();
-        String DtUltItem = cursorparamapp.getString(cursorparamapp.getColumnIndex("DT_ULT_ITENS"));
-        if (DtUltItem == null) {
-            DtUltItem = "01/01/2000 10:00:00";
-        }
-        cursorparamapp.close();
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-        soap.addProperty("aParam", "D" + DtUltItem);
-        soap.addProperty("aUsuario", nUsuario);
-        soap.addProperty("aSenha", nSenha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
-        String RetProdutos = null;
-
-
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (ConexOk) {
-            try {
-                Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL =" + idPerfil, null);
-                if (cursorVerificaProd.getCount() == 0) {
-                    hd.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            DialogECB = new ProgressDialog(Sincronismo.this);
-                            DialogECB.setTitle(R.string.wait);
-                            DialogECB.setMessage(getString(R.string.primeira_sync_itens));
-                            DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                            DialogECB.setIcon(R.drawable.icon_sync);
-                            DialogECB.setCancelable(false);
-                            DialogECB.show();
-                        }
-                    });
-                    int i = 0;
-                    do {
-                        try {
-                            if (i > 0) {
-                                hd.post(new Runnable() {
-                                    public void run() {
-                                        DialogECB.setMessage(getString(R.string.primeira_sync_itens));
-                                    }
-                                });
-                                Thread.sleep(500);
-                            }
-                            final int y = i;
-                            switch (i) {
-                                case 1:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 2:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 3:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 4:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 5:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 6:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            DialogECB.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            if (ConexOk) {
-
-                                try {
-                                    if (i == 0) {
-                                        Envio.call("", envelope);
-
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                        RetProdutos = (String) envelope.getResponse();
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    } else {
-                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-                                        newsoap.addProperty("aParam", "D" + DtUltItem);
-                                        newsoap.addProperty("aUsuario", nUsuario);
-                                        newsoap.addProperty("aSenha", nSenha);
-                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                        envelope.setOutputSoapObject(soap);
-                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
-                                        newEnvio.call("", newenvelope);
-
-                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                        RetProdutos = (String) newenvelope.getResponse();
-                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                    }
-                                } catch (Exception e) {
-                                    e.toString();
-                                    hd.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                                cursorVerificaProd.close();
-                            } else {
-                                hd.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        } catch (Exception e) {
-                            System.out.println("Error na solicitação" + e);
-                        }
-                        i = i + 1;
-                    } while (RetProdutos == null && i <= 6);
-                    if (DialogECB.isShowing()) {
-                        DialogECB.dismiss();
-                    }
-                } else {
-                    int i = 0;
-                    do {
-                        try {
-                            if (i > 0) {
-                                Thread.sleep(500);
-                            }
-                            final int y = i;
-                            switch (i) {
-                                case 1:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 2:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 3:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 4:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 5:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                                case 6:
-                                    hd.post(new Runnable() {
-                                        public void run() {
-                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                        }
-                                    });
-                                    break;
-                            }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            if (ConexOk) {
-
-                                try {
-                                    if (i == 0) {
-                                        Envio.call("", envelope);
-
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                        RetProdutos = (String) envelope.getResponse();
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    } else {
-                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME);
-                                        newsoap.addProperty("aParam", "D" + DtUltItem);
-                                        newsoap.addProperty("aUsuario", nUsuario);
-                                        newsoap.addProperty("aSenha", nSenha);
-                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                        newenvelope.setOutputSoapObject(newsoap);
-                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS, 900000);
-                                        newEnvio.call("", newenvelope);
-
-                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                        RetProdutos = (String) newenvelope.getResponse();
-                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                    }
-                                } catch (Exception e) {
-                                    e.toString();
-                                    hd.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-
-                                cursorVerificaProd.close();
-
-                            } else {
-                                hd.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        } catch (Exception e) {
-                            System.out.println("Error na solicitação" + e);
-                        }
-                        i = i + 1;
-                    } while (RetProdutos == null && i <= 6);
-                }
-
-
-            } catch (Exception e) {
-                e.toString();
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-        } else {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        if (RetProdutos == null) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-
-                }
-            });
-            return;
-        } else if (RetProdutos.equals("0")) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.syn_clients_successfully, Toast.LENGTH_SHORT).show();
-
-                }
-            });
-            return;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetProdutos);
-            JSONArray ProdItens = jsonObj.getJSONArray(TAG_PRODUTOSINFO);
-
-            try {
-                DtUltItem = Util.DataHojeComHorasMinSecBR();
-                DB.execSQL("UPDATE PARAMAPP SET DT_ULT_ITENS = '" + DtUltItem + "' WHERE CODPERFIL = " + idPerfil);
-            } catch (Exception e) {
-                e.toString();
-            }
-
-            int jumpTime = 0;
-            final int totalProgressTime = ProdItens.length();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-
-            for (int i = 0; i < ProdItens.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject CItens = ProdItens.getJSONObject(jumpTime);
-                        String Ativo = CItens.getString(TAG_ATIVO);
-                        if (Ativo.equals("true")) {
-                            Ativo = "S";
-                        } else {
-                            Ativo = "N";
-                        }
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-                        hd.post(new Runnable() {
-                            public void run() {
-                                Dialog.setMessage(getString(R.string.sync_products));
-                            }
-                        });
-                        Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) + " AND CODPERFIL = " + idPerfil + "", null);
-                        try {
-                            if (CursItens.getCount() > 0) {
-                                CursItens.moveToFirst();
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim() +
-                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim() +
-                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim() +
-                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim() +
-                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
-                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
-                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
-                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
-                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
-                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
-                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', ATIVO = '" + Ativo +
-                                        "', CODPERFIL = " + idPerfil +
-                                        ", QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim() + "'" +
-                                        "   WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
-                                        "   AND CODPERFIL = " + idPerfil + "");
-                            } else {
-                                DB.execSQL("INSERT INTO ITENS (CODIGOITEM, CODITEMANUAL, DESCRICAO, FABRICANTE, FORNECEDOR, CLASSE, MARCA, UNIVENDA, " +
-                                        "VLVENDA1, VLVENDA2, VLVENDA3, VLVENDA4, VLVENDA5, VLVENDAP1, VLVENDAP2, TABELAPADRAO, " +
-                                        "ATIVO,CODPERFIL, QTDESTPROD, APRESENTACAO) VALUES(" + "'" + CItens.getString(TAG_CODIGOITEM) +
-                                        "',' " + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "',' " + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "',' " + CItens.getString(TAG_FABRICANTE).trim() +
-                                        "',' " + CItens.getString(TAG_FORNECEDOR).trim() +
-                                        "',' " + CItens.getString(TAG_CLASSE).trim() +
-                                        "',' " + CItens.getString(TAG_MARCA).trim() +
-                                        "',' " + CItens.getString(TAG_UNIVENDA).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA1).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA2).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA3).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA4).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDA5).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "',' " + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "',' " + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "',' " + Ativo +
-                                        "',  " + idPerfil +
-                                        " ,' " + CItens.getString(TAG_QTDESTOQUE) +
-                                        "',' " + CItens.getString(TAG_APRESENTACAO).trim() + "');");
-
-                                //está tendo que atualizar cadas item que é incluso para tirar os espaçõs em alguns campos, pois somente na inserção não tira.
-                                DB.execSQL(" UPDATE ITENS SET CODITEMANUAL = '" + CItens.getString(TAG_CODMANUAL).trim() +
-                                        "', DESCRICAO = '" + CItens.getString(TAG_DESCRICAO).trim().replace("'", "") +
-                                        "', FABRICANTE = '" + CItens.getString(TAG_FABRICANTE).trim().replace("'", "") +
-                                        "', FORNECEDOR = '" + CItens.getString(TAG_FORNECEDOR).trim().replace("'", "") +
-                                        "', CLASSE = '" + CItens.getString(TAG_CLASSE).trim().replace("'", "") +
-                                        "', MARCA = '" + CItens.getString(TAG_MARCA).trim().replace("'", "") +
-                                        "', UNIVENDA = '" + CItens.getString(TAG_UNIVENDA).trim() +
-                                        "', VLVENDA1 = '" + CItens.getString(TAG_VLVENDA1).trim() +
-                                        "', VLVENDA2 = '" + CItens.getString(TAG_VLVENDA2).trim() +
-                                        "', VLVENDA3 = '" + CItens.getString(TAG_VLVENDA3).trim() +
-                                        "', VLVENDA4 = '" + CItens.getString(TAG_VLVENDA4).trim() +
-                                        "', VLVENDA5 = '" + CItens.getString(TAG_VLVENDA5).trim() +
-                                        "', VLVENDAP1 = '" + CItens.getString(TAG_VLVENDAP1).trim() +
-                                        "', VLVENDAP2 = '" + CItens.getString(TAG_VLVENDAP2).trim() +
-                                        "', TABELAPADRAO = '" + CItens.getString(TAG_TABELAPADRAO).trim() +
-                                        "', ATIVO = '" + Ativo +
-                                        "', CODPERFIL = " + idPerfil +
-                                        " , QTDESTPROD = '" + CItens.getString(TAG_QTDESTOQUE) +
-                                        "', APRESENTACAO = '" + CItens.getString(TAG_APRESENTACAO).trim().replace("'", "") +
-                                        "'  WHERE CODIGOITEM = " + CItens.getString(TAG_CODIGOITEM) +
-                                        "   AND CODPERFIL = " + idPerfil + "");
-                            }
-                            CursItens.close();
-
-                        } catch (Exception E) {
-                            System.out.println("Error" + E);
-                        }
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-        }
-    }
-
-    private void SincDescricaoTabelas() {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
-        soap.addProperty("aUsuario", usuario);
-        soap.addProperty("aSenha", senha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
-        String RetDescTabelas = null;
-
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (ConexOk) {
-
-            int i = 0;
-            do {
-                try {
-                    if (i > 0) {
-                        Thread.sleep(500);
-                    }
-                    final int y = i;
-                    switch (i) {
-                        case 1:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 2:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 3:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 4:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 5:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 6:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    if (ConexOk) {
-                        try {
-                            if (i == 0) {
-                                Envio.call("", envelope);
-
-                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                RetDescTabelas = (String) envelope.getResponse();
-                                System.out.println("Response :" + resultsRequestSOAP.toString());
-                            } else {
-                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "CarregaNomeTabelas");
-                                newsoap.addProperty("aUsuario", usuario);
-                                newsoap.addProperty("aSenha", senha);
-                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                newenvelope.setOutputSoapObject(newsoap);
-                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPRODUTOS);
-                                newEnvio.call("", newenvelope);
-
-                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                RetDescTabelas = (String) newenvelope.getResponse();
-                                System.out.println("Response :" + newresultsRequestSOAP.toString());
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                            hd.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        }
-
-                    } else {
-                        hd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    }
-                } catch (Exception e) {
-                    System.out.println("Error na solicitação" + e);
-                }
-                i = i + 1;
-            } while (RetDescTabelas == null && i <= 6);
-
-
-        } else {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        if (RetDescTabelas == null) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetDescTabelas);
-            JSONArray JParamApp = jsonObj.getJSONArray("tabelas");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JParamApp.length();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-
-            for (int i = 0; i < JParamApp.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JParamApp.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-                        hd.post(new Runnable() {
-                            public void run() {
-                                Dialog.setMessage(getString(R.string.updating_tables));
-                            }
-                        });
-                        String DescTab1 = c.getString("nometab1");
-                        String DescTab2 = c.getString("nometab2");
-                        String DescTab3 = c.getString("mometab3");
-                        String DescTab4 = c.getString("nometab4");
-                        String DescTab5 = c.getString("nometab5");
-                        String DescTab6 = c.getString("nometabp1");
-                        String DescTab7 = c.getString("nometabp2");
-
-                        Cursor CursorTabela = DB.rawQuery(" SELECT CODPERFIL, DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
-                        CursorTabela.moveToFirst();
-                        if (CursorTabela.getCount() > 0) {
-                            DB.execSQL(" UPDATE PARAMAPP SET DESCRICAOTAB1 = '" + DescTab1.trim() +
-                                    "', DESCRICAOTAB2 = '" + DescTab2.trim() +
-                                    "', DESCRICAOTAB3 = '" + DescTab3.trim() +
-                                    "', DESCRICAOTAB4 = '" + DescTab4.trim() +
-                                    "', DESCRICAOTAB5 = '" + DescTab5.trim() +
-                                    "', DESCRICAOTAB6 = '" + DescTab6.trim() +
-                                    "', DESCRICAOTAB7 = '" + DescTab7.trim() +
-                                    "' WHERE CODPERFIL = " + idPerfil);
-                        } else {
-
-                            DB.execSQL(" INSERT INTO PARAMAPP (DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7,CODPERFIL)" +
-                                    " VALUES(" + "'" + DescTab1.trim() + "','" + DescTab2.trim() + "','" + DescTab3.trim() + "','" + DescTab4.trim() + "','" + DescTab5.trim() + "','" + DescTab6.trim() + "','" + DescTab7.trim() + "', " + idPerfil + " );");
-                        }
-                        CursorTabela.close();
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-        }
-    }
-
-    private void SincBloqueios() {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
-        soap.addProperty("aUsuario", usuario);
-        soap.addProperty("aSenha", senha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-        String RetBloqueios = null;
-
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (ConexOk) {
-
-            int i = 0;
-            do {
-                try {
-                    if (i > 0) {
-                        Thread.sleep(500);
-                    }
-                    final int y = i;
-                    switch (i) {
-                        case 1:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 2:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 3:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 4:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 5:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 6:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    if (ConexOk) {
-
-                        try {
-                            if (i == 0) {
-                                Envio.call("", envelope);
-
-                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                RetBloqueios = (String) envelope.getResponse();
-                                System.out.println("Response :" + resultsRequestSOAP.toString());
-                            } else {
-                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaCadBloqueios");
-                                newsoap.addProperty("aUsuario", usuario);
-                                newsoap.addProperty("aSenha", senha);
-                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                newenvelope.setOutputSoapObject(newsoap);
-                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-                                newEnvio.call("", newenvelope);
-
-                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                RetBloqueios = (String) newenvelope.getResponse();
-                                System.out.println("Response :" + newresultsRequestSOAP.toString());
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                            hd.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        }
-
-                    } else {
-                        hd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    }
-                } catch (Exception e) {
-                    System.out.println("Error na solicitação" + e);
-                }
-                i = i + 1;
-            } while (RetBloqueios == null && i <= 6);
-
-
-        } else {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        if (RetBloqueios == null) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetBloqueios);
-            JSONArray JBloqueios = jsonObj.getJSONArray("bloqueios");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JBloqueios.length();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-
-            for (int i = 0; i < JBloqueios.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JBloqueios.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-                        hd.post(new Runnable() {
-                            public void run() {
-                                Dialog.setMessage(getString(R.string.updating_locks));
-                            }
-                        });
-                        String codblq = c.getString("codblq");
-                        String descricao = c.getString("descricao");
-                        String bloquear = c.getString("bloquear");
-                        String liberar = c.getString("liberar");
-                        String fpavista = c.getString("fpavista");
-
-
-                        Cursor CursorBloqueio = DB.rawQuery(" SELECT CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, FPAVISTA FROM BLOQCLIE WHERE CODBLOQ = " + codblq + " AND CODPERFIL = " + idPerfil, null);
-                        if (CursorBloqueio.getCount() > 0) {
-                            DB.execSQL(" UPDATE BLOQCLIE SET CODBLOQ = '" + codblq + "', DESCRICAO = '" + descricao + "', BLOQUEAR = '" + bloquear + "'," +
-                                    " LIBERAR = '" + liberar + "', FPAVISTA = '" + fpavista + "'" +
-                                    " WHERE CODBLOQ = '" + codblq + "' AND CODPERFIL = " + idPerfil);
-                        } else {
-                            DB.execSQL(" INSERT INTO BLOQCLIE (CODBLOQ, DESCRICAO, BLOQUEAR, LIBERAR, CODPERFIL, FPAVISTA)" +
-                                    " VALUES('" + codblq + "','" + descricao + "', '" + bloquear + "','" + liberar + "', " + idPerfil + ", '" + fpavista + "' );");
-                        }
-                        CursorBloqueio.close();
-
-                    } catch (Exception E) {
-
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.toString();
-        }
-    }
-
-    private void SincParametros() {
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
-        soap.addProperty("aUsuario", usuario);
-        soap.addProperty("aSenha", senha);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS, 6000);
-        String RetParamApp = null;
-
-        Boolean ConexOk = Util.checarConexaoCelular(this);
-        if (ConexOk) {
-
-            int i = 0;
-            do {
-
-                try {
-                    if (i > 0) {
-                        Thread.sleep(1000);
-                    }
-                    final int y = i;
-                    switch (i) {
-                        case 1:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 2:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 3:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 4:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 5:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                        case 6:
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                }
-                            });
-                            break;
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    if (ConexOk) {
-
-                        try {
-                            if (i == 0) {
-                                Envio.call("", envelope);
-
-                                SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                RetParamApp = (String) envelope.getResponse();
-                                System.out.println("Response :" + resultsRequestSOAP.toString());
-                            } else {
-                                SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, "RetornaParametros");
-                                newsoap.addProperty("aUsuario", usuario);
-                                newsoap.addProperty("aSenha", senha);
-                                SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                newenvelope.setOutputSoapObject(newsoap);
-                                HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLUSUARIOS);
-                                newEnvio.call("", newenvelope);
-
-                                SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                RetParamApp = (String) newenvelope.getResponse();
-                                System.out.println("Response :" + newresultsRequestSOAP.toString());
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                            hd.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                        }
-
-                    } else {
-                        hd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    }
-                } catch (Exception e) {
-                    System.out.println("Error na solicitação" + e);
-                }
-                i = i + 1;
-            } while (RetParamApp == null && i <= 6);
-
-
-        } else {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        if (RetParamApp == null) {
-            hd.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetParamApp);
-            JSONArray JParamApp = jsonObj.getJSONArray("param_app");
-
-            int jumpTime = 0;
-            final int totalProgressTime = JParamApp.length();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-
-            for (int i = 0; i < JParamApp.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    try {
-                        JSONObject c = JParamApp.getJSONObject(jumpTime);
-                        jumpTime += 1;
-                        Dialog.setProgress(jumpTime);
-
-                        hd.post(new Runnable() {
-                            public void run() {
-                                Dialog.setMessage(getString(R.string.updating_parameters));
-                            }
-                        });
-                        Double PercDescMax = c.getDouble("percdescmaxped");
-                        String habitemnegativo = c.getString("habitemnegativo");
-                        String habcritsitclie = c.getString("habcritsitclie");
-                        String habcritqtditens = c.getString("habcritqtditens");
-
-                        Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL, PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
-                        CursorParam.moveToFirst();
-                        if (CursorParam.getCount() > 0) {
-                            DB.execSQL(" UPDATE PARAMAPP SET PERCACRESC = '" + PercDescMax +
-                                    "', HABITEMNEGATIVO = '" + habitemnegativo.trim() +
-                                    "', HABCRITSITCLIE = '" + habcritsitclie.trim() +
-                                    "', CODPERFIL = '" + idPerfil +
-                                    "', TIPOCRITICQTDITEM = '" + habcritqtditens.trim() +
-                                    "' WHERE CODPERFIL = " + idPerfil);
-                        } else {
-
-                            DB.execSQL(" INSERT INTO PARAMAPP (PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, CODPERFIL, TIPOCRITICQTDITEM)" +
-                                    " VALUES(" + "'" + PercDescMax + "','" + habitemnegativo.trim() + "', '" + habcritsitclie.trim() + "', " + idPerfil + ", '" + habcritqtditens.trim() + "');");
-                        }
-                        CursorParam.close();
-
-                    } catch (Exception E) {
-                        E.toString();
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (Dialog.isShowing())
-            Dialog.dismiss();
-
-    }
-
-    private void SincronizarClientesEnvio() {
-
-        String Jcliente = null;
-        String METHOD_NAMEENVIO = "Cadastrar";
-
-        try {
-            Cursor CursorClieEnv = DB.rawQuery(" SELECT CLIENTES.*, CIDADES.DESCRICAO AS CIDADE, BAIRROS.DESCRICAO AS BAIRRO FROM CLIENTES LEFT OUTER JOIN " +
-                    " CIDADES ON CLIENTES.CODCIDADE = CIDADES.CODCIDADE LEFT OUTER JOIN" +
-                    " BAIRROS ON CLIENTES.CODBAIRRO = BAIRROS.CODBAIRRO WHERE FLAGINTEGRADO = '1' " +
-                    " ORDER BY NOMEFAN, NOMERAZAO ", null);
-
-            int jumpTime = 0;
-            String CodClie_ext = null;
-            final int totalProgressTime = CursorClieEnv.getCount();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            if (CursorClieEnv.getCount() > 0) {
-                CursorClieEnv.moveToFirst();
-                do {
-                    for (int i = 0; i < CursorClieEnv.getCount(); i++) {
-                        do {
-                            try {
-                                jumpTime += 1;
-                                Dialog.setProgress(jumpTime);
-                                hd.post(new Runnable() {
-                                    public void run() {
-                                        Dialog.setMessage(getString(R.string.updating_customer_registration));
-                                    }
-                                });
-                                Jcliente = "{razao_social: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMERAZAO")).trim() + "'," +
-                                        "nome_fantasia: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NOMEFAN")).trim() + "'," +
-                                        "tipo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TIPOPESSOA")) + "'," +
-                                        "cnpj_cpf: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'," +
-                                        "inscricao_estadual: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("INSCREST")).trim() + "'," +
-                                        "Logradouro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ENDERECO")).trim() + "'," +
-                                        "numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("NUMERO")).trim() + "'," +
-                                        "codvendedor: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODVENDEDOR")) + "'," +
-                                        "complemento: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("COMPLEMENT")).trim() + "'," +
-                                        "bairro: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("BAIRRO")) + "'," +
-                                        "cidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CIDADE")) + "'," +
-                                        "estado: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("UF")) + "'," +
-                                        "cep: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CEP")) + "'," +
-                                        "observacao: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("OBS")).trim() + "'," +
-                                        "identidade: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("REGIDENT")) + "'," +
-                                        "emails: [{email: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("EMAIL")).trim() + "'}," +
-                                        "{email: ''}]," +
-                                        "ativo: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("ATIVO")) + "'," +
-                                        "telefones: [{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL1")) + "'}," +
-                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TEL2")) + "'}," +
-                                        "{numero: '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("TELFAX")) + "'}]";
-
-                                String Contatos = "";
-                                Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " +
-                                        CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CODCLIE_INT")), null);
-
-                                CursorContatosEnv.moveToFirst();
-                                while (CursorContatosEnv.moveToNext()) {
-                                    Contatos = Contatos + "{nome: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("NOME")).trim() + "'," +
-                                            "cargo: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("CARGO")).trim() + "'," +
-                                            "emails: [{email: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("EMAIL")).trim() + "'}]," +
-                                            "telefones: [{numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL1")) + "'," +
-                                            "numero: '" + CursorContatosEnv.getString(CursorContatosEnv.getColumnIndex("TEL2")) + "'}]},";
-                                }
-                                CursorContatosEnv.close();
-
-                                if (Contatos != "") {
-                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
-                                } else {
-                                    Contatos = "{nome: ''," +
-                                            "cargo: ''," +
-                                            "emails: [{email: ''}]," +
-                                            "telefones: [{numero: ''," +
-                                            "numero: ''}]}";
-                                    Jcliente = Jcliente + ",contatos: " + "[" + Contatos + "]";
-                                }
-                                String Dependentes = "{nome: ''," +
-                                        "dataadesao: ''," +
-                                        "datanascimento: ''," +
-                                        "redident: ''," +
-                                        "codclie: ''}";
-                                Jcliente = Jcliente + ",dependentes: " + "[" + Dependentes + "]}";
-
-                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                                StrictMode.setThreadPolicy(policy);
-
-                                SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                                soap.addProperty("aJson", Jcliente);
-                                soap.addProperty("aUsuario", usuario);
-                                soap.addProperty("aSenha", senha);
-                                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                envelope.setOutputSoapObject(soap);
-                                HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
-                                String RetClieEnvio = "0";
-
-                                Boolean ConexOk = Util.checarConexaoCelular(this);
-                                if (ConexOk) {
-
-                                    int j = 0;
-                                    do {
-                                        try {
-                                            if (j > 0) {
-                                                Thread.sleep(500);
-                                            }
-                                            final int y = j;
-                                            switch (i) {
-                                                case 1:
-                                                    hd.post(new Runnable() {
-                                                        public void run() {
-                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                        }
-                                                    });
-                                                    break;
-                                                case 2:
-                                                    hd.post(new Runnable() {
-                                                        public void run() {
-                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                        }
-                                                    });
-                                                    break;
-                                                case 3:
-                                                    hd.post(new Runnable() {
-                                                        public void run() {
-                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                        }
-                                                    });
-                                                    break;
-                                                case 4:
-                                                    hd.post(new Runnable() {
-                                                        public void run() {
-                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                        }
-                                                    });
-                                                    break;
-                                                case 5:
-                                                    hd.post(new Runnable() {
-                                                        public void run() {
-                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                        }
-                                                    });
-                                                    break;
-                                                case 6:
-                                                    hd.post(new Runnable() {
-                                                        public void run() {
-                                                            Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                        }
-                                                    });
-                                                    break;
-                                            }
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        try {
-                                            if (ConexOk) {
-
-                                                try {
-                                                    if (j == 0) {
-                                                        Envio.call("", envelope);
-
-                                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                                        RetClieEnvio = (String) envelope.getResponse();
-                                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                                    } else {
-                                                        SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                                                        newsoap.addProperty("aJson", Jcliente);
-                                                        newsoap.addProperty("aUsuario", usuario);
-                                                        newsoap.addProperty("aSenha", senha);
-                                                        SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                                        newenvelope.setOutputSoapObject(newsoap);
-                                                        HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLCLIENTES);
-                                                        newEnvio.call("", newenvelope);
-
-                                                        SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                                        RetClieEnvio = (String) newenvelope.getResponse();
-                                                        System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                                    }
-                                                } catch (Exception e) {
-                                                    e.toString();
-                                                    hd.post(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
-
-                                                }
-
-                                            } else {
-                                                hd.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-
-                                            }
-                                        } catch (Exception e) {
-                                            System.out.println("Error na solicitação" + e);
-                                        }
-                                        j = j + 1;
-                                    } while (RetClieEnvio == null && j <= 6);
-
-
-                                } else {
-                                    hd.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                                if (RetClieEnvio == null) {
-                                    hd.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    return;
-                                }
-                            } catch (Exception E) {
-                                E.toString();
-                                hd.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(Sincronismo.this, R.string.customer_not_sent, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        }
-                        while (jumpTime < totalProgressTime);
-                    }
-                    try {
-                        if (!CodClie_ext.equals("0")) {
-                            Cursor CursClieAtu = DB.rawQuery(" SELECT * FROM CLIENTES WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'", null);
-                            if (CursClieAtu.getCount() > 0) {
-                                CursClieAtu.moveToFirst();
-                                DB.execSQL(" UPDATE CLIENTES SET FLAGINTEGRADO = '2', CODCLIE_EXT = " + CodClie_ext + " WHERE CNPJ_CPF = '" + CursorClieEnv.getString(CursorClieEnv.getColumnIndex("CNPJ_CPF")) + "'");
-                            }
-                            CursClieAtu.close();
-                        }
-                    } catch (Exception E) {
-                    }
-                }
-                while (CursorClieEnv.moveToNext());
-                CursorClieEnv.close();
-                Dialog.dismiss();
-            } else {
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.no_new_clients, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            }
-        } catch (Exception E) {
-            System.out.println("Error" + E);
-        }
-    }
-
-    private void SincronizarPedidosEnvio() {
-
-        String JPedidos = null;
-        String METHOD_NAMEENVIO = "CadastrarPedidos";
-        Cursor CursorPedido;
-        String RetClieEnvio = null;
-        try {
-            CursorPedido = DB.rawQuery(" SELECT * FROM PEDOPER WHERE FLAGINTEGRADO = '5'", null);
-
-            int jumpTime = 0;
-            final int totalProgressTime = CursorPedido.getCount();
-            Dialog.setMax(totalProgressTime);
-            Dialog.setProgress(jumpTime);
-            if (CursorPedido.getCount() > 0) {
-                CursorPedido.moveToFirst();
-                do {
-                    for (int i = 0; i < CursorPedido.getCount(); i++) {
-                        do try {
-                            jumpTime += 1;
-                            Dialog.setProgress(jumpTime);
-                            hd.post(new Runnable() {
-                                public void run() {
-                                    Dialog.setMessage(getString(R.string.sending_orders));
-                                }
-                            });
-
-                            String ValorFrete = CursorPedido.getString(CursorPedido.getColumnIndex("VLFRETE"));
-                            if (Util.isNullOrEmpty(ValorFrete)) {
-                                ValorFrete = "0";
-                            }
-                            String ValorSeguro = CursorPedido.getString(CursorPedido.getColumnIndex("VALORSEGURO"));
-                            if (Util.isNullOrEmpty(ValorSeguro)) {
-                                ValorSeguro = "0";
-                            }
-
-                            String Observacao = CursorPedido.getString(CursorPedido.getColumnIndex("OBS")).trim();
-                            String line_separator = System.getProperty("line.separator");
-                            String OBS = Observacao.replaceAll("\n|" + line_separator, "");
-                            String vldesconto = CursorPedido.getString(CursorPedido.getColumnIndex("VLDESCONTO"));
-                            if (vldesconto == null) {
-                                vldesconto = "0";
-                            } else {
-                                vldesconto = vldesconto.replace(".", ",");
-                            }
-
-
-                            JPedidos = "{codclie_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODCLIE_EXT")) + "'," +
-                                    "data_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
-                                    "hora_emissao: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAEMIS")) + "'," +
-                                    "valor_mercad: '" + CursorPedido.getString(CursorPedido.getColumnIndex("VLMERCAD")).replace(".", ",") + "'," +
-                                    "valor_frete: '" + ValorFrete + "'," +
-                                    "valor_seguro: '" + ValorSeguro + "'," +
-                                    "dataentregaprevista: '" + CursorPedido.getString(CursorPedido.getColumnIndex("DATAPREVISTAENTREGA")) + "'," +
-                                    "valor_desconto: '" + vldesconto + "'," +
-                                    "obs_pedido: '" + OBS + "'," +
-                                    "numpedido_ext: '" + CursorPedido.getString(CursorPedido.getColumnIndex("NUMPED")) + "'," +
-                                    "chavePedido: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'," +
-                                    "codempresa: '" + 1 + "'," +
-                                    "cod_vendedor: '" + CursorPedido.getString(CursorPedido.getColumnIndex("CODVENDEDOR")) + "',";
-
-                            String PedItems = "";
-                            Cursor CursorItensEnv = DB.rawQuery(" SELECT * FROM PEDITENS WHERE CHAVEPEDIDO = '" +
-                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-
-                            CursorItensEnv.moveToFirst();
-                            do {
-                                PedItems = PedItems + "{codigo_manual: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("CODITEMANUAL")) + "'," +
-                                        "descricao: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("DESCRICAO")) + "'," +
-                                        "numeroitem: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("NUMEROITEM")) + "'," +
-                                        "qtdmenorped: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("QTDMENORPED")) + "'," +
-                                        "vlunit: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLUNIT")).replace(".", ",") + "'," +
-                                        "valortotal: '" + CursorItensEnv.getString(CursorItensEnv.getColumnIndex("VLTOTAL")).replace(".", ",") + "'}";
-
-                                if (!CursorItensEnv.isLast()) {
-                                    PedItems = PedItems + ",";
-                                }
-
-                            } while (CursorItensEnv.moveToNext());
-                            CursorItensEnv.close();
-
-                            if (PedItems != "") {
-                                JPedidos = JPedidos + "produtos: " + "[" + PedItems + "]";
-                            }
-                            String PedParcelas = "";
-                            Cursor CursorParcelasEnv = DB.rawQuery(" SELECT * FROM CONREC WHERE vendac_chave = '" +
-                                    CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                            CursorParcelasEnv.moveToFirst();
-                            do {
-                                PedParcelas = PedParcelas + "{chavePedido: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("vendac_chave")) + "'," +
-                                        "numparcela: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_numparcela")) + "'," +
-                                        "valor_receber: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_valor_receber")) + "'," +
-                                        "datavencimento: '" + CursorParcelasEnv.getString(CursorParcelasEnv.getColumnIndex("rec_datavencimento")) + "'}";
-
-                                if (!CursorParcelasEnv.isLast()) {
-                                    PedParcelas = PedParcelas + ",";
-                                }
-                            } while (CursorParcelasEnv.moveToNext());
-                            CursorParcelasEnv.close();
-
-                            if (PedParcelas != "") {
-                                JPedidos = JPedidos + ",formapgto: " + "[" + PedParcelas + "]";
-                            }
-
-                            JPedidos = JPedidos + '}';
-
-                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                            StrictMode.setThreadPolicy(policy);
-
-                            SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                            soap.addProperty("aJson", JPedidos);
-                            soap.addProperty("aUsuario", usuario);
-                            soap.addProperty("aSenha", senha);
-                            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                            envelope.setOutputSoapObject(soap);
-                            HttpTransportSE Envio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
-
-
-                            Boolean ConexOk = Util.checarConexaoCelular(this);
-                            if (ConexOk) {
-
-                                int j = 0;
-                                do {
-
-                                    try {
-                                        if (j > 0) {
-                                            Thread.sleep(500);
-                                        }
-                                        final int y = j;
-                                        switch (i) {
-                                            case 1:
-                                                hd.post(new Runnable() {
-                                                    public void run() {
-                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                    }
-                                                });
-                                                break;
-                                            case 2:
-                                                hd.post(new Runnable() {
-                                                    public void run() {
-                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                    }
-                                                });
-                                                break;
-                                            case 3:
-                                                hd.post(new Runnable() {
-                                                    public void run() {
-                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                    }
-                                                });
-                                                break;
-                                            case 4:
-                                                hd.post(new Runnable() {
-                                                    public void run() {
-                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                    }
-                                                });
-                                                break;
-                                            case 5:
-                                                hd.post(new Runnable() {
-                                                    public void run() {
-                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                    }
-                                                });
-                                                break;
-                                            case 6:
-                                                hd.post(new Runnable() {
-                                                    public void run() {
-                                                        Dialog.setMessage("Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor... Tentativa " + y + "/6");
-                                                    }
-                                                });
-                                                break;
-                                        }
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    try {
-                                        if (ConexOk) {
-
-                                            try {
-                                                if (j == 0) {
-                                                    Envio.call("", envelope);
-
-                                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                                                    RetClieEnvio = (String) envelope.getResponse();
-                                                    System.out.println("Response :" + resultsRequestSOAP.toString());
-                                                } else {
-                                                    SoapObject newsoap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAMEENVIO);
-                                                    newsoap.addProperty("aJson", JPedidos);
-                                                    newsoap.addProperty("aUsuario", usuario);
-                                                    newsoap.addProperty("aSenha", senha);
-                                                    SoapSerializationEnvelope newenvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                                    newenvelope.setOutputSoapObject(newsoap);
-                                                    HttpTransportSE newEnvio = new HttpTransportSE(URLPrincipal + ConfigConex.URLPEDIDOS);
-                                                    newEnvio.call("", newenvelope);
-
-                                                    SoapObject newresultsRequestSOAP = (SoapObject) newenvelope.bodyIn;
-                                                    RetClieEnvio = (String) newenvelope.getResponse();
-                                                    System.out.println("Response :" + newresultsRequestSOAP.toString());
-                                                }
-                                            } catch (Exception e) {
-                                                e.toString();
-                                                hd.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-
-                                            }
-
-                                        } else {
-                                            hd.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-
-                                        }
-                                    } catch (Exception e) {
-                                        System.out.println("Error na solicitação" + e);
-                                    }
-                                    j = j + 1;
-                                } while (RetClieEnvio == null && j <= 6);
-
-
-                            } else {
-                                hd.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(Sincronismo.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                            if (RetClieEnvio == null) {
-                                hd.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(Sincronismo.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                return;
-                            }
-
-                            try {
-                                Cursor CursPedAtu = DB.rawQuery(" SELECT * FROM PEDOPER WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'", null);
-                                if (CursPedAtu.getCount() > 0) {
-                                    CursPedAtu.moveToFirst();
-                                    DB.execSQL(" UPDATE PEDOPER SET FLAGINTEGRADO = '2', NUMPEDIDOERP = " + RetClieEnvio + " WHERE CHAVE_PEDIDO = '" + CursorPedido.getString(CursorPedido.getColumnIndex("CHAVE_PEDIDO")) + "'");
-                                }
-                                CursPedAtu.close();
-                            } catch (Exception E) {
-                                Toast.makeText(this, E.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception E) {
-                            E.toString();
-                            hd.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(Sincronismo.this, R.string.json_file_mount_error, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                        while (jumpTime < totalProgressTime);
-                    }
-
-                    JPedidos = "";
-                }
-                while (CursorPedido.moveToNext());
-                CursorPedido.close();
-            } else {
-                hd.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(Sincronismo.this, R.string.no_new_request, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-        } catch (Exception E) {
-            System.out.println("Error" + E);
-        }
-    }
-
-    private void SincAgendas() {
-
     }
 
     public static String SincronizarAgendaEnvio (final Context ctxAgEnv, String NumAgenda, final ProgressDialog dialog) {
@@ -9481,7 +5291,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 String RetEnvio = "0";
 
                                 try {
-                                    Boolean ConexOk = Util.checarConexaoCelular(ctx);
+                                    Boolean ConexOk = Util.checarConexaoCelular(ctxAgEnv);
                                     if (ConexOk) {
                                         Envio.call("", envelope);
                                         SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
@@ -9504,7 +5314,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         }
                     } while (CursorAgenda.moveToNext());
                     try {
-                        DB = new ConfigDB(ctx).getReadableDatabase();
+                        DB = new ConfigDB(ctxAgEnv).getReadableDatabase();
                         Cursor CursAgAtu = DB.rawQuery(" SELECT * FROM AGENDA WHERE CODIGO = '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("CODIGO")) + "' AND CODPERFIL = " + idPerfil, null);
                         CursAgAtu.moveToFirst();
                         if (CursAgAtu.getCount() > 0) {
@@ -9555,7 +5365,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     public void onBackPressed() {
         Intent i = new Intent(Sincronismo.this, ConsultaPedidos.class);
         Bundle params = new Bundle();
-        params.getString("codvendedor", sCodVend);
+        params.getString("codvendedor", codVendedor);
         params.getString("usuario", usuario);
         params.getString("senha", senha);
         params.getString("urlPrincipal", URLPrincipal);

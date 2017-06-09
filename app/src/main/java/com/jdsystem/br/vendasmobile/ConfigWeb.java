@@ -39,27 +39,27 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
-    public String ChaveAcesso, RetHost, host, perfil, chave;
+    private String ChaveAcesso, RetHost, host, perfil, chave;
     public int idPerfil, codperfil;
-    ProgressDialog DialogECB;
-    TextView txvlicenca1, txvlicenca2, txvlicenca3, txvempresa1, txvempresa2, txvempresa3, txvexcluir;
-    View view0, view1, view2, view3, view4;
-    RelativeLayout lyttabela;
+    private ProgressDialog DialogECB;
+    private TextView txvlicenca1, txvlicenca2, txvlicenca3, txvempresa1, txvempresa2, txvempresa3, txvexcluir;
+    private View view0, view1, view2, view3, view4;
+    private RelativeLayout lyttabela;
     private EditText edtChave;
     private Button btnsalvhost, btnexcluir1, btnexcluir2, btnexcluir3;
     private SQLiteDatabase DB;
     private Handler hd = new Handler();
-    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.configweb);
+        Toolbar toolbar;
         try {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
         } catch (Exception e) {
-
+            e.toString();
         }
 
         declaraobjetos();
@@ -291,7 +291,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         carregarlicencas();
     }
 
-    public void SalvarHost(View view) {
+    protected void SalvarHost(View view) {
         if (edtChave.getText().length() == 0) {
             edtChave.setError(getString(R.string.enter_host));
             edtChave.requestFocus();

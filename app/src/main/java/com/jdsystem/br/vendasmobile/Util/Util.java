@@ -111,9 +111,10 @@ public class Util extends Activity {
         //20170806 00:00:00
         String retorno = "";
         String vc = dataAmericanaString.replace("-", "");
-        retorno = vc.substring(6, 8) + "/" + vc.substring(4, 6) + "/" + vc.substring(0, 4) + vc.substring(8, 14);
+        retorno = vc.substring(6, 8) + "/" + vc.substring(4, 6) + "/" + vc.substring(0, 4) + vc.substring(8, 17);
         return retorno;
     }
+
     public static String FormataDataAAAAMMDD_ComHoras(String dataSQLString) {
         String retorno = "";
         //10122017 09:05:30

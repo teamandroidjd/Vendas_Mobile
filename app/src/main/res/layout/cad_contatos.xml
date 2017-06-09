@@ -1,442 +1,464 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:fitsSystemWindows="true"
     tools:context=".CadastroContatos">
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:scrollbars="vertical">
 
-        <LinearLayout
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/img_fundo_splash"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
+
+        <ScrollView
+            android:id="@+id/scrollView"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:weightSum="1">
+            android:layout_height="fill_parent"
+            android:scrollbars="vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp">
-
-                <Spinner
-                    android:id="@+id/spnTipoContato"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:entries="@array/Tipo_contato" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linearrazaosocial"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:weightSum="1">
 
-                <TextView
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+
+                    <Spinner
+                        android:id="@+id/spnTipoContato"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:entries="@array/Tipo_contato" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearrazaosocial"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Razao Social:"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="22sp"
-                    android:textStyle="normal|bold" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/txtrazaocontato"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Razao Social:"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="22sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/txtrazaocontato"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="nome do cliente que ira vincular o contato"
+                        android:textSize="22sp" />
+
+                </LinearLayout>
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="nome do cliente que ira vincular o contato"
-                    android:textSize="22sp" />
+                    android:layout_height="wrap_content">
 
-            </LinearLayout>
+                    <EditText
+                        android:id="@+id/EdtNomeCompleto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Nome do contato"
+                        android:inputType="textCapCharacters"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/EdtNomeCompleto"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Nome do contato"
-                    android:inputType="textCapCharacters"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/EdtDocumento"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Número de documento"
+                        android:inputType="textCapCharacters"
+                        android:maxLength="15"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
 
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtDocumento"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Número de documento"
-                    android:inputType="textCapCharacters"
-                    android:maxLength="15"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content">
 
+                    <EditText
+                        android:id="@+id/EdtSetor"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_weight="1"
+                        android:hint="Setor"
+                        android:inputType="textCapCharacters"
+                        android:maxLength="30"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtSetor"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:layout_weight="1"
-                    android:hint="Setor"
-                    android:inputType="textCapCharacters"
-                    android:maxLength="30"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtData"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:layout_weight="1"
-                    android:hint="Data Aniversário / Inauguração"
-                    android:inputType="number"
-                    android:maxLength="10"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
+                    <EditText
+                        android:id="@+id/EdtData"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_weight="1"
+                        android:hint="Data Aniversário / Inauguração"
+                        android:inputType="number"
+                        android:maxLength="10"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:layout_weight="4">
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
 
-                    <Spinner
-                        android:id="@+id/spnCargoEspec"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_weight="4">
+
+                        <Spinner
+                            android:id="@+id/spnCargoEspec"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="18dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <ImageButton
+                            android:id="@+id/btn_add_novo_cargo"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/ic_add_prod"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/EdtEmail"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginRight="18dp" />
-                </LinearLayout>
+                        android:layout_centerHorizontal="true"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
+
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center">
-
-                    <ImageButton
-                        android:id="@+id/btn_add_novo_cargo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/ic_add_prod"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-            </LinearLayout>
-
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtEmail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Email"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
+                    android:baselineAligned="false">
 
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:baselineAligned="false">
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3">
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/textInputLayout2"
-                        android:layout_width="251dp"
-                        android:layout_height="52dp">
-
-                        <EditText
-                            android:id="@+id/EdtCep"
+                        <android.support.design.widget.TextInputLayout
+                            android:id="@+id/textInputLayout2"
                             android:layout_width="251dp"
+                            android:layout_height="52dp">
+
+                            <EditText
+                                android:id="@+id/EdtCep"
+                                android:layout_width="251dp"
+                                android:layout_height="wrap_content"
+                                android:elevation="1dp"
+                                android:hint="CEP"
+                                android:inputType="number"
+                                android:maxLines="1"
+                                tools:ignore="UnusedAttribute" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <ImageButton
+                            android:id="@+id/btnBuscaCep"
+                            android:layout_width="50dp"
+                            android:layout_height="40dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@+id/textInputLayout2"
+                            android:layout_toRightOf="@+id/textInputLayout2"
+                            android:background="@drawable/busca_cep"
+                            android:onClick="buscacep"
+                            tools:ignore="ContentDescription" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/EdtEndereco"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Endereço"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/EdtNumero"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Número"
+                        android:inputType="number"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/EdtComple"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Complemento"
+                        android:inputType="text"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+
+                    <Spinner
+                        android:id="@+id/spnUF"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:entries="@array/uf" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+
+                    <Spinner
+                        android:id="@+id/spnCidade"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+
+                    <Spinner
+                        android:id="@+id/spnBairro"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/EdtTel1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Telefone Comercial"
+                        android:inputType="phone"
+                        android:maxLength="15"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/EdtTel2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:hint="Telefone Celular"
+                        android:inputType="phone"
+                        android:maxLength="15"
+                        android:maxLines="1" />
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnrtxtdiasemana"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Informe os dias e horários de visita"
+                        android:textColor="@color/colordescClie"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="5">
+
+                        <ListView
+                            android:id="@+id/list_view_agenda_contato"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:elevation="1dp"
-                            android:hint="CEP"
-                            android:inputType="number"
-                            android:maxLines="1"
-                            tools:ignore="UnusedAttribute" />
-                    </android.support.design.widget.TextInputLayout>
+                            tools:ignore="NestedScrolling" />
+                    </LinearLayout>
 
-                    <ImageButton
-                        android:id="@+id/btnBuscaCep"
-                        android:layout_width="50dp"
-                        android:layout_height="40dp"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/textInputLayout2"
-                        android:layout_toRightOf="@+id/textInputLayout2"
-                        android:background="@drawable/busca_cep"
-                        android:onClick="buscacep"
-                        tools:ignore="ContentDescription" />
-                </RelativeLayout>
-
-            </LinearLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtEndereco"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Endereço"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtNumero"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Número"
-                    android:inputType="number"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtComple"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Complemento"
-                    android:inputType="text"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp">
-
-                <Spinner
-                    android:id="@+id/spnUF"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:entries="@array/uf" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp">
-
-                <Spinner
-                    android:id="@+id/spnCidade"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp">
-
-                <Spinner
-                    android:id="@+id/spnBairro"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </LinearLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtTel1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Telefone Comercial"
-                    android:inputType="phone"
-                    android:maxLength="15"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtTel2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Telefone Celular"
-                    android:inputType="phone"
-                    android:maxLength="15"
-                    android:maxLines="1" />
-            </android.support.design.widget.TextInputLayout>
-
-            <LinearLayout
-                android:id="@+id/lnrtxtdiasemana"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:visibility="visible">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Informe os dias e horários de visita"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5">
-
-                    <ListView
-                        android:id="@+id/list_view_agenda_contato"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:ignore="NestedScrolling" />
+                        android:layout_gravity="end"
+                        android:gravity="end">
+
+
+                        <ImageButton
+                            android:id="@+id/btn_add_dias_contato"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/ic_add_prod"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:gravity="end">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Produtos oferecidos ao contato: "
+                        android:textColor="@color/colordescClie"
+                        android:textSize="20sp" />
+                </LinearLayout>
 
-                    <ImageButton
-                        android:id="@+id/btn_add_dias_contato"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
                         android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="5">
+
+                        <ListView
+                            android:id="@+id/list_view_produtos_contato"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:ignore="NestedScrolling">
+
+                        </ListView>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/ic_add_prod"
-                        tools:ignore="ContentDescription" />
+                        android:layout_gravity="end"
+                        android:gravity="end">
+
+
+                        <ImageButton
+                            android:id="@+id/btn_add_produtos_contato"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/ic_add_prod"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:visibility="visible">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Produtos oferecidos ao contato: "
-                    android:textColor="@color/colordescClie"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="5">
-
-                    <ListView
-                        android:id="@+id/list_view_produtos_contato"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:ignore="NestedScrolling">
-
-                    </ListView>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:gravity="end">
-
-
-                    <ImageButton
-                        android:id="@+id/btn_add_produtos_contato"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/ic_add_prod"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/EdtOBS"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:gravity="start"
-                    android:hint="Observação"
-                    android:inputType="textMultiLine" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content">
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorPrimary"
-                android:onClick="btnsalvarcontato"
-                android:text="Salvar"
-                android:textColor="@color/common_google_signin_btn_text_dark_default" />
-        </LinearLayout>
-    </ScrollView>
+                    <EditText
+                        android:id="@+id/EdtOBS"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:gravity="start"
+                        android:hint="Observação"
+                        android:inputType="textMultiLine" />
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:onClick="btnsalvarcontato"
+                    android:text="Salvar"
+                    android:textColor="@color/common_google_signin_btn_text_dark_default" />
+            </LinearLayout>
+        </ScrollView>
 
 
-</LinearLayout>
+    </LinearLayout>
 
     <!--android:entries="@array/Cargo_espec"-->
+</android.support.design.widget.CoordinatorLayout>

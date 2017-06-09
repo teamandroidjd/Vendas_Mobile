@@ -271,7 +271,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
                                         }
                                     } /*else if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
                                     if (CodigoContato == 0) {
-                                        String clieEnvio = Sincronismo.SincronizarClientesEnvioStatic(CodigoClienteInterno, getActivity(), usuario, senha, null, null, null);
+                                        String clieEnvio = Sincronismo.sincronizaClientesEnvio(CodigoClienteInterno, getActivity(), usuario, senha, null, null, null);
                                         if (!clieEnvio.equals("0")) {
                                             Intent intent = ((ConsultaClientes) getActivity()).getIntent();
                                             ((ConsultaClientes) getActivity()).finish();

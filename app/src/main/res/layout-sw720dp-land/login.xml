@@ -27,6 +27,7 @@
 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginTop="63dp"
         android:layout_gravity="center"
         android:orientation="vertical">
 
@@ -39,7 +40,7 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="@color/common_google_signin_btn_text_dark_default"
-            android:textSize="12sp" />
+            android:textSize="18sp" />
 
 
         <RelativeLayout

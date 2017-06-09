@@ -153,7 +153,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             params.putString(getString(R.string.intent_nomerazao), nomeRazao);
             intentp.putExtras(params);
             startActivity(intentp);
-            getActivity().finish();
+            //getActivity().finish();
 
         } else if (flag == 0 && cadContato == 1) {
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
@@ -225,7 +225,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             } else if (BloqClie.equals("S")) {
                 Boolean ConexOk = Util.checarConexaoCelular(getActivity());
                 if (ConexOk) {
-                    Sincronismo.SincronizarClientesStatic(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno), null, null, null);
+                    Sincronismo.sincronizaClientes(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno), null, null, null);
                     Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + CodigoClienteInterno + " AND CODPERFIL = " + idPerfil, null);
                     cursorclie.moveToFirst();
                     bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
@@ -362,7 +362,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
                                     if (CodigoClienteExterno == null) {
-                                        String clieEnvio = Sincronismo.SincronizarClientesEnvioStatic(CodigoClienteInterno, getActivity(), usuario, senha, null, null, null);
+                                        String clieEnvio = Sincronismo.sincronizaClientesEnvio(CodigoClienteInterno, getActivity(), usuario, senha, null, null, null);
                                         if (!clieEnvio.equals("0")) {
                                             Intent intent = ((ConsultaClientes) getActivity()).getIntent();
                                             ((ConsultaClientes) getActivity()).finish();

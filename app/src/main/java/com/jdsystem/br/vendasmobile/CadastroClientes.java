@@ -777,7 +777,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 String sitclieenvio;
-                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodCliente, CadastroClientes.this, usuario, senha, null, null, null);
+                                sitclieenvio = Sincronismo.sincronizaClientesEnvio(CodCliente, CadastroClientes.this, usuario, senha, null, null, null);
                                 if (sitclieenvio.equals(getString(R.string.newcustomers_successfully))) {
                                     handler.post(new Runnable() {
                                         @Override
@@ -927,7 +927,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
     public void run() {
         if (flag == 1) {
             try {
-                Sincronismo.SincAtualizaCidade(sUF, CadastroClientes.this, DialogECB, handler);
+                Sincronismo.sincronizaCidade(sUF, CadastroClientes.this, DialogECB, handler);
             } catch (Exception e) {
                 e.toString();
             }
@@ -938,7 +938,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
             }
         } else if (flag == 2) {
             try {
-                Sincronismo.SincAtualizaBairro(CodCidade, this, DialogECB, CodCidadeInt, handler);
+                Sincronismo.sincronizaBairro(CodCidade, this, DialogECB, CodCidadeInt, handler);
                 atuBairro = true;
             } catch (Exception e) {
                 e.toString();

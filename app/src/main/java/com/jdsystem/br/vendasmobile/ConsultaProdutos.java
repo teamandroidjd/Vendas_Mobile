@@ -278,7 +278,6 @@ public class ConsultaProdutos extends AppCompatActivity
                 String tabela5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
                 String tabpromo1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
                 String tabpromo2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-                String qtdminvend = CursorParametro.getString(CursorParametro.getColumnIndex("QTDMINVEND"));
                 String tipoEstoque = CursorParametro.getString(CursorParametro.getColumnIndex("TIPOCRITICQTDITEM"));
 
                 Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) AND ((DESCRICAO LIKE '%" + editQuery + "%') OR (CODITEMANUAL LIKE '%" + editQuery + "%') OR (CLASSE LIKE '%" + editQuery + "%')" +
@@ -296,6 +295,7 @@ public class ConsultaProdutos extends AppCompatActivity
                         String quantidade = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDESTPROD"));
                         int codInterno = cursorProdutos.getInt(cursorProdutos.getColumnIndex("CODIGOITEM"));
                         String taPadrao = cursorProdutos.getString(cursorProdutos.getColumnIndex("TABELAPADRAO"));
+                        String qtdminvend = cursorProdutos.getString(cursorProdutos.getColumnIndex("QTDMINVEND"));
                   /*ppadrao = ppadrao.trim();
                     BigDecimal precopadrao = new BigDecimal(Double.parseDouble(ppadrao.replace(',', '.')));*/
 
@@ -552,7 +552,7 @@ public class ConsultaProdutos extends AppCompatActivity
                     }
                 } else if (Flag == 1) {
                     try {
-                        sincprod = Sincronismo.SincronizarProdutosStatic(ConsultaProdutos.this, usuario, senha, 0, dialog, null, null);
+                        sincprod = Sincronismo.sincronizaProdutos(ConsultaProdutos.this, usuario, senha, 0, dialog, null, null);
                         handler.post(new Runnable() {
                             @Override
                             public void run() {

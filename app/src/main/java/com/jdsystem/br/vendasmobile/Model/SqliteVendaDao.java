@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Sqlite_VENDADAO {
+public class SqliteVendaDao {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
@@ -31,7 +31,7 @@ public class Sqlite_VENDADAO {
     private boolean gravacao;
 
 
-    public Sqlite_VENDADAO(Context ctx, String CodVend, Boolean bAltera) {
+    public SqliteVendaDao(Context ctx, String CodVend, Boolean bAltera) {
 
         this.ctx = ctx;
         this.CodVend = CodVend;
@@ -286,7 +286,7 @@ public class Sqlite_VENDADAO {
             vendaDBean.setVendad_preco_venda(item_transf.getVendad_preco_venda());
             vendaDBean.setVendad_total(item_transf.getSubTotal());
             venda.getItens_da_venda().add(vendaDBean);
-            //new Sqlite_VENDADAO(ctx,CodVend,true).excluir_um_item_da_venda(item_transf);
+            //new SqliteVendaDao(ctx,CodVend,true).excluir_um_item_da_venda(item_transf);
             numero_item++;
         }
         // aqui comeca a gravacao das 2 tabelas pedoper e peditens

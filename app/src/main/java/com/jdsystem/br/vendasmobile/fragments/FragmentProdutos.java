@@ -38,7 +38,7 @@ import com.jdsystem.br.vendasmobile.Model.SqliteProdutoBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
-import com.jdsystem.br.vendasmobile.Model.Sqlite_VENDADAO;
+import com.jdsystem.br.vendasmobile.Model.SqliteVendaDao;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.Sincronismo;
@@ -316,12 +316,12 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             codProd = "";
 
             iPosition = position;
-            new Thread() {
-                public void run() {
+            /*new Thread() {
+                public void run() {*/
                     try {
                         ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
-                        String codProd = adapter.ChamaDados(position).trim();
+                        //String codProd = adapter.ChamaDados(position).trim();
                         CodProdExt = adapter.ChamaCodItemExt(position);
                         Intent intentp = new Intent(getActivity(), DadosProduto.class);
                         Bundle params = new Bundle();
@@ -332,17 +332,17 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
                         intentp.putExtras(params);
                         startActivity(intentp);
-                        getActivity().finish();
+                        //getActivity().finish();
                     } catch (Exception e) {
                         e.toString();
                     }
-                    activity.runOnUiThread(new Runnable() {
+                    /*activity.runOnUiThread(new Runnable() {
                         public void run() {
 
                         }
-                    });
-                }
-            }.start();
+                    });*/
+              //  }
+            //}.start();
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             codProd = adapter.ChamaDados(position).trim();
@@ -356,7 +356,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
             intentp.putExtras(params);
             startActivity(intentp);
-            getActivity().finish();
+            //getActivity().finish();
 
             //=============EXECUTA A CONSULTA DO ITEM NA INSERÇÃO DO PRODUTO NO CADASTRO DO PEDIDO================
 
@@ -512,7 +512,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 try {
                                     boolean ConexOk = Util.checarConexaoCelular(getActivity());
                                     if (vendenegativo.equals("N") && ConexOk) {
-                                        sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt, eDialog, null, null);
+                                        sincprod = Sincronismo.sincronizaProdutos(getActivity(), usuario, senha, CodProdExt, eDialog, null, null);
 
                                         if (sincprod.equals(getString(R.string.sync_products_successfully))) {
                                             Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM =" + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
@@ -839,7 +839,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                     {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                                            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                         }
                                     });
                                     SharedPreferences prefsHost = getActivity().getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
@@ -863,7 +863,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             } else {
                                 boolean ConexOk = Util.checarConexaoCelular(getActivity());
                                 if (vendenegativo.equals("N") && ConexOk) {
-                                    sincprod = Sincronismo.SincronizarProdutosStatic(getActivity(), usuario, senha, CodProdExt, null, null, null);
+                                    sincprod = Sincronismo.sincronizaProdutos(getActivity(), usuario, senha, CodProdExt, null, null, null);
 
                                     if (sincprod.equals(getString(R.string.sync_products_successfully))) {
                                         Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM = " + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
@@ -1116,19 +1116,19 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         String DESCRICAO = info_txv_descricaoproduto.getText().toString();
                                         String UNIDADE = info_txv_unmedida.getText().toString();
 
-                                        if (QUANTIDADE_DIGITADA > 0) {
-                                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                                return;
-                                            }
-                                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
-                                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
-                                                return;
-                                            }
-                                            SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
-                                            final SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
-                                            SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
-                                            Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getActivity(), codVendedor, true);
+                        if (QUANTIDADE_DIGITADA > 0) {
+                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
+                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                return;
+                            }
+                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
+                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                return;
+                            }
+                            SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
+                            final SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
+                            SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
+                            SqliteVendaDao itemDao = new SqliteVendaDao(getActivity(), codVendedor, true);
 
                                             itemBean2.setVendad_prd_codigo(COD_PRODUTO);
                                             itemBean3 = itemDao.altera_item_na_venda(itemBean2, chavePedido);

@@ -58,24 +58,23 @@ import java.util.List;
 
 public class Login extends AppCompatActivity implements Runnable {
     public static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
-    public static final String COD_EMPRESA = "CODIGO_EMPRESA";
+    private static final String COD_EMPRESA = "CODIGO_EMPRESA";
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String METHOD_NAME = "Login";
     private static final int REQUEST_READ_PHONE_STATE = 0;
-    public String Retorno = "0";
+    //public String Retorno = "0";
     public SharedPreferences prefs;
-    public String usuario, senha, URLPrincipal, sCodVend, UFVendedor, qtdperfil, habcadclie;
-    public TextView txvcopyright, txvversao, txvempresa;
-    Spinner spPerfilInput;
-    Boolean ConexOk;
-    int idPerfil;
+    private String usuario, senha, URLPrincipal, sCodVend, UFVendedor, qtdperfil, habCadClie;
+    private TextView txvCopyRight, txvVersao, txvEmpresa;
+    private Spinner spPerfilInput;
+    private int idPerfil;
     private SQLiteDatabase DB;
     private EditText edtUsuario, edtSenha;
     private CheckBox cbGravSenha;
     private ProgressDialog Dialogo;
     private Handler handler = new Handler();
     private String codVendedor = "0";
-    Toolbar toolbar;
+
 
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -87,18 +86,115 @@ public class Login extends AppCompatActivity implements Runnable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        Toolbar toolbar;
         try {
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
         } catch (Exception e) {
 
         }
+        declaraObjetos();
+        carregarPreferencias();
+        carregarPerfil();
+        validaDados();
+    }
 
-        declaraobjetos();
-        carregarpreferencias();
-        carregarperfil();
+    private void declaraObjetos() {
+
+        txvEmpresa = (TextView) findViewById(R.id.txtempresalogin);
+        txvVersao = (TextView) findViewById(R.id.txtversaologin);
+        DB = new ConfigDB(this).getReadableDatabase();
+        Button btnEntrar = (Button) findViewById(R.id.btnEntrar);
+        edtUsuario = (EditText) findViewById(R.id.edtUsuario);
+        edtSenha = (EditText) findViewById(R.id.edtSenha);
+        cbGravSenha = (CheckBox) findViewById(R.id.cbGravSenha);
+        GoogleApiClient client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        txvCopyRight = (TextView) findViewById(R.id.textView2);
+    }
+
+    private void carregarPreferencias() {
+        prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
+        usuario = prefs.getString(getString(R.string.intent_prefs_usuario), null);
+        senha = prefs.getString(getString(R.string.intent_prefs_senha), null);
+
+        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
+        URLPrincipal = prefs.getString(getString(R.string.intent_prefs_host), null);
+        idPerfil = prefs.getInt(getString(R.string.intent_prefs_perfil), 0);
+    }
+
+    private String carregarPerfil() {
+        qtdperfil = null;
+        try {
+            Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL", null);
+            cursorPerfil.moveToFirst();
+            if (cursorPerfil.getCount() > 1) {
+                List<String> DadosListPerfil = new ArrayList<String>();
+                do {
+                    DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL")).toUpperCase());
+                } while (cursorPerfil.moveToNext());
+                cursorPerfil.close();
+
+                @SuppressLint("InflateParams") View viewEmp = (LayoutInflater.from(Login.this)).inflate(R.layout.input_perfil, null);
+
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Login.this);
+                alertBuilder.setView(viewEmp);
+                spPerfilInput = (Spinner) viewEmp.findViewById(R.id.spnperfil);
+
+                new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, DadosListPerfil).setDropDownViewResource(android.R.layout.simple_list_item_1);
+                spPerfilInput.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, DadosListPerfil));
+
+                alertBuilder.setCancelable(true)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String NomePerfil = spPerfilInput.getSelectedItem().toString();
+                                try {
+                                    Cursor cursorperfil1 = DB.rawQuery(" SELECT LICENCA,CODPERFIL,HOST,NOMEPERFIL FROM PERFIL WHERE NOMEPERFIL = '" + NomePerfil + "'", null);
+                                    cursorperfil1.moveToFirst();
+                                    int idPerfil = 0;
+                                    String host = null;
+                                    String chave = null;
+                                    String nomePerfil = null;
+                                    if (cursorperfil1.getCount() > 0) {
+                                        idPerfil = cursorperfil1.getInt(cursorperfil1.getColumnIndex("CODPERFIL"));
+                                        host = cursorperfil1.getString(cursorperfil1.getColumnIndex("HOST"));
+                                        chave = cursorperfil1.getString(cursorperfil1.getColumnIndex("LICENCA"));
+                                        nomePerfil = cursorperfil1.getString(cursorperfil1.getColumnIndex("NOMEPERFIL"));
+                                    }
+                                    cursorperfil1.close();
+
+                                    SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
+                                    editorhost.putString(getString(R.string.intent_prefs_chaveacesso), chave);
+                                    editorhost.putString(getString(R.string.intent_prefs_host), host);
+                                    editorhost.putInt(getString(R.string.intent_prefs_perfil), idPerfil);
+                                    editorhost.apply();
+
+                                    URLPrincipal = host;
+                                    txvEmpresa.setText(nomePerfil);
 
 
+                                } catch (Exception E) {
+                                    System.out.println("Error" + E);
+                                }
+                            }
+                        });
+                Dialog dialog = alertBuilder.create();
+                dialog.show();
+                qtdperfil = "S";
+                return qtdperfil;
+
+            } else {
+                txvEmpresa.setVisibility(View.GONE);
+                qtdperfil = "N";
+                return qtdperfil;
+            }
+        } catch (Exception E) {
+            E.toString();
+        }
+        return qtdperfil;
+    }
+
+    private void validaDados() {
         if (URLPrincipal == null && qtdperfil.equals("N")) {
             Intent intent = new Intent(getApplicationContext(), ConfigWeb.class);
             startActivity(intent);
@@ -127,16 +223,16 @@ public class Login extends AppCompatActivity implements Runnable {
             e.printStackTrace();
         }
         String version = pInfo.versionName;
-        txvversao.setText("Versão " + version);
+        txvVersao.setText("Versão " + version);
 
-        txvcopyright.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
+        txvCopyRight.setText("Copyright © " + Util.AnoAtual() + " - JD System Tecnologia em Informática");
     }
 
     public void logar(View view) {
-        carregarpreferencias();
+        carregarPreferencias();
         final String user = edtUsuario.getText().toString();
         final String pass = edtSenha.getText().toString();
-        ConexOk = Util.checarConexaoCelular(Login.this);
+        boolean ConexOk = Util.checarConexaoCelular(Login.this);
         if (!ConexOk) {
             sCodVend = ValidarLogin(user, pass); // verifica se o usuário e senha  existe na base local do dispositivo
             if (sCodVend != null) {
@@ -294,7 +390,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 }
                 i = i + 1;
             } while (sUsuario == null && i <= 6);
-            if (sUsuario == null) {
+            if (sUsuario == null || sUsuario.equals("Tempo Limite Excedido")) {
                 Dialogo.dismiss();
                 Thread.interrupted();
                 sCodVend = ValidarLogin(edtUsuario.getText().toString(), edtSenha.getText().toString()); // verifica se o usuário e senha  existe na base local do dispositivo
@@ -367,7 +463,7 @@ public class Login extends AppCompatActivity implements Runnable {
                 JSONObject jsonObjpermissap = new JSONObject(permissao);
                 JSONArray JPermissao = jsonObjpermissap.getJSONArray("codpermissao");
                 JSONObject tt = JPermissao.getJSONObject(0);
-                habcadclie = tt.getString("codpermissao"); // 1= permite cadastrar clientes
+                habCadClie = tt.getString("codpermissao"); // 1= permite cadastrar clientes
 
 
             } catch (Exception e) {
@@ -460,13 +556,13 @@ public class Login extends AppCompatActivity implements Runnable {
                         Cursor CursorUser = DB.rawQuery(" SELECT * FROM USUARIOS WHERE CODVEND = " + codVendedor + " AND CODEMPRESA = " + CodEmpresa +
                                 " AND CODPERFIL = " + idPerfil, null);
                         if (CursorUser.getCount() > 0) {
-                            DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + codVendedor + ", CODEMPRESA = " + CodEmpresa + ", HABCADCLIE = '" + habcadclie + "', USUARIO = '" + edtUsuario.getText().toString() +
+                            DB.execSQL(" UPDATE USUARIOS SET CODVEND = " + codVendedor + ", CODEMPRESA = " + CodEmpresa + ", HABCADCLIE = '" + habCadClie + "', USUARIO = '" + edtUsuario.getText().toString() +
                                     "', SENHA = '" + edtSenha.getText().toString() + "' WHERE CODVEND = " + codVendedor + " AND CODEMPRESA = " + CodEmpresa +
                                     " AND CODPERFIL = " + idPerfil);
                             CursorUser.close();
 
                         } else {
-                            CadastrarLogin(usuario, pass, codVendedor, CodEmpresa, habcadclie); // Cadastra usuário.
+                            cadastrarLogin(usuario, pass, codVendedor, CodEmpresa, habCadClie); // Cadastra usuário.
                         }
                     } catch (Exception e) {
                         e.toString();
@@ -501,53 +597,53 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.atualizando_formpgto));
                         }
                     });
-                    Sincronismo.CarregarFormasPagamento(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
+                    Sincronismo.sincronizaFormasPagamento(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.sync_companies));
                         }
                     });
-                    Sincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
+                    Sincronismo.sincronizaEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_parameters));
                         }
                     });
-                    Sincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
+                    Sincronismo.sincronizaParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_tables));
                         }
                     });
-                    Sincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
+                    Sincronismo.sincronizaDescricaoTabelas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_locks));
 
                         }
                     });
-                    Sincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
+                    Sincronismo.sincronizaBloqueios(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_customer_registration));
                         }
                     });
-                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
+                    Sincronismo.sincronizaClientesEnvio("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_contacts));
                         }
                     });
-                    Sincronismo.SincronizarContatosEnvioStatic(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
+                    Sincronismo.sincronizaContatosEnvio(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    Sincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, "0", null, null, null);
+                    Sincronismo.sincronizaPedidosEnvio(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, "0", null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -556,7 +652,7 @@ public class Login extends AppCompatActivity implements Runnable {
                             }
                         }
                     });
-                    Sincronismo.SincAtualizaCidadeBairro(UFVendedor, Login.this, Dialogo);
+                    Sincronismo.sincronizaCidadeBairro(UFVendedor, Login.this, Dialogo);
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
@@ -579,32 +675,32 @@ public class Login extends AppCompatActivity implements Runnable {
                             Dialogo.setMessage(getString(R.string.atualizando_formpgto));
                         }
                     });
-                    Sincronismo.CarregarFormasPagamento(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
+                    Sincronismo.sincronizaFormasPagamento(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.sync_companies));
                         }
                     });
-                    Sincronismo.SincEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
+                    Sincronismo.sincronizaEmpresas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_parameters));
                         }
                     });
-                    Sincronismo.SincParametrosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
+                    Sincronismo.sincronizaParametros(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_tables));
                         }
                     });
-                    Sincronismo.SincDescricaoTabelasStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
+                    Sincronismo.sincronizaDescricaoTabelas(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
                     handler.post(new Runnable() {
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_locks));
 
                         }
                     });
-                    Sincronismo.SincBloqueiosStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
+                    Sincronismo.sincronizaBloqueios(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -612,21 +708,21 @@ public class Login extends AppCompatActivity implements Runnable {
                         }
                     });
 
-                    Sincronismo.SincronizarClientesEnvioStatic("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
+                    Sincronismo.sincronizaClientesEnvio("0", Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.updating_contacts));
                         }
                     });
-                    Sincronismo.SincronizarContatosEnvioStatic(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
+                    Sincronismo.sincronizaContatosEnvio(Login.this, edtUsuario.getText().toString(), edtSenha.getText().toString(), null, null, null);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             Dialogo.setMessage(getString(R.string.sending_orders));
                         }
                     });
-                    Sincronismo.SincronizarPedidosEnvioStatic(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, "0", null, null, null);
+                    Sincronismo.sincronizaPedidosEnvio(edtUsuario.getText().toString(), edtSenha.getText().toString(), Login.this, "0", null, null, null);
                     Dialogo.dismiss();
                     handler.post(new Runnable() {
                         @Override
@@ -687,102 +783,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
     }
 
-    private String carregarperfil() {
-        qtdperfil = null;
-        try {
-            Cursor cursorPerfil = DB.rawQuery("SELECT * FROM PERFIL", null);
-            cursorPerfil.moveToFirst();
-            if (cursorPerfil.getCount() > 1) {
-                List<String> DadosListPerfil = new ArrayList<String>();
-                do {
-                    DadosListPerfil.add(cursorPerfil.getString(cursorPerfil.getColumnIndex("NOMEPERFIL")).toUpperCase());
-                } while (cursorPerfil.moveToNext());
-                cursorPerfil.close();
-
-                @SuppressLint("InflateParams") View viewEmp = (LayoutInflater.from(Login.this)).inflate(R.layout.input_perfil, null);
-
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Login.this);
-                alertBuilder.setView(viewEmp);
-                spPerfilInput = (Spinner) viewEmp.findViewById(R.id.spnperfil);
-
-                new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, DadosListPerfil).setDropDownViewResource(android.R.layout.simple_list_item_1);
-                spPerfilInput.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, DadosListPerfil));
-
-                alertBuilder.setCancelable(true)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String NomePerfil = spPerfilInput.getSelectedItem().toString();
-                                try {
-                                    Cursor cursorperfil1 = DB.rawQuery(" SELECT LICENCA,CODPERFIL,HOST,NOMEPERFIL FROM PERFIL WHERE NOMEPERFIL = '" + NomePerfil + "'", null);
-                                    cursorperfil1.moveToFirst();
-                                    int idPerfil = 0;
-                                    String host = null;
-                                    String chave = null;
-                                    String nomePerfil = null;
-                                    if (cursorperfil1.getCount() > 0) {
-                                        idPerfil = cursorperfil1.getInt(cursorperfil1.getColumnIndex("CODPERFIL"));
-                                        host = cursorperfil1.getString(cursorperfil1.getColumnIndex("HOST"));
-                                        chave = cursorperfil1.getString(cursorperfil1.getColumnIndex("LICENCA"));
-                                        nomePerfil = cursorperfil1.getString(cursorperfil1.getColumnIndex("NOMEPERFIL"));
-                                    }
-                                    cursorperfil1.close();
-
-                                    SharedPreferences.Editor editorhost = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE).edit();
-                                    editorhost.putString(getString(R.string.intent_prefs_chaveacesso), chave);
-                                    editorhost.putString(getString(R.string.intent_prefs_host), host);
-                                    editorhost.putInt(getString(R.string.intent_prefs_perfil), idPerfil);
-                                    editorhost.apply();
-
-                                    URLPrincipal = host;
-                                    txvempresa.setText(nomePerfil);
-
-
-                                } catch (Exception E) {
-                                    System.out.println("Error" + E);
-                                }
-                            }
-                        });
-                Dialog dialog = alertBuilder.create();
-                dialog.show();
-                qtdperfil = "S";
-                return qtdperfil;
-
-            } else {
-                txvempresa.setVisibility(View.GONE);
-                qtdperfil = "N";
-                return qtdperfil;
-            }
-        } catch (Exception E) {
-            E.toString();
-        }
-        return qtdperfil;
-    }
-
-    private void carregarpreferencias() {
-        prefs = getSharedPreferences(NOME_USUARIO, MODE_PRIVATE);
-        usuario = prefs.getString(getString(R.string.intent_prefs_usuario), null);
-        senha = prefs.getString(getString(R.string.intent_prefs_senha), null);
-
-        prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
-        URLPrincipal = prefs.getString(getString(R.string.intent_prefs_host), null);
-        idPerfil = prefs.getInt(getString(R.string.intent_prefs_perfil), 0);
-    }
-
-    private void declaraobjetos() {
-
-        txvempresa = (TextView) findViewById(R.id.txtempresalogin);
-        txvversao = (TextView) findViewById(R.id.txtversaologin);
-        DB = new ConfigDB(this).getReadableDatabase();
-        Button btnEntrar = (Button) findViewById(R.id.btnEntrar);
-        edtUsuario = (EditText) findViewById(R.id.edtUsuario);
-        edtSenha = (EditText) findViewById(R.id.edtSenha);
-        cbGravSenha = (CheckBox) findViewById(R.id.cbGravSenha);
-        GoogleApiClient client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-        txvcopyright = (TextView) findViewById(R.id.textView2);
-    }
-
-    private int CadastrarLogin(String NomeUsuario, String Senha, String CodVendedor, String CodEmpresa, String habcadclie) {
+    private int cadastrarLogin(String NomeUsuario, String Senha, String CodVendedor, String CodEmpresa, String habcadclie) {
         int CodVend;
         try {
             Cursor CursorLogin = DB.rawQuery(" SELECT * FROM USUARIOS WHERE USUARIO = '" + NomeUsuario + "' AND SENHA = '" + Senha + "' AND CODEMPRESA = " + CodEmpresa + " AND CODPERFIL = " + idPerfil, null);
@@ -800,7 +801,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
             return CodVend;
         } catch (Exception E) {
-            System.out.println("Login, falha no SQL da função CadastrarLogin.Tente novamente.");
+            System.out.println("Login, falha no SQL da função cadastrarLogin.Tente novamente.");
             return 0;
         }
     }
@@ -843,7 +844,7 @@ public class Login extends AppCompatActivity implements Runnable {
             startActivity(intent);
             return true;
         } else if (item.getItemId() == R.id.alteraperfil) {
-            carregarperfil();
+            carregarPerfil();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -853,7 +854,7 @@ public class Login extends AppCompatActivity implements Runnable {
         super.onResume();
     }
 
-    public boolean VerificaConexaoWifi() {
+    private boolean VerificaConexaoWifi() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         return mWifi.isConnected();

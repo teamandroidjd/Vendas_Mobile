@@ -92,14 +92,14 @@ public class DadosCliente extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent1 = new Intent(DadosCliente.this, ConsultaClientes.class);
+        /*Intent intent1 = new Intent(DadosCliente.this, ConsultaClientes.class);
         Bundle params1 = new Bundle();
         params1.putString(getString(R.string.intent_codvendedor), sCodVend);
         params1.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params1.putString(getString(R.string.intent_usuario), usuario);
         params1.putString(getString(R.string.intent_senha), senha);
         intent1.putExtras(params1);
-        startActivity(intent1);
+        startActivity(intent1);*/
         finish();
     }
 

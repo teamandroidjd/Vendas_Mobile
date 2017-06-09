@@ -101,7 +101,7 @@ public class DadosContato extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(DadosContato.this, ConsultaContatos.class);
+        /*Intent intent = new Intent(DadosContato.this, ConsultaContatos.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), sCodVend);
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
@@ -110,7 +110,7 @@ public class DadosContato extends AppCompatActivity {
         params.putInt("codCliente", CodCliente);
         params.putInt(getString(R.string.intent_codcontato), CodContato);
         intent.putExtras(params);
-        startActivity(intent);
+        startActivity(intent);*/
         finish();
     }
 

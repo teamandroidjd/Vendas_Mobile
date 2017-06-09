@@ -229,13 +229,13 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                         if (ConexOk) {
                                             if (flagintegrado.equals("1")) {
-                                                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(codclie_inte, getActivity(), usuario, senha, null, null, null);
+                                                sitclieenvio = Sincronismo.sincronizaClientesEnvio(codclie_inte, getActivity(), usuario, senha, null, null, null);
                                                 if (sitclieenvio.equals("OK")) {
                                                     if(String.valueOf(datavend).equals("null")){
                                                         String dtvend = Util.DataHojeComHorasBR();
                                                         DB.execSQL(" UPDATE PEDOPER SET DATAVENDA = '"+dtvend+"' WHERE NUMPED = '" + NumPedido + "' AND CODPERFIL = " + idPerfil);
                                                     }
-                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido, null, null, null);
+                                                    pedidoendiado = Sincronismo.sincronizaPedidosEnvio(usuario, senha, getContext(), NumPedido, null, null, null);
                                                     if (pedidoendiado.equals("OK")) {
                                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                         ((ConsultaPedidos) getActivity()).finish();
@@ -250,13 +250,13 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                     return;
                                                 }
                                             } else {
-                                                sitcliexvend = Sincronismo.SituacaodoClientexPed(totalvenda, getActivity(), usuario, senha, codclie_ext);
+                                                sitcliexvend = Sincronismo.sincronizaSitClieXPed(totalvenda, getActivity(), usuario, senha, codclie_ext);
                                                 if (sitcliexvend.equals("OK")) {
                                                     if(String.valueOf(datavend).equals("null")){
                                                         String dtvend = Util.DataHojeComHorasBR();
                                                         DB.execSQL(" UPDATE PEDOPER SET DATAVENDA = '"+dtvend+"' WHERE NUMPED = '" + NumPedido + "' AND CODPERFIL = " + idPerfil);
                                                     }
-                                                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, getContext(), NumPedido, null, null, null);
+                                                    pedidoendiado = Sincronismo.sincronizaPedidosEnvio(usuario, senha, getContext(), NumPedido, null, null, null);
                                                     if (pedidoendiado.equals("OK")) {
                                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                         ((ConsultaPedidos) getActivity()).finish();
@@ -287,7 +287,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                 .setCancelable(false)
                                                 .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int id) {
-                                                        String Cancelado = Sincronismo.AtualizaPedido(NumPedido, getContext(), "C");
+                                                        String Cancelado = Sincronismo.sincronizaAtualizaPedido(NumPedido, getContext(), "C");
 
                                                         if (Cancelado.equals("ok")) {
                                                             Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
@@ -341,7 +341,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     String statusatualizado;
                                     if (Status.equals("#")) {
                                         final String NumPedidoExt = adapter.PedidoExterno(position);
-                                        statusatualizado = Sincronismo.AtualizaPedido(NumPedidoExt, getContext(), "S");
+                                        statusatualizado = Sincronismo.sincronizaAtualizaPedido(NumPedidoExt, getContext(), "S");
                                         if (statusatualizado != null) {
                                             if (statusatualizado.equals("Orçamento")) {
                                                 Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " ainda não foi faturado. Encontra-se com o status de " + statusatualizado + ".", Util.PADRAO);
@@ -370,7 +370,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Gerar Venda")) {
                                     if (Status.equals("Orçamento")) {
-                                        String Autorizado = Sincronismo.AtualizaPedido(NumPedido, getContext(), "A");
+                                        String Autorizado = Sincronismo.sincronizaAtualizaPedido(NumPedido, getContext(), "A");
                                         if (Autorizado.equals("ok")) {
                                             Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                             ((ConsultaPedidos) getActivity()).finish();

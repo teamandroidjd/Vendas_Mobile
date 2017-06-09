@@ -44,7 +44,7 @@ import com.jdsystem.br.vendasmobile.Model.SqliteVendaCBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaDBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempBean;
 import com.jdsystem.br.vendasmobile.Model.SqliteVendaD_TempDao;
-import com.jdsystem.br.vendasmobile.Model.Sqlite_VENDADAO;
+import com.jdsystem.br.vendasmobile.Model.SqliteVendaDao;
 import com.jdsystem.br.vendasmobile.Pagamento.ConfPagamento;
 import com.jdsystem.br.vendasmobile.Pagamento.Mensal;
 import com.jdsystem.br.vendasmobile.Util.Gps;
@@ -364,7 +364,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             AtuPed = false;
         }
         if (!NumPedido.equals("0")) {
-            itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
+            itens_venda = new SqliteVendaDao(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
             if (!itens_venda.isEmpty()) {
                 AtuPed = true;
                 Intent it = new Intent(getBaseContext(), ConfPagamento.class);
@@ -393,7 +393,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
     private void carregadadosAlterarpedido() {
         if (!NumPedido.equals("0") && (CLI_CODIGO == 0)) {
             vendaCBean = new SqliteVendaCBean();
-            vendaCBean = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_vendas_por_numeropedido(NumPedido.toString());
+            vendaCBean = new SqliteVendaDao(getApplicationContext(), CodVendedor, true).buscar_vendas_por_numeropedido(NumPedido.toString());
             CLI_CODIGO_EXT = vendaCBean.getVendac_cli_codigo_ext();
             CLI_CODIGO = vendaCBean.getVendac_cli_codigo();
             nomeclievenda = vendaCBean.getVendac_cli_nome().toString();
@@ -421,7 +421,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             venda_txv_codigo_cliente.setText("Cliente: " + CLI_CODIGO_EXT.toString() + " - " + cliBean.getCli_nome().toString());
             venda_txv_codigo_cliente.requestFocus();
             vendaCBean = new SqliteVendaCBean();
-            vendaCBean = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_vendas_por_numeropedido(NumPedido.toString());
+            vendaCBean = new SqliteVendaDao(getApplicationContext(), CodVendedor, true).buscar_vendas_por_numeropedido(NumPedido.toString());
             Chave_Venda = vendaCBean.getVendac_chave();
             //CodEmpresa = vendaCBean.getCodEmpresa();
             CodVendedor = vendaCBean.getCodVendedor();
@@ -465,12 +465,18 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                         .setCancelable(false)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent it = new Intent();
-                                it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
-                                setResult(1, it);
-
                                 new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
-
+                                Intent it = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
+                                Bundle params = new Bundle();
+                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                params.putString(getString(R.string.intent_usuario), usuario);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                it.putExtras(params);
+                                startActivity(it);
+                                //it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
+                                //setResult(1, it);
                                 SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
                                 editor.putString("dataentrega", "");
                                 editor.commit();
@@ -493,9 +499,17 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                         .setCancelable(false)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent it = new Intent();
-                                it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
-                                setResult(1, it);
+                                Intent it = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
+                                Bundle params = new Bundle();
+                                params.putString(getString(R.string.intent_codvendedor), sCodVend);
+                                params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                params.putString(getString(R.string.intent_usuario), usuario);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                it.putExtras(params);
+                                startActivity(it);
+                                //it.putExtra("atualizalista", true); //true: Atualiza a Tela anterior
+                                //setResult(1, it);
                                 //new SqliteVendaD_TempDao(getApplicationContext()).excluir_itens();
 
                                 SharedPreferences.Editor editor = getSharedPreferences(DATA_ENT, MODE_PRIVATE).edit();
@@ -515,9 +529,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             }
 
         } else if (!NumPedido.equals("0")) {
-            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).retornaquantidade_preco(Chave_Venda);
-            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).retornaItensOculto(Chave_Venda);
-            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensTemp(Chave_Venda);
+            new SqliteVendaDao(getApplicationContext(), sCodVend, true).retornaquantidade_preco(Chave_Venda);
+            new SqliteVendaDao(getApplicationContext(), sCodVend, true).retornaItensOculto(Chave_Venda);
+            new SqliteVendaDao(getApplicationContext(), sCodVend, true).excluiItensTemp(Chave_Venda);
             confDao.recupera_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
             Alterar_Pedido_listview_e_calcula_total();
 
@@ -569,7 +583,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                 }
             }
 
-            itens_venda = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
+            itens_venda = new SqliteVendaDao(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
             if (!itens_venda.isEmpty()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
@@ -620,7 +634,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                                 editor.commit();
 
                                 finish();
-                                Boolean pedcancelado = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).atualizar_pedido_para_cancelado(Chave_Venda);
+                                Boolean pedcancelado = new SqliteVendaDao(getApplicationContext(), CodVendedor, true).atualizar_pedido_para_cancelado(Chave_Venda);
                                 if (pedcancelado) {
                                     Toast.makeText(CadastroPedidos.this, "Pedido cancelado com sucesso!", Toast.LENGTH_SHORT).show();
                                     Intent i = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
@@ -985,7 +999,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                     vendaCBean.setVendac_chave(String.valueOf(CLI_CODIGO + chave));
                     vendaCBean.setVendac_cli_codigo_ext(cliBean.getCli_codigo_ext());
                     vendaCBean.setVendac_cli_nome(cliBean.getCli_nome());
-                    String datvenda = Util.DataHojeComHorasBR();
+                    String datvenda = Util.DataHojeComHorasUSA();
                     vendaCBean.setVendac_datahoravenda(datvenda);
                     vendaCBean.setVendac_previsaoentrega(DATA_DE_ENTREGA);
                     vendaCBean.setVendac_cli_codigo(CLI_CODIGO);
@@ -1007,8 +1021,8 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                     editor.putString("dataentrega", "");
                     editor.commit();
 
-                    Sqlite_VENDADAO gravavenda = null;
-                    gravavenda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false);
+                    SqliteVendaDao gravavenda = null;
+                    gravavenda = new SqliteVendaDao(getApplicationContext(), CodVendedor, false);
                     venda_ok = gravavenda.grava_venda(vendaCBean, itens_temp);
                     if (venda_ok > 0) {
                         gerar_parcelas_venda();
@@ -1058,9 +1072,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                     startActivity(it);
 
                 } else {
-                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaquantidadeprecotemp(Chave_Venda);
-                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluiItensOculto(Chave_Venda);
-                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).atualizaItensTemp(Chave_Venda);
+                    new SqliteVendaDao(getApplicationContext(), sCodVend, true).atualizaquantidadeprecotemp(Chave_Venda);
+                    new SqliteVendaDao(getApplicationContext(), sCodVend, true).excluiItensOculto(Chave_Venda);
+                    new SqliteVendaDao(getApplicationContext(), sCodVend, true).atualizaItensTemp(Chave_Venda);
                     Alterar_Pedido_listview_e_calcula_total();
                     Gps gps = new Gps(getApplicationContext());
                     vendaCBean = new SqliteVendaCBean();
@@ -1089,9 +1103,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                     editor.putString("dataentrega", "");
                     editor.commit();
 
-                    Sqlite_VENDADAO gravavenda = null;
+                    SqliteVendaDao gravavenda = null;
 
-                    gravavenda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true);
+                    gravavenda = new SqliteVendaDao(getApplicationContext(), CodVendedor, true);
                     venda_ok = gravavenda.grava_vendasalva(vendaCBean, itens_venda);
                     if (venda_ok > 0) {
 
@@ -1196,7 +1210,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
         declaraObjetos();
         obterConfiguracoesPagamento();
         //venda_txv_datavenda.setText("Data/Hora Venda : " + vendaCBean.getVendac_datahoravenda());
-        itens_venda = new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
+        itens_venda = new SqliteVendaDao(getApplicationContext(), CodVendedor, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
         ListView_ItensVendidos.setAdapter(new ListAdapterItensVenda(getApplicationContext(), itens_venda));
         if (!itens_venda.isEmpty()) {
             TOTAL_DA_VENDA = BigDecimal.ZERO;
@@ -1502,15 +1516,15 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                             } else {
                                 SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                                 if (NumPedido.equals("0")) {
-                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
+                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
                                 } else {
-                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
+                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
                                 }
                             }
 
                         } else {
                             final SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
-                            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
+                            new SqliteVendaDao(getApplicationContext(), sCodVend, true);
                             if (item != null) {
 
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -1712,7 +1726,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                                             SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
                                             SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
                                             SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
-                                            Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
+                                            SqliteVendaDao itemDao = new SqliteVendaDao(getApplicationContext(), sCodVend, true);
 
                                             itemBean1.setvendad_quantidade_temp(item.getVendad_quantidade());
                                             itemBean1.setvendad_preco_venda_temp(item.getVendad_preco_venda());
@@ -1790,9 +1804,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                             } else {
                                 SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                                 if (NumPedido.equals("0")) {
-                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
+                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
                                 } else {
-                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
+                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
                                 }
                             }
 
@@ -1808,9 +1822,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                             SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                             int codprod = item.getVendad_prd_codigoitem();
                             //String chaveitem = item.getVendac_chave();
-                            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod, Chave_Venda);
+                            new SqliteVendaDao(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod, Chave_Venda);
 
-                            //new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
+                            //new SqliteVendaDao(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
 
                             Alterar_Pedido_listview_e_calcula_total();
                         } else {
@@ -1890,9 +1904,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                     SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                     int codprod = item.getVendad_prd_codigoitem();
                     //String chaveitem = item.getVendac_chave();
-                    new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod, Chave_Venda);
+                    new SqliteVendaDao(getApplicationContext(), sCodVend, true).oculta_item_da_venda(codprod, Chave_Venda);
 
-                    //new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
+                    //new SqliteVendaDao(getApplicationContext(), sCodVend, true).excluir_um_item_da_venda(item);
 
                     Alterar_Pedido_listview_e_calcula_total();
                 }
@@ -2202,9 +2216,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                             } else {
                                 SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                                 if (NumPedido.equals("0")) {
-                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
+                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
                                 } else {
-                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
+                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
                                 }
                             }
 
@@ -2212,7 +2226,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                             CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                             SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                             //SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
-                            new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
+                            new SqliteVendaDao(getApplicationContext(), sCodVend, true);
                             //new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
                             if (item != null) {
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -2423,7 +2437,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                                                 SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
                                                 SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
                                                 SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
-                                                Sqlite_VENDADAO itemDao = new Sqlite_VENDADAO(getApplicationContext(), sCodVend, true);
+                                                SqliteVendaDao itemDao = new SqliteVendaDao(getApplicationContext(), sCodVend, true);
 
                                                 itemBean2.setVendad_prd_codigo(COD_PRODUTO);
                                                 //itemBean3 = itemDao.altera_item_na_venda(itemBean2);
@@ -2482,9 +2496,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                             } else {
                                 SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
                                 if (NumPedido.equals("0")) {
-                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
+                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
                                 } else {
-                                    new Sqlite_VENDADAO(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
+                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
                                 }
                             }
 
@@ -2678,7 +2692,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             String FlagIntegrado = CursorClie.getString(CursorClie.getColumnIndex("FLAGINTEGRADO"));
             CursorClie.close();
             if (FlagIntegrado.equals("1")) {
-                sitclieenvio = Sincronismo.SincronizarClientesEnvioStatic(CodClie_Int, this, usuario, senha, null, null, null);
+                sitclieenvio = Sincronismo.sincronizaClientesEnvio(CodClie_Int, this, usuario, senha, null, null, null);
                 if (sitclieenvio.equals("OK")) {
                     handler.post(new Runnable() {
                         @Override
@@ -2686,7 +2700,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                             Toast.makeText(CadastroPedidos.this, "Cliente sincronizado com sucesso!", Toast.LENGTH_LONG).show();
                         }
                     });
-                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido, null, null, null);
+                    pedidoendiado = Sincronismo.sincronizaPedidosEnvio(usuario, senha, this, NumPedido, null, null, null);
                     if (pedidoendiado.equals("OK")) {
                         dialog.dismiss();
                         Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);
@@ -2727,9 +2741,9 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                     }
                 }
             } else {
-                final String sitcliexvend = Sincronismo.SituacaodoClientexPed(totalvenda, CadastroPedidos.this, usuario, senha, CodClie_Ext);
+                final String sitcliexvend = Sincronismo.sincronizaSitClieXPed(totalvenda, CadastroPedidos.this, usuario, senha, CodClie_Ext);
                 if (sitcliexvend.equals("OK")) {
-                    pedidoendiado = Sincronismo.SincronizarPedidosEnvioStatic(usuario, senha, this, NumPedido, null, null, null);
+                    pedidoendiado = Sincronismo.sincronizaPedidosEnvio(usuario, senha, this, NumPedido, null, null, null);
                     if (pedidoendiado.equals("OK")) {
                         dialog.dismiss();
                         Intent intent = new Intent(CadastroPedidos.this, ConsultaPedidos.class);

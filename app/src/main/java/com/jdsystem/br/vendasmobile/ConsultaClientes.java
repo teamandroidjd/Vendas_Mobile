@@ -490,8 +490,17 @@ public class ConsultaClientes extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if(telaInvocada != null && telaInvocada.equals("CadastroPedidos")){
+        if(telaInvocada != null && (telaInvocada.equals("CadastroPedidos")|| telaInvocada.equals("ConsultaPedidos"))){
+            Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            intent.putExtras(params);
+            startActivity(intent);
             finish();
+            return;
         }
         switch (flag) {
             case 0:
@@ -809,14 +818,14 @@ public class ConsultaClientes extends AppCompatActivity
 
         } else if (flag == 1) {
             try {
-                sincclieenvio = Sincronismo.SincronizarClientesEnvioStatic("0", this, usuario, senha, null, null, null);
+                sincclieenvio = Sincronismo.sincronizaClientesEnvio("0", this, usuario, senha, null, null, null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplication(), sincclieenvio, Toast.LENGTH_SHORT).show();
                     }
                 });
-                sincclie = Sincronismo.SincronizarClientesStatic(codVendedor, this, usuario, senha, 0, dialog, null, null);
+                sincclie = Sincronismo.sincronizaClientes(codVendedor, this, usuario, senha, 0, dialog, null, null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
