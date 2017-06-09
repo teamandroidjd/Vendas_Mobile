@@ -532,7 +532,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                     SUBTOTAL_VENDA = Double.parseDouble(String.valueOf(subtotal));
                     if (vltotal != SUBTOTAL_VENDA) {
                         fechar = false;
-                        Util.msg_toast_personal(getBaseContext(), "Valor total das parcelas defere do valor total do pedido. Verifique!", Util.ALERTA);
+                        Util.msg_toast_personal(getBaseContext(), "Valor total das parcelas difere do valor total do pedido. Verifique!", Util.ALERTA);
                     }
                 }
             } catch (Exception e) {

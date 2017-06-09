@@ -119,61 +119,64 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void onClickListener(View view, int position) {
-        if (telaInvocada.equals("CadastroAgenda")) {
-            ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
+        if (telaInvocada != null) {
+            if (telaInvocada.equals("CadastroAgenda")) {
+                ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
 
-            int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
-            int CodigoContato = adapterContatos.CodigoContato(position);
-            String nomeContato = adapterContatos.ChamaDados(position);
-            Intent intentp = new Intent(getActivity(), CadastroAgenda.class);
-            Bundle params = new Bundle();
-            params.putInt(getString(R.string.intent_codcliente), CodigoCliente);
-            params.putInt(getString(R.string.intent_codcontato), CodigoContato);
-            params.putString(getString(R.string.intent_nomecontato), nomeContato);
-            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_usuario), usuario);
-            params.putString(getString(R.string.intent_senha), senha);
-            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-            intentp.putExtras(params);
-            startActivity(intentp);
-            getActivity().finish();
-        } else if (telaInvocada.equals("ConsultaAgenda")) {
-            ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
+                int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
+                int CodigoContato = adapterContatos.CodigoContato(position);
+                String nomeContato = adapterContatos.ChamaDados(position);
+                Intent intentp = new Intent(getActivity(), CadastroAgenda.class);
+                Bundle params = new Bundle();
+                params.putInt(getString(R.string.intent_codcliente), CodigoCliente);
+                params.putInt(getString(R.string.intent_codcontato), CodigoContato);
+                params.putString(getString(R.string.intent_nomecontato), nomeContato);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+                intentp.putExtras(params);
+                startActivity(intentp);
+                getActivity().finish();
+            } else if (telaInvocada.equals("ConsultaAgenda")) {
+                ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
 
-            int CodigoContato = adapterContatos.CodigoContato(position);
-            String nomeContato = adapterContatos.ChamaDados(position);
-            Intent intentp = new Intent(getActivity(), ConsultaAgenda.class);
-            Bundle params = new Bundle();
-            params.putInt(getString(R.string.intent_codcontato), CodigoContato);
-            params.putString(getString(R.string.intent_nomecontato), nomeContato);
-            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_usuario), usuario);
-            params.putString(getString(R.string.intent_senha), senha);
-            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-            intentp.putExtras(params);
-            startActivity(intentp);
-            getActivity().finish();
-        } else {
-        if (flag == 0) {
-            ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
+                int CodigoContato = adapterContatos.CodigoContato(position);
+                String nomeContato = adapterContatos.ChamaDados(position);
+                Intent intentp = new Intent(getActivity(), ConsultaAgenda.class);
+                Bundle params = new Bundle();
+                params.putInt(getString(R.string.intent_codcontato), CodigoContato);
+                params.putString(getString(R.string.intent_nomecontato), nomeContato);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+                intentp.putExtras(params);
+                startActivity(intentp);
+                getActivity().finish();
+            }
+        }else {
+                if (flag == 0) {
+                    ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
 
-            int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
-            int CodigoContato = adapterContatos.CodigoContato(position);
-            int CodigoExtCont = Integer.parseInt(adapterContatos.CodigoContatoExterno(position));
-            Intent intentp = new Intent(getActivity(), DadosContato.class);
-            Bundle params = new Bundle();
-            params.putInt("codCliente", CodigoCliente);
-            params.putInt(getString(R.string.intent_codcontato), CodigoContato);
-            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_usuario), usuario);
-            params.putString(getString(R.string.intent_senha), senha);
-            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-            params.putInt(getString(R.string.intent_codcontato_externo), CodigoExtCont);
-            intentp.putExtras(params);
-            startActivity(intentp);
-            getActivity().finish();
-        }
-        }
+                    int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
+                    int CodigoContato = adapterContatos.CodigoContato(position);
+                    int CodigoExtCont = Integer.parseInt(adapterContatos.CodigoContatoExterno(position));
+                    Intent intentp = new Intent(getActivity(), DadosContato.class);
+                    Bundle params = new Bundle();
+                    params.putInt("codCliente", CodigoCliente);
+                    params.putInt(getString(R.string.intent_codcontato), CodigoContato);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+                    params.putInt(getString(R.string.intent_codcontato_externo), CodigoExtCont);
+                    intentp.putExtras(params);
+                    startActivity(intentp);
+                    getActivity().finish();
+                }
+            }
+
     }
 
     @Override

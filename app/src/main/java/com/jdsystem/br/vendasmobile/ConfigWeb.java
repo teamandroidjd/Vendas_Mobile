@@ -345,7 +345,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         soap.addProperty("Chave", edtChave.getText().toString());
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSHOST, 10000);
+        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSHOST);
         RetHost = null;
         Boolean ConexOk = Util.checarConexaoCelular(ConfigWeb.this);
         if (ConexOk) {

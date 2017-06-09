@@ -482,7 +482,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         newparams.putString(getString(R.string.intent_senha), senha);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                        newparams.putString(getString(R.string.intent_telainvocada), telaInvocada);
                         newfrag.setArguments(newparams);
                         newft.commit();
                     }
@@ -519,7 +519,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         newparams.putString(getString(R.string.intent_senha), senha);
                         newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
                         newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                        newparams.putString(getString(R.string.intent_telainvocada), telaInvocada);
                         newfrag.setArguments(newparams);
                         newft.commit();
                     }

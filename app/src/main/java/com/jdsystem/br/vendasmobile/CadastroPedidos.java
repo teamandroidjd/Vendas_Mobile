@@ -63,7 +63,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
-public class CadastroPedidos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
+public class  CadastroPedidos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
 
     public static final String DATA_ENT = "DATA DE ENTREGA";
     public static final String CONFIG_HOST = "CONFIG_HOST";

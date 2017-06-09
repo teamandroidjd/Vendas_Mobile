@@ -175,6 +175,7 @@ public class CadastroAgenda extends AppCompatActivity {
         if (agendando.isChecked()) {
             if (data.getText().length() == 0) {
                 data.setError("Digite a data do agendamento!");
+                Toast.makeText(ctx, "Digite a data do agendamento!", Toast.LENGTH_LONG).show();
                 data.requestFocus();
                 rgsituacao.check(R.id.rbagendando);
                 data.setVisibility(View.VISIBLE);
@@ -182,16 +183,18 @@ public class CadastroAgenda extends AppCompatActivity {
                 return;
             } else if (datadigitada.before(datahoje)) {
                 data.setError("Data e hora do agendamento menor que a data e hora de atual!");
+                Toast.makeText(ctx, "Data e hora do agendamento menor que a data e hora de atual!", Toast.LENGTH_LONG).show();
                 data.requestFocus();
-                rgsituacao.check(R.id.rbfinalizando);
+                rgsituacao.check(R.id.rbagendando);
                 data.setVisibility(View.VISIBLE);
-                obs.setVisibility(View.VISIBLE);
+                obs.setVisibility(View.GONE);
                 return;
             }
 
         } else if (finalizando.isChecked()) {
             if (data.getText().length() == 0) {
                 data.setError("Digite a data!");
+                Toast.makeText(ctx, "Digite a data!", Toast.LENGTH_LONG).show();
                 data.requestFocus();
                 rgsituacao.check(R.id.rbfinalizando);
                 data.setVisibility(View.VISIBLE);
@@ -199,6 +202,7 @@ public class CadastroAgenda extends AppCompatActivity {
                 return;
             } else if (datadigitada.after(datahoje)) {
                 data.setError("Data e hora da finalização maior que a data e hora de atual!");
+                Toast.makeText(ctx, "Data e hora da finalização maior que a data e hora de atual!", Toast.LENGTH_LONG).show();
                 data.requestFocus();
                 rgsituacao.check(R.id.rbfinalizando);
                 data.setVisibility(View.VISIBLE);
