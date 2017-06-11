@@ -33,6 +33,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jdsystem.br.vendasmobile.Util.RateDialogManager;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
@@ -76,6 +77,7 @@ public class ConsultaPedidos extends AppCompatActivity
         setContentView(R.layout.consulta_pedidos);
         declaraObjetos();
         setSupportActionBar(toolbar);
+        //RateDialogManager.showRateDialog( this, savedInstanceState );
 
         Intent intent = getIntent();
         if (intent != null) {

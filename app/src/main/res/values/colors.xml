@@ -10,4 +10,5 @@
     <color name="colorVerde">#0e660e</color>
     <color name="branco">#ffffff</color>
     <color name="preto">#000000</color>
+    <color name="colorGrey">#aaa</color>
 </resources>

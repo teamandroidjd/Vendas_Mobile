@@ -176,10 +176,16 @@
     <string name="msg_comunicacaoservidor">Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor…</string>
     <string name="msg_semcomunicacaoservidor">Atenção! Não foi possível obter resposta do servidor referente a validação das informações de atualização, neste caso o usuário será conectado porém até que seja restabelecida a comunicação com o servidor, não será possivel realizar nenhuma atualização ou transmissão de informações.</string>
 
-    <string name="msg_errorconsultaclie">Não foi possível realizar a consulta de cliente, pois não foram configurado os parâmetros. Entre em contato com a </string>
+    <string name="msg_errorconsultaclie">Não foi possível realizar a consulta de cliente, pois não foram configurado os
+        parâmetros. Entre em contato com a </string>
     <string name="msg_atention">Atenção!</string>
     <string name="text_qtdregistro">Quantidade de registro:</string>
     <string name="atualizando_formpgto">Atualizando condições de pagamento...</string>
+
+    <string name="main_inform">Permitindo que usuários frequentes de seu aplicativo
+        possam avalia-lo e assim, com boas avaliações, você
+        consiga ainda mais instalações para ele.
+    </string>
 
 
 </resources>

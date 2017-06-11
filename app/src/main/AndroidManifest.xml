@@ -17,6 +17,7 @@
 
         android:allowBackup="true"
         android:icon="@drawable/ic_app"
+        android:hardwareAccelerated="true"
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
