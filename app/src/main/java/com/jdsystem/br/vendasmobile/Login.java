@@ -62,7 +62,6 @@ public class Login extends AppCompatActivity implements Runnable {
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String METHOD_NAME = "Login";
     private static final int REQUEST_READ_PHONE_STATE = 0;
-    //public String Retorno = "0";
     public SharedPreferences prefs;
     private String usuario, senha, URLPrincipal, sCodVend, UFVendedor, qtdperfil, habCadClie;
     private TextView txvCopyRight, txvVersao, txvEmpresa;

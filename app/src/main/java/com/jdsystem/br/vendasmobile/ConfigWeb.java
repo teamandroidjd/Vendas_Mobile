@@ -291,7 +291,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
         carregarlicencas();
     }
 
-    protected void SalvarHost(View view) {
+    public void SalvarHost(View view) {
         if (edtChave.getText().length() == 0) {
             edtChave.setError(getString(R.string.enter_host));
             edtChave.requestFocus();

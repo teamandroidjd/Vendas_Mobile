@@ -61,15 +61,12 @@ public class ConsultaPedidos extends AppCompatActivity
     private String DtFinal = "0";
     private String codVendedor, URLPrincipal, usuario, senha, usuarioLogado, codEmpresa, nomeCliente, nomeSitPed;
     private ProgressDialog pDialog;
-    //Pedidos lstpedidos;
-    //LinearLayout lnenhum;
     SQLiteDatabase DB;
     FloatingActionMenu mmPrincPedido, mmPrincNovoPed;
     FloatingActionButton mmSitPedido, mmEmissaoPedido, mmCliePedido, mmNovoPedido;
     private int idPerfil;
     private Handler handler = new Handler();
     private Toolbar toolbar;
-    Date dateinical,datefinal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +247,7 @@ public class ConsultaPedidos extends AppCompatActivity
         return DadosList;
     }
 
-    protected void novoPedido(View view) {
+    public void novoPedido(View view) {
 
         codEmpresa = "0";
         try {
@@ -334,7 +331,7 @@ public class ConsultaPedidos extends AppCompatActivity
 
     }
 
-    protected void filtroSitPed(View view) {
+    public void filtroSitPed(View view) {
 
         @SuppressLint("InflateParams") View viewSitPed = (LayoutInflater.from(ConsultaPedidos.this)).inflate(R.layout.input_filtro_situacao_pedido, null);
 
@@ -389,13 +386,13 @@ public class ConsultaPedidos extends AppCompatActivity
 
     }
 
-    protected void filtroEmissaoPed(View view) {
+    public void filtroEmissaoPed(View view) {
         Intent intent = new Intent(ConsultaPedidos.this, actFiltroPeriodoPedidos.class);
         //finish();
         startActivityForResult(intent, 3);
     }
 
-    protected void filtroCliPed(View view) {
+    public void filtroCliPed(View view) {
         Intent intent = new Intent(ConsultaPedidos.this, ConsultaClientes.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), codVendedor);
