@@ -228,7 +228,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
         }  else if (CodCliente != 0) {
             TipoContato.setSelection(1);
             linearrazao.setVisibility(View.VISIBLE);
-            razaosocial.setText(NomeCliente);
+            razaosocial.setText(nomeCliente);
             lineartxtsemana.setVisibility(View.VISIBLE);
         } else {
             linearrazao.setVisibility(View.GONE);

@@ -7,19 +7,19 @@
     tools:context="com.jdsystem.br.vendasmobile.TH_ClientesXVendas">
 
     <TextView
+        android:id="@+id/txvinfopedxclie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nenhum pedido para este Cliente!"
-        android:id="@+id/txvinfopedxclie"
-        android:textAlignment="center"
         android:layout_marginTop="10dp"
-        android:visibility="gone"
-        android:textSize="20dp"/>
+        android:text="Nenhum pedido para este Cliente!"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:visibility="gone" />
 
     <RelativeLayout
-        android:layout_width="368dp"
-        android:layout_height="wrap_content"
         android:id="@+id/leganda_tipopedido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:gravity="center"
         tools:layout_editor_absoluteX="8dp"
@@ -152,111 +152,123 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/legenda_cliexped"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Tipo"
-            android:textAlignment="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.1"
-            android:text="Data"
-            android:textAlignment="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Pedido"
-            android:textAlignment="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.98 "
-            android:text="Desconto"
-            android:textAlignment="center" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.3"
-            android:text="Total"
-            android:textAlignment="center" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp">
-
-        <ListView
-            android:id="@+id/lstinfopedidos"
-            android:layout_width="match_parent"
-            android:layout_height="206dp"></ListView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/legenda_itensxpedxclie"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Código"
-            android:textAlignment="center" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Descrição"
-            android:textAlignment="center" />
-
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Qtd"
-            android:textAlignment="center" />
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Vl.Unit."
-            android:textAlignment="center" />
+            <LinearLayout
+                android:id="@+id/legenda_cliexped"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Vl.Total"
-            android:textAlignment="center" />
-    </LinearLayout>
+                <TextView
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Tipo"
+                    android:textAlignment="center" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.1"
+                    android:text="Data"
+                    android:textAlignment="center" />
 
-        <ListView
-            android:id="@+id/lstinfoitens"
-            android:layout_width="match_parent"
-            android:layout_height="206dp"></ListView>
-    </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Pedido"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.98 "
+                    android:text="Desconto"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.3"
+                    android:text="Total"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <ListView
+                    android:id="@+id/lstinfopedidos"
+                    android:layout_width="match_parent"
+                    android:layout_height="206dp"></ListView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/legenda_itensxpedxclie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Código"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Descrição"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Qtd"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Vl.Unit."
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Vl.Total"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <ListView
+                    android:id="@+id/lstinfoitens"
+                    android:layout_width="match_parent"
+                    android:layout_height="206dp"></ListView>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

@@ -22,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,17 +42,14 @@ public class ConsultaProdutos extends AppCompatActivity
     public static final String CONFIG_HOST = "CONFIG_HOST";
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public SharedPreferences prefs;
-    String codVendedor, URLPrincipal, usuario, senha, dtUltAtu, usuarioLogado, sincprod, numPedido, chavePedido,
-            NomeCliente, editQuery, telaInvocada, nomeEmpresa;
-    SQLiteDatabase DB;
-    int Flag = 0, CodCliente, codContato;
+    private String codVendedor, URLPrincipal, usuario, senha, usuarioLogado, sincProd, numPedido, chavePedido,
+            nomeCliente, editQuery, telaInvocada, nomeEmpresa;
+    private SQLiteDatabase DB;
+    private int flag = 0, codCliente, codContato, idPerfil, CadastroContato;
     Produtos lstprodutos;
     Handler handler = new Handler();
     MenuItem searchItem;
     SearchView searchView;
-    int idPerfil;
-    int CadastroContato;
-    private EditText prod_txt_pesquisaproduto;
     private TextView txvqtdregprod;
     private ProgressDialog dialog;
 
@@ -74,12 +70,12 @@ public class ConsultaProdutos extends AppCompatActivity
                 senha = params.getString(getString(R.string.intent_senha));
                 numPedido = params.getString(getString(R.string.intent_numpedido));
                 chavePedido = params.getString(getString(R.string.intent_chavepedido));
-                Flag = params.getInt(getString(R.string.intent_flag));
+                flag = params.getInt(getString(R.string.intent_flag));
                 telaInvocada = params.getString(getString(R.string.intent_telainvocada));
                 CadastroContato = params.getInt(getString(R.string.intent_cad_contato), 0);
-                CodCliente = params.getInt(getString(R.string.intent_codcliente));
+                codCliente = params.getInt(getString(R.string.intent_codcliente));
                 codContato = params.getInt(getString(R.string.intent_codcontato));
-                NomeCliente = params.getString(getString(R.string.intent_nomerazao));
+                nomeCliente = params.getString(getString(R.string.intent_nomerazao));
                 //Pedido = params.getBoolean("pedido");
             }
         }
@@ -91,14 +87,15 @@ public class ConsultaProdutos extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        carregausuariologado();
-        carregarpreferencias();
-        carregarobjetos();
+        carregaUsuarioLogado();
+        carregaPreferencias();
+        declaraObjetos();
 
         dialog = new ProgressDialog(ConsultaProdutos.this);
+        dialog.setCancelable(false);
         dialog.setTitle(getString(R.string.wait));
         dialog.setMessage(getString(R.string.loading_products));
-        dialog.setCancelable(false);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.show();
 
         Thread thread = new Thread(ConsultaProdutos.this);
@@ -108,8 +105,6 @@ public class ConsultaProdutos extends AppCompatActivity
     public List<Produtos> carregarprodutos() {
         ArrayList<Produtos> DadosLisProdutos = new ArrayList<Produtos>();
         if (editQuery == null) {
-
-            DB = new ConfigDB(this).getReadableDatabase();
             BigDecimal preco1 = null;
             BigDecimal preco2 = null;
             BigDecimal preco3 = null;
@@ -147,7 +142,6 @@ public class ConsultaProdutos extends AppCompatActivity
                     alert.show();
                     return DadosLisProdutos;
                 }
-
 
                 Cursor cursorProdutos = DB.rawQuery("SELECT * FROM ITENS WHERE ((ATIVO = 'S') AND (CODPERFIL = " + idPerfil + ")) ORDER BY DESCRICAO", null);
                 cursorProdutos.moveToFirst();
@@ -237,7 +231,6 @@ public class ConsultaProdutos extends AppCompatActivity
                     } while (cursorProdutos.moveToNext());
                     cursorProdutos.close();
                     CursorParametro.close();
-
 
                 } else {
                     txvqtdregprod.setText("Quantidade de Registro: 0");
@@ -366,26 +359,25 @@ public class ConsultaProdutos extends AppCompatActivity
 
             }
         }
-
         if (dialog.isShowing())
             dialog.dismiss();
 
         return DadosLisProdutos;
-
     }
 
-    private void carregarobjetos() {
+    private void declaraObjetos() {
+        DB = new ConfigDB(this).getReadableDatabase();
         txvqtdregprod = (TextView) findViewById(R.id.txvqtdregistroprod);
     }
 
-    private void carregarpreferencias() {
+    private void carregaPreferencias() {
         prefs = getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         nomeEmpresa = prefs.getString("nome", null);
         idPerfil = prefs.getInt("idperfil", 0);
     }
 
-    private void carregausuariologado() {
+    private void carregaUsuarioLogado() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
@@ -422,8 +414,8 @@ public class ConsultaProdutos extends AppCompatActivity
                 editQuery = query;
                 searchView.setQuery("", false);
                 //searchView.clearFocus();
-                if (Flag != 0) {
-                    Flag = 2;
+                if (flag != 0) {
+                    flag = 2;
                 }
 
                 Thread thread = new Thread(ConsultaProdutos.this);
@@ -441,7 +433,7 @@ public class ConsultaProdutos extends AppCompatActivity
             @Override
             public boolean onClose() {
 
-                //Flag = 2;
+                //flag = 2;
                 editQuery = null;
                 searchView.onActionViewCollapsed();
                 Thread thread = new Thread(ConsultaProdutos.this);
@@ -459,42 +451,49 @@ public class ConsultaProdutos extends AppCompatActivity
             if (item.getItemId() == R.id.menu_sinc_cliente) {
                 Boolean ConexOk = Util.checarConexaoCelular(ConsultaProdutos.this);
                 if (ConexOk) {
-                    Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL = " + idPerfil, null);
-                    if (cursorVerificaProd.getCount() == 0) {
-                        cursorVerificaProd.close();
-                        Flag = 1;
-                        dialog = new ProgressDialog(this);
-                        dialog.setCancelable(false);
-                        dialog.setMessage(getString(R.string.primeira_sync_itens));
-                        dialog.setTitle(getString(R.string.wait));
-                        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                        dialog.setProgress(0);
-                        dialog.setMax(0);
-                        dialog.show();
+                    try {
+                        Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL = " + idPerfil, null);
+                        if (cursorVerificaProd.getCount() == 0) {
+                            cursorVerificaProd.close();
+                            flag = 1;
+                            dialog = new ProgressDialog(ConsultaProdutos.this);
+                            dialog.setCancelable(false);
+                            dialog.setMessage(getString(R.string.primeira_sync_itens));
+                            dialog.setTitle(getString(R.string.wait));
+                            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                            dialog.setProgress(0);
+                            dialog.setMax(0);
+                            dialog.setIcon(R.drawable.icon_sync);
+                            dialog.show();
 
-                        Thread thread = new Thread(this);
-                        thread.start();
+                            Thread thread = new Thread(this);
+                            thread.start();
 
-                    } else {
-                        cursorVerificaProd.close();
-                        Flag = 1;
-                        dialog = new ProgressDialog(this);
-                        dialog.setCancelable(false);
-                        dialog.setMessage(getString(R.string.sync_products));
-                        dialog.setTitle(getString(R.string.wait));
-                        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                        dialog.setProgress(0);
-                        dialog.setMax(0);
-                        dialog.show();
+                        } else {
+                            cursorVerificaProd.close();
+                            flag = 1;
+                            dialog = new ProgressDialog(ConsultaProdutos.this);
+                            dialog.setCancelable(false);
+                            dialog.setMessage(getString(R.string.sync_products));
+                            dialog.setTitle(getString(R.string.wait));
+                            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                            dialog.setProgress(0);
+                            dialog.setMax(0);
+                            dialog.setIcon(R.drawable.icon_sync);
+                            dialog.show();
 
-                        Thread thread = new Thread(this);
-                        thread.start();
+                            Thread thread = new Thread(this);
+                            thread.start();
+                        }
+                    } catch (Exception e) {
+                        e.toString();
                     }
 
                 } else {
                     Toast.makeText(ConsultaProdutos.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
 
                 }
+
 
             }
         }
@@ -505,7 +504,7 @@ public class ConsultaProdutos extends AppCompatActivity
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (Flag == 0) {
+                if (flag == 0) {
                     try {
                         FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
                         Bundle params = new Bundle();
@@ -513,7 +512,7 @@ public class ConsultaProdutos extends AppCompatActivity
                             frag = new FragmentProdutos();
                             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                            params.putInt(getString(R.string.intent_flag), Flag);
+                            params.putInt(getString(R.string.intent_flag), flag);
                             params.putString(getString(R.string.intent_numpedido), numPedido);
                             params.putString(getString(R.string.intent_chavepedido), chavePedido);
                             params.putString(getString(R.string.intent_usuario), usuario);
@@ -521,9 +520,9 @@ public class ConsultaProdutos extends AppCompatActivity
                             params.putString(getString(R.string.intent_codvendedor), codVendedor);
                             params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                             params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
-                            params.putInt(getString(R.string.intent_codcliente), CodCliente);
+                            params.putInt(getString(R.string.intent_codcliente), codCliente);
                             params.putInt(getString(R.string.intent_codcontato), codContato);
-                            params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                            params.putString(getString(R.string.intent_nomerazao), nomeCliente);
                             params.putInt(getString(R.string.intent_codcontato), codContato);
                             frag.setArguments(params);
                             ft.commit();
@@ -534,7 +533,7 @@ public class ConsultaProdutos extends AppCompatActivity
                                 newfrag = new FragmentProdutos();
                                 FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
                                 newft.replace(R.id.rl_fragment_container, newfrag, "mainFragB");
-                                newparams.putInt(getString(R.string.intent_flag), Flag);
+                                newparams.putInt(getString(R.string.intent_flag), flag);
                                 newparams.putString(getString(R.string.intent_numpedido), numPedido);
                                 newparams.putString(getString(R.string.intent_chavepedido), chavePedido);
                                 newparams.putString(getString(R.string.intent_usuario), usuario);
@@ -550,13 +549,13 @@ public class ConsultaProdutos extends AppCompatActivity
                     } catch (Exception e) {
                         e.toString();
                     }
-                } else if (Flag == 1) {
+                } else if (flag == 1) {
                     try {
-                        sincprod = Sincronismo.sincronizaProdutos(ConsultaProdutos.this, usuario, senha, 0, dialog, null, null);
+                        sincProd = Sincronismo.sincronizaProdutos(ConsultaProdutos.this, usuario, senha, 0, dialog, null, null);
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplication(), sincprod, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplication(), sincProd, Toast.LENGTH_LONG).show();
                             }
                         });
                         if (numPedido == null) {
@@ -581,7 +580,7 @@ public class ConsultaProdutos extends AppCompatActivity
                     } catch (Exception e) {
                         e.toString();
                     }
-                } else if (Flag == 2) {
+                } else if (flag == 2) {
                     try {
                         FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
                         Bundle params = new Bundle();
@@ -589,7 +588,7 @@ public class ConsultaProdutos extends AppCompatActivity
                             frag = new FragmentProdutos();
                             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                             ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                            params.putInt(getString(R.string.intent_flag), Flag);
+                            params.putInt(getString(R.string.intent_flag), flag);
                             params.putString(getString(R.string.intent_numpedido), numPedido);
                             params.putString(getString(R.string.intent_chavepedido), chavePedido);
                             params.putString(getString(R.string.intent_usuario), usuario);
@@ -606,7 +605,7 @@ public class ConsultaProdutos extends AppCompatActivity
                                 newfrag = new FragmentProdutos();
                                 FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
                                 newft.replace(R.id.rl_fragment_container, newfrag, "mainFragB");
-                                newparams.putInt(getString(R.string.intent_flag), Flag);
+                                newparams.putInt(getString(R.string.intent_flag), flag);
                                 newparams.putString(getString(R.string.intent_numpedido), numPedido);
                                 newparams.putString(getString(R.string.intent_chavepedido), chavePedido);
                                 newparams.putString(getString(R.string.intent_usuario), usuario);
@@ -623,55 +622,12 @@ public class ConsultaProdutos extends AppCompatActivity
                     }
 
                 }
-
-        /*else if (Flag == 3) {
-            Flag = 2;
-            Bundle params = new Bundle();
-            FragmentFiltroProdutos frag = (FragmentFiltroProdutos) getSupportFragmentManager().findFragmentByTag("mainFragB");
-            if (frag == null) {
-                frag = new FragmentFiltroProdutos();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragB");
-                params.putInt("flag", Flag);
-                params.putString("numpedido", numPedido);
-                params.putString("chave", chavePedido);
-                params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                frag.setArguments(params);
-                ft.commit();
-            } else {
-                frag = new FragmentFiltroProdutos();
-                Bundle bundle = new Bundle();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragB");
-                bundle.putInt("flag", Flag);
-                bundle.putString("numpedido", numPedido);
-                bundle.putString("chave", chavePedido);
-                bundle.putString(getString(R.string.intent_usuario), usuario);
-                bundle.putString(getString(R.string.intent_senha), senha);
-                bundle.putString(getString(R.string.intent_codvendedor), codVendedor);
-                frag.setArguments(bundle);
-                ft.commit();
-            }
-
-        } else {
-            try {
-                FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                if (frag == null) {
-                    frag = new FragmentProdutos();
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                    ft.commit();
-                }
-            } catch (Exception e) {
-                e.toString();
-            }
-        }*/
                 if (dialog.isShowing())
                     dialog.dismiss();
             }
         });
+
+
     }
 
     @Override
@@ -689,8 +645,8 @@ public class ConsultaProdutos extends AppCompatActivity
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 //params.putString(getString(R.string.intent_cad_contato), CodProd);
-                params.putInt(getString(R.string.intent_codcliente), CodCliente);
-                params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                params.putInt(getString(R.string.intent_codcliente), codCliente);
+                params.putString(getString(R.string.intent_nomerazao), nomeCliente);
                 intentp.putExtras(params);
                 startActivity(intentp);
                 ConsultaProdutos.this.finish();
@@ -703,15 +659,15 @@ public class ConsultaProdutos extends AppCompatActivity
                 params.putString(getString(R.string.intent_senha), senha);
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 // params.putString(getString(R.string.intent_cad_contato), CodProd);
-                params.putInt(getString(R.string.intent_codcliente), CodCliente);
-                params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                params.putInt(getString(R.string.intent_codcliente), codCliente);
+                params.putString(getString(R.string.intent_nomerazao), nomeCliente);
                 params.putInt(getString(R.string.intent_codcontato), codContato);
                 intentp.putExtras(params);
                 startActivity(intentp);
                 ConsultaProdutos.this.finish();
             }
 
-            switch (Flag) {
+            switch (flag) {
                 case 0:
                     if (!telaInvocada.equals("CADASTRO_CONTATOS")) {
                         if (!telaInvocada.equals("TAB_PRODUTOS_CONTATOS")) {
@@ -753,7 +709,7 @@ public class ConsultaProdutos extends AppCompatActivity
                             params2.putString(getString(R.string.intent_usuario), usuario);
                             params2.putString(getString(R.string.intent_senha), senha);
                             params2.putString(getString(R.string.intent_numpedido), numPedido);
-                            params2.putInt(getString(R.string.intent_flag), Flag);
+                            params2.putInt(getString(R.string.intent_flag), flag);
                             intent2.putExtras(params2);
                             startActivity(intent2);
                             finish();
@@ -828,7 +784,7 @@ public class ConsultaProdutos extends AppCompatActivity
             startActivity(i);
             finish();
 
-        }else if (id == R.id.nav_sincronismo) {
+        } else if (id == R.id.nav_sincronismo) {
             Intent i = new Intent(ConsultaProdutos.this, Sincronismo.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_codvendedor), codVendedor);

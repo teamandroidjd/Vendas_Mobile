@@ -124,4 +124,9 @@ public class TH_ClientesXVendas extends Fragment {
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }
