@@ -20,7 +20,7 @@ import android.widget.Toast;
  */
 
 
-public class act_TH_obsclie extends Fragment {
+public class TH_ObsClie extends Fragment {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;

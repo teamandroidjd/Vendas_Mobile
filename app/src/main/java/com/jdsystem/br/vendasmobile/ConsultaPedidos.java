@@ -77,7 +77,9 @@ public class ConsultaPedidos extends AppCompatActivity
         setContentView(R.layout.consulta_pedidos);
         declaraObjetos();
         setSupportActionBar(toolbar);
-        //RateDialogManager.showRateDialog( this, savedInstanceState );
+        if(Util.checarConexaoCelular(this)) {
+            RateDialogManager.showRateDialog(this, savedInstanceState); // Avaliação do aplicativo.
+        }
 
         Intent intent = getIntent();
         if (intent != null) {

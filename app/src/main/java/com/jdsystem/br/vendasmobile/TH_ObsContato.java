@@ -30,7 +30,7 @@ import com.jdsystem.br.vendasmobile.Util.Util;
  * Created by WKS22 on 28/03/2017.
  */
 
-public class act_TH_obscontato extends Fragment {
+public class TH_ObsContato extends Fragment {
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
     String obsContato, codVendedor, URLPrincipal, usuario, senha;

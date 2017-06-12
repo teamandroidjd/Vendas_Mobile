@@ -677,7 +677,7 @@ public class ConsultaProdutos extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (telaInvocada != null) {
-            if (telaInvocada.equals("VENDER_PRODUTOS")) {
+            if (telaInvocada.equals("CadastroPedidos")) {
                 finish();
                 return;
             } else if (telaInvocada.equals("CADASTRO_CONTATOS")) {

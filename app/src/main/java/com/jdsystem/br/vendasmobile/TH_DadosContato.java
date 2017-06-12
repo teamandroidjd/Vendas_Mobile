@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
  * Created by WKS22 on 27/03/2017.
  */
 
-public class act_TH_dadoscontato extends Fragment {
+public class TH_DadosContato extends Fragment {
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
     int sCodCliente;

@@ -1100,6 +1100,9 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         super.onBackPressed();
         if (!AtuPedido) {
             new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
+            finish();
+        }else {
+            finish();
         }
 
     }

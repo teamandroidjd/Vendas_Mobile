@@ -204,7 +204,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                         params.putString(getString(R.string.intent_usuario), usuario);
                         params.putString(getString(R.string.intent_senha), senha);
                         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                        params.putString(getString(R.string.intent_telainvocada), "VENDER_PRODUTOS");
+                        params.putString(getString(R.string.intent_telainvocada), "CadastroPedidos");
                         params.putInt(getString(R.string.intent_flag), 2);
                         Lista_produtos.putExtras(params);
                         startActivity(Lista_produtos);
@@ -277,6 +277,19 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
         if (!NumPedido.equals("0")) {
             confDao.salva_CONFPAGAMENTO_TEMP_Pedido(Chave_Venda);
         }
+    }
+
+    protected void consultaHistoricoVendas(View v){
+        Intent i = new Intent(this, DadosCliente.class);
+        Bundle params = new Bundle();
+        params.putString(getString(R.string.intent_codvendedor), sCodVend);
+        params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+        params.putString(getString(R.string.intent_usuario), usuario);
+        params.putString(getString(R.string.intent_senha), senha);
+        params.putString(getString(R.string.intent_codcliente),String.valueOf(CLI_CODIGO));
+        i.putExtras(params);
+        startActivity(i);
     }
 
     private void carregarparametros() {
@@ -448,7 +461,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             }
         }
         if (!NumPedido.equals("0") && (dataent == null || dataent == "")) {
-            dataent = "Data da entrega: " + Util.FormataDataDDMMAAAA(DATA_DE_ENTREGA);
+            dataent = "Data da entrega: " + /*Util.FormataDataDDMMAAAA(*/DATA_DE_ENTREGA/*)*/;
             venda_txv_dataentrega.setText(dataent);
         }
     }
@@ -704,7 +717,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
         if (!NumPedido.equals("0")) {
             Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
             Bundle params = new Bundle();
-            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+            params.putString(getString(R.string.intent_telainvocada), "CadastroPedidos");
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
             params.putString(getString(R.string.intent_usuario), usuario);
@@ -720,7 +733,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
         } else {
             Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
             Bundle params = new Bundle();
-            params.putString("TELA_QUE_CHAMOU", "VENDER_PRODUTOS");
+            params.putString(getString(R.string.intent_telainvocada), "CadastroPedidos");
             params.putString(getString(R.string.intent_codvendedor), sCodVend);
             params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
             params.putInt(getString(R.string.intent_codcliente), CLI_CODIGO);
@@ -919,6 +932,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_numpedido), NumPedido);
+            params.putString(getString(R.string.intent_telainvocada),"CadastroPedidos");
             Lista_produtos.putExtras(params);
             startActivity(Lista_produtos);
             return;
@@ -927,6 +941,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_numpedido), NumPedido);
+            params.putString(getString(R.string.intent_telainvocada),"CadastroPedidos");
             Lista_produtos.putExtras(params);
             startActivity(Lista_produtos);
             return;
@@ -949,6 +964,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                 it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
                 it.putExtra("CLI_CODIGO", CLI_CODIGO);
                 it.putExtra("AtuPedido", AtuPed);
+                it.putExtra(getString(R.string.intent_telainvocada),"CadastroPedidos");
                 it.putExtra("ChavePedido", Chave_Venda);
                 startActivity(it);
             } else {
@@ -959,6 +975,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             Intent it = new Intent(getBaseContext(), ConfPagamento.class);
             it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
             it.putExtra("CLI_CODIGO", CLI_CODIGO);
+            it.putExtra(getString(R.string.intent_telainvocada),"CadastroPedidos");
             startActivity(it);
         } else if (confBean.getConf_valor_recebido() != null) {
             Double ValorVENDA = TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue();

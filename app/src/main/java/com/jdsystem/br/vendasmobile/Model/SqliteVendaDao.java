@@ -432,6 +432,7 @@ public class SqliteVendaDao {
             while (cursor.moveToNext()) {
 
                 SqliteVendaCBean vendac = new SqliteVendaCBean();
+                vendac.setVendac_id(cursor.getInt(cursor.getColumnIndex(vendac.CODIGO_DA_VENDA)));
                 vendac.setVendac_chave(cursor.getString(cursor.getColumnIndex(vendac.CHAVE_DA_VENDA)));
                 vendac.setVendac_datahoravenda(cursor.getString(cursor.getColumnIndex(vendac.DATA_HORA_DA_VENDA)));
                 vendac.setVendac_previsaoentrega(cursor.getString(cursor.getColumnIndex(vendac.PREVISAO_ENTREGA)));
@@ -448,6 +449,8 @@ public class SqliteVendaDao {
                 vendac.setVendac_latitude(cursor.getDouble(cursor.getColumnIndex(vendac.LATITUDE)));
                 vendac.setVendac_longitude(cursor.getDouble(cursor.getColumnIndex(vendac.LONGITUDE)));
                 vendac.setObservacao(cursor.getString(cursor.getColumnIndex(vendac.OBSERVACAO)));
+                vendac.setIntegrado(cursor.getString(cursor.getColumnIndex(vendac.INTEGRADO)));
+                vendac.setNumPedErp(cursor.getInt(cursor.getColumnIndex(vendac.PEDIDOERP)));
 
                 lista_registros_vendaC.add(vendac);
             }

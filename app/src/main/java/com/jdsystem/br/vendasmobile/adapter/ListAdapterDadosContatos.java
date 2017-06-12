@@ -4,23 +4,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.jdsystem.br.vendasmobile.act_TH_dadoscontato;
-import com.jdsystem.br.vendasmobile.act_TH_horarios_contatos;
-import com.jdsystem.br.vendasmobile.act_TH_obscontato;
-import com.jdsystem.br.vendasmobile.act_TH_produtos_contatos;
+import com.jdsystem.br.vendasmobile.TH_DadosContato;
+import com.jdsystem.br.vendasmobile.TH_HorariosXContatos;
+import com.jdsystem.br.vendasmobile.TH_ObsContato;
+import com.jdsystem.br.vendasmobile.TH_ProdutosXContatos;
 
 /**
  * Created by WKS22 on 28/03/2017.
  */
 
-public class DadosContatosAdapter extends FragmentStatePagerAdapter {
+public class ListAdapterDadosContatos extends FragmentStatePagerAdapter {
 
     CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
     int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
 
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public DadosContatosAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
+    public ListAdapterDadosContatos(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
         super(fm);
 
         this.Titles = mTitles;
@@ -36,14 +36,14 @@ public class DadosContatosAdapter extends FragmentStatePagerAdapter {
         if (position == 0) // if the position is 0 we are returning the First tab
         {
 
-            return new act_TH_dadoscontato();
+            return new TH_DadosContato();
         } else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
-            return new act_TH_obscontato();
+            return new TH_ObsContato();
         } else if (position == 2) {
-            return new act_TH_produtos_contatos();
+            return new TH_ProdutosXContatos();
         } else {
-            return new act_TH_horarios_contatos();
+            return new TH_HorariosXContatos();
         }
 
     }

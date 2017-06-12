@@ -313,15 +313,15 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 E.toString();
             }
         } else if (flag == 0 && numPedido == null) {
-            codProd = "";
+            /*codProd = "";
 
             iPosition = position;
-            /*new Thread() {
-                public void run() {*/
+            new Thread() {
+                public void run() {
                     try {
                         ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
-                        //String codProd = adapter.ChamaDados(position).trim();
+                        String codProd = adapter.ChamaDados(position).trim();
                         CodProdExt = adapter.ChamaCodItemExt(position);
                         Intent intentp = new Intent(getActivity(), DadosProduto.class);
                         Bundle params = new Bundle();
@@ -332,17 +332,17 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                         params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
                         intentp.putExtras(params);
                         startActivity(intentp);
-                        //getActivity().finish();
+                        getActivity().finish();
                     } catch (Exception e) {
                         e.toString();
                     }
-                    /*activity.runOnUiThread(new Runnable() {
+                    activity.runOnUiThread(new Runnable() {
                         public void run() {
 
                         }
-                    });*/
-              //  }
-            //}.start();
+                    });
+                }
+            }.start();*/
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             codProd = adapter.ChamaDados(position).trim();

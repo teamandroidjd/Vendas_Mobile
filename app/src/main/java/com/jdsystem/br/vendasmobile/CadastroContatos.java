@@ -1305,7 +1305,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
     public void onBackPressed() {
         excluiBaseTempCadastroContatos(this);
         if (telaInvocada != null) {
-            if (telaInvocada.equals("act_TH_contclie")) {
+            if (telaInvocada.equals("TH_ContClie")) {
 
                 Intent cadcont = new Intent(CadastroContatos.this, DadosCliente.class);
                 Bundle params = new Bundle();

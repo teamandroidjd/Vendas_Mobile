@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by hp1 on 21-01-2015.
  */
-public class act_TH_dadosclie extends Fragment {
+public class TH_DadosClie extends Fragment {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;

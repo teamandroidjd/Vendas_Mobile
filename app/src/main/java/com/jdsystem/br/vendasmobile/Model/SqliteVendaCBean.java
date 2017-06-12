@@ -23,12 +23,12 @@ public class SqliteVendaCBean {
     public static String VALOR_DA_VENDA = "VALORTOTAL";
     public static String DESCONTO = "VLDESCONTO";
     public static String PERCDESCONTO = "PERCDESCO";
-    // public static String PESO_TOTAL_DOS_PRODUTOS = "vendac_pesototal";
     public static String VENDA_ENVIADA_SERVIDOR = "STATUS";
     public static String LATITUDE = "LATITUDEPEDIDO";
     public static String LONGITUDE = "LONGITUDEPEDIDO";
     public static String OBSERVACAO = "OBS";
     public static String INTEGRADO = "FLAGINTEGRADO";
+    public static String PEDIDOERP = "NUMPEDIDOERP";
     public List<SqliteVendaDBean> itens_da_venda;
     private Integer vendac_id;
     private String vendac_chave;
@@ -53,6 +53,7 @@ public class SqliteVendaCBean {
     private String Integrado;
     private String CodEmpresa;
     private String CodVendedor;
+    private int numPedidoErp;
 
     public SqliteVendaCBean() {
         this.itens_da_venda = new ArrayList<SqliteVendaDBean>();
@@ -247,6 +248,15 @@ public class SqliteVendaCBean {
 
     public void setVendac_longitude(double vendac_longitude) {
         this.vendac_longitude = vendac_longitude;
+    }
+
+    public int getNumPedErp(){
+        return numPedidoErp;
+    }
+
+    public void setNumPedErp (int numPedErp){
+        this.numPedidoErp = numPedErp;
+
     }
 
     public BigDecimal getTotal() {

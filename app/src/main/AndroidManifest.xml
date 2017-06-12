@@ -96,7 +96,8 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".actFiltroPeriodoPedidos"
-            android:label="Filtro por emissão"
+            android:label="Filtro por Emissão"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ConsultaContatos"
@@ -126,8 +127,8 @@
         <activity android:name=".CadastroAgenda"
             android:label="Cadastro de agendamento"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden"
-        />
+            android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".TH_ClientesXVendas"></activity>
     </application>
 
 </manifest>

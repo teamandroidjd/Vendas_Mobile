@@ -28,7 +28,7 @@ import java.util.HashMap;
 /**
  * Created by hp1 on 21-01-2015.
  */
-public class act_TH_contclie extends Fragment {
+public class TH_ContClie extends Fragment {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public ArrayAdapter<String> adapter;
@@ -84,7 +84,7 @@ public class act_TH_contclie extends Fragment {
                 params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                 params.putInt(getString(R.string.intent_codcliente), Integer.parseInt(CodCliente));
                 params.putString(getString(R.string.intent_nomerazao), NomeCliente);
-                params.putString(getString(R.string.intent_telainvocada), "act_TH_contclie");
+                params.putString(getString(R.string.intent_telainvocada), "TH_ContClie");
                 i.putExtras(params);
                 startActivity(i);
                 getActivity().finish();

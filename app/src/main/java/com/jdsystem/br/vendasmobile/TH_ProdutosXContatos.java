@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * Created by WKS22 on 28/03/2017.
  */
 
-public class act_TH_produtos_contatos extends Fragment {
+public class TH_ProdutosXContatos extends Fragment {
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
     int sCodContato, sCodContatoExt;

@@ -19,12 +19,14 @@ public class RateDialogPlayStoreFrag extends RateDialogFrag {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rate_dialog_play_store, container);
+        View bt = view.findViewById(R.id.bt_yes);
+        bt.setOnClickListener(this);
         return view;
     }
 
     @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.bt_yes) {
+    public void onClick(View view) {
+        if (view.getId() == R.id.bt_yes) {
             String packageName = getActivity().getPackageName();
             Intent it;
             try {

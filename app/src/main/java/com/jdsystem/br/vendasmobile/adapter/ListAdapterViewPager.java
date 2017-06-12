@@ -8,9 +8,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.jdsystem.br.vendasmobile.act_TH_contclie;
-import com.jdsystem.br.vendasmobile.act_TH_dadosclie;
-import com.jdsystem.br.vendasmobile.act_TH_obsclie;
+import com.jdsystem.br.vendasmobile.TH_ClientesXVendas;
+import com.jdsystem.br.vendasmobile.TH_ContClie;
+import com.jdsystem.br.vendasmobile.TH_DadosClie;
+import com.jdsystem.br.vendasmobile.TH_ObsClie;
 
 /**
  * Created by hp1 on 21-01-2015.
@@ -37,12 +38,14 @@ public class ListAdapterViewPager extends FragmentStatePagerAdapter {
         if (position == 0) // if the position is 0 we are returning the First tab
         {
 
-            return new act_TH_dadosclie();
+            return new TH_DadosClie();
         } else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
-            return new act_TH_contclie();
+            return new TH_ContClie();
+        } else if (position == 2) {
+            return new TH_ObsClie();
         } else {
-            return new act_TH_obsclie();
+            return new TH_ClientesXVendas();
         }
 
 

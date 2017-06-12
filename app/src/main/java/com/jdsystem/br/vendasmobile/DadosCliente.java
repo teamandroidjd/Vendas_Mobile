@@ -20,8 +20,8 @@ public class DadosCliente extends AppCompatActivity {
     ViewPager pager;
     ListAdapterViewPager adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[] = {"Dados", "Contatos", "obs"};
-    int Numboftabs = 3;
+    CharSequence Titles[] = {"Dados", "Contatos", "obs", "Pedidos"};
+    int Numboftabs = 4;
     private String DocClie;
     private String sCodVend;
     private String URLPrincipal;
