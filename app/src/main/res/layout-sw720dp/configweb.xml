@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,6 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/actionBarConfigWeb"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -26,7 +27,7 @@
         android:id="@+id/act_configweb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="64dp"
+        android:layout_below="@+id/actionBarConfigWeb"
         android:background="@drawable/img_fundo_splash">
 
         <TextView
@@ -303,4 +304,4 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/tabela" />
     </RelativeLayout>
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

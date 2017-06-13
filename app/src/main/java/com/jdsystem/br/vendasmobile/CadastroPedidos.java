@@ -63,7 +63,7 @@ import java.util.Locale;
 import java.util.Random;
 
 
-public class  CadastroPedidos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
+public class CadastroPedidos extends Activity implements View.OnKeyListener, View.OnFocusChangeListener, Runnable {
 
     public static final String DATA_ENT = "DATA DE ENTREGA";
     public static final String CONFIG_HOST = "CONFIG_HOST";
@@ -85,7 +85,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
     private ListView ListView_ItensVendidos;
     private List<SqliteVendaD_TempBean> itens_temp = new ArrayList<>();
     private List<SqliteVendaDBean> itens_venda = new ArrayList<>();
-    private EditText venda_txt_desconto, edtprecovend;
+    private EditText venda_txt_desconto, edtprecovend, obspedido;
     private Double DESCONTO_PADRAO_VENDEDOR, qtdestoque, qtdminvend;
     private SimpleDateFormat dateFormatterBR, dateFormatterUSA;
     private DatePickerDialog datePicker;
@@ -257,6 +257,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                 if (!verifica_limite_desconto()) {
                     return;
                 }
+                setDateTimeField();
                 datePicker.setTitle("Entrega Prevista");
                 datePicker.show();
             }
@@ -279,7 +280,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
         }
     }
 
-    protected void consultaHistoricoVendas(View v){
+    protected void consultaHistoricoVendas(View v) {
         Intent i = new Intent(this, DadosCliente.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), sCodVend);
@@ -287,7 +288,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
         params.putString(getString(R.string.intent_usuario), usuario);
         params.putString(getString(R.string.intent_senha), senha);
-        params.putString(getString(R.string.intent_codcliente),String.valueOf(CLI_CODIGO));
+        params.putString(getString(R.string.intent_codcliente), String.valueOf(CLI_CODIGO));
         i.putExtras(params);
         startActivity(i);
     }
@@ -349,18 +350,18 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
 
     private void incluirobs() {
         @SuppressLint("InflateParams") View view = (LayoutInflater.from(CadastroPedidos.this)).inflate(R.layout.input_obs_pedido, null);
-        final EditText userInput = (EditText) view.findViewById(R.id.inputobspedido);
+        obspedido = (EditText) view.findViewById(R.id.inputobspedido);
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CadastroPedidos.this);
         alertBuilder.setView(view);
 
         if (!ObsPedido.equals("")) {
-            userInput.setText(ObsPedido);
+            obspedido.setText(ObsPedido);
         }
         alertBuilder.setCancelable(true)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ObsPedido = String.valueOf(userInput.getText());
+                        ObsPedido = String.valueOf(obspedido.getText());
                     }
                 });
         dialogobs = alertBuilder.create();
@@ -932,7 +933,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_numpedido), NumPedido);
-            params.putString(getString(R.string.intent_telainvocada),"CadastroPedidos");
+            params.putString(getString(R.string.intent_telainvocada), "CadastroPedidos");
             Lista_produtos.putExtras(params);
             startActivity(Lista_produtos);
             return;
@@ -941,7 +942,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             Intent Lista_produtos = new Intent(getBaseContext(), ConsultaProdutos.class);
             Bundle params = new Bundle();
             params.putString(getString(R.string.intent_numpedido), NumPedido);
-            params.putString(getString(R.string.intent_telainvocada),"CadastroPedidos");
+            params.putString(getString(R.string.intent_telainvocada), "CadastroPedidos");
             Lista_produtos.putExtras(params);
             startActivity(Lista_produtos);
             return;
@@ -964,7 +965,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
                 it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
                 it.putExtra("CLI_CODIGO", CLI_CODIGO);
                 it.putExtra("AtuPedido", AtuPed);
-                it.putExtra(getString(R.string.intent_telainvocada),"CadastroPedidos");
+                it.putExtra(getString(R.string.intent_telainvocada), "CadastroPedidos");
                 it.putExtra("ChavePedido", Chave_Venda);
                 startActivity(it);
             } else {
@@ -975,7 +976,7 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
             Intent it = new Intent(getBaseContext(), ConfPagamento.class);
             it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
             it.putExtra("CLI_CODIGO", CLI_CODIGO);
-            it.putExtra(getString(R.string.intent_telainvocada),"CadastroPedidos");
+            it.putExtra(getString(R.string.intent_telainvocada), "CadastroPedidos");
             startActivity(it);
         } else if (confBean.getConf_valor_recebido() != null) {
             Double ValorVENDA = TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue();
@@ -2833,5 +2834,43 @@ public class  CadastroPedidos extends Activity implements View.OnKeyListener, Vi
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        try {
+            outState.putBoolean("obs", dialogobs.isShowing());
+        }catch (Exception e){
+            e.toString();
+        }
+        try {
+            outState.putBoolean("dtentrega", datePicker.isShowing());
+        }catch (Exception e){
+            e.toString();
+        }
+        try {
+            outState.getString("textoobs", obspedido.getText().toString());
+        }catch (Exception e){
+            e.toString();
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState.getBoolean("obs")) {
+            incluirobs();
+        }
+        if (savedInstanceState.getBoolean("dtentrega")) {
+            datePicker.setTitle("Entrega Prevista");
+            datePicker.show();
+        }
+        try {
+            obspedido.setText(savedInstanceState.getString("textoobs"));
+        } catch (Exception e) {
+            e.toString();
+        }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/img_fundo_splash"
@@ -12,6 +12,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/actionBarLogin"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -27,7 +28,7 @@
 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginTop="63dp"
+        android:layout_below="@+id/actionBarLogin"
         android:layout_gravity="center"
         android:orientation="vertical">
 
@@ -164,4 +165,4 @@
 
     </RelativeLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

@@ -94,9 +94,11 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
             }
         }
-        spUF.setOnItemSelectedListener(CadastroClientes.this);
-        spCidade.setOnItemSelectedListener(CadastroClientes.this);
-        spBairro.setOnItemSelectedListener(CadastroClientes.this);
+        if (savedInstanceState == null) {
+            spUF.setOnItemSelectedListener(CadastroClientes.this);
+            spCidade.setOnItemSelectedListener(CadastroClientes.this);
+            spBairro.setOnItemSelectedListener(CadastroClientes.this);
+        }
 
         PesqCEP = false;
         atuCidade = false;
@@ -1720,5 +1722,70 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("tipocliente", spTipoPessoa.getSelectedItemPosition());
+        outState.putInt("estadoUF", spUF.getSelectedItemPosition());
+        outState.putString("cidade", spCidade.getSelectedItem().toString());
+        //outState.putInt("cidade",spCidade.getSelectedItemPosition());
+        outState.putString("bairro", spBairro.getSelectedItem().toString());
+        //outState.putInt("bairro",spBairro.getSelectedItemPosition());
+        outState.putString("razasocial", nomerazao.getText().toString());
+        outState.putString("nomefan", nomefan.getText().toString());
+        outState.putString("nomecompleto", nomecompleto.getText().toString());
+        outState.putString("cnpj", cnpjcpf.getText().toString());
+        outState.putString("cpf", Edtcpf.getText().toString());
+        outState.putString("email", email.getText().toString());
+        outState.putString("ie", ie.getText().toString());
+        outState.putString("cep", cep.getText().toString());
+        outState.putString("endereco", endereco.getText().toString());
+        outState.putString("numero", numero.getText().toString());
+        outState.putString("complemento", Complemento.getText().toString());
+        outState.putString("tel1", tel1.getText().toString());
+        outState.putString("tel2", tel2.getText().toString());
+        outState.putString("rg", EdtRG.getText().toString());
+        outState.putString("obs", edtOBS.getText().toString());
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            spTipoPessoa.setSelection(savedInstanceState.getInt("tipocliente"));
+            PesqCEP = true;
+            NomeCidade = savedInstanceState.getString("cidade");
+            NomeBairro = savedInstanceState.getString("bairro");
+            spUF.setSelection(savedInstanceState.getInt("estadoUF"));
+            onItemSelected(spUF,null,savedInstanceState.getInt("estadoUF"),0);
+            onItemSelected(spCidade, null, 0, 0);
+            nomerazao.setText(savedInstanceState.getString("razasocial"));
+            nomefan.setText(savedInstanceState.getString("nomefan"));
+            nomecompleto.setText(savedInstanceState.getString("nomecompleto"));
+            cnpjcpf.setText(savedInstanceState.getString("cnpj"));
+            Edtcpf.setText(savedInstanceState.getString("cpf"));
+            email.setText(savedInstanceState.getString("email"));
+            ie.setText(savedInstanceState.getString("ie"));
+            cep.setText(savedInstanceState.getString("cep"));
+            endereco.setText(savedInstanceState.getString("endereco"));
+            numero.setText(savedInstanceState.getString("numero"));
+            Complemento.setText(savedInstanceState.getString("complemento"));
+            try {
+                tel1.setText(savedInstanceState.getString("tel1"));
+            } catch (Exception e) {
+                e.toString();
+            }
+            try {
+                tel2.setText(savedInstanceState.getString("tel2"));
+            } catch (Exception e) {
+                e.toString();
+            }
+            edtOBS.setText(savedInstanceState.getString("obs"));
+            EdtRG.setText(savedInstanceState.getString("rg"));
+
+        }
+        //super.onRestoreInstanceState(savedInstanceState);
     }
 }

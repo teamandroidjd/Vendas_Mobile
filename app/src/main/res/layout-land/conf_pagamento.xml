@@ -1,4 +1,4 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,6 +9,7 @@
 
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/actionBarCadFormPagamaneto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -25,6 +26,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/actionBarCadFormPagamaneto"
         android:layout_margin="2dp"
         android:orientation="vertical">
 
@@ -32,7 +34,6 @@
             android:id="@+id/lnr1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="52dp"
             android:orientation="horizontal">
 
             <TextView
@@ -120,24 +121,6 @@
         </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/conf_txvlabelvalorrecebido"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/scrollView"
-            android:text="Valor recebido:"
-            android:textColor="@color/branco"
-            android:textStyle="bold"
-            android:visibility="invisible" />
-
-        <EditText
-            android:id="@+id/conf_txtvalorrecebido"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/conf_txvlabelvalorrecebido"
-            android:inputType="numberDecimal"
-            android:visibility="invisible" />
-
         <Button
             android:id="@+id/btnsalvarformpgto"
             android:layout_width="match_parent"
@@ -162,4 +145,4 @@
             android:src="@drawable/fab_add" />
 
     </RelativeLayout>
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

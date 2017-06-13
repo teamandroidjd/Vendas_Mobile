@@ -45,14 +45,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 
-public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener, Spinner.OnItemSelectedListener {
+public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSelectedListener {
 
-    public static final String DADOS_PG = "DADOS DO PAGAMENTO";
+    //public static final String DADOS_PG = "DADOS DO PAGAMENTO";
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
-    private EditText conf_txtqtdparcelas, conf_txtvalorrecebido, edtdiasvenc;
+    private EditText conf_txtqtdparcelas, edtdiasvenc;
     private TextView conf_txvvalorvenda, txvdatavenc, conf_txvlabelparcelas, txvValorRestante;
     private Spinner conf_spfpgto;
     FloatingActionButton btnincluirpagamento;
@@ -73,6 +74,8 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     SQLiteDatabase DB;
     List<String> DadosList = new ArrayList<String>();
     Toolbar toolbar;
+    private AlertDialog.Builder builderformpgto, builderalterexcluiparc;
+    private AlertDialog.Builder alertaformpgto, alertaalterexcluiparc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +90,6 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
         declaraObjetosListeners();
         carregarpreferencias();
-        //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         Intent INTENT_SOBTOTAL_VENDA = getIntent();
         SUBTOTAL_VENDA = INTENT_SOBTOTAL_VENDA.getDoubleExtra("SUBTOTAL_VENDA", 0);
@@ -96,12 +98,12 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         ChavePedido = INTENT_CLI_CODIGO.getStringExtra("ChavePedido");
         AtuPedido = INTENT_CLI_CODIGO.getBooleanExtra("AtuPedido", false);
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
-        conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
         txvValorRestante.setVisibility(View.GONE);
 
         carregaformapagamento();
         atualizalistviewparcelas();
         obterConfiguracoesPagamento();
+
     }
 
     private void carregarpreferencias() {
@@ -110,11 +112,11 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
     }
 
     public void incluirformapagamento(final View view) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Atenção");
-        builder.setCancelable(true);
-        builder.setMessage("Deseja incluir parcela?");
-        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+        builderformpgto = new AlertDialog.Builder(this);
+        builderformpgto.setTitle("Atenção");
+        builderformpgto.setCancelable(true);
+        builderformpgto.setMessage("Deseja incluir parcela?");
+        builderformpgto.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         carregarparcelas();
                         int parcelas = 0;
@@ -128,9 +130,9 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
                         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.input_form_pgto, null);
-                        final AlertDialog.Builder alerta = new AlertDialog.Builder(ConfPagamento.this);
-                        alerta.setCancelable(false);
-                        alerta.setView(v);
+                        alertaformpgto = new AlertDialog.Builder(ConfPagamento.this);
+                        alertaformpgto.setCancelable(false);
+                        alertaformpgto.setView(v);
 
 
                         TextView desctotalvend = (TextView) v.findViewById(R.id.txvdescparcela);
@@ -207,7 +209,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                         });
 
                         final int finalParcelas = parcelas;
-                        alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                        alertaformpgto.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if (AtuPedido) {
@@ -278,25 +280,25 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                             }
                         });
 
-                        alerta.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        alertaformpgto.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 atualizalistviewparcelas();
                             }
                         });
 
-                        alerta.show();
+                        alertaformpgto.show();
 
                     }
                 }
         );
-        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+        builderformpgto.setNegativeButton("Não", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         //atualizalistviewparcelas();
                     }
                 }
         );
-        builder.create().show();
+        builderformpgto.show();
 
 
     }
@@ -566,25 +568,6 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
 
     }
 
-    @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-        switch (checkedId) {
-
-            /*case R.id.conf_rbdinheiro:
-                RECEBIMENTO_DIN_CAR_CHQ = getString(R.string.confpagamento_dinheiro);
-                conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-                //Util.msg_toast_personal(getBaseContext(), "dinheiro", Util.ALERTA);
-                break;
-
-              case R.id.conf_rbboleto:
-                RECEBIMENTO_DIN_CAR_CHQ = getString(R.string.confpagamento_boleto);
-                conf_txtvalorrecebido.setText(new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString());
-                //Util.msg_toast_personal(getBaseContext(), "cartao", Util.ALERTA);
-                break;*/
-        }
-    }
-
     public void calcular_valor_parcela(CharSequence valor_digitado, int tipo) throws ParseException {
         if (tipo == 1) {
             flag = 0;
@@ -760,7 +743,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
             });
 
         }
-        if(!itens_temp.isEmpty()){
+        if (!itens_temp.isEmpty()) {
             if (AtuPedido) {
                 try {
                     Cursor cursorconfpagamento = DB.rawQuery("SELECT conf_valor_recebido FROM CONFPAGAMENTO WHERE vendac_chave = '" + ChavePedido + "' AND conf_temp = 'N' AND CODPERFIL = " + idPerfil, null);
@@ -778,7 +761,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                         if (vltotal != SUBTOTAL_VENDA) {
                             BigDecimal vlrestante = subtotal.subtract(BigDecimal.valueOf(vltotal));
                             txvValorRestante.setVisibility(View.VISIBLE);
-                            txvValorRestante.setText(String.valueOf("Valor restante: "+vlrestante));
+                            txvValorRestante.setText(String.valueOf("Valor restante: " + vlrestante));
                             txvValorRestante.setTextColor(Color.RED);
                         }
                     }
@@ -806,7 +789,7 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
                         if (vltotal != SUBTOTAL_VENDA) {
                             BigDecimal vlrestante = subtotal.subtract(BigDecimal.valueOf(vltotal));
                             txvValorRestante.setVisibility(View.VISIBLE);
-                            txvValorRestante.setText(String.valueOf("Valor restante: "+vlrestante).replace(".",","));
+                            txvValorRestante.setText(String.valueOf("Valor restante: " + vlrestante).replace(".", ","));
                             txvValorRestante.setTextColor(Color.RED);
                         }
                     }
@@ -1056,7 +1039,6 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         conf_spfpgto.setOnItemSelectedListener(this);
         conf_txtqtdparcelas = (EditText) findViewById(R.id.conf_txtqtdparcelas);
         btnincluirpagamento = (FloatingActionButton) findViewById(R.id.btnincluirpagamento);
-        conf_txtvalorrecebido = (EditText) findViewById(R.id.conf_txtvalorrecebido);
         ListView_formapgto = (ListView) findViewById(R.id.lstparcelas);
 
         conf_txtqtdparcelas.addTextChangedListener(new TextWatcher() {
@@ -1101,9 +1083,61 @@ public class ConfPagamento extends AppCompatActivity implements RadioGroup.OnChe
         if (!AtuPedido) {
             new SqliteConfPagamentoDao(this).excluir_CONFPAGAMENTO();
             finish();
-        }else {
+        } else {
             finish();
         }
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("tipopgto", conf_spfpgto.getSelectedItemPosition());
+        try {
+            outState.putString("qtdparcela", conf_txtqtdparcelas.getText().toString());
+        } catch (Exception e) {
+            e.toString();
+        }
+        try{
+            outState.putBoolean("builderformpgto",builderformpgto.show().isShowing());
+        }catch (Exception e ){
+            e.toString();
+        }
+        try{
+            outState.putBoolean("alertaformpgto",alertaformpgto.show().isShowing());
+        }catch (Exception e){
+            e.toString();
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+        conf_spfpgto.setSelection(savedInstanceState.getInt("tipopgto"));
+        String qtdparc = savedInstanceState.getString("qtdparcela");
+        if(!qtdparc.equals("")) {
+            try {
+                flag = 1;
+                conf_txtqtdparcelas.setText(savedInstanceState.getString("qtdparcela"));
+                atualizalistviewparcelas();
+            } catch (Exception e) {
+                e.toString();
+            }
+        }
+        try {
+            if (savedInstanceState.getBoolean("builderformpgto")){
+                builderformpgto.show();
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+        try{
+            if(savedInstanceState.getBoolean("alertaformpgto")){
+                alertaformpgto.show();
+            }
+        }catch (Exception e){
+            e.toString();
+        }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }
