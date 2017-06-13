@@ -1,0 +1,191 @@
+<resources>
+    <string name="app_name">Força de Vendas</string>
+    <string name="app_namesair">Força de Vendas</string>
+    <string name="action_settings">Configurações</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+
+    <!-- Example settings for Data & Sync -->
+
+    <!-- Example settings for Notifications -->
+    <string name="login">Login</string>
+    <string name="search_hint">Pesquisar</string>
+
+
+    <string name="wait">Aguarde</string>
+    <string name="password">ChaveAcesso</string>
+    <string name="failure_communicate">Falha de comunicação com o servidor. Tente novamente!</string>
+    <string name="failed_return">Falha no retorno das informações do servidor. Tente novamente!</string>
+    <string name="no_connection">Sem conexão com a internet. Verifique!</string>
+    <string name="login_no_connection">Sem conexão com a Internet! O Usuário será autenticado localmente. Não havendo possibilidade de sincronização de informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo.</string>
+    <string name="msg_no_connection_sinc">Atenção! Sem conexão com a Internet. Não há possibilidade de sincronização de informação com o servidor até que a conexão com a internet seja restabelecida em seu dispositivo. Clique em OK para retornar ou em Configurações para ativar a internet</string>
+    <string name="no_new_request">Nenhum pedido novo para ser enviado</string>
+    <string name="json_file_mount_error">Erro na montagem do arquivo Json</string>
+    <string name="synchronization">Sincronização</string>
+    <string name="synchronize_registered_customer">Deseja sincronizar o cliente cadastrado?</string>
+    <string name="cancel_customer_registration">Deseja realmente cancelar o cadasto do cliente?</string>
+    <string name="no_contacts_found">Nenhum contato encontrado. Verifique!</string>
+    <string name="confpagamento_avista">À VISTA</string>
+    <string name="confpagamento_parcelado">PARCELADO</string>
+    <string name="confpagamento_dinheiro">DINHEIRO</string>
+    <string name="confpagamento_boleto">BOLETO</string>
+
+    <!-- Mensagens de validação-->
+
+    <string name="enter_corporate_name">Digite a razão social!</string>
+    <string name="enter_name_fantasia">Digite o nome fantasia!</string>
+    <string name="enter_CNPJ">Digite o CNPJ!</string>
+    <string name="enter_full_name">Digite o nome completo!</string>
+    <string name="enter_identity">Digite a identidade!</string>
+    <string name="enter_backstreet">Digite o logradouro!</string>
+    <string name="enter_street_number">Digite o número da rua!</string>
+    <string name="enter_host">Digite o caminho do host!</string> <!-- Utilizado somente na classe ConfigWeb -->
+    <string name="enter_username">Digite o nome do usuário!</string>
+    <string name="enter_password">Digite a senha!</string>
+    <string name="invalid_user_password">Usuário ou senha inválido. Verifique!</string>
+    <string name="limit_users">Limite de usuários atingido ou não habilitado. Entre em contato com a empresa.</string>
+    <string name="not_validate_license">Não foi possivel validar a licença. Tente novamente!</string>
+    <string name="not_valid_license_failure_communicate">Não foi possível validar a licença devido a uma falha de comunicação com o servidor. Tente novamente!</string>
+    <string name="zip_code_not_found">CEP não Encontrado. Verifique!</string>
+    <string name="CEP_not_found_database">CEP não encontrado na base de dados. Verifique se está correto e tente novamente.</string>
+    <string name="CEP_incomplete">CEP incompleto. Verifique!</string>
+    <string name="invalid_CPF">CPF inválido. Verifique!</string>
+    <string name="invalid_CNPJ">CNPJ inválido. Verifique!</string>
+    <string name="enter_CEP">Digite o CEP!</string>
+    <string name="data_inicialfinal_invalida">Data inicial maior que a data final. Verifique!</string>
+    <string name="enter_quntity">Informe a quantidade de parcelas.</string>
+    <string name="item_sem_estoque">Item sem quantidade disponível. Verifique!</string>
+
+    <!-- Mensagens de clientes-->
+
+    <string name="customer_not_sent">Cliente não enviado. Verifique!</string>
+    <string name="no_new_clients">Nenhum cliente novo para ser enviado.</string>
+    <string name="alertsyncclients">Não existe nenhum cliente sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de dados e clique no botão Sincronizar.</string>
+    <string name="customer_without_purchase_permission">Cliente sem permissão de compra.Verifique!</string>
+    <string name="primeira_sync_clientes">Esta é sua primeira sincronização de clientes. Esse processo pode demorar alguns minutos.</string>
+    <string name="msg_noclient">Nenhum cliente encontrando. Verifique!</string>
+
+    <!--Mensagens de Contatos -->
+
+    <string name="primeira_sync_contatos">Esta é sua primeira sincronização de contatos. Esse processo pode demorar alguns minutos.</string>
+    <string name="no_sync_cont">Nenhum contato sincronizado. Verifique!</string>
+    <string name="alert_sync_contacts">Não existe nenhum contato sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de Dados e clique no botão Sincronizar.</string>
+    <string name="syn_contatos_successfully">Contatos sincronizados com sucesso!</string>
+    <!-- Mensagens de itens-->
+
+    <string name="alertsyncproducts">Não existe nenhum item sincronizado. Favor, clique no botão SINCRONIZAR ou vá ao menu Sincronização de dados e clique no botão Sincronizar.</string>
+    <string name="no_products_found">Nenhum iten encontrado. Verifique!</string>
+    <string name="primeira_sync_itens">Esta é sua primeira sincronização de itens. Esse processo pode demorar alguns minutos.</string>
+
+
+    <!-- Mensagens de sucesso no processo-->
+
+    <string name="syn_clients_successfully">Clientes sincronizados com sucesso!</string>
+    <string name="license_validated">Licença validada com sucesso!</string>
+    <string name="newcustomers_successfully">Novos clientes enviados com sucesso!</string>
+    <string name="sync_products_successfully">Itens sincronizados com sucesso!</string>
+
+    <!-- Mensagens de sincronização e leitura de dados-->
+
+    <string name="sync_clients">Sincronizando clientes...</string>
+    <string name="sync_products">Sincronizando itens...</string>
+    <string name="sync_contacts">Sincronizando contatos...</string>
+    <string name="loading_products">Carregando itens...</string>
+    <string name="loading_clients">Carregando clientes...</string>
+    <string name="updating_city">Atualizando cadastro de cidades/bairros...</string>
+    <string name="sending_orders">Enviando pedidos...</string>
+    <string name="sync_companies">Sincronizando empresas...</string>
+    <string name="updating_parameters">Atualizando parâmetros...</string>
+    <string name="updating_tables">Atualizando tabelas...</string>
+    <string name="updating_locks">Atualizando bloqueios...</string>
+    <string name="checking_user_password">Verificando usuário e senha...</string>
+    <string name="valid_license">Validando licença...</string>
+    <string name="loading_orders">Carregando pedidos...</string>
+    <string name="carregando_agendas">Carregando agendamentos...</string>
+    <string name="loadingcontacts">Carregando contatos...</string>
+    <string name="searchingcontacts">Buscando contatos...</string>
+    <string name="searchingclients">Buscando clientes...</string>
+    <string name="updating_customer_registration">Enviando novos cadastros de clientes...</string>
+    <string name="updating_contacts">Enviando novos cadastros de contatos...</string>
+    <string name="searching_the_CEP_informed">Pesquisando o CEP informado...</string>
+    <string name="performing_filter">Realizando filtro...</string>
+
+    <!-- Utilizado somente nas Intent-->
+
+    <string name="intent_codvendedor">codvendedor</string>
+    <string name="intent_usuario">usuario</string>
+    <string name="intent_senha">senha</string>
+    <string name="intent_urlprincipal">urlPrincipal</string>
+    <string name="intent_listaclie">listaclie</string>
+    <string name="intent_codcliente">codCliente</string>
+    <string name="intent_codcliente_ext">codClienteExt</string>
+    <string name="intent_nomerazao">nomerazao</string>
+    <string name="intent_cad_contato">cadcont</string>
+    <string name="intent_codproduto">codproduto</string>
+    <string name="intent_datainicial">datainicial</string>
+    <string name="intent_datafinal">datafinal</string>
+    <string name="intent_situacaopedido">SitPedido</string>
+    <string name="intent_situacaoagenda">SitAgenda</string>
+    <string name="intent_nomesitagenda">NomeSitAgenda</string>
+    <string name="intent_codigoempresa">codempresa</string>
+    <string name="intent_flag">flag</string>
+    <string name="intent_numpedido">numpedido</string>
+    <string name="intent_chavepedido">chave</string>
+    <string name="intent_telainvocada">telainvocada</string>
+    <string name="intent_consultapedido">consultapedido</string>
+    <string name="intent_consultaagenda">consultaagenda</string>
+    <string name="intent_codcontato">codContato</string>
+    <string name="intent_nomecontato">nomecontato</string>
+    <string name="intent_numagenda">numagenda</string>
+    <string name="intent_codcontato_ext">codContatoExt</string>
+    <string name="intent_codcontato_externo">codContatoExterno</string>
+
+
+    <!-- Utilizado somente nas preferências-->
+
+    <string name="intent_prefs_chaveacesso">ChaveAcesso</string>
+    <string name="intent_prefs_host">host</string>
+    <string name="intent_prefs_perfil">idperfil</string>
+    <string name="intent_prefs_usuario">usuario</string>
+    <string name="intent_prefs_senha">senha</string>
+    <string name="intent_prefs_nomeempresa">nome</string>
+
+    <!--Utilizado para Contatos-->
+
+    <string name="title_novocontato">Novo Contato</string>
+    <string name="question_newcontact">Deseja cadastrar outro contato para este cliente?</string>
+    <string name="question_newcontact_contact">Deseja cadastrar outro contato?</string>
+
+    <string name="link_mapsjdsystem">https://www.google.com.br/maps/place/J+D+System/@-22.8909128,-43.1258554,17z/data=!3m1!4b1!4m5!3m4!1s0x9983c680f05473:0x9e54004d06d8e11c!8m2!3d-22.8909128!4d-43.1236667</string>
+
+    <string name="remove_hour">Remover horário</string>
+    <string name="remove_schedule">Deseja remover o horário agendado?</string>
+    <string name="sched_already_exist">Este horário já foi agendado anteriormente. Verifique!</string>
+    <string name="cancel_add_contact">Deseja cancelar a inclusão deste contato?</string>
+
+    <string name="remove_prod_cont">Remover produto relacionado à este contato?</string>
+    <string name="msg_delete_licença">Deseja realmente excluir essa licença? Ao excluir essa licença você estará excluindo todas informações existente atualmente referente a esse perfil no aplicativo.</string>
+    <string name="msg_logininvalido_part_1">Atenção! O Usuário ou a senha informada são inválidos ou não existe esse usuário</string>
+    <string name="msg_logininvalido_part_2">cadastrado neste aparelho. Caso seja a primeira utilização, é necessário se conectar online para que o aparelho cadastre esse usuário e posteriormente seja possível se conectar offline.Verifique essas informações e tente novamente.</string>
+
+    <string name="msg_comunicacaoservidor">Por favor, aguarde mais alguns instantes, estamos tentando comunicação com o servidor…</string>
+    <string name="msg_semcomunicacaoservidor">Atenção! Não foi possível obter resposta do servidor referente a validação das informações de atualização, neste caso o usuário será conectado porém até que seja restabelecida a comunicação com o servidor, não será possivel realizar nenhuma atualização ou transmissão de informações.</string>
+
+    <string name="msg_errorconsultaclie">Não foi possível realizar a consulta de cliente, pois não foram configurado os
+        parâmetros. Entre em contato com a </string>
+    <string name="msg_atention">Atenção!</string>
+    <string name="text_qtdregistro">Quantidade de registro:</string>
+    <string name="atualizando_formpgto">Atualizando condições de pagamento...</string>
+
+    <string name="main_inform">Permitindo que usuários frequentes de seu aplicativo
+        possam avalia-lo e assim, com boas avaliações, você
+        consiga ainda mais instalações para ele.
+    </string>
+
+
+</resources>

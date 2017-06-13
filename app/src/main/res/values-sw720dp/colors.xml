@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#02a2b6</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#04a3b6</color>
+    <color name="ColorFundo">#79ccd7</color>
+    <color name="colordescClie">#024149</color>
+    <color name="vermelho">#ff0000</color>
+    <color name="fastScrollBarColor">#ffcecece</color>
+    <color name="colorVerde">#0e660e</color>
+    <color name="branco">#ffffff</color>
+    <color name="preto">#000000</color>
+    <color name="colorGrey">#aaa</color>
+    <color name="azul">#FF0011FF</color>
+</resources>
