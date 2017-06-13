@@ -92,7 +92,7 @@ public class Localizacao extends AppCompatActivity {
         int codCidadeInt = 0, codCidadeExt = 0, codBairro = 0;
 
         try {
-            Cursor cursor = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
+            Cursor cursor = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade.toUpperCase() + "'", null);
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 codCidadeExt = cursor.getInt(cursor.getColumnIndex("CODCIDADE_EXT"));
@@ -104,7 +104,7 @@ public class Localizacao extends AppCompatActivity {
             e.toString();
         }
         try {
-            Cursor cursorBairros = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + codCidadeExt, null);
+            Cursor cursorBairros = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + codCidadeInt, null);
             cursorBairros.moveToFirst();
 
             if (cursorBairros.getCount() > 0) {
@@ -143,31 +143,6 @@ public class Localizacao extends AppCompatActivity {
         return codCidade;
     }
 
-    public int retornaPositionUf(Context ctx, String uf, int CodContatoInt) {
-        SQLiteDatabase DB = new ConfigDB(ctx).getReadableDatabase();
-        String sUF;
-        int codPositionUF = 0;
-        try {
-            Cursor cursor = DB.rawQuery("SELECT UF FROM CONTATO_TEMPORARIO", null);
-            cursor.moveToFirst();
-            if (cursor.getCount() > 0) {
-                sUF = cursor.getString(cursor.getColumnIndex("UF"));
-                //return codPositionUF;
-                List<String> arrayList =  Arrays.<String>asList(String.valueOf(R.array.uf));
-                int i=0;
-                do {
-                    i++;
-                }while(arrayList.get(i).toString().equals(sUF));
-            }
-
-
-        } catch (Exception e) {
-            e.toString();
-        }
-
-        return codPositionUF;
-    }
-
     public int retornaPosicaoCidade(Context ctx, String nomeCidade, String uf){
         int posicao = 0;
         String cidade = "";
@@ -186,5 +161,37 @@ public class Localizacao extends AppCompatActivity {
                 }
         }
             return posicao;
+    }
+
+    public int retornaPosicaoBairro(Context ctx, String nomeBairro, String uf, String nomeCidade){
+        int posicao = 0;
+        int codCidade = 0;
+        String bairro = "";
+        SQLiteDatabase DB = new ConfigDB(ctx).getReadableDatabase();
+
+        Cursor cursorCidades = DB.rawQuery("SELECT CIDADES.CODCIDADE, CIDADES.DESCRICAO " +
+                "FROM CIDADES " +
+                "WHERE CIDADES.DESCRICAO = '" + nomeCidade + "' ",null);
+        cursorCidades.moveToFirst();
+        if(cursorCidades.getCount()>0){
+            codCidade = cursorCidades.getInt(cursorCidades.getColumnIndex("CIDADES.CODCIDADE"));
+        }
+        cursorCidades.close();
+
+        Cursor cursor = DB.rawQuery("SELECT BAIRROS.DESCRICAO AS DESC " +
+                " FROM BAIRROS WHERE BAIRROS.CODCIDADE = '" + codCidade + "'", null);
+        cursor.moveToFirst();
+        if(cursor.getCount()>0) {
+            for (int i = 0;i<cursor.getCount();i++) {
+                bairro = cursor.getString(cursor.getColumnIndex("DESC"));
+                if(bairro.equals(nomeBairro)){
+                    posicao = i+1;
+                    break;
+                }
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        return posicao;
     }
 }

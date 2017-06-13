@@ -80,6 +80,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
         Thread thread = new Thread(ConsultaContatos.this);
         thread.start();
+
         FloatingActionButton CadContatos = (FloatingActionButton) findViewById(R.id.cadcontato);
         CadContatos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -333,13 +334,13 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
             try {
                 Cursor cursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.CODCONTATO_INT, CONTATO.CODPERFIL, CONTATO.NOME, " +
-                        "CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+                        "CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, CONTATO.CODCLIENTE, " +
                         "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
                         "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
                         "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
                         "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.FLAGINTEGRADO " +
                         "FROM CONTATO " +
-                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_EXT WHERE CONTATO.CODPERFIL = " + idPerfil + " " +
+                        "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT WHERE CONTATO.CODPERFIL = " + idPerfil + " " +
                         "ORDER BY NOME ", null);
                 cursorContatos.moveToFirst();
                 if (cursorContatos.getCount() > 0) {
@@ -360,6 +361,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         String flagIntegrado = cursorContatos.getString(cursorContatos.getColumnIndex("CONTATO.FLAGINTEGRADO"));
 
                         int codClieExt = cursorContatos.getInt(cursorContatos.getColumnIndex("CLIENTES.CODCLIE_EXT"));
+                        int codCliente = cursorContatos.getInt(cursorContatos.getColumnIndex("CONTATO.CODCLIENTE"));
                         String nomeCliente;
                         String tipoContato = cursorContatos.getString(cursorContatos.getColumnIndex("CONTATO.TIPO"));
                         if (tipoContato == null) {
@@ -373,7 +375,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                         String codContatoExt = cursorContatos.getString(cursorContatos.getColumnIndex("CONTATO.CODCONTATO_EXT"));
 
                         lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
-                                0, 0, codClieExt, nomeCliente, codContato, flagIntegrado, codContatoExt);
+                                0, codCliente, codClieExt, nomeCliente, codContato, flagIntegrado, codContatoExt);
                         DadosListContatos.add(lstcontatos);
                     } while (cursorContatos.moveToNext());
                     cursorContatos.close();
@@ -391,13 +393,13 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
             }
         } else {
             Cursor CursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.CODCONTATO_EXT, CONTATO.CODPERFIL, " +
-                    "CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, " +
+                    "CONTATO.NOME, CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, CONTATO.CODCLIENTE, " +
                     "CONTATO.TEL2, CONTATO.DOCUMENTO, CONTATO.DATA, CONTATO.CEP, " +
                     "CONTATO.ENDERECO, CONTATO.NUMERO, CONTATO.COMPLEMENTO, CONTATO.UF, " +
                     "CONTATO.CODVENDEDOR, CONTATO.BAIRRO, CONTATO.TIPO, " +
                     "CLIENTES.NOMERAZAO, CONTATO.CODCIDADE, CLIENTES.CODCLIE_EXT, CONTATO.CODCONTATO_INT, CONTATO.FLAGINTEGRADO " +
                     "FROM CONTATO " +
-                    "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_EXT " +
+                    "LEFT OUTER JOIN CLIENTES ON CONTATO.CODCLIENTE = CLIENTES.CODCLIE_INT " +
                     "WHERE (CONTATO.CODPERFIL = " + idPerfil + ") AND CONTATO.NOME LIKE '%" + editQuery + "%' OR CLIENTES.NOMERAZAO " +
                     "LIKE '%" + editQuery + "%'" +
                     " order by CONTATO.NOME ", null);
@@ -432,10 +434,11 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                     }
 
                     int codContato = CursorContatos.getInt(CursorContatos.getColumnIndex("CONTATO.CODCONTATO_INT"));
+                    int codCliente = CursorContatos.getInt(CursorContatos.getColumnIndex("CONTATO.CODCLIENTE"));
                     String codContatoExt = CursorContatos.getString(CursorContatos.getColumnIndex("CONTATO.CODCONTATO_EXT"));
 
                     lstcontatos = new Contatos(nome, cargo, email, tel1, tel2, null, null, null, null, null, null, 0, 0, null,
-                            0, 0, codClieExt, nomeCliente, codContato, flagIntegrado, codContatoExt);
+                            0, codCliente, codClieExt, nomeCliente, codContato, flagIntegrado, codContatoExt);
                     DadosListContatos.add(lstcontatos);
                 } while (CursorContatos.moveToNext());
             } else {
@@ -454,84 +457,87 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
     @Override
     public void run() {
-        if (flag == 0) {
-            try {
-                FragmentContatos frag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                Bundle params = new Bundle();
-                if (frag == null) {
-                    frag = new FragmentContatos();
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
-                    params.putInt(getString(R.string.intent_flag), flag);
-                    params.putString(getString(R.string.intent_usuario), usuario);
-                    params.putString(getString(R.string.intent_senha), senha);
-                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                    params.putString(getString(R.string.intent_telainvocada), telaInvocada);
-                    frag.setArguments(params);
-                    ft.commit();
-                } else {
-                    FragmentContatos newfrag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragB");
-                    Bundle newparams = new Bundle();
-                    if (newfrag == null) {
-                        newfrag = new FragmentContatos();
-                        FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
-                        newft.replace(R.id.rl_fragment_container2, newfrag, "mainFragB");
-                        newparams.putInt(getString(R.string.intent_flag), flag);
-                        newparams.putString(getString(R.string.intent_usuario), usuario);
-                        newparams.putString(getString(R.string.intent_senha), senha);
-                        newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
-                        newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                        newparams.putString(getString(R.string.intent_telainvocada), telaInvocada);
-                        newfrag.setArguments(newparams);
-                        newft.commit();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (flag == 0) {
+                    try {
+                        FragmentContatos frag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                        Bundle params = new Bundle();
+                        if (frag == null) {
+                            frag = new FragmentContatos();
+                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
+                            params.putInt(getString(R.string.intent_flag), flag);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                            frag.setArguments(params);
+                            ft.commit();
+                        } else {
+                            FragmentContatos newfrag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                            Bundle newparams = new Bundle();
+                            if (newfrag == null) {
+                                newfrag = new FragmentContatos();
+                                FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                                newft.replace(R.id.rl_fragment_container2, newfrag, "mainFragB");
+                                newparams.putInt(getString(R.string.intent_flag), flag);
+                                newparams.putString(getString(R.string.intent_usuario), usuario);
+                                newparams.putString(getString(R.string.intent_senha), senha);
+                                newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                newparams.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                                newfrag.setArguments(newparams);
+                                newft.commit();
+                            }
+
+                        }
+                    } catch (Exception E) {
+                        E.toString();
                     }
+                } else if (flag == 1) {
+                    try {
+                        FragmentContatos frag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                        Bundle params = new Bundle();
+                        if (frag == null) {
+                            frag = new FragmentContatos();
+                            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
+                            params.putInt(getString(R.string.intent_flag), flag);
+                            params.putString(getString(R.string.intent_usuario), usuario);
+                            params.putString(getString(R.string.intent_senha), senha);
+                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                            params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                            frag.setArguments(params);
+                            ft.commit();
+                        } else {
+                            FragmentContatos newfrag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragB");
+                            Bundle newparams = new Bundle();
+                            if (newfrag == null) {
+                                newfrag = new FragmentContatos();
+                                FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
+                                newft.replace(R.id.rl_fragment_container2, newfrag, "mainFragB");
+                                newparams.putInt(getString(R.string.intent_flag), flag);
+                                newparams.putString(getString(R.string.intent_usuario), usuario);
+                                newparams.putString(getString(R.string.intent_senha), senha);
+                                newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                newparams.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                                newfrag.setArguments(newparams);
+                                newft.commit();
+                            }
 
-                }
-            } catch (Exception E) {
-                E.toString();
-            }
-        } else if (flag == 1) {
-            try {
-                FragmentContatos frag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                Bundle params = new Bundle();
-                if (frag == null) {
-                    frag = new FragmentContatos();
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.rl_fragment_container2, frag, "mainFragA");
-                    params.putInt(getString(R.string.intent_flag), flag);
-                    params.putString(getString(R.string.intent_usuario), usuario);
-                    params.putString(getString(R.string.intent_senha), senha);
-                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                    params.putString(getString(R.string.intent_telainvocada), telaInvocada);
-                    frag.setArguments(params);
-                    ft.commit();
-                } else {
-                    FragmentContatos newfrag = (FragmentContatos) getSupportFragmentManager().findFragmentByTag("mainFragB");
-                    Bundle newparams = new Bundle();
-                    if (newfrag == null) {
-                        newfrag = new FragmentContatos();
-                        FragmentTransaction newft = getSupportFragmentManager().beginTransaction();
-                        newft.replace(R.id.rl_fragment_container2, newfrag, "mainFragB");
-                        newparams.putInt(getString(R.string.intent_flag), flag);
-                        newparams.putString(getString(R.string.intent_usuario), usuario);
-                        newparams.putString(getString(R.string.intent_senha), senha);
-                        newparams.putString(getString(R.string.intent_codvendedor), codVendedor);
-                        newparams.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                        newparams.putString(getString(R.string.intent_telainvocada), telaInvocada);
-                        newfrag.setArguments(newparams);
-                        newft.commit();
+                        }
+                    } catch (Exception E) {
+                        E.toString();
                     }
-
                 }
-            } catch (Exception E) {
-                E.toString();
-            }
-        }
-        if (pDialog.isShowing())
-            pDialog.dismiss();
 
+            }
+        });
     }
 }
 

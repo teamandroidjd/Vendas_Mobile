@@ -3,7 +3,9 @@ package com.jdsystem.br.vendasmobile.fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -48,15 +51,18 @@ import java.util.List;
  * Created by WKS22 on 29/11/2016.
  */
 
-public class FragmentPedido extends Fragment implements RecyclerViewOnClickListenerHack {
+public class FragmentPedido extends Fragment implements RecyclerViewOnClickListenerHack, Runnable {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int codclie_ext;
     String limitecred, bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte, URLPrincipal;
-    int idPerfil;
+    int idPerfil, runFlag;
     private RecyclerView mRecyclerView;
     private Context context = this.getActivity();
     private SQLiteDatabase DB;
+    String sStatus, sDataVenda, sNumPedido, sTotalVenda;
+    Handler handler = new Handler();
+    ProgressDialog eDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -214,70 +220,24 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                             if (selectedId > 0) {
                                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                                 if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
-                                    String sitclieenvio;
-                                    String pedidoendiado;
-                                    String sitcliexvend;
-                                    try {
-                                        Cursor cursorclie = DB.rawQuery("SELECT FLAGINTEGRADO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = '" + codclie_inte + "' AND CODPERFIL = " + idPerfil, null);
-                                        cursorclie.moveToFirst();
-                                        flagintegrado = cursorclie.getString(cursorclie.getColumnIndex("FLAGINTEGRADO"));
+                                    sStatus = Status;
+                                    sDataVenda = datavend;
+                                    sTotalVenda = totalvenda;
+                                    sNumPedido = NumPedido;
 
-                                        cursorclie.close();
-                                    } catch (Exception e) {
-                                        e.toString();
-                                    }
-                                    if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
-                                        if (ConexOk) {
-                                            if (flagintegrado.equals("1")) {
-                                                sitclieenvio = Sincronismo.sincronizaClientesEnvio(codclie_inte, getActivity(), usuario, senha, null, null, null);
-                                                if (sitclieenvio.equals("OK")) {
-                                                    if(String.valueOf(datavend).equals("null")){
-                                                        String dtvend = Util.DataHojeComHorasBR();
-                                                        DB.execSQL(" UPDATE PEDOPER SET DATAVENDA = '"+dtvend+"' WHERE NUMPED = '" + NumPedido + "' AND CODPERFIL = " + idPerfil);
-                                                    }
-                                                    pedidoendiado = Sincronismo.sincronizaPedidosEnvio(usuario, senha, getContext(), NumPedido, null, null, null);
-                                                    if (pedidoendiado.equals("OK")) {
-                                                        Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                                        ((ConsultaPedidos) getActivity()).finish();
-                                                        startActivity(intent);
-                                                        Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
-                                                    } else {
-                                                        Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
-                                                        return;
-                                                    }
-                                                } else {
-                                                    Util.msg_toast_personal(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Util.PADRAO);
-                                                    return;
-                                                }
-                                            } else {
-                                                sitcliexvend = Sincronismo.sincronizaSitClieXPed(totalvenda, getActivity(), usuario, senha, codclie_ext);
-                                                if (sitcliexvend.equals("OK")) {
-                                                    if(String.valueOf(datavend).equals("null")){
-                                                        String dtvend = Util.DataHojeComHorasBR();
-                                                        DB.execSQL(" UPDATE PEDOPER SET DATAVENDA = '"+dtvend+"' WHERE NUMPED = '" + NumPedido + "' AND CODPERFIL = " + idPerfil);
-                                                    }
-                                                    pedidoendiado = Sincronismo.sincronizaPedidosEnvio(usuario, senha, getContext(), NumPedido, null, null, null);
-                                                    if (pedidoendiado.equals("OK")) {
-                                                        Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                                        ((ConsultaPedidos) getActivity()).finish();
-                                                        startActivity(intent);
-                                                        Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " sincronizado com Sucesso!", Util.PADRAO);
-                                                    } else {
-                                                        Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
-                                                        return;
-                                                    }
-                                                } else {
-                                                    Util.msg_toast_personal(getActivity(), sitcliexvend, Util.PADRAO);
-                                                    return;
-                                                }
-                                            }
-                                        } else {
-                                            Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
-                                            return;
-                                        }
-                                    } else {
-                                        Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
-                                    }
+                                    runFlag = 1;
+
+                                    eDialog = new ProgressDialog(getContext());
+                                    eDialog.setTitle(getString(R.string.wait));
+                                    eDialog.setMessage("Sincronizando pedido...");
+                                    eDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                                    eDialog.setCancelable(false);
+                                    eDialog.show();
+
+                                    Thread thread = new Thread(FragmentPedido.this);
+                                    thread.start();
+
+
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Cancelar")) {
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -426,9 +386,101 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             E.toString();
         }
     }
+
     private void carregarpreferencias() {
         SharedPreferences prefs = getActivity().getSharedPreferences(CONFIG_HOST, Context.MODE_PRIVATE);
         URLPrincipal = prefs.getString("host", null);
         idPerfil = prefs.getInt("idperfil", 0);
+    }
+
+    @Override
+    public void run() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (runFlag == 1) {
+                        Activity activity = new Activity();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String sitclieenvio;
+                            String pedidoendiado;
+                            String sitcliexvend;
+                            try {
+                                Cursor cursorclie = DB.rawQuery("SELECT FLAGINTEGRADO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = '" + codclie_inte + "' AND CODPERFIL = " + idPerfil, null);
+                                cursorclie.moveToFirst();
+                                flagintegrado = cursorclie.getString(cursorclie.getColumnIndex("FLAGINTEGRADO"));
+
+                                cursorclie.close();
+                            } catch (Exception e) {
+                                e.toString();
+                            }
+                            if (sStatus.equals("Orçamento") || sStatus.equals("Gerar Venda")) {
+                                if (Util.checarConexaoCelular(getContext())) {
+                                    if (flagintegrado.equals("1")) {
+                                        sitclieenvio = Sincronismo.sincronizaClientesEnvio(codclie_inte, getActivity(), usuario, senha, null, null, null);
+                                        if (sitclieenvio.equals("OK")) {
+                                            try {
+                                                if (String.valueOf(sDataVenda).equals("null")) {
+                                                    String dtvend = Util.DataHojeComHorasBR();
+                                                    DB.execSQL(" UPDATE PEDOPER SET DATAVENDA = '" + dtvend + "' WHERE NUMPED = '" + sNumPedido + "' AND CODPERFIL = " + idPerfil);
+                                                }
+                                                pedidoendiado = Sincronismo.sincronizaPedidosEnvio(usuario, senha, getContext(), sNumPedido, null, null, null);
+                                                if (pedidoendiado.equals("OK")) {
+                                                    Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                                    ((ConsultaPedidos) getActivity()).finish();
+                                                    startActivity(intent);
+                                                    Util.msg_toast_personal(getActivity(), "Pedido nº " + sNumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                } else {
+                                                    Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
+                                                    return;
+                                                }
+                                            }catch (Exception e){
+                                                e.toString();
+                                            }
+                                            } else{
+                                                Util.msg_toast_personal(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Util.PADRAO);
+                                                return;
+                                            }
+
+
+                                    } else {
+                                        try {
+                                            sitcliexvend = Sincronismo.sincronizaSitClieXPed(sTotalVenda, getActivity(), usuario, senha, codclie_ext);
+                                            if (sitcliexvend.equals("OK")) {
+                                                if (String.valueOf(sDataVenda).equals("null")) {
+                                                    String dtvend = Util.DataHojeComHorasBR();
+                                                    DB.execSQL(" UPDATE PEDOPER SET DATAVENDA = '" + dtvend + "' WHERE NUMPED = '" + sNumPedido + "' AND CODPERFIL = " + idPerfil);
+                                                }
+                                                pedidoendiado = Sincronismo.sincronizaPedidosEnvio(usuario, senha, getContext(), sNumPedido, null, null, null);
+                                                if (pedidoendiado.equals("OK")) {
+                                                    Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                                    ((ConsultaPedidos) getActivity()).finish();
+                                                    startActivity(intent);
+                                                    Util.msg_toast_personal(getActivity(), "Pedido nº " + sNumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                } else {
+                                                    Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
+                                                    return;
+                                                }
+                                            } else {
+                                                Util.msg_toast_personal(getActivity(), sitcliexvend, Util.PADRAO);
+                                                return;
+                                            }
+                                        }catch (Exception e){
+                                            e.toString();
+                                        }
+                                    }
+                                } else {
+                                    Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
+                                    return;
+                                }
+                            } else {
+                                Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                            }
+                        }
+                    });
+                }
+                }
+            });
     }
 }

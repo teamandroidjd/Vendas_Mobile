@@ -181,6 +181,24 @@
     <string name="msg_atention">Atenção!</string>
     <string name="text_qtdregistro">Quantidade de registro:</string>
     <string name="atualizando_formpgto">Atualizando condições de pagamento...</string>
+    <string name="bundle_nome_contato">nomeContato</string>
+    <string name="bundle_pos_tipo_cargo">posicaoTipoCargo</string>
+    <string name="bundle_pos_tipo_contato">posTipoContato</string>
+    <string name="bundle_posicao_uf">posicaoUF</string>
+    <string name="bundle_posicao_cidade">posicaoCidade</string>
+    <string name="bundle_posicao_bairro">posicaoBairro</string>
+    <string name="bundle_documento">documento</string>
+    <string name="bundle_setor">setor</string>
+    <string name="bundle_email">email</string>
+    <string name="bundle_cep">cep</string>
+    <string name="bundle_endereco">endereco</string>
+    <string name="bundle_numero">numero</string>
+    <string name="bundle_complemento">complemento</string>
+    <string name="bundle_telefone1">telefone1</string>
+    <string name="bundle_telefone2">telefone2</string>
+    <string name="bundle_observacao">observacao</string>
+    <string name="bundle_data">data</string>
+    <string name="bundle_razao_social">razaoSocial</string>
 
     <string name="main_inform">Permitindo que usuários frequentes de seu aplicativo
         possam avalia-lo e assim, com boas avaliações, você

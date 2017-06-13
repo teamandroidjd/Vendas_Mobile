@@ -657,8 +657,11 @@ public class Util extends Activity {
             db.execSQL("insert into dias_contatos (CODCONTATOEXT, HORA_INICIO, MINUTO_INICIO, HORA_FINAL, MINUTO_FINAL, " +
                     "COD_DIA_SEMANA) VALUES (" + codContato + "," + horaInicio + "," + minutoInicio + "," + horaFinal + "," +
                     minutoFinal + "," + codDiaSemana + ");");
+            cursorDias.close();
         }
+    cursorDias.close();
     }
+
 
     public static void setIntegrar(int codContato, Context ctx) {
         SQLiteDatabase db = new ConfigDB(ctx).getReadableDatabase();

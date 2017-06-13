@@ -109,7 +109,7 @@ public class ListAdapterContatos extends RecyclerView.Adapter<ListAdapterContato
 
     public int ChamaCodigoContato(int position) {
 
-        return mList.get(position).getCODCLIEEXT();
+        return mList.get(position).getCODCLIENTE();
     }
 
     public int CodigoContato(int position) {

@@ -184,7 +184,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
         if (telaInvocada.equals("CadastroAgenda")) {
             ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
 
-            int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
+            int CodigoCliente = adapterContatos.ChamaCodigoContato(position); //Código Externo do Cliente
             int CodigoContato = adapterContatos.CodigoContato(position);
             Intent intentp = new Intent(getActivity(), DadosContato.class);
             Bundle params = new Bundle();

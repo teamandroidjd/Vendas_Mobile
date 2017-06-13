@@ -926,200 +926,23 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                             E.toString();
                         }
 
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
-                            cursor1.moveToFirst();
-                            CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
-                            CodClieExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
+                        Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CODCLIE_EXT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CODCLIE_EXT = '" + c.getString(TAG_CODIGO) + "'", null);
+                        cursor1.moveToFirst();
+                        CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
+                        CodClieExt = cursor1.getString(cursor1.getColumnIndex("CODCLIE_EXT"));
 
+                        cursor1.close();
 
-                            cursor1.close();
+                        //JSONObject jsonObjectContato = c.getJSONObject(jumpTime);
+                        String Contatos = c.getString("Contatos");
 
-                        } catch (Exception E) {
-                            E.toString();
-                        }
-
-                        //sincronizaContatos(ctxEnvClie, user, pass, RetClientes, Integer.parseInt(CodCliente), jumpTime);
-                        /*if (CodClieExt == null) {
-                            Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIENTE = " + CodCliente, null);
-                            CursorContatosEnv.moveToFirst();
-                            if ((CursorContatosEnv.getCount() > 0)) {
-                                DB.execSQL("DELETE FROM CONTATO WHERE CODCLIENTE = " + CodCliente);
-                                CursorContatosEnv.close();
-                            }
-                        } else {
-                            Cursor CursorContatosEnv = DB.rawQuery(" SELECT * FROM CONTATO WHERE CODCLIE_EXT = " + CodClieExt, null);
-                            CursorContatosEnv.moveToFirst();
-                            if ((CursorContatosEnv.getCount() > 0)) {
-                                DB.execSQL("DELETE FROM CONTATO WHERE CODCLIE_EXT = " + CodClieExt);
-                                CursorContatosEnv.close();
-                            }
-                        }
-                        String Contatos = c.getString(TAG_CONTATOSINFO);
-                        Contatos = "{\"contatos\":" + Contatos + "\t}";
-                        JSONObject ObjCont = new JSONObject(Contatos);
-                        JSONArray Cont = ObjCont.getJSONArray("contatos");
-                        String nomeContato = null,
-                                cargoContato = null,
-                                atvCargoContato = null,
-                                codExtContato = null,
-                                emailContato = null,
-                                tel1Contato = null,
-                                tel2Contato = null,
-                                bairroContato = null,
-                                documentoContato = null,
-                                dataAnivContato = null,
-                                endContato = null,
-                                complContato = null,
-                                ufContato = null,
-                                obsContato = null,
-                                cepContato = null,
-                                cidadeContato = null,
-                                tipoContato = null,
-                                setorContato = null;
-                        String codCargoContato = null;
-
-
-                        try {
-                            for (int co = 0; co < Cont.length(); co++) {
-                                JSONObject cc = Cont.getJSONObject(co);
-                                if (co == 0) {
-                                    nomeContato = cc.getString("nome");
-                                    cargoContato = cc.getString("cargo");
-                                    codCargoContato = cc.getString("codcargo");
-                                    atvCargoContato = cc.getString("cargoativo");
-                                    emailContato = cc.getString("email");
-                                    codExtContato = cc.getString("CodContato");
-                                    documentoContato = cc.getString("Documento");
-                                    dataAnivContato = cc.getString("DataAniversario");
-                                    endContato = cc.getString("Logradouro");
-                                    complContato = cc.getString("complemento");
-                                    bairroContato = cc.getString("Bairro");
-                                    cidadeContato = cc.getString("Cidade");
-                                    cepContato = cc.getString("cep");
-                                    ufContato = cc.getString("uf");
-                                    obsContato = cc.getString("observacao");
-                                    tipoContato = "C";
-
-                                    String TelCont1 = c.getString("telefones");
-                                    TelCont1 = "{\"telefones\":" + TelCont1 + "\t}";
-                                    JSONObject ObjTelC1 = new JSONObject(TelCont1);
-                                    JSONArray TelefC1 = ObjTelC1.getJSONArray("telefones");
-
-                                    for (int tc1 = 0; tc1 < TelefC1.length(); tc1++) {
-                                        JSONObject tt1 = TelefC1.getJSONObject(tc1);
-                                        if (tc1 == 0) {
-                                            tel1Contato = tt1.getString("numero");
-                                        }
-                                        if (tc1 == 1) {
-                                            tel2Contato = tt1.getString("numero");
-                                        }
-                                    }
-                                }
-                                if (co == 1) {
-                                    nomeContato = cc.getString("nome");
-                                    cargoContato = cc.getString("cargo");
-                                    codCargoContato = cc.getString("codcargo");
-                                    atvCargoContato = cc.getString("cargoativo");
-                                    emailContato = cc.getString("email");
-                                    codExtContato = cc.getString("CodContato");
-                                    documentoContato = cc.getString("Documento");
-                                    dataAnivContato = cc.getString("DataAniversario");
-                                    endContato = cc.getString("Logradouro");
-                                    complContato = cc.getString("complemento");
-                                    bairroContato = cc.getString("Bairro");
-                                    cidadeContato = cc.getString("Cidade");
-                                    cepContato = cc.getString("cep");
-                                    ufContato = cc.getString("uf");
-                                    obsContato = cc.getString("observacao");
-                                    tipoContato = "C";
-
-                                    String TelCont2 = c.getString("telefones");
-                                    TelCont2 = "{\"telefones\":" + TelCont2 + "\t}";
-                                    JSONObject ObjTelC2 = new JSONObject(TelCont2);
-                                    JSONArray TelefC2 = ObjTelC2.getJSONArray("telefones");
-
-                                    for (int tc2 = 0; tc2 < TelefC2.length(); tc2++) {
-                                        JSONObject tt2 = Telef.getJSONObject(tc2);
-                                        if (tc2 == 0) {
-                                            tel1Contato = tt2.getString("numero");
-                                        }
-                                        if (tc2 == 1) {
-                                            tel2Contato = tt2.getString("numero");
-                                        }
-                                    }
-                                }
-                                if (co == 2) {
-                                    nomeContato = cc.getString("nome");
-                                    cargoContato = cc.getString("cargo");
-                                    codCargoContato = cc.getString("codcargo");
-                                    atvCargoContato = cc.getString("cargoativo");
-                                    emailContato = cc.getString("email");
-                                    codExtContato = cc.getString("CodContato");
-                                    documentoContato = cc.getString("Documento");
-                                    dataAnivContato = cc.getString("DataAniversario");
-                                    endContato = cc.getString("Logradouro");
-                                    complContato = cc.getString("complemento");
-                                    bairroContato = cc.getString("Bairro");
-                                    cidadeContato = cc.getString("Cidade");
-                                    cepContato = cc.getString("cep");
-                                    ufContato = cc.getString("uf");
-                                    obsContato = cc.getString("observacao");
-                                    tipoContato = "C";
-
-                                    String TelCont3 = c.getString("telefones");
-                                    TelCont3 = "{\"telefones\":" + TelCont3 + "\t}";
-                                    JSONObject ObjTelC3 = new JSONObject(TelCont3);
-                                    JSONArray TelefC3 = ObjTelC3.getJSONArray("telefones");
-
-                                    for (int tc3 = 0; tc3 < TelefC3.length(); tc3++) {
-                                        JSONObject tt3 = Telef.getJSONObject(tc3);
-                                        if (tc3 == 0) {
-                                            tel1Contato = tt3.getString("numero");
-                                        }
-                                        if (tc3 == 1) {
-                                            tel2Contato = tt3.getString("numero");
-                                        }
-                                    }
-                                }
-
-                                String produtosCont = c.getString("itens_contato");
-                                produtosCont = "{\"codigoitem\":" + produtosCont + "\t}";
-                                JSONObject objProdCont = new JSONObject(produtosCont);
-                                JSONArray prodCont = objProdCont.getJSONArray("itens_contato");
-
-                                for(int pd = 0; pd < prodCont.length(); pd++){
-                                    JSONObject pdt = prodCont.getJSONObject(pd);
-                                }
-
-                                try {
-                                    if (!nomeContato.equals("0") || !cargoContato.equals("0") || !emailContato.equals("0") ||
-                                            !tel1Contato.equals("0") || !tel2Contato.equals("0")) {
-                                        DB.execSQL("INSERT INTO CONTATO (NOME, CARGO, EMAIL, TEL1, TEL2, CODCLIENTE, CODCLIE_EXT, codcontato_ext, documento, " +
-                                                "data, cep, endereco, complemento, uf, codvendedor, bairro, desc_cidade, tipo, obs, codperfil, CODCARGO_EXT, SETOR) VALUES(" +
-                                                "'" + nomeContato.trim() + "','" + cargoContato.trim() +
-                                                "',' " + emailContato.trim() + "',' " + tel1Contato + "',' " + tel2Contato + "'" +
-                                                "," + CodCliente + ", '" + CodClieExt + "', '" + codExtContato + "', '" + documentoContato + "', '" +
-                                                dataAnivContato + "', '" + cepContato + "', '" + endContato + "', '" + complContato + "', '" +
-                                                ufContato + "', " + codVendedor + ", '" + bairroContato + "', '" + cidadeContato + "', '" +
-                                                tipoContato + "', '" + obsContato + "', " + idPerfil + ", " + Integer.parseInt(codCargoContato) + ", '" + setorContato + "');");
-                                    }
-                                    try{
-                                        if (!codCargoContato.equals("")){
-                                            Util.atualizaCargoContato(cargoContato,codCargoContato,atvCargoContato,ctxEnvClie);
-                                        }
-                                    }catch(Exception e){
-                                        e.toString();
-                                    }
-                                    //}
-                                    sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
-                                } catch (Exception E) {
-                                    System.out.println("Error" + E);
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.toString();
-                        }*/
+                        SincronizarContatosStatic(ctxEnvClie, user, pass, Contatos, Integer.parseInt(CodCliente), jumpTime);
                         sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
+
+                    } catch (Exception E) {
+                        E.toString();
+                    }
+
                 }
             }
         } catch (JSONException e) {
@@ -1136,7 +959,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return sinccliestatic;
     }
 
-    public static String sincronizaContatos(final Context ctxContato, String user, String pass, String result, int codCliente, int jumpTime) {
+    public static String SincronizarContatosStatic(final Context ctxContato, String user, String pass, String Contatos, int codCliente, int jumpTime) {
 
         SharedPreferences prefsHost = ctxContato.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -1175,43 +998,35 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 CODITEM_CONTATO = "codigoitem";
 
         try {
-            JSONObject jsonObj = new JSONObject(result);
-            JSONArray arrayResult = jsonObj.getJSONArray("clientes");
-
-            JSONObject cd = arrayResult.getJSONObject(jumpTime);
-
-            String Contatos = cd.getString(CONTATO_INFO);
             Contatos = "{\"contatos\":" + Contatos + "\t}";
             JSONObject ObjCont = new JSONObject(Contatos);
             JSONArray Cont = ObjCont.getJSONArray("contatos");
-
-            DB = new ConfigDB(ctxContato).getReadableDatabase();
 
             for (int i = 0; i < Cont.length(); i++) {
                     try {
                         JSONObject c = Cont.getJSONObject(i);
 
-                        String Telefone = c.getString(TELEFONES_CONTATOS);
-                        Telefone = "{\"telefones\":" + Telefone + "\t}";
-                        JSONObject ObjTel = new JSONObject(Telefone);
-                        JSONArray Telef = ObjTel.getJSONArray("telefones");
-                        String Tel1 = null;
-                        String Tel2 = null;
-                        String Tel3 = null;
+                    String Telefone = c.getString(TELEFONES_CONTATOS);
+                    Telefone = "{\"telefones\":" + Telefone + "\t}";
+                    JSONObject ObjTel = new JSONObject(Telefone);
+                    JSONArray Telef = ObjTel.getJSONArray("telefones");
+                    String Tel1 = null;
+                    String Tel2 = null;
+                    String Tel3 = null;
 
-                        for (int t = 0; t < Telef.length(); t++) {
-                            JSONObject tt = Telef.getJSONObject(t);
-                            if (t == 0) {
-                                Tel1 = tt.getString("numero");
-                            }
-                            if (t == 1) {
-                                Tel2 = tt.getString("numero");
-                            }
-                            if (t == 2) {
-                                Tel3 = tt.getString("numero");
-                            }
+                    for (int t = 0; t < Telef.length(); t++) {
+                        JSONObject tt = Telef.getJSONObject(t);
+                        if (t == 0) {
+                            Tel1 = tt.getString("numero");
                         }
-
+                        if (t == 1) {
+                            Tel2 = tt.getString("numero");
+                        }
+                        if (t == 2) {
+                            Tel3 = tt.getString("numero");
+                        }
+                    }
+                    try {
                         Cursor cursorContato = DB.rawQuery("SELECT CONTATO.* " +
                                 "FROM CONTATO WHERE CODCONTATO_EXT = " + c.getString(COD_CONTATO) + " and CODPERFIL = " + idPerfil, null);
                         cursorContato.moveToFirst();
@@ -1227,7 +1042,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         try {
                             if ((Contatos != null) || (!Contatos.equals(""))) {
                                 if (cursorContato.getCount() > 0) {
-                                    DB.execSQL(" UPDATE CONTATO SET CODCLIENTE = " + c.getString(CODCLIE_CONTATO) + ", " +
+                                    DB.execSQL(" UPDATE CONTATO SET CODCLIE_EXT = " + c.getString(CODCLIE_CONTATO) + ", " +
                                             "    CODCONTATO_EXT = " + c.getString(COD_CONTATO) + ", " +
                                             "    NOME = '" + c.getString(NOME_CONTATO) + "', " +
                                             "    CARGO = '" + c.getString(CARGO_CONTATO) + "', " +
@@ -1245,16 +1060,17 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                             "    EMAIL = '" + c.getString(EMAIL_CONTATO) + "', " +
                                             "    TIPO = '" + c.getString(TIPO_CONTATO) + "', " +
                                             "    OBS = '" + c.getString(OBS_CONTATO) + "', " +
-                                            //"    CODCLIE_EXT = " + Codclie + ", " +
+                                            "    CODCLIENTE = " + codCliente + ", " +
                                             "    FLAGINTEGRADO = 'S', " +
                                             "    CODPERFIL = " + idPerfil +
                                             " WHERE CODCONTATO_EXT = " + c.getString(COD_CONTATO) + " and CODPERFIL = " + idPerfil);
                                 } else {
-                                    DB.execSQL("INSERT INTO CONTATO (CODCLIENTE, CODCONTATO_EXT, NOME, CARGO, CODCARGO, SETOR, TEL1, TEL2, DOCUMENTO, " +
+                                    DB.execSQL("INSERT INTO CONTATO (CODCLIE_EXT, CODCLIENTE, CODCONTATO_EXT, NOME, CARGO, CODCARGO, SETOR, TEL1, TEL2, DOCUMENTO, " +
                                             "DATA, CEP, SETOR, " +
                                             "ENDERECO, COMPLEMENTO, UF, CODVENDEDOR, BAIRRO, DESC_CIDADE, EMAIL, TIPO, OBS, FLAGINTEGRADO, CODPERFIL) " +
-                                            "VALUES(" +
-                                            "" + c.getString(CODCLIE_CONTATO) +
+                                            "VALUES" +
+                                            "(" + c.getString(CODCLIE_CONTATO) +
+                                            "," + codCliente +
                                             "," + c.getString(COD_CONTATO) +
                                             ",'" + c.getString(NOME_CONTATO).trim().replace("'", "''") +
                                             "','" + c.getString(CARGO_CONTATO).trim().replace("'", "''") +
@@ -1279,27 +1095,19 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                             "'," + idPerfil + ");");
                                 }
                             }
+                            cursorContato.close();
 
                             //-------------------CADASTRO E ATUALIZAÇÃO CARGOS----------------------------
 
-                            //if(!c.getString(CODCARGO_CONTATO).equals("")) {
                             try {
-                                    /*Cursor cursor1 = DB.rawQuery(" SELECT CODCARGO_EXT, ATIVO, DES_CARGO FROM CARGOS WHERE DES_CARGO = '" + c.getString(CARGO_CONTATO) + "' " +
-                                            " and CODCARGO_EXT = " + c.getInt(CODCARGO_CONTATO), null);
-                                    cursor1.moveToFirst();*/
-
-                                //if (cursor1.getCount() > 0) {
                                 String desc_cargo = c.getString(CARGO_CONTATO);
                                 String codCargo = c.getString(CODCARGO_CONTATO);
                                 String ativCargo = c.getString(CARGOATIVO_CONTATO);
 
                                 Util.atualizaCargoContato(desc_cargo, codCargo, ativCargo, ctxContato);
-                                //}
-                                //cursor1.close();
                             } catch (Exception E) {
                                 E.toString();
                             }
-                            //}
 
                             //-------------------CADASTRO DOS ITENS DO CONTATO----------------------------
 
@@ -1316,51 +1124,59 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
 
                                 int codProdCont = pp.getInt("codigoitem");
 
-                                DB = new ConfigDB(ctxContato).getReadableDatabase();
                                 cursProd = DB.rawQuery("select cod_externo_contato, cod_item " +
                                         "from produtos_contatos " +
-                                        "where cod_externo_contato = " + c.getString(COD_CONTATO) + ", and " +
+                                        "where cod_externo_contato = " + c.getString(COD_CONTATO) + " and " +
                                         "cod_item = " + codProdCont, null);
                                 if (cursProd.getCount() == 0) {
                                     DB.execSQL("insert into produtos_contatos (cod_externo_contato, cod_item) values (" +
                                             c.getString(COD_CONTATO) + "," +
-                                            codProdCont);
+                                            codProdCont + ")");
                                 }
+                                if(cursProd !=null)
                                 cursProd.close();
                             }
+                            if(cursProd !=null)
+                            cursProd.close();
 
                             //-------------------------------CADASTRO DE DIAS AGENDA-------------------------------
+                            try {
+                                String Agenda = c.getString("dias_contato");
+                                Agenda = "{\"dias_contato\":" + Agenda + "\t}";
+                                JSONObject ObjAg = new JSONObject(Agenda);
+                                JSONArray Ag = ObjAg.getJSONArray("dias_contato");
 
-                            String Agenda = c.getString(PRODUTOS_INFO);
-                            Agenda = "{\"dias_contato\":" + Agenda + "\t}";
-                            JSONObject ObjAg = new JSONObject(Agenda);
-                            JSONArray Ag = ObjAg.getJSONArray("dias_contato");
+                                Cursor cursAg = null;
+                                for (int iAg = 0; iAg < Ag.length(); iAg++) {
 
-                            Cursor cursAg = null;
-                            for (int iAg = 0; iAg < Ag.length(); iAg++) {
+                                    JSONObject pp = Ag.getJSONObject(iAg);
 
-                                JSONObject pp = Prod.getJSONObject(iAg);
+                                    int codDiaSemana = pp.getInt("cod_dia_semana");
+                                    String hrInicio = pp.getString("hora_inicio");
+                                    String hrFinal = pp.getString("hora_final");
 
-                                int codDiaSemana = pp.getInt("cod_dia_semana");
-                                String hrInicio = pp.getString("hora_inicio");
-                                String hrFinal = pp.getString("hora_saida");
-
-                                Util.gravaHorariosContatos(ctxContato, hrInicio, hrFinal, codDiaSemana, codContato);
+                                    Util.gravaHorariosContatos(ctxContato, hrInicio, hrFinal, codDiaSemana, codContato);
+                                }
+                                cursorContato.close();
+                            } catch (Exception e) {
+                                e.toString();
                             }
-                            cursorContato.close();
 
                         } catch (Exception E) {
                             E.toString();
                         }
+                        cursorContato.close();
                     } catch (Exception E) {
                         E.toString();
                     }
 
-            }
-        } catch (
-                JSONException e)
 
-        {
+                } catch (JSONException e) {
+                    e.toString();
+                }
+                return sincContatoEnvio;
+            }
+        } catch (Exception e) {
             e.toString();
         }
         return sincContatoEnvio;
@@ -3202,7 +3018,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                 if (cursProd.getCount() == 0) {
                                     DB.execSQL("insert into produtos_contatos (cod_externo_contato, cod_item) values (" +
                                             c.getString(COD_CONTATO) + "," +
-                                            codProdCont +");");
+                                            codProdCont + ");");
                                 }
                                 cursProd.close();
                             }
@@ -5374,5 +5190,4 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         finish();
         super.onBackPressed();
     }
-
 }

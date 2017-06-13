@@ -502,11 +502,22 @@ public class ConsultaClientes extends AppCompatActivity
             startActivity(intent);
             finish();
             return;
+        }else if(flag == 0 && CadastroContato == 1){
+            Intent intent = new Intent(ConsultaClientes.this, CadastroContatos.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            intent.putExtras(params);
+            startActivity(intent);
+            finish();
+            return;
         }
         switch (flag) {
             case 0:
                 Bundle params = new Bundle();
-                Intent intent = new Intent(ConsultaClientes.this, CadastroContatos.class);
+                Intent intent = new Intent(ConsultaClientes.this, ConsultaPedidos.class);
                 params.putInt(getString(R.string.intent_flag), flag);
                 params.putString(getString(R.string.intent_numpedido), numPedido);
                 params.putString(getString(R.string.intent_chavepedido), chavepedido);
@@ -645,78 +656,84 @@ public class ConsultaClientes extends AppCompatActivity
 
     @Override
     public void run() {
-        if (flag == 0 && CadastroContato == 0) {
-            if (telaInvocada == null) {
-                //uttilizado para carregar todos os clientes.
-                FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                Bundle params = new Bundle();
-                if (frag != null) {
-                    frag = null;
-                }
-                frag = new FragmentCliente();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                params.putInt(getString(R.string.intent_flag), flag);
-                params.putString(getString(R.string.intent_numpedido), numPedido);
-                params.putString(getString(R.string.intent_chavepedido), chavepedido);
-                params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
-                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params.putInt(getString(R.string.intent_codcontato), CodContato);
-                if (telaInvocada != null) {
-                    if (telaInvocada.equals("ConsultaPedidos")) {
-                        params.putBoolean("consultapedido", true);
-                    }
-                }
-                frag.setArguments(params);
-                ft.commit();
-            } else if (telaInvocada.equals("ConsultaPedidos")) {
-                //uttilizado para carregar todos os clientes para filtro do pedido.
-                FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                Bundle params = new Bundle();
-                if (frag != null) {
-                    frag = null;
-                }
-                frag = new FragmentCliente();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                params.putInt(getString(R.string.intent_flag), 2);
-                params.putString(getString(R.string.intent_numpedido), numPedido);
-                params.putString(getString(R.string.intent_chavepedido), chavepedido);
-                params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
-                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                params.putBoolean(getString(R.string.intent_consultapedido), ConsultaPedido);
-                frag.setArguments(params);
-                ft.commit();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (flag == 0 && CadastroContato == 0) {
+                            if (telaInvocada == null) {
+                                //uttilizado para carregar todos os clientes.
+                                FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                                Bundle params = new Bundle();
+                                if (frag != null) {
+                                    frag = null;
+                                }
+                                frag = new FragmentCliente();
+                                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                                params.putInt(getString(R.string.intent_flag), flag);
+                                params.putString(getString(R.string.intent_numpedido), numPedido);
+                                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                params.putString(getString(R.string.intent_usuario), usuario);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                params.putInt(getString(R.string.intent_codcontato), CodContato);
+                                if (telaInvocada != null) {
+                                    if (telaInvocada.equals("ConsultaPedidos")) {
+                                        params.putBoolean("consultapedido", true);
+                                    }
+                                }
+                                frag.setArguments(params);
+                                ft.commit();
+                            } else if (telaInvocada.equals("ConsultaPedidos")) {
+                                //uttilizado para carregar todos os clientes para filtro do pedido.
+                                FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                                Bundle params = new Bundle();
+                                if (frag != null) {
+                                    frag = null;
+                                }
+                                frag = new FragmentCliente();
+                                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                                params.putInt(getString(R.string.intent_flag), 2);
+                                params.putString(getString(R.string.intent_numpedido), numPedido);
+                                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                params.putString(getString(R.string.intent_usuario), usuario);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                params.putBoolean(getString(R.string.intent_consultapedido), ConsultaPedido);
+                                frag.setArguments(params);
+                                ft.commit();
 
-            } else {
-                //uttilizado para carregar todos os clientes para inclusão do pedido.
-                FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                Bundle params = new Bundle();
-                if (frag != null) {
-                    frag = null;
-                }
-                frag = new FragmentCliente();
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                params.putInt(getString(R.string.intent_flag), 2);
-                params.putString(getString(R.string.intent_numpedido), numPedido);
-                params.putString(getString(R.string.intent_chavepedido), chavepedido);
-                params.putString(getString(R.string.intent_usuario), usuario);
-                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
-                params.putString(getString(R.string.intent_senha), senha);
-                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
-                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                frag.setArguments(params);
-                ft.commit();
+                            } else {
+                                //uttilizado para carregar todos os clientes para inclusão do pedido.
+                                FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                                Bundle params = new Bundle();
+                                if (frag != null) {
+                                    frag = null;
+                                }
+                                frag = new FragmentCliente();
+                                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                                params.putInt(getString(R.string.intent_flag), 2);
+                                params.putString(getString(R.string.intent_numpedido), numPedido);
+                                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                                params.putString(getString(R.string.intent_usuario), usuario);
+                                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                                params.putString(getString(R.string.intent_senha), senha);
+                                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                frag.setArguments(params);
+                                ft.commit();
 
-            }
+                            }
 
         } else if (flag == 0 && CadastroContato == 1) {
             // utilizado para carregar todos clientes para inclusão de contato
@@ -741,14 +758,14 @@ public class ConsultaClientes extends AppCompatActivity
             ft.commit();
         } else if (flag == 1) {
             try {
-                sincclieenvio = Sincronismo.sincronizaClientesEnvio("0", this, usuario, senha, null, null, null);
+                sincclieenvio = Sincronismo.sincronizaClientesEnvio("0", ConsultaClientes.this, usuario, senha, null, null, null);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplication(), sincclieenvio, Toast.LENGTH_SHORT).show();
                     }
                 });
-                sincclie = Sincronismo.sincronizaClientes(codVendedor, this, usuario, senha, 0, dialog, dialogECB, handler);
+                sincclie = Sincronismo.sincronizaClientes(codVendedor, ConsultaClientes.this, usuario, senha, 0, dialog, dialogECB, handler);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -788,6 +805,10 @@ public class ConsultaClientes extends AppCompatActivity
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
+    }
+                });
+            }
+        });
     }
 
     private void carregarpreferencias() {

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 public class TH_DadosContato extends Fragment {
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
-    int sCodCliente;
+    //int sCodCliente;
     String codVendedor, URLPrincipal, usuario, senha, numContato;
     SQLiteDatabase DB;
     int sCodContato;
@@ -71,7 +71,7 @@ public class TH_DadosContato extends Fragment {
         if (intent != null) {
             Bundle params = intent.getExtras();
             if (params != null) {
-                sCodCliente = params.getInt("codCliente");
+                //sCodCliente = params.getInt("codCliente");
                 sCodContato = params.getInt("codContato");
                 codVendedor = params.getString(getString(R.string.intent_codvendedor));
                 URLPrincipal = params.getString(getString(R.string.intent_urlprincipal));
