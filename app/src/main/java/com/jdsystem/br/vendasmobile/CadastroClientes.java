@@ -1000,7 +1000,12 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
                 } else {
                     DialogECB.dismiss();
-                    Toast.makeText(CadastroClientes.this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(CadastroClientes.this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                        }
+                    });
                     return;
                 }
             } catch (Exception e) {
@@ -1571,48 +1576,12 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                     spBairro.setSelection(pos);
                 }
             }
-            /*} else {
-                try {
-                    Cursor CurCidade = DB.rawQuery(" SELECT CODCIDADE_EXT, CODCIDADE FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '" + sUF + "' AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
-                    if (CurCidade.getCount() > 0) {
-                        CurCidade.moveToFirst();
-                        CodCidade = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE_EXT"));
-                        CodCidadeInt = CurCidade.getInt(CurCidade.getColumnIndex("CODCIDADE"));
-                    }
-
-                    CurCidade.close();
-                } catch (Exception e) {
-                    e.toString();
-                }
-                Cursor CurBairro = null;
-                try {
-                    CurBairro = DB.rawQuery(" SELECT DESCRICAO FROM BAIRROS WHERE CODCIDADE = " + CodCidadeInt + " AND CODPERFIL = " + idPerfil + " ORDER BY DESCRICAO", null);
-                } catch (Exception e) {
-                    e.toString();
-                }
-                List<String> DadosListBairro = new ArrayList<String>();
-                DadosListBairro.clear();
-                if (CurBairro.getCount() > 0) {
-                    CurBairro.moveToFirst();
-                    do {
-                        String Bairro = CurBairro.getString(CurBairro.getColumnIndex("DESCRICAO"));
-                        DadosListBairro.add(Bairro);
-                    } while (CurBairro.moveToNext());
-                } else {
-
-                }
-                CurBairro.close();
-
-                new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                spBairro.setAdapter(new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro));
-                if (PesqCEP) {
-                    int pos = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, DadosListBairro).getPosition(NomeBairro);
-                    spBairro.setSelection(pos);
-                }
-            }*/
 
         } else if (parent.getId() == R.id.spnBairro) {
-            NomeBairro = spBairro.getSelectedItem().toString();
+            if (!PesqCEP) {
+                NomeBairro = spBairro.getSelectedItem().toString();
+            }
+
             try {
                 Cursor CurBai = DB.rawQuery(" SELECT CODCIDADE, CODBAIRRO, DESCRICAO FROM BAIRROS WHERE DESCRICAO = '" + NomeBairro + "' AND CODPERFIL = " + idPerfil, null);
                 if (CurBai.getCount() > 0) {
