@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/lblStatusPed"
+                        android:id="@+id/lblAgenda"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Agenda"
@@ -53,14 +53,14 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/lblNumPedido"
+                        android:id="@+id/lblNumAgenda"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_marginLeft="40dp"
                         android:layout_marginStart="10dp"
-                        android:layout_toEndOf="@+id/lblStatusPed"
-                        android:layout_toRightOf="@+id/lblStatusPed"
+                        android:layout_toEndOf="@+id/lblAgenda"
+                        android:layout_toRightOf="@+id/lblAgenda"
                         android:text="20"
                         android:textColor="@color/colordescClie"
                         android:textSize="18sp"
@@ -89,7 +89,7 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/lblEmpresa"
+                        android:id="@+id/lblNomeContato"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Ciclano"
@@ -112,13 +112,31 @@
                         android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/dtemissao"
+                        android:id="@+id/dtagenda"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="20/10/2017 08:00 hrs"
                         android:textColor="@color/colorAccent"
                         android:textSize="16sp"
                         android:textStyle="normal|bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/lblsituacao"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Agendado / Finalizado / Cancelado"
+                        android:textColor="@color/colorVerde"
+                        android:textSize="18sp"
+                        android:textStyle="normal|bold" />
+
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

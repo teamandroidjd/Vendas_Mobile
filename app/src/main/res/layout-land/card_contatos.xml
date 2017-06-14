@@ -12,7 +12,7 @@
     <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
@@ -57,10 +57,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="NOME DO CLIENTE "
-                            android:textColor="@color/colordescClie"
+                            android:textColor="@color/preto"
                             android:textSize="15sp"
                             android:textStyle="normal|bold" />
-                        </LinearLayout>
+                    </LinearLayout>
                     <LinearLayout
                         android:id="@+id/flag_integrado_cont"
                         android:layout_width="wrap_content"
@@ -91,9 +91,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Contato"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </LinearLayout>
 
 
@@ -106,17 +106,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cargo: "
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblCargoContato"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cargo"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -129,16 +129,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Email: "
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblEmailContato"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Email"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="normal|bold" />
+                        android:autoLink="email"
+                        android:textColor="@color/preto"
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 
@@ -152,16 +153,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Telefone 1: "
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblTel1Contato"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Telefone1"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="normal|bold" />
+                        android:autoLink="phone"
+                        android:textColor="@color/preto"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -174,16 +176,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Telefone 2: "
-                        android:textColor="@color/colordescClie"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblTel2Contato"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Telefone2"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="normal|bold" />
+                        android:autoLink="phone"
+                        android:textColor="@color/preto"
+                        android:textStyle="normal" />
 
 
                 </LinearLayout>

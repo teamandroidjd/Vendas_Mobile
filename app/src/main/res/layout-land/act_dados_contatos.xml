@@ -33,7 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="NOME FANTASIA"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="@color/preto"
                     android:textSize="20sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
@@ -49,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="NOME CONTATO"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="20sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
@@ -63,9 +63,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cargo: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
 
                 <TextView
@@ -73,9 +73,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cargo"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -87,18 +87,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Documento: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/txt_documento_contato"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Documento"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -111,18 +111,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Endereço: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/txtEndereco_contato"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Endereço"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
             </LinearLayout>
 
@@ -135,18 +135,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Complemento: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/txt_Complemento_contato"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Complemento"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -164,17 +164,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Bairro "
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="18sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" - "
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="18sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -187,17 +187,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cidade"
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="18sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" - "
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="18sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -210,9 +210,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="UF"
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="18sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -226,18 +226,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="CEP: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/txt_cep_contato"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="CEP"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -249,9 +249,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Telefone 1: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/txt_telefone_1_contato"
@@ -259,9 +259,9 @@
                     android:layout_height="wrap_content"
                     android:autoLink="phone"
                     android:text="Telefone1"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/azul"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -273,9 +273,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Telefone 2: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/txt_telefone_2_contato"
@@ -283,9 +283,9 @@
                     android:layout_height="wrap_content"
                     android:autoLink="phone"
                     android:text="Telefone2"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/azul"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -297,9 +297,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="E-mail: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/txt_email_contato"
@@ -307,9 +307,9 @@
                     android:layout_height="wrap_content"
                     android:autoLink="email"
                     android:text="Email"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/azul"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -321,18 +321,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Aniversario: "
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <TextView
                     android:id="@+id/txt_data_aniversario_contato"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Aniversario"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="18sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

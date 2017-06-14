@@ -1,12 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:layout_height="76dp"
+        android:layout_weight="0.25"
+        android:background="@drawable/img_fundo_splash"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -20,128 +22,135 @@
             android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:padding="5dp"
-            android:background="#afd8de"
-            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txv1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Datas e horários sugeridos pelo contato: "
-            android:textColor="@color/preto"
-            android:textStyle="bold"
-            android:textSize="16sp" />
-
-            <ListView
-                android:id="@+id/lv_horarios_contatos"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="@color/colordescClie"
-                android:textSize="15sp"
-                android:textStyle="normal" />
-
-    </LinearLayout>
-
-
-    <RadioGroup
-        android:id="@+id/rgsituacao"
-        android:layout_marginTop="15dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/rbagendando"
+        <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Agendando"
-            android:textColor="@color/colordescClie"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
-        <RadioButton
-            android:id="@+id/rbfinalizando"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Finalizando"
-            android:layout_marginLeft="20dp"
-            android:textColor="@color/colordescClie"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-    </RadioGroup>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#afd8de"
+                android:orientation="vertical"
+                android:padding="5dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/txv1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Datas e horários sugeridos pelo contato: "
+                    android:textColor="@color/preto"
+                    android:textSize="16sp"
+                    android:textStyle="normal" />
 
-        <EditText
-            android:id="@+id/data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:hint="Data e hora"
-            android:inputType="datetime"
-            android:focusable="false"
-            android:padding="10dp"
-            android:textColor="@color/colordescClie"
-            android:textSize="18sp"
-            android:textStyle="normal|bold" />
-    </LinearLayout>
+                <ListView
+                    android:id="@+id/lv_horarios_contatos"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/preto"
+                    android:textSize="15sp"
+                    android:textStyle="normal" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <EditText
-        android:id="@+id/EdtOBS"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:textSize="18sp"
-        android:textColor="@color/colordescClie"
-        android:hint="Observação"
-        android:textStyle="normal|bold"
-        android:inputType="textMultiLine" />
-    </LinearLayout>
+            </LinearLayout>
 
-    <LinearLayout
-        android:layout_gravity="bottom"
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btncancelar"
-            android:layout_weight="1"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:text="Cancelar"
-            android:textSize="20dp"
-            android:textColor="@color/branco"
-            android:gravity="center"
-            android:layout_gravity="center"/>
+            <RadioGroup
+                android:id="@+id/rgsituacao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnsalvar"
-            android:layout_weight="1"
-            android:layout_width="220dp"
-            android:layout_marginLeft="2dp"
-            android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:text="Salvar"
-            android:textSize="20dp"
-            android:textColor="@color/branco"
-            android:gravity="center"
-            android:layout_gravity="center"/>
+                <RadioButton
+                    android:id="@+id/rbagendando"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Agendando"
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+
+                <RadioButton
+                    android:id="@+id/rbfinalizando"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Finalizando"
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:focusable="false"
+                    android:hint="Data e hora"
+                    android:inputType="datetime"
+                    android:padding="10dp"
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/EdtOBS"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:hint="Observação"
+                    android:inputType="textMultiLine"
+                    android:padding="10dp"
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btncancelar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/colorAccent"
+                    android:text="Cancelar"
+                    android:textColor="@color/branco"
+                    android:textSize="20dp" />
+
+                <Button
+                    android:id="@+id/btnsalvar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorAccent"
+                    android:text="Salvar"
+                    android:textColor="@color/branco"
+                    android:textSize="20dp" />
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 
 </LinearLayout>

@@ -29,9 +29,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nome fantasia:"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="20sp"
+                    android:textStyle="normal" />
 
 
                 <TextView
@@ -39,8 +39,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="NOME FANTASIA"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/textsize_sw600_30"
+                    android:textColor="@color/preto"
+                    android:textSize="20sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -54,9 +54,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Razão Social:"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="20sp"
+                    android:textStyle="normal" />
 
 
                 <TextView
@@ -64,8 +64,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="RAZAO SOCIAL"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/textsize_sw600_30"
+                    android:textColor="@color/preto"
+                    android:textSize="20sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -80,8 +80,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Documento"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
                     android:textStyle="normal|bold" />
             </LinearLayout>
 
@@ -96,9 +96,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Identidade"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
 
@@ -113,9 +113,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Inscrição Estadual"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -128,9 +128,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Endereço"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -143,9 +143,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Complemento"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -158,9 +158,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Estado"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -173,9 +173,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cidade"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
 
@@ -189,9 +189,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Bairro"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -204,9 +204,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="CEP"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -219,9 +219,9 @@
                     android:layout_height="wrap_content"
                     android:autoLink="phone"
                     android:text="Telefone1"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
@@ -232,24 +232,26 @@
                     android:id="@+id/txt_telefone_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:autoLink="phone"
                     android:text="Telefone2"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/txt_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:autoLink="email"
                     android:text="Email"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textSize="18sp"
+                    android:textStyle="normal" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

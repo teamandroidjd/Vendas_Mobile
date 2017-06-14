@@ -16,8 +16,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Escolha uma das opções abaixo:"
-            android:textColor="@color/colordescClie"
-            android:textSize="40sp" />
+            android:textColor="@color/preto"
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -37,8 +37,8 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Remarcar ou Finalizar"
-                android:textColor="@color/colordescClie"
-                android:textSize="40sp" />
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
 
             <RadioButton
                 android:layout_width="wrap_content"
@@ -46,8 +46,10 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Cancelar"
-                android:textColor="@color/colordescClie"
-                android:textSize="40sp" />
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
+
+
 
             <RadioButton
                 android:layout_width="wrap_content"
@@ -55,8 +57,8 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Sincronizar"
-                android:textColor="@color/colordescClie"
-                android:textSize="40sp" />
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
         </RadioGroup>
     </LinearLayout>
 </RelativeLayout>

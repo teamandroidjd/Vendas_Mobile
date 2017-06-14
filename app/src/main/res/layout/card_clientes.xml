@@ -44,15 +44,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="11435"
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="16sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <ImageView
                         android:id="@+id/bola_vermelha"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:layout_marginLeft="20dp"
                         android:src="@drawable/bola_vermelha"
                         android:textColor="@color/colordescClie"
                         android:textSize="16sp"
@@ -71,7 +70,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CLIENTE COM NOME GRANDE QUE DA TRABALHO "
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/preto"
                         android:textSize="16sp"
                         android:textStyle="normal|bold" />
 
@@ -88,7 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Razão Social"
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="12sp"
                         android:textStyle="normal|bold" />
 
@@ -97,9 +96,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CNPJ"
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="16sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 
@@ -112,9 +111,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Estado"
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="12sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lbl1"
@@ -126,9 +125,9 @@
                         android:layout_toEndOf="@+id/lblEstado"
                         android:layout_toRightOf="@+id/lblEstado"
                         android:text=" - "
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="12sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblCidade"
@@ -140,9 +139,9 @@
                         android:layout_toEndOf="@+id/lbl1"
                         android:layout_toRightOf="@+id/lbl1"
                         android:text="Cidade"
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="12sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lbl2"
@@ -154,9 +153,9 @@
                         android:layout_toEndOf="@+id/lblCidade"
                         android:layout_toRightOf="@+id/lblCidade"
                         android:text=" - "
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="12sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblBairro"
@@ -168,9 +167,9 @@
                         android:layout_toEndOf="@+id/lbl2"
                         android:layout_toRightOf="@+id/lbl2"
                         android:text="Bairro"
-                        android:textColor="@color/colordescClie"
+                        android:textColor="@color/preto"
                         android:textSize="12sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -182,9 +181,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Telefone"
-                        android:textColor="@color/colordescClie"
+                        android:autoLink="phone"
+                        android:textColor="@color/preto"
                         android:textSize="12sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

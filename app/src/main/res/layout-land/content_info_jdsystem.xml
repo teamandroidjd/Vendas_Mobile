@@ -27,6 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:src="@drawable/logo"
                 tools:ignore="ContentDescription" />
 
@@ -36,7 +37,7 @@
                 android:layout_marginTop="10dp"
                 android:text="Força de vendas"
                 android:textAlignment="center"
-                android:textColor="@color/colordescClie"
+                android:textColor="@color/preto"
                 android:textSize="30sp"
                 android:textStyle="normal|bold" />
 
@@ -47,13 +48,12 @@
                 android:text="versao"
                 android:textAlignment="center" />
 
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:text="Fale conosco:"
-                android:textColor="@color/colordescClie"
+                android:textColor="@color/preto"
                 android:textStyle="normal|bold" />
 
             <LinearLayout
@@ -66,35 +66,42 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="E-mail: "
-                    android:textColor="@color/colordescClie"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textStyle="normal" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:autoLink="email"
+                    android:textColorLink="@color/azul"
                     android:text="sac@jdsystem.com.br"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
                     android:text="Site: "
-                    android:textColor="@color/colordescClie"
-                    android:textStyle="normal|bold" />
+                    android:textColor="@color/preto"
+                    android:textStyle="normal" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:autoLink="web"
+                    android:textColorLink="@color/azul"
                     android:linksClickable="true"
                     android:text="http://www.jdsystem.com.br"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
             </LinearLayout>
 
@@ -103,33 +110,53 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Tels.: +55 (21) 2618-2950 / +55 (21) 2618-3834 / +55 (21) 2622-2087 "
-                android:textStyle="normal|bold" />
+                android:textColor="@color/preto"
+                android:text="Tels.: +55 (21) 2618-2950 / +55 (21) 2618-3834"
+                android:textStyle="normal" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" +55 (21) 2717-7938/ +55 (21) 3629-0157 / +55 (21) 3629-5071 / +55 (21) 3629-0230 "
-                android:textStyle="normal|bold" />
+                android:textColor="@color/preto"
+                android:text="+55 (21) 2622-2087 / +55 (21) 2717-7938 "
+                android:textStyle="normal" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="+55 (21) 2722-1439"
-                android:textStyle="normal|bold" />
+                android:textColor="@color/preto"
+                android:text="+55 (21) 3629-0157 / +55 (21) 3629-5071 "
+                android:textStyle="normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/preto"
+                android:text="+55 (21) 3629-0230 / +55 (21) 2722-1439 "
+                android:textStyle="normal" />
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="End.: Rua Visconde do Rio Branco,305 - Sala 502 e 503 - Centro - Niterói - RJ"
-                android:textStyle="normal|bold" />
+                android:textColor="@color/preto"
+                android:text="End.: Rua Visconde do Rio Branco,305 - Sala 502 e 503"
+                android:textStyle="normal" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/preto"
+                android:text="Centro - Niterói - RJ"
+                android:textStyle="normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/preto"
                 android:text="CEP: 24020-004"
-                android:textStyle="normal|bold" />
+                android:textStyle="normal" />
 
             <LinearLayout
                 android:layout_width="match_parent"

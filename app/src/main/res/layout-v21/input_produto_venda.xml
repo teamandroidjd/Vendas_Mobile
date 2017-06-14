@@ -95,15 +95,16 @@
         android:textSize="16sp" />
 
     <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/spntabpreco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txv04"
         android:entries="@array/tabela_preco"
         android:padding="10dp"
-        android:textColor="@color/colordescClie"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@+id/txv04"></Spinner>
+        android:textColor="@color/colordescClie"></Spinner>
 
     <LinearLayout
         android:id="@+id/lnrprecovenda"
@@ -112,7 +113,22 @@
         android:layout_below="@+id/spntabpreco"
         android:layout_margin="10dp"
         android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Preço R$: "
+            android:textSize="16sp"
+            android:textColor="@color/colordescClie"
+            android:textStyle="bold"/>
 
+        <EditText
+            android:id="@+id/edtprecovenda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorAccent"
+            android:inputType="numberDecimal"
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <TextView
@@ -141,33 +157,6 @@
         android:layout_toRightOf="@+id/txv07"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Preço R$: "
-        android:textColor="@color/colordescClie"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_alignBaseline="@+id/spntabpreco"
-        android:layout_alignBottom="@+id/spntabpreco"
-        android:layout_toLeftOf="@+id/edtprecovenda"
-        android:layout_toStartOf="@+id/edtprecovenda"
-        android:layout_marginRight="10dp"
-        android:layout_marginEnd="10dp" />
-
-    <EditText
-        android:id="@+id/edtprecovenda"
-        android:layout_width="211dp"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:textColor="@color/colorAccent"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_alignBottom="@+id/spntabpreco"
-        android:layout_alignRight="@+id/lnrprecovenda"
-        android:layout_alignEnd="@+id/lnrprecovenda" />
 </RelativeLayout>
 
 

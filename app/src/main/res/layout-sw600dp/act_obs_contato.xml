@@ -28,9 +28,9 @@
                 android:layout_height="wrap_content"
                 android:scrollbars="vertical"
                 android:text="Observações"
-                android:textColor="@color/colordescClie"
+                android:textColor="@color/preto"
                 android:textSize="20sp"
-                android:textStyle="normal|bold" />
+                android:textStyle="normal" />
         </LinearLayout>
     </LinearLayout>
 

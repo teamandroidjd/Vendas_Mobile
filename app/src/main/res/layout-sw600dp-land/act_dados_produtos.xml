@@ -26,11 +26,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/actionBarDadosProduto"
         android:orientation="vertical"
+        android:layout_below="@+id/actionBarDadosProduto"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin">
+
 
         <ScrollView
             android:layout_width="match_parent"
@@ -55,18 +56,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Código: "
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="20sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/txt_codprod"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CÓDIGO"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="20sp"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -79,17 +80,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Descrição:"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="20sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/txt_descricao"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="DESCRIÇÃO"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="30sp"
+                        android:textColor="@color/preto"
+                        android:textSize="20sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
 
@@ -103,9 +104,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Status"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -118,9 +119,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Unidade"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -132,9 +133,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Apresentação"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -146,9 +147,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Fabricante"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -160,9 +161,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Fornecedor"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -174,9 +175,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Classe"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -188,16 +189,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Marca"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="250sp"
                     android:orientation="vertical">
 
                     <RelativeLayout
@@ -211,17 +211,17 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preço padrão"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/txtprecopadrao"
                             android:text="R$ "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
@@ -230,9 +230,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="100000,0000"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </RelativeLayout>
 
@@ -247,18 +247,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preço de venda 1"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/txtpreco"
                             android:text="R$ "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/txtpreco"
@@ -266,9 +266,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="100000,0000"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </RelativeLayout>
 
@@ -283,18 +283,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preço de venda 2"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/txtprecoauxiliara"
                             android:text="R$ "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/txtprecoauxiliara"
@@ -302,9 +302,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="100000,0000"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </RelativeLayout>
 
@@ -319,18 +319,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preço de venda 3"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/txtprecoauxiliarb"
                             android:text="R$ "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/txtprecoauxiliarb"
@@ -338,9 +338,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="100000,0000"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </RelativeLayout>
 
@@ -355,18 +355,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preço de venda 4"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/txtprecoauxiliarc"
                             android:text="R$ "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/txtprecoauxiliarc"
@@ -374,9 +374,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="100000,0000"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </RelativeLayout>
 
@@ -391,18 +391,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preço de venda 5"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/txtprecoauxiliard"
                             android:text="R$ "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/txtprecoauxiliard"
@@ -410,9 +410,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="100000,0000"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </RelativeLayout>
 
@@ -427,18 +427,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preço de venda P1"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/txtprecopromocaoa"
                             android:text="R$ "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/txtprecopromocaoa"
@@ -447,9 +447,9 @@
                             android:layout_alignParentRight="true"
                             android:gravity="right"
                             android:text="100000,0000"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </RelativeLayout>
 
@@ -464,18 +464,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Preço de venda P2"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/txtprecopromocaob"
                             android:text="R$ "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/txtprecopromocaob"
@@ -483,9 +483,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="100000,0000"
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </RelativeLayout>
 
@@ -499,9 +499,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Quantidade mínina para vendas: "
-                            android:textColor="@color/colordescClie"
-                            android:textSize="25sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/vermelho"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                         <TextView
                             android:id="@+id/txvqtdminvend"
@@ -509,9 +509,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:text="9999,9999"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="30sp"
-                            android:textStyle="normal|bold" />
+                            android:textColor="@color/preto"
+                            android:textSize="18sp"
+                            android:textStyle="normal" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -526,18 +526,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="Estoque: "
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/txt_qtdestoque"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1000000"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
 
                 </LinearLayout>
             </LinearLayout>

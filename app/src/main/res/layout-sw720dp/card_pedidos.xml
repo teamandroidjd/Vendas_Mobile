@@ -48,9 +48,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="#"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblNumPedido"
@@ -62,22 +62,22 @@
                         android:layout_toEndOf="@+id/lblStatusPed"
                         android:layout_toRightOf="@+id/lblStatusPed"
                         android:text="40"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblPed"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="220dp"
-                        android:layout_marginStart="220dp"
+                        android:layout_marginLeft="100dp"
+                        android:layout_marginStart="100dp"
                         android:layout_toEndOf="@+id/lblNumPedido"
                         android:layout_toRightOf="@+id/lblNumPedido"
                         android:text="Pedido"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblNPedidoExt"
@@ -89,14 +89,14 @@
                         android:layout_toEndOf="@+id/lblPed"
                         android:layout_toRightOf="@+id/lblPed"
                         android:text="40"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="18sp"
+                        android:textStyle="normal" />
 
                     <ImageView
                         android:id="@+id/imgStatus"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
 
                         android:layout_alignParentRight="true"
                         android:src="@drawable/bola_vermelha"
@@ -112,18 +112,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Empresa: "
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblEmpresa"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Empresa"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 
@@ -136,18 +136,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Data de emissão: "
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/dtemissao"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="01/01/2017 12:00:00"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:text="Terça, 06 de Dezembro de 2016"
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
 
 
                 </LinearLayout>
@@ -158,8 +158,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cliente da Venda"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="30sp"
+                    android:textColor="@color/preto"
+                    android:textSize="16sp"
                     android:textStyle="normal|bold" />
 
 
@@ -171,10 +171,10 @@
                         android:id="@+id/lblsimbolo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total R$ "
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:text="Total: R$ "
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblValorTotal"
@@ -183,9 +183,9 @@
                         android:layout_alignParentTop="true"
                         android:layout_toRightOf="@+id/lblsimbolo"
                         android:text="2.000,00"
-                        android:textColor="@color/colordescClie"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/lblVendedor"
@@ -195,10 +195,10 @@
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
                         android:gravity="right"
-                        android:text="Eduardo"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:text="Rafael"
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

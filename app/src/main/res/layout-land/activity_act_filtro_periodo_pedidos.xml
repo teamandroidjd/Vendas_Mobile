@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img_fundo_splash"
     android:fitsSystemWindows="true"
     android:scrollbarAlwaysDrawVerticalTrack="true"
     tools:context=".actFiltroPeriodoPedidos">
@@ -12,6 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/actionBarFiltroPedido"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -26,6 +26,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/actionBarFiltroPedido"
         android:orientation="vertical">
 
 
@@ -69,17 +70,15 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Data Inicial"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/preto"
                                 android:textSize="20sp"
-                                android:textStyle="normal|bold" />
+                                android:textStyle="normal" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:orientation="horizontal">
+                            android:gravity="center">
 
                             <EditText
                                 android:id="@+id/dpResult"
@@ -89,7 +88,9 @@
                                 android:focusable="false"
                                 android:focusableInTouchMode="false"
                                 android:inputType="number"
-                                tools:ignore="UnusedAttribute" />
+                                android:maxLength="10"
+
+                                />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -109,15 +110,16 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Data Final"
-                                android:textColor="@color/colorPrimary"
+                                android:textColor="@color/preto"
                                 android:textSize="20sp"
-                                android:textStyle="normal|bold" />
+                                android:textStyle="normal" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center">
+
 
                             <EditText
                                 android:id="@+id/dpResultFinal"
@@ -126,8 +128,8 @@
                                 android:elevation="1dp"
                                 android:focusable="false"
                                 android:focusableInTouchMode="false"
-                                android:inputType="number" />
-
+                                android:inputType="number"
+                                android:maxLength="10" />
 
                         </LinearLayout>
                     </LinearLayout>
@@ -149,4 +151,4 @@
         </android.support.v7.widget.CardView>
 
     </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

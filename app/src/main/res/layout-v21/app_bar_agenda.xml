@@ -112,5 +112,5 @@
         fab:menu_buttonSpacing="5dp"
         fab:menu_fab_size="normal"
         android:src="@drawable/add"
-        />
+    />
 </android.support.design.widget.CoordinatorLayout>

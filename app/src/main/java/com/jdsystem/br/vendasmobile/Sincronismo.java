@@ -149,7 +149,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         finish();
     }
 
-    protected void sincronizar(View view) {
+    public void sincronizar(View view) {
         hd = new Handler();
         DialogECB = new ProgressDialog(Sincronismo.this);
         Dialog = new ProgressDialog(Sincronismo.this);

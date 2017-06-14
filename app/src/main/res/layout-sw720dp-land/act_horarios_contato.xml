@@ -52,8 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Horários"
-            android:textColor="@color/colordescClie"
+            android:textColor="@color/preto"
             android:textSize="20sp"
-            android:textStyle="normal|bold" />
+            android:textStyle="normal" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
