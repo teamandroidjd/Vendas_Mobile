@@ -87,7 +87,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_act_filtro_periodo_pedidos);
+        setContentView(R.layout.filtro_periodo_pedidos);
         Toolbar toolbar;
         try {
             toolbar = (Toolbar) findViewById(R.id.toolbar);

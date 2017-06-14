@@ -1,7 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -23,8 +22,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.SearchView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -397,7 +396,7 @@ public class ConsultaProdutos extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_sincroniza_cliente, menu);
+        inflater.inflate(R.menu.action_bar_produto, menu);
         searchItem = menu.findItem(R.id.action_searchable_activity);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -407,7 +406,7 @@ public class ConsultaProdutos extends AppCompatActivity
                 dialog = new ProgressDialog(ConsultaProdutos.this);
                 dialog.setIndeterminate(true);
                 dialog.setTitle(getString(R.string.wait));
-                dialog.setMessage(getString(R.string.sync_products));
+                dialog.setMessage(getString(R.string.searchingproduct));
                 dialog.setCancelable(false);
                 dialog.setProgress(0);
                 dialog.show();
@@ -436,8 +435,16 @@ public class ConsultaProdutos extends AppCompatActivity
             public boolean onClose() {
 
                 //flag = 2;
+                ConsultaProdutos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 editQuery = null;
                 searchView.onActionViewCollapsed();
+                dialog = new ProgressDialog(ConsultaProdutos.this);
+                dialog.setCancelable(false);
+                dialog.setTitle(getString(R.string.wait));
+                dialog.setMessage(getString(R.string.loading_products));
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.show();
+
                 Thread thread = new Thread(ConsultaProdutos.this);
                 thread.start();
 
@@ -449,55 +456,51 @@ public class ConsultaProdutos extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_sinc_cliente) {
-            if (item.getItemId() == R.id.menu_sinc_cliente) {
-                Boolean ConexOk = Util.checarConexaoCelular(ConsultaProdutos.this);
-                if (ConexOk) {
-                    try {
-                        Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL = " + idPerfil, null);
-                        if (cursorVerificaProd.getCount() == 0) {
-                            cursorVerificaProd.close();
-                            flag = 1;
-                            dialog = new ProgressDialog(ConsultaProdutos.this);
-                            dialog.setCancelable(false);
-                            dialog.setMessage(getString(R.string.primeira_sync_itens));
-                            dialog.setTitle(getString(R.string.wait));
-                            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                            dialog.setProgress(0);
-                            dialog.setMax(0);
-                            dialog.setIcon(R.drawable.icon_sync);
-                            dialog.show();
+        if (item.getItemId() == R.id.menu_sinc_produto) {
+            Boolean ConexOk = Util.checarConexaoCelular(ConsultaProdutos.this);
+            if (ConexOk) {
+                try {
+                    Cursor cursorVerificaProd = DB.rawQuery("SELECT * FROM ITENS WHERE CODPERFIL = " + idPerfil, null);
+                    if (cursorVerificaProd.getCount() == 0) {
+                        cursorVerificaProd.close();
+                        flag = 1;
+                        dialog = new ProgressDialog(ConsultaProdutos.this);
+                        dialog.setCancelable(false);
+                        dialog.setMessage(getString(R.string.primeira_sync_itens));
+                        dialog.setTitle(getString(R.string.wait));
+                        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        dialog.setProgress(0);
+                        dialog.setMax(0);
+                        dialog.setIcon(R.drawable.icon_sync);
+                        dialog.show();
 
-                            dialogECB = new ProgressDialog(ConsultaProdutos.this);
+                        dialogECB = new ProgressDialog(ConsultaProdutos.this);
 
-                            Thread thread = new Thread(this);
-                            thread.start();
+                        Thread thread = new Thread(this);
+                        thread.start();
 
-                        } else {
-                            cursorVerificaProd.close();
-                            flag = 1;
-                            dialog = new ProgressDialog(ConsultaProdutos.this);
-                            dialog.setCancelable(false);
-                            dialog.setMessage(getString(R.string.sync_products));
-                            dialog.setTitle(getString(R.string.wait));
-                            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                            dialog.setProgress(0);
-                            dialog.setMax(0);
-                            dialog.setIcon(R.drawable.icon_sync);
-                            dialog.show();
+                    } else {
+                        cursorVerificaProd.close();
+                        flag = 1;
+                        dialog = new ProgressDialog(ConsultaProdutos.this);
+                        dialog.setCancelable(false);
+                        dialog.setMessage(getString(R.string.sync_products));
+                        dialog.setTitle(getString(R.string.wait));
+                        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        dialog.setProgress(0);
+                        dialog.setMax(0);
+                        dialog.setIcon(R.drawable.icon_sync);
+                        dialog.show();
 
-                            Thread thread = new Thread(this);
-                            thread.start();
-                        }
-                    } catch (Exception e) {
-                        e.toString();
+                        Thread thread = new Thread(this);
+                        thread.start();
                     }
-
-                } else {
-                    Toast.makeText(ConsultaProdutos.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
-
+                } catch (Exception e) {
+                    e.toString();
                 }
 
+            } else {
+                Toast.makeText(ConsultaProdutos.this, getString(R.string.no_connection), Toast.LENGTH_SHORT).show();
 
             }
         }
@@ -505,104 +508,106 @@ public class ConsultaProdutos extends AppCompatActivity
     }
 
     public void run() {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (flag == 0) {
-                            try {
-                                FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                                Bundle params = new Bundle();
-                                if (frag != null) {
-                                    frag = null;
-                                }
-                                frag = new FragmentProdutos();
-                                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                                params.putInt(getString(R.string.intent_flag), flag);
-                                params.putString(getString(R.string.intent_numpedido), numPedido);
-                                params.putString(getString(R.string.intent_chavepedido), chavePedido);
-                                params.putString(getString(R.string.intent_usuario), usuario);
-                                params.putString(getString(R.string.intent_senha), senha);
-                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
-                                params.putInt(getString(R.string.intent_codcliente), codCliente);
-                                params.putInt(getString(R.string.intent_codcontato), codContato);
-                                params.putString(getString(R.string.intent_nomerazao), nomeCliente);
-                                params.putInt(getString(R.string.intent_codcontato), codContato);
-                                frag.setArguments(params);
-                                ft.commit();
-
-                            } catch (Exception e) {
-                                e.toString();
-                            }
-                        } else if (flag == 2) {
-                            try {
-                                FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                                Bundle params = new Bundle();
-                                if (frag != null) {
-                                    frag = null;
-                                }
-                                frag = new FragmentProdutos();
-                                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                                params.putInt(getString(R.string.intent_flag), flag);
-                                params.putString(getString(R.string.intent_numpedido), numPedido);
-                                params.putString(getString(R.string.intent_chavepedido), chavePedido);
-                                params.putString(getString(R.string.intent_usuario), usuario);
-                                params.putString(getString(R.string.intent_senha), senha);
-                                params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
-                                frag.setArguments(params);
-                                ft.commit();
-
-                            } catch (Exception e) {
-                                e.toString();
-                            }
-                        }
-                    }
-                });
-                if (flag == 1) {
+        if (flag == 0) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
                     try {
-                        sincProd = Sincronismo.sincronizaProdutos(ConsultaProdutos.this, usuario, senha, 0, dialog, dialogECB, handler);
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplication(), sincProd, Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        if (numPedido == null) {
-                            Intent intent = (ConsultaProdutos.this).getIntent();
-                            (ConsultaProdutos.this).finish();
-                            startActivity(intent);
-                        } else {
-                            Intent intent = (ConsultaProdutos.this).getIntent();
-                            Bundle params = new Bundle();
-                            params.putString(getString(R.string.intent_numpedido), numPedido);
-                            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                            params.putString(getString(R.string.intent_usuario), usuario);
-                            params.putString(getString(R.string.intent_senha), senha);
-                            params.putString(getString(R.string.intent_chavepedido), chavePedido);
-                            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                            params.putInt(getString(R.string.intent_flag), 0);
-                            intent.putExtras(params);
-                            (ConsultaProdutos.this).finish();
-                            startActivity(intent);
+                        FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                        Bundle params = new Bundle();
+                        if (frag != null) {
+                            frag = null;
                         }
+                        frag = new FragmentProdutos();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                        params.putInt(getString(R.string.intent_flag), flag);
+                        params.putString(getString(R.string.intent_numpedido), numPedido);
+                        params.putString(getString(R.string.intent_chavepedido), chavePedido);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putInt(getString(R.string.intent_cad_contato), CadastroContato);
+                        params.putInt(getString(R.string.intent_codcliente), codCliente);
+                        params.putInt(getString(R.string.intent_codcontato), codContato);
+                        params.putString(getString(R.string.intent_nomerazao), nomeCliente);
+                        params.putInt(getString(R.string.intent_codcontato), codContato);
+                        frag.setArguments(params);
+                        ft.commit();
 
                     } catch (Exception e) {
                         e.toString();
                     }
                 }
-                if (dialog.isShowing())
-                    dialog.dismiss();
+            });
 
+        } else if (flag == 2) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                        Bundle params = new Bundle();
+                        if (frag != null) {
+                            frag = null;
+                        }
+                        frag = new FragmentProdutos();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                        params.putInt(getString(R.string.intent_flag), flag);
+                        params.putString(getString(R.string.intent_numpedido), numPedido);
+                        params.putString(getString(R.string.intent_chavepedido), chavePedido);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                        frag.setArguments(params);
+                        ft.commit();
+
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+                }
+            });
+
+        }
+        if (flag == 1) {
+            try {
+                sincProd = Sincronismo.sincronizaProdutos(ConsultaProdutos.this, usuario, senha, 0, dialog, dialogECB, handler);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplication(), sincProd, Toast.LENGTH_LONG).show();
+                    }
+                });
+                if (numPedido == null) {
+                    Intent intent = (ConsultaProdutos.this).getIntent();
+                    (ConsultaProdutos.this).finish();
+                    startActivity(intent);
+                } else {
+                    Intent intent = (ConsultaProdutos.this).getIntent();
+                    Bundle params = new Bundle();
+                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_chavepedido), chavePedido);
+                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                    params.putInt(getString(R.string.intent_flag), 0);
+                    intent.putExtras(params);
+                    (ConsultaProdutos.this).finish();
+                    startActivity(intent);
+                }
+
+            } catch (Exception e) {
+                e.toString();
             }
-        });
+        }
+        if (dialog.isShowing())
+            dialog.dismiss();
+
     }
 
 

@@ -143,7 +143,7 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
             // Neese momento é que a tela com as opções do pedido é criada.
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            @SuppressLint("InflateParams") final View formElementsView = inflater.inflate(R.layout.act_pergunta_list_agenda, null, false);
+            @SuppressLint("InflateParams") final View formElementsView = inflater.inflate(R.layout.input_pergunta_agenda, null, false);
             final RadioGroup genderRadioGroup = (RadioGroup) formElementsView.findViewById(R.id.genderRadioGroup);
             new AlertDialog.Builder(getActivity()).setView(formElementsView)
                     .setTitle("Agendamento: " + NumAgenda)

@@ -93,7 +93,7 @@
                         android:text="Contato"
                         android:textColor="@color/preto"
                         android:textSize="15sp"
-                        android:textStyle="normal" />
+                        android:textStyle="bold" />
                 </LinearLayout>
 
 

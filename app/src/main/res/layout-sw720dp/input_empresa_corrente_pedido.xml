@@ -44,9 +44,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Selecione a Empresa"
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/preto"
                         android:textSize="45sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <LinearLayout

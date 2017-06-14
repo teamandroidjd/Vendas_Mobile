@@ -61,7 +61,7 @@ public class CadastroAgenda extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act_cadastro_agenda);
+        setContentView(R.layout.cad_agenda);
 
         Intent intent = getIntent();
         if (intent != null) {

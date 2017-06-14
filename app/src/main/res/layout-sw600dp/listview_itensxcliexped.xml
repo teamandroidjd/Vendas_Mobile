@@ -19,7 +19,7 @@
             android:gravity="center"
             android:text="123456789123456"
             android:paddingLeft="4dp"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
         <TextView
             android:id="@+id/listview_itensxclie_descitem"
@@ -29,7 +29,7 @@
             android:gravity="center"
             android:paddingLeft="4dp"
             android:text="Descrição do item muito grande para ver como vai ficar"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="400000"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
         <TextView
             android:id="@+id/listview_itensxclie_vlunititem"
@@ -48,7 +48,7 @@
             android:layout_weight="1.48"
             android:gravity="center"
             android:text="99999,9999"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
         <TextView
             android:id="@+id/listview_itensxclie_vltotalitem"
@@ -58,7 +58,7 @@
             android:gravity="right"
             android:paddingRight="4dp"
             android:text="100000,00"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
     </LinearLayout>
 </RelativeLayout>

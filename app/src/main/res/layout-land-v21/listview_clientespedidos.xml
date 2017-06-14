@@ -29,7 +29,7 @@
             android:gravity="center"
             android:paddingLeft="4dp"
             android:text="01/01/2000"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Pedido"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
         <TextView
             android:id="@+id/listview_clientespedidos_desc"
@@ -48,7 +48,7 @@
             android:layout_weight="0.80"
             android:gravity="center"
             android:text="100 %"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
         <TextView
             android:id="@+id/listview_clientespedidos_vltotal"
@@ -58,7 +58,7 @@
             android:gravity="right"
             android:paddingRight="4dp"
             android:text="R$ 100000,00"
-            android:textColor="@color/colordescClie"/>
+            android:textColor="@color/preto"/>
 
     </LinearLayout>
 </RelativeLayout>

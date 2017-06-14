@@ -46,8 +46,8 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="Mensagem"
-                        android:textColor="#14bfd6"
-                        android:textSize="40sp"
+                        android:textColor="@color/preto"
+                        android:textSize="20sp"
                         android:textStyle="normal|bold" />
 
                 </LinearLayout>

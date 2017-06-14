@@ -110,6 +110,7 @@
     <string name="loadingcontacts">Carregando contatos...</string>
     <string name="searchingcontacts">Buscando contatos...</string>
     <string name="searchingclients">Buscando clientes...</string>
+    <string name="searchingproduct">Buscando produtos...</string>
     <string name="updating_customer_registration">Enviando novos cadastros de clientes...</string>
     <string name="updating_contacts">Enviando novos cadastros de contatos...</string>
     <string name="searching_the_CEP_informed">Pesquisando o CEP informado...</string>

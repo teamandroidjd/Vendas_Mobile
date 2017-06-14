@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Escolha uma das opções abaixo:"
-            android:textColor="@color/colordescClie"
+            android:textColor="@color/preto"
             android:textSize="20sp" />
 
     </LinearLayout>
@@ -38,7 +38,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Alterar"
-                android:textColor="@color/colordescClie"
+                android:textColor="@color/preto"
                 android:textSize="20sp" />
 
             <RadioButton
@@ -47,7 +47,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Excluir"
-                android:textColor="@color/colordescClie"
+                android:textColor="@color/preto"
                 android:textSize="20sp" />
 
 
@@ -57,7 +57,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Sincronizar"
-                android:textColor="@color/colordescClie"
+                android:textColor="@color/preto"
                 android:textSize="20sp" />
 
         </RadioGroup>

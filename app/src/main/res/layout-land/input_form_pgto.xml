@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:text="Cálculo de parcelas"
         android:textAlignment="center"
-        android:textColor="@color/colordescClie"
+        android:textColor="@color/preto"
         android:textSize="15sp"
         android:textStyle="normal|bold" />
 

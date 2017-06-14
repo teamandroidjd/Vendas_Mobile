@@ -34,7 +34,7 @@ public class ListAdapterAgenda extends RecyclerView.Adapter<ListAdapterAgenda.My
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Log.i("LOG", "onCreateViewHolder()");
-        View v = mLayoutInflater.inflate(R.layout.lst_agenda_card, viewGroup, false);
+        View v = mLayoutInflater.inflate(R.layout.card_agenda, viewGroup, false);
         return new MyViewHolder(v);
     }
 

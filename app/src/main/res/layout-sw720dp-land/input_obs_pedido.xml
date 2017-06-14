@@ -44,9 +44,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Observação do Pedido"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="30sp"
-                        android:textStyle="normal|bold" />
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <EditText
@@ -55,7 +55,7 @@
                     android:layout_height="match_parent"
                     android:inputType="textMultiLine"
                     android:textColor="@color/colordescClie"
-                    android:textSize="30sp" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
         </LinearLayout>

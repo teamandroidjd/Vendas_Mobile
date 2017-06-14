@@ -46,7 +46,7 @@
 
         <RelativeLayout
             android:id="@+id/rltprincipal"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -102,18 +102,18 @@
                     android:layout_height="wrap_content"
                     android:text="empresa"
                     android:textAlignment="center"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="20sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <CheckBox
                     android:id="@+id/cbGravSenha"
                     android:layout_width="133dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:buttonTint="@color/colorPrimary"
+                    android:buttonTint="@color/preto"
                     android:text="Salvar Senha?"
-                    android:textColor="#4d4d4d"
+                    android:textColor="@color/preto"
                     android:textSize="15sp"
                     tools:ignore="UnusedAttribute" />
 
@@ -139,9 +139,9 @@
                 android:layout_alignParentTop="true"
                 android:text="@string/login"
                 android:textAlignment="center"
-                android:textColor="#14bfd6"
+                android:textColor="@color/preto"
                 android:textSize="20sp"
-                android:textStyle="normal|bold" />
+                android:textStyle="normal" />
 
         </RelativeLayout>
 

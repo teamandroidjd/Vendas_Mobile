@@ -821,7 +821,7 @@ public class Login extends AppCompatActivity implements Runnable {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_act_principal, menu);
+        getMenuInflater().inflate(R.menu.action_bar_login, menu);
         return true;
     }
 

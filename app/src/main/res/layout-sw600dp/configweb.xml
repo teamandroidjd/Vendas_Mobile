@@ -39,7 +39,7 @@
             android:textAlignment="center"
             android:textColor="@color/branco"
             android:textSize="30sp"
-            android:textStyle="normal|bold" />
+            android:textStyle="normal" />
 
         <EditText
             android:id="@+id/edthost"
@@ -71,7 +71,7 @@
             android:text="Salvar"
             android:textColor="@color/branco"
             android:textSize="15sp"
-            android:textStyle="normal|bold" />
+            android:textStyle="normal" />
 
         <TextView
             android:id="@+id/textView4"
@@ -120,7 +120,7 @@
                         android:text="Empresa"
                         android:textColor="@color/branco"
                         android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
 
                     <TextView
@@ -131,7 +131,7 @@
                         android:text="Licença"
                         android:textColor="@color/branco"
                         android:textSize="25sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <TextView
                         android:id="@+id/txtexcluir"
@@ -142,7 +142,7 @@
                         android:text="Excluir"
                         android:textColor="@color/branco"
                         android:textSize="25sp"
-                        android:textStyle="normal|bold"
+                        android:textStyle="normal"
                         tools:ignore="InconsistentLayout" />
                 </TableRow>
 
@@ -167,7 +167,7 @@
                         android:text="Empresa 1"
                         android:textColor="@color/branco"
                         android:textSize="20sp"
-                        android:textStyle="normal|bold"
+                        android:textStyle="normal"
                         tools:ignore="InconsistentLayout" />
 
                     <TextView
@@ -179,7 +179,7 @@
                         android:text="Licença 1"
                         android:textColor="@color/branco"
                         android:textSize="20sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <Button
                         android:id="@+id/excluir1"
@@ -212,7 +212,7 @@
                         android:text="Empresa 2"
                         android:textColor="@color/branco"
                         android:textSize="20sp"
-                        android:textStyle="normal|bold"
+                        android:textStyle="normal"
                         tools:ignore="InconsistentLayout" />
 
                     <TextView
@@ -224,7 +224,7 @@
                         android:text="Licença 2"
                         android:textColor="@color/branco"
                         android:textSize="20sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <Button
                         android:id="@+id/excluir2"
@@ -257,7 +257,7 @@
                         android:text="Empresa 3"
                         android:textColor="@color/branco"
                         android:textSize="20sp"
-                        android:textStyle="normal|bold"
+                        android:textStyle="normal"
                         tools:ignore="InconsistentLayout" />
 
                     <TextView
@@ -269,7 +269,7 @@
                         android:text="Licença 3"
                         android:textColor="@color/branco"
                         android:textSize="20sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
 
                     <Button
                         android:id="@+id/excluir3"

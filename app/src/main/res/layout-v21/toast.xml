@@ -46,7 +46,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="Mensagem"
-                        android:textColor="#14bfd6"
+                        android:textColor="@color/preto"
                         android:textSize="20sp"
                         android:textStyle="normal|bold" />
 

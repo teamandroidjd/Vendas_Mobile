@@ -28,8 +28,8 @@
 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/actionBarLogin"
         android:layout_gravity="center"
+        android:layout_below="@+id/actionBarLogin"
         android:orientation="vertical">
 
 
@@ -41,7 +41,7 @@
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="@color/common_google_signin_btn_text_dark_default"
-            android:textSize="18sp" />
+            android:textSize="12sp" />
 
 
         <RelativeLayout
@@ -69,9 +69,9 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login"
                     android:textAlignment="center"
-                    android:textColor="#14bfd6"
+                    android:textColor="@color/preto"
                     android:textSize="20sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -110,18 +110,18 @@
                     android:layout_height="wrap_content"
                     android:text="empresa"
                     android:textAlignment="center"
-                    android:textColor="@color/colordescClie"
+                    android:textColor="@color/preto"
                     android:textSize="20sp"
-                    android:textStyle="normal|bold" />
+                    android:textStyle="normal" />
 
                 <CheckBox
                     android:id="@+id/cbGravSenha"
                     android:layout_width="133dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:buttonTint="@color/colorPrimary"
+                    android:buttonTint="@color/preto"
                     android:text="Salvar Senha?"
-                    android:textColor="#4d4d4d"
+                    android:textColor="@color/preto"
                     android:textSize="15sp"
                     tools:ignore="UnusedAttribute" />
 
@@ -156,7 +156,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:textColor="@color/branco"
                 android:textSize="12sp" />
 
 

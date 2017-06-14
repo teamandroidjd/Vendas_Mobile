@@ -20,6 +20,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_contatos"
-        app:menu="@menu/activity_act__contatos_drawer" />
+        app:menu="@menu/consulta_contatos_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

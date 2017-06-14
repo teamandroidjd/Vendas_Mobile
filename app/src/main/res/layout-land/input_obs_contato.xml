@@ -43,9 +43,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Observação: "
-                        android:textColor="@color/colorPrimary"
+                        android:textColor="@color/preto"
                         android:textSize="16sp"
-                        android:textStyle="normal|bold" />
+                        android:textStyle="normal" />
                 </LinearLayout>
 
                 <EditText

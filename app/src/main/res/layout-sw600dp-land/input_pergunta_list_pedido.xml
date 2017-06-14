@@ -15,83 +15,80 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Escolha uma das opções abaixo:"
-            android:textColor="@color/colordescClie"
-            android:textSize="@dimen/textsize_sw600_35" />
+            android:textColor="@color/preto"
+            android:textSize="20sp" />
 
     </LinearLayout>
 
-    <ScrollView
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/layTop">
 
-        <LinearLayout
+        <RadioGroup
+            android:id="@+id/genderRadioGroup"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp">
 
-            <RadioGroup
-                android:id="@+id/genderRadioGroup"
-                android:layout_width="match_parent"
+            <RadioButton
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="15dp">
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Alterar"
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="Alterar"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="30sp" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Cancelar"
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="Cancelar"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Compartilhar"
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="Compartilhar"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Gerar Venda"
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="Gerar Venda"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30" />
-
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="Sincronizar"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Sincronizar"
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
 
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="Verificar Status"
-                    android:textColor="@color/colordescClie"
-                    android:textSize="@dimen/textsize_sw600_30" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Verificar Status"
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
 
 
-            </RadioGroup>
-        </LinearLayout>
-    </ScrollView>
+        </RadioGroup>
+    </LinearLayout>
+
 </RelativeLayout>

@@ -280,7 +280,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
         }
     }
 
-    protected void consultaHistoricoVendas(View v) {
+    public void consultaHistoricoVendas(View v) {
         Intent i = new Intent(this, DadosCliente.class);
         Bundle params = new Bundle();
         params.putString(getString(R.string.intent_codvendedor), sCodVend);
