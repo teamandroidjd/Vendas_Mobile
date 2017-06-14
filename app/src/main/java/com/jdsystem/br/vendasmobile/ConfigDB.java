@@ -13,7 +13,7 @@ public class ConfigDB extends SQLiteOpenHelper {
     }
 
     public static String Dbname = "WSGEDB.db";
-    public static int versao = 3;
+    public static int versao = 4;
 
     private static String SQL_CLIENTE = (" CREATE TABLE IF NOT EXISTS CLIENTES (" +
             " CNPJ_CPF      VARCHAR (14) NOT NULL,             " +
@@ -717,6 +717,9 @@ public class ConfigDB extends SQLiteOpenHelper {
             }catch (Exception e){
                 e.toString();
             }
+
+
+            //NOVOS CAMPOS PARA O DB 5
         }
     }
 }
