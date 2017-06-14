@@ -1,6 +1,7 @@
 package com.jdsystem.br.vendasmobile;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -39,6 +40,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.jdsystem.br.vendasmobile.Util.PesquisaCep;
 import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.Util.Localizacao;
 
@@ -442,7 +444,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
                     bairroPos = 0;
                     spBairro.setAdapter(null);
                     flag = 3;
-                    PesqCEP = false;
+                    //PesqCEP = false;
 
                     Thread thread = new Thread(CadastroContatos.this);
                     thread.start();
@@ -907,9 +909,14 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
         String Estado = null;
         String Cidade = null;
         Boolean AtualizaEst = true;
+        String respostaCep = "";
         PesqCEP = true;
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        PesquisaCep pesquisaCep = new PesquisaCep();
+        respostaCep = pesquisaCep.buscarDadosConsultaCep(cep, CadastroContatos.this);
+
+
+        /*StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "PesquisaCEP");
@@ -960,17 +967,18 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
             }
         } catch (Exception e) {
             System.out.println("Error" + e);
-        }
+        }*/
 
-        if (RetDadosEndereco.equals("CEP não Encontrado")) {
+        if (respostaCep.equals("CEP não Encontrado")) {
+            //(RetDadosEndereco.equals("CEP não Encontrado")) {
             DialogECB.dismiss();
-            Toast.makeText(CadastroContatos.this, "CEP não encontrado na base de dados. Verifique se está correto e tente novamente.", Toast.LENGTH_LONG).show();
+            Toast.makeText(CadastroContatos.this, R.string.CEP_not_found_database, Toast.LENGTH_LONG).show();
             endereco.setText("");
-            return PesqCEP;
+            //return PesqCEP;
         }
 
         try {
-            JSONObject jsonObj = new JSONObject(RetDadosEndereco);
+            JSONObject jsonObj = new JSONObject(respostaCep);
             JSONArray JEndereco = jsonObj.getJSONArray("cep");
 
             int jumpTime = 0;
@@ -1091,6 +1099,10 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
             PesqCEP = true;
 
         } catch (JSONException e) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Util.msg_toast_personal(CadastroContatos.this, respostaCep, Toast.LENGTH_SHORT);
+            } else
+                Toast.makeText(this, respostaCep, Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
         if (DialogECB.isShowing())
@@ -1117,12 +1129,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
         DialogECB.setIcon(R.drawable.icon_sync);
         DialogECB.show();
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                cadastraDadosCep(sCEP);
-            }
-        });
+        flag = 2;
+
+        new Thread(CadastroContatos.this).start();
 
     }
 
@@ -1187,94 +1196,95 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
     }
 
     public void run() {
-        try {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (flag == 1) {
-                        Sincronismo.sincronizaCidade(sUF, CadastroContatos.this, DialogECB, handler);
-                    }
-                    if (DialogECB != null && flag == 1) {
-                        flag = 0;
-                        DialogECB.dismiss();
-                        //onItemSelected(null, null, posicao, 0);
-                    } else if (flag == 3) {
-                        flag = 0;
-                        if (spUF.getSelectedItemPosition() != 0) {
-                            if (VerificaConexao()) {
-                                if (sUF != null) {
-                                    if (!PesqCEP)
-                                        Sincronismo.sincronizaCidade(sUF, CadastroContatos.this, DialogECB, handler);
-                                }
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (flag == 1) {
+                    Sincronismo.sincronizaCidade(sUF, CadastroContatos.this, DialogECB, handler);
+                }
+                if (DialogECB != null && flag == 1) {
+                    flag = 0;
+                    DialogECB.dismiss();
+                    //onItemSelected(null, null, posicao, 0);
+                } else if (flag == 2) {
+                    new Activity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String sCEP = cep.getText().toString().replaceAll("[^0123456789]", "");
+                            cadastraDadosCep(sCEP);
+                        }
+                    });
+                } else if (flag == 3) {
+                    flag = 0;
+                    if (spUF.getSelectedItemPosition() != 0) {
+                        if (VerificaConexao()) {
+                            if (sUF != null) {
+                                if (!PesqCEP)
+                                    Sincronismo.sincronizaCidade(sUF, CadastroContatos.this, DialogECB, handler);
                             }
-                            ArrayAdapter<String> spinnerArrayAdapter = (localizacao.Cidades(CadastroContatos.this, sUF, spCidade, DialogECB));
-                            if (spinnerArrayAdapter != null) {
-                                try {
+                        }
+                        ArrayAdapter<String> spinnerArrayAdapter = (localizacao.Cidades(CadastroContatos.this, sUF, spCidade, DialogECB));
+                        if (spinnerArrayAdapter != null) {
+                            try {
                                     /*runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {*/
-                                            spCidade.setAdapter(null);
-                                            spCidade.setAdapter(spinnerArrayAdapter);
-                                            spCidade.setSelection(posCidade);
-                                            return;
+                                spCidade.setAdapter(null);
+                                spCidade.setAdapter(spinnerArrayAdapter);
+                                spCidade.setSelection(posCidade);
+                                return;
                                        /* }
                                     });*/
+
+                            } catch (Exception e) {
+                                e.toString();
+                            }
+
+                        } else
+                            return;
+                    }
+                    if (DialogECB.isShowing())
+                        DialogECB.dismiss();
+                } else if (flag == 4) {
+                    try {
+                        flag = 0;
+                        if (spCidade.getSelectedItemPosition() != 0) {
+                            //Preenche o spinner de Bairros
+                            if (VerificaConexao()) {
+                                if (NomeBairro != null) {
+                                    if (!PesqCEP) //TODO Está caindo aqui e sincronizando Bairros
+                                        Sincronismo.sincronizaBairro(localizacao.retornaCodContatoExt(CadastroContatos.this, NomeCidade, sUF),
+                                                CadastroContatos.this, DialogECB, codCidadeInt, handler);
+                                }
+                            }
+                            ArrayAdapter<String> spinnerArrayAdapter = localizacao.Bairros(CadastroContatos.this, NomeCidade, spBairro, DialogECB);
+                            if (spinnerArrayAdapter != null) {
+                                try {
+                                        /*runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {*/
+                                    spBairro.setAdapter(spinnerArrayAdapter);
+                                    spBairro.setSelection(bairroPos);
+                                    return;
+                                           /* }
+                                        });*/
 
                                 } catch (Exception e) {
                                     e.toString();
                                 }
 
-                            } else
+                            } else {
                                 return;
+                            }
                         }
                         if (DialogECB.isShowing())
                             DialogECB.dismiss();
-                    } else if (flag == 4) {
-                        try {
-                            flag = 0;
-                            if (spCidade.getSelectedItemPosition() != 0) {
-                                //Preenche o spinner de Bairros
-                                if (VerificaConexao()) {
-                                    if (NomeBairro != null) {
-                                        if (!PesqCEP)
-                                            Sincronismo.sincronizaBairro(localizacao.retornaCodContatoExt(CadastroContatos.this, NomeCidade, sUF),
-                                                    CadastroContatos.this, DialogECB, codCidadeInt, handler);
-                                    }
-                                }
-
-
-                                ArrayAdapter<String> spinnerArrayAdapter = localizacao.Bairros(CadastroContatos.this, NomeCidade, spBairro, DialogECB);
-                                if (spinnerArrayAdapter != null) {
-                                    try {
-                                        /*runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {*/
-                                                spBairro.setAdapter(spinnerArrayAdapter);
-                                                spBairro.setSelection(bairroPos);
-                                                return;
-                                           /* }
-                                        });*/
-
-                                    } catch (Exception e) {
-                                        e.toString();
-                                    }
-
-                                } else {
-                                    return;
-                                }
-                            }
-                            if (DialogECB.isShowing())
-                                DialogECB.dismiss();
-                        } catch (Exception e) {
-                            e.toString();
-                        }
+                    } catch (Exception e) {
+                        e.toString();
                     }
                 }
-            });
-
-        } catch (Exception e) {
-            e.toString();
-        }
+            }
+        });
     }
 
     public Action getIndexApiAction() {

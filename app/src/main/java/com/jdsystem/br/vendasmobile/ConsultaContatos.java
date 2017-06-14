@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -24,6 +25,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jdsystem.br.vendasmobile.Util.Util;
 import com.jdsystem.br.vendasmobile.domain.Contatos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentContatos;
 
@@ -382,7 +384,10 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
 
                 } else {
                     txvqtdregcont.setText("Quantidade de Registro: 0");
-                    Toast.makeText(this, R.string.no_contacts_found, Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                        Util.msg_toast_personal(ConsultaContatos.this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT);
+                    else
+                        Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception E) {
                 Toast.makeText(this, "Houve um problema ao acessar a base de dados. Favor entrar em contato com o suporte técnico JD System.", Toast.LENGTH_SHORT).show();
@@ -443,7 +448,10 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                 } while (CursorContatos.moveToNext());
             } else {
                 txvqtdregcont.setText("Quantidade de Registro: 0");
-                Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+                    Util.msg_toast_personal(ConsultaContatos.this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT);
+                else
+                    Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT).show();
             }
             CursorContatos.close();
             if (Dialogo.isShowing()) {

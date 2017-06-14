@@ -415,9 +415,8 @@ public class ConsultaProdutos extends AppCompatActivity
                 editQuery = query;
                 searchView.setQuery("", false);
                 //searchView.clearFocus();
-                if (flag != 0) {
+                if (flag != 0)
                     flag = 2;
-                }
 
                 Thread thread = new Thread(ConsultaProdutos.this);
                 thread.start();
@@ -476,8 +475,7 @@ public class ConsultaProdutos extends AppCompatActivity
 
                         dialogECB = new ProgressDialog(ConsultaProdutos.this);
 
-                        Thread thread = new Thread(this);
-                        thread.start();
+                            new Thread(ConsultaProdutos.this).start();
 
                     } else {
                         cursorVerificaProd.close();
@@ -609,7 +607,6 @@ public class ConsultaProdutos extends AppCompatActivity
             dialog.dismiss();
 
     }
-
 
     @Override
     public void onBackPressed() {

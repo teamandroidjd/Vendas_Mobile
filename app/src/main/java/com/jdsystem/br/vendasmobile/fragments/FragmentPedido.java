@@ -37,6 +37,7 @@ import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Util;
+import com.jdsystem.br.vendasmobile.adapter.ListAdapter;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
@@ -56,13 +57,15 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int codclie_ext;
     String limitecred, bloqueio, usuario, senha, Codvendedor, flagintegrado, codclie_inte, URLPrincipal;
-    int idPerfil, runFlag;
+    int idPerfil, runFlag, iPosition;
     private RecyclerView mRecyclerView;
     private Context context = this.getActivity();
     private SQLiteDatabase DB;
     String sStatus, sDataVenda, sNumPedido, sTotalVenda;
     Handler handler = new Handler();
     ProgressDialog eDialog;
+    ListAdapterPedidos listAdapterPedidos;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -237,7 +240,6 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     Thread thread = new Thread(FragmentPedido.this);
                                     thread.start();
 
-
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Cancelar")) {
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -298,36 +300,24 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         Util.msg_toast_personal(getActivity(), "Não foi possivel compartilhar o Pedido nº " + NumPedido + ".", Util.PADRAO);
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Verificar Status")) {
-                                    String statusatualizado;
-                                    if (Status.equals("#")) {
-                                        final String NumPedidoExt = adapter.PedidoExterno(position);
-                                        statusatualizado = Sincronismo.sincronizaAtualizaPedido(NumPedidoExt, getContext(), "S");
-                                        if (statusatualizado != null) {
-                                            if (statusatualizado.equals("Orçamento")) {
-                                                Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " ainda não foi faturado. Encontra-se com o status de " + statusatualizado + ".", Util.PADRAO);
-                                                Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                                ((ConsultaPedidos) getActivity()).finish();
-                                                startActivity(intent);
-                                            } else if (statusatualizado.equals("Faturado")) {
-                                                Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " foi faturado!", Util.PADRAO);
-                                                Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                                ((ConsultaPedidos) getActivity()).finish();
-                                                startActivity(intent);
-                                            } else if (statusatualizado.equals("")) {
-                                                Util.msg_toast_personal(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua txvempresa.", Util.PADRAO);
-                                                Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                                ((ConsultaPedidos) getActivity()).finish();
-                                                startActivity(intent);
-                                            }
-                                        } else {
-                                            Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
-                                            ((ConsultaPedidos) getActivity()).finish();
-                                            startActivity(intent);
-                                            Util.msg_toast_personal(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt + ".", Util.PADRAO);
-                                        }
-                                    } else {
-                                        Util.msg_toast_personal(getActivity(), "Somente Pedidos Sincronizados", Util.PADRAO);
-                                    }
+                                    sStatus = Status;
+                                    sDataVenda = datavend;
+                                    sTotalVenda = totalvenda;
+                                    sNumPedido = NumPedido;
+                                    iPosition = position;
+                                    listAdapterPedidos = adapter;
+
+                                    runFlag = 2;
+
+                                    eDialog = new ProgressDialog(getContext());
+                                    eDialog.setTitle(getString(R.string.wait));
+                                    eDialog.setMessage("Verificando o status do pedido...");
+                                    eDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                                    eDialog.setCancelable(false);
+                                    eDialog.show();
+
+                                    new Thread(FragmentPedido.this).start();
+
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Gerar Venda")) {
                                     if (Status.equals("Orçamento")) {
                                         String Autorizado = Sincronismo.sincronizaAtualizaPedido(NumPedido, getContext(), "A");
@@ -399,7 +389,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             @Override
             public void run() {
                 if (runFlag == 1) {
-                        Activity activity = new Activity();
+                    Activity activity = new Activity();
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -435,13 +425,13 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                     Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
                                                     return;
                                                 }
-                                            }catch (Exception e){
+                                            } catch (Exception e) {
                                                 e.toString();
                                             }
-                                            } else{
-                                                Util.msg_toast_personal(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Util.PADRAO);
-                                                return;
-                                            }
+                                        } else {
+                                            Util.msg_toast_personal(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Util.PADRAO);
+                                            return;
+                                        }
 
 
                                     } else {
@@ -466,7 +456,7 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                 Util.msg_toast_personal(getActivity(), sitcliexvend, Util.PADRAO);
                                                 return;
                                             }
-                                        }catch (Exception e){
+                                        } catch (Exception e) {
                                             e.toString();
                                         }
                                     }
@@ -479,8 +469,50 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                             }
                         }
                     });
+                } else if (runFlag == 2) {
+                    Activity activity = new Activity();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String statusatualizado;
+                            if (sStatus.equals("#")) {
+                                final String NumPedidoExt = listAdapterPedidos.PedidoExterno(iPosition);
+                                statusatualizado = Sincronismo.sincronizaAtualizaPedido(NumPedidoExt, getContext(), "S");
+                                if (statusatualizado != null) {
+                                    if (statusatualizado.equals("Orçamento")) {
+                                        if (eDialog.isShowing()) eDialog.dismiss();
+                                        Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " ainda não foi faturado. Encontra-se com o status de " + statusatualizado + ".", Util.PADRAO);
+                                        Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                        ((ConsultaPedidos) getActivity()).finish();
+                                        startActivity(intent);
+                                    } else if (statusatualizado.equals("Faturado")) {
+                                        if (eDialog.isShowing()) eDialog.dismiss();
+                                        Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " foi faturado!", Util.PADRAO);
+                                        Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                        ((ConsultaPedidos) getActivity()).finish();
+                                        startActivity(intent);
+                                    } else if (statusatualizado.equals("")) {
+                                        if (eDialog.isShowing()) eDialog.dismiss();
+                                        Util.msg_toast_personal(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua txvempresa.", Util.PADRAO);
+                                        Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                        ((ConsultaPedidos) getActivity()).finish();
+                                        startActivity(intent);
+                                    }
+                                } else {
+                                    if (eDialog.isShowing()) eDialog.dismiss();
+                                    Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
+                                    ((ConsultaPedidos) getActivity()).finish();
+                                    startActivity(intent);
+                                    Util.msg_toast_personal(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt + ".", Util.PADRAO);
+                                }
+                            } else {
+                                if (eDialog.isShowing()) eDialog.dismiss();
+                                Util.msg_toast_personal(getActivity(), "Somente Pedidos Sincronizados", Util.PADRAO);
+                            }
+                        }
+                    });
                 }
-                }
-            });
+            }
+        });
     }
 }

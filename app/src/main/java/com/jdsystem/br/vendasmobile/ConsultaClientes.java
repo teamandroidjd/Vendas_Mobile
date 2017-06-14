@@ -349,7 +349,6 @@ public class ConsultaClientes extends AppCompatActivity
         intent.putExtras(params);
         startActivity(intent);
         finish();
-
     }
 
     @Override

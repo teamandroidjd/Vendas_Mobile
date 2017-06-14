@@ -92,7 +92,7 @@ public class Localizacao extends AppCompatActivity {
         int codCidadeInt = 0, codCidadeExt = 0, codBairro = 0;
 
         try {
-            Cursor cursor = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade.toUpperCase() + "'", null);
+            Cursor cursor = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT FROM CIDADES WHERE DESCRICAO = '" + NomeCidade + "'", null);
             if (cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 codCidadeExt = cursor.getInt(cursor.getColumnIndex("CODCIDADE_EXT"));

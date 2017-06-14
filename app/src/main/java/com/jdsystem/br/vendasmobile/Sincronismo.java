@@ -1,5 +1,6 @@
 package com.jdsystem.br.vendasmobile;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -65,7 +66,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
     private static final String NOME_USUARIO = "LOGIN_AUTOMATICO";
     public static final String METHOD_NAME_AGENDA = "ENVIAR_AGENDA";
     private static SQLiteDatabase DB;
-    private static String usuario,senha,codVendedor,URLPrincipal;
+    private static String usuario, senha, codVendedor, URLPrincipal;
     //private static Context ctx;
     private static BaseFont bfBold;
     private static BaseFont bf;
@@ -119,7 +120,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         try {
             sincronizaParametros(usuario, senha, this, Dialog, DialogECB, hd);
             sincronizaClientes(codVendedor, this, usuario, senha, 0, Dialog, DialogECB, hd);
-            sincronizaContatosOutros(this,usuario,senha,0,Dialog,DialogECB,hd);
+            sincronizaContatosOutros(this, usuario, senha, 0, Dialog, DialogECB, hd);
             sincronizaProdutos(this, usuario, senha, 0, Dialog, DialogECB, hd);
             sincronizaDescricaoTabelas(usuario, senha, this, Dialog, DialogECB, hd);
             sincronizaBloqueios(usuario, senha, this, Dialog, DialogECB, hd);
@@ -325,9 +326,9 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                         Cursor CursorParam = DB.rawQuery(" SELECT CODPERFIL,HABALTPRECOVENDA,VLMINVENDA,HABCLIEXVEND,HABCADASTRO_CLIE,HABCONTROLQTDMINVEND,PERCACRESC, HABITEMNEGATIVO, HABCRITSITCLIE, TIPOCRITICQTDITEM FROM PARAMAPP WHERE CODPERFIL = " + idPerfil + "", null);
                         CursorParam.moveToFirst();
                         if (CursorParam.getCount() > 0) {
-                            if(!habcliexvend.equals(CursorParam.getString(CursorParam.getColumnIndex("HABCLIEXVEND")))){
+                            if (!habcliexvend.equals(CursorParam.getString(CursorParam.getColumnIndex("HABCLIEXVEND")))) {
                                 try {
-                                    DB.execSQL("UPDATE USUARIOS SET DT_ULT_ATU_CLIE = "+null+" WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + usuario + "' AND SENHA = '" + senha + "'");
+                                    DB.execSQL("UPDATE USUARIOS SET DT_ULT_ATU_CLIE = " + null + " WHERE CODPERFIL = " + idPerfil + " AND USUARIO = '" + usuario + "' AND SENHA = '" + senha + "'");
                                 } catch (Exception e) {
                                     e.toString();
                                 }
@@ -1003,8 +1004,8 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             JSONArray Cont = ObjCont.getJSONArray("contatos");
 
             for (int i = 0; i < Cont.length(); i++) {
-                    try {
-                        JSONObject c = Cont.getJSONObject(i);
+                try {
+                    JSONObject c = Cont.getJSONObject(i);
 
                     String Telefone = c.getString(TELEFONES_CONTATOS);
                     Telefone = "{\"telefones\":" + Telefone + "\t}";
@@ -1133,11 +1134,11 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                                             c.getString(COD_CONTATO) + "," +
                                             codProdCont + ")");
                                 }
-                                if(cursProd !=null)
-                                cursProd.close();
+                                if (cursProd != null)
+                                    cursProd.close();
                             }
-                            if(cursProd !=null)
-                            cursProd.close();
+                            if (cursProd != null)
+                                cursProd.close();
 
                             //-------------------------------CADASTRO DE DIAS AGENDA-------------------------------
                             try {
@@ -5019,7 +5020,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
             startActivity(i);
             finish();
 
-        }else if (id == R.id.nav_sincronismo) {
+        } else if (id == R.id.nav_sincronismo) {
 
         } else if (id == R.id.nav_logout) {
             Intent intent = new Intent(Sincronismo.this, Login.class);
@@ -5044,7 +5045,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return true;
     }
 
-    public static String SincronizarAgendaEnvio (final Context ctxAgEnv, String NumAgenda, final ProgressDialog dialog) {
+    public static String SincronizarAgendaEnvio(final Context ctxAgEnv, String NumAgenda, final ProgressDialog dialog) {
 
         SharedPreferences prefsHost = ctxAgEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
@@ -5055,100 +5056,100 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         senha = prefs.getString("senha", null);
 
         String sincagendaenviostatic = null;
-            String JAgenda = null;
-            DB = new ConfigDB(ctxAgEnv).getReadableDatabase();
-            Cursor CursorAgenda;
-            String RetClieEnvio = null;
-            try {
-                CursorAgenda = DB.rawQuery(" SELECT * FROM AGENDA WHERE CODIGO = " + NumAgenda + " AND CODPERFIL = " + idPerfil, null);
-                int jumpTime = 0;
-                final int totalProgressTime = CursorAgenda.getCount();
-                CursorAgenda.moveToFirst();
-                if (dialog != null) {
-                    dialog.setProgress(jumpTime);
-                    dialog.setMax(totalProgressTime);
-                }
+        String JAgenda = null;
+        DB = new ConfigDB(ctxAgEnv).getReadableDatabase();
+        Cursor CursorAgenda;
+        String RetClieEnvio = null;
+        try {
+            CursorAgenda = DB.rawQuery(" SELECT * FROM AGENDA WHERE CODIGO = " + NumAgenda + " AND CODPERFIL = " + idPerfil, null);
+            int jumpTime = 0;
+            final int totalProgressTime = CursorAgenda.getCount();
+            CursorAgenda.moveToFirst();
+            if (dialog != null) {
+                dialog.setProgress(jumpTime);
+                dialog.setMax(totalProgressTime);
+            }
 
-                if (CursorAgenda.getCount() > 0) {
-                    CursorAgenda.moveToFirst();
-                    do {
-                        for (int i = 0; i < CursorAgenda.getCount(); i++) {
+            if (CursorAgenda.getCount() > 0) {
+                CursorAgenda.moveToFirst();
+                do {
+                    for (int i = 0; i < CursorAgenda.getCount(); i++) {
+
+                        try {
+                            jumpTime += 1;
+                            if (dialog != null) {
+                                dialog.setProgress(jumpTime);
+                            }
+
+                            int CodContato = CursorAgenda.getInt(CursorAgenda.getColumnIndex("CODCONTATO"));
+
+                            String Observacao = CursorAgenda.getString(CursorAgenda.getColumnIndex("DESCRICAO"));
+                            String line_separator = System.getProperty("line.separator");
+                            String OBS = Observacao.replaceAll("\n|" + line_separator, "");
+
+                            JAgenda = "{codcont_ext: '" + CodContato + "'," +
+                                    "nome_contato: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("NOMECONTATO")) + "'," +
+                                    "data_geracao: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("DATAAGEND")) + "'," +
+                                    "cod_agenda: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("CODIGO")) + "'," +
+                                    "obs_pedido: '" + OBS + "'," +
+                                    "situacao: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("SITUACAO")) + "',";
+
+                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                            StrictMode.setThreadPolicy(policy);
+
+                            SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME_AGENDA);
+                            soap.addProperty("aJson", JAgenda);
+                            soap.addProperty("aUsuario", usuario);
+                            soap.addProperty("aSenha", senha);
+                            soap.addProperty("aNumAgenda", NumAgenda);
+                            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                            envelope.setOutputSoapObject(soap);
+                            HttpTransportSE Envio = new HttpTransportSE(URLPrincipal);
+                            String RetEnvio = "0";
 
                             try {
-                                jumpTime += 1;
-                                if (dialog != null) {
-                                    dialog.setProgress(jumpTime);
-                                }
+                                Boolean ConexOk = Util.checarConexaoCelular(ctxAgEnv);
+                                if (ConexOk) {
+                                    Envio.call("", envelope);
+                                    SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 
-                                int CodContato = CursorAgenda.getInt(CursorAgenda.getColumnIndex("CODCONTATO"));
-
-                                String Observacao = CursorAgenda.getString(CursorAgenda.getColumnIndex("DESCRICAO"));
-                                String line_separator = System.getProperty("line.separator");
-                                String OBS = Observacao.replaceAll("\n|" + line_separator, "");
-
-                                JAgenda = "{codcont_ext: '" + CodContato + "'," +
-                                        "nome_contato: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("NOMECONTATO")) + "'," +
-                                        "data_geracao: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("DATAAGEND")) + "'," +
-                                        "cod_agenda: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("CODIGO"))+ "'," +
-                                        "obs_pedido: '" + OBS + "'," +
-                                        "situacao: '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("SITUACAO")) + "',";
-
-                                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-                                StrictMode.setThreadPolicy(policy);
-
-                                SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, METHOD_NAME_AGENDA);
-                                soap.addProperty("aJson", JAgenda);
-                                soap.addProperty("aUsuario", usuario);
-                                soap.addProperty("aSenha", senha);
-                                soap.addProperty("aNumAgenda", NumAgenda);
-                                SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                                envelope.setOutputSoapObject(soap);
-                                HttpTransportSE Envio = new HttpTransportSE(URLPrincipal);
-                                String RetEnvio = "0";
-
-                                try {
-                                    Boolean ConexOk = Util.checarConexaoCelular(ctxAgEnv);
-                                    if (ConexOk) {
-                                        Envio.call("", envelope);
-                                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-
-                                        RetEnvio = (String) envelope.getResponse();
-                                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                                    } else {
-                                        sincagendaenviostatic = ctxAgEnv.getString(R.string.no_connection);
-                                        return sincagendaenviostatic;
-                                    }
-                                } catch (Exception e) {
-                                    e.toString();
-                                    sincagendaenviostatic = ctxAgEnv.getString(R.string.failure_communicate);
-                                    Toast.makeText(ctxAgEnv, "Não foi possível enviar a agenda! Verifique.", Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
+                                    RetEnvio = (String) envelope.getResponse();
+                                    System.out.println("Response :" + resultsRequestSOAP.toString());
+                                } else {
+                                    sincagendaenviostatic = ctxAgEnv.getString(R.string.no_connection);
+                                    return sincagendaenviostatic;
                                 }
                             } catch (Exception e) {
                                 e.toString();
+                                sincagendaenviostatic = ctxAgEnv.getString(R.string.failure_communicate);
+                                Toast.makeText(ctxAgEnv, "Não foi possível enviar a agenda! Verifique.", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
                             }
+                        } catch (Exception e) {
+                            e.toString();
                         }
-                    } while (CursorAgenda.moveToNext());
-                    try {
-                        DB = new ConfigDB(ctxAgEnv).getReadableDatabase();
-                        Cursor CursAgAtu = DB.rawQuery(" SELECT * FROM AGENDA WHERE CODIGO = '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("CODIGO")) + "' AND CODPERFIL = " + idPerfil, null);
-                        CursAgAtu.moveToFirst();
-                        if (CursAgAtu.getCount() > 0) {
-                            DB.execSQL(" UPDATE AGENDA SET STATUS = 'S' WHERE CODIGO = '" + CursAgAtu.getString(CursAgAtu.getColumnIndex("CODIGO")) + "' AND CODPERFIL = " + idPerfil);
-                        }
-                        sincagendaenviostatic = "OK";
-                        CursAgAtu.close();
-                    } catch (Exception E) {
-                        E.toString();
                     }
-                    CursorAgenda.close();
-                } else {
-                    sincagendaenviostatic = "Nenhum agendamento a ser enviado.";
-                    return sincagendaenviostatic;
+                } while (CursorAgenda.moveToNext());
+                try {
+                    DB = new ConfigDB(ctxAgEnv).getReadableDatabase();
+                    Cursor CursAgAtu = DB.rawQuery(" SELECT * FROM AGENDA WHERE CODIGO = '" + CursorAgenda.getString(CursorAgenda.getColumnIndex("CODIGO")) + "' AND CODPERFIL = " + idPerfil, null);
+                    CursAgAtu.moveToFirst();
+                    if (CursAgAtu.getCount() > 0) {
+                        DB.execSQL(" UPDATE AGENDA SET STATUS = 'S' WHERE CODIGO = '" + CursAgAtu.getString(CursAgAtu.getColumnIndex("CODIGO")) + "' AND CODPERFIL = " + idPerfil);
+                    }
+                    sincagendaenviostatic = "OK";
+                    CursAgAtu.close();
+                } catch (Exception E) {
+                    E.toString();
                 }
-            } catch (Exception e) {
-                e.toString();
+                CursorAgenda.close();
+            } else {
+                sincagendaenviostatic = "Nenhum agendamento a ser enviado.";
+                return sincagendaenviostatic;
             }
+        } catch (Exception e) {
+            e.toString();
+        }
         return sincagendaenviostatic;
     }
 
