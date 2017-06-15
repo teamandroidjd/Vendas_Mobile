@@ -67,7 +67,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     private int flag;
     private int CodProdExt;
     private String numPedido, vlminimovend, habalteraprecovenda, vendenegativo, habcontrolqtdmin, chavePedido, usuario, senha, codVendedor,
-            urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7, Preco1, Preco2, Preco3, Preco4, Preco5, Precop1, Precop2;
+            urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7, Preco1, Preco2, Preco3, Preco4, Preco5, Precop1, Precop2,sincprod;
     private Spinner spntabpreco;
     private EditText edtprecovend;
     private String PREFS_PRIVATE = "PREFS_PRIVATE", NomeCliente;
@@ -440,10 +440,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void run() {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (flagRun == 1) {
+        if (flagRun == 1) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
                     ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
                     String CodProd = adapterProdutos.ChamaDados(iPosition);
@@ -491,15 +492,25 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     }
                     if (eDialog.isShowing()) eDialog.dismiss();
 
-                    //=============EXECUTA A CONSULTA DO ITEM NA INSERÇÃO DO PRODUTO NO CADASTRO DO PEDIDO================
-                } else if (flagRun == 2) {
+                }
+            });
+
+            //=============EXECUTA A CONSULTA DO ITEM NA INSERÇÃO DO PRODUTO NO CADASTRO DO PEDIDO================
+        } else if (flagRun == 2) {
+            ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
+            CodProdExt = adapter.ChamaCodItemExt(iPosition);
+            if(Util.checarConexaoCelular(getActivity())) {
+                sincprod = Sincronismo.sincronizaProdutos(getActivity(), usuario, senha, CodProdExt, eDialog, null, null);
+            }
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+
+
                     activity = new Activity();
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
-                            //codProd = adapter.ChamaDados(position).trim();
-                            CodProdExt = adapter.ChamaCodItemExt(iPosition);
                             String codItem = null;
                             String descricao = null;
                             String unidadeMedida = null;
@@ -507,12 +518,10 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             Cursor cursoritem = null;
 
                             int sprecoprincipal;
-                            String sincprod;
                             if (numPedido.equals("0")) {
                                 try {
                                     boolean ConexOk = Util.checarConexaoCelular(getActivity());
                                     if (vendenegativo.equals("N") && ConexOk) {
-                                        sincprod = Sincronismo.sincronizaProdutos(getActivity(), usuario, senha, CodProdExt, eDialog, null, null);
 
                                         if (sincprod.equals(getString(R.string.sync_products_successfully))) {
                                             Cursor CursItens = DB.rawQuery(" SELECT * FROM ITENS WHERE CODIGOITEM =" + CodProdExt + " AND CODPERFIL = " + idPerfil, null);
@@ -768,21 +777,21 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                             String DESCRICAO = info_txv_descricaoproduto.getText().toString();
                                             String UNIDADE = info_txv_unmedida.getText().toString();
 
-                        if (QUANTIDADE_DIGITADA > 0) {
-                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > finalQtdestoque) {
-                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                                return;
-                            }
-                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
-                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
-                                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                                return;
-                            }
-                            SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
-                            SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
-                            SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
-                            SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getActivity());
+                                            if (QUANTIDADE_DIGITADA > 0) {
+                                                if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > finalQtdestoque) {
+                                                    Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                                                    return;
+                                                }
+                                                if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
+                                                    Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                                                    return;
+                                                }
+                                                SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
+                                                SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getActivity());
 
                                                 itemBean2.setVendad_prd_codigoTEMP(COD_PRODUTO);
                                                 itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
@@ -800,18 +809,18 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 ValorItem = String.valueOf(vendaitem);*/
 
 
-                                if (!ValorItem.equals("0,0000")) {
-                                    if(habalteraprecovenda.equals("S")) {
-                                        String validapreco = validaprecominimo(ValorItem);
-                                        if(!validapreco.equals("ok")){
-                                            Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
-                                            getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                                            return;
-                                        }
-                                    }
-                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                    venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                    itemBean1.setVendad_preco_vendaTEMP(venda);
+                                                    if (!ValorItem.equals("0,0000")) {
+                                                        if (habalteraprecovenda.equals("S")) {
+                                                            String validapreco = validaprecominimo(ValorItem);
+                                                            if (!validapreco.equals("ok")) {
+                                                                Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                                                                return;
+                                                            }
+                                                        }
+                                                        BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
+                                                        venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
+                                                        itemBean1.setVendad_preco_vendaTEMP(venda);
 
                                                         itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
                                                         itemDao.insere_item(itemBean1);
@@ -1116,19 +1125,19 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         String DESCRICAO = info_txv_descricaoproduto.getText().toString();
                                         String UNIDADE = info_txv_unmedida.getText().toString();
 
-                        if (QUANTIDADE_DIGITADA > 0) {
-                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                return;
-                            }
-                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
-                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
-                                return;
-                            }
-                            SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
-                            final SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
-                            SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
-                            SqliteVendaDao itemDao = new SqliteVendaDao(getActivity(), codVendedor, true);
+                                        if (QUANTIDADE_DIGITADA > 0) {
+                                            if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
+                                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                return;
+                                            }
+                                            if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
+                                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                                return;
+                                            }
+                                            SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
+                                            final SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
+                                            SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
+                                            SqliteVendaDao itemDao = new SqliteVendaDao(getActivity(), codVendedor, true);
 
                                             itemBean2.setVendad_prd_codigo(COD_PRODUTO);
                                             itemBean3 = itemDao.altera_item_na_venda(itemBean2, chavePedido);
@@ -1206,9 +1215,9 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                     });
                 }
-                //if(eDialog.isShowing())eDialog.dismiss();
-            }
-        });
-
+            });
+        }
+        if(eDialog.isShowing())
+            eDialog.dismiss();
     }
 }

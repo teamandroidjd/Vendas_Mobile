@@ -52,7 +52,8 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int flag, cadContato, CodContato;
-    String numPedido, chavePedido, usuario, senha, codVendedor, CodEmpresa, dataEntrega, telaInvocada, urlPrincipal;
+    String numPedido, chavePedido, usuario, senha, codVendedor, CodEmpresa, dataEntrega, telaInvocada,
+            urlPrincipal, BloqClie, bloqueio;
     boolean consultaPedido;
     SQLiteDatabase DB;
     int idPerfil, flagRun, iPosition;
@@ -208,6 +209,30 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
     @Override
     public void run() {
         if (flagRun == 1) {
+            String FlagIntegrado = null;
+            FlagIntegrado = adapter.ChamaFlagIntegradoCliente(iPosition);
+            String CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(iPosition);
+            final String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(iPosition);
+            DB = new ConfigDB(getActivity()).getReadableDatabase();
+            try {
+                Cursor cursorbloqclie = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP where CODPERFIL = " + idPerfil, null);
+                cursorbloqclie.moveToFirst();
+                BloqClie = cursorbloqclie.getString(cursorbloqclie.getColumnIndex("HABCRITSITCLIE"));
+                cursorbloqclie.close();
+            } catch (Exception e) {
+                e.toString();
+            }
+            if (BloqClie.equals("S") && !FlagIntegrado.equals("1")) {
+                Boolean ConexOk = Util.checarConexaoCelular(getActivity());
+                if (ConexOk) {
+                    Sincronismo.sincronizaClientes(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno), null, null, null);
+                    Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + CodigoClienteInterno + " AND CODPERFIL = " + idPerfil, null);
+                    cursorclie.moveToFirst();
+                    bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
+                    cursorclie.close();
+                }
+            }
+            final String finalFlagIntegrado = FlagIntegrado;
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -215,25 +240,12 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            String CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(iPosition);
-                            String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(iPosition);
+                            bloqueio = adapter.ChamaBloqueioCliente(iPosition);
+                            //String BloqClie = null;
+                            //String bloqueio = null;
 
-                            String BloqClie = null;
-                            String bloqueio = null;
-                            String FlagIntegrado = null;
-                            DB = new ConfigDB(getActivity()).getReadableDatabase();
-                            try {
-                                Cursor cursorbloqclie = DB.rawQuery("SELECT HABCRITSITCLIE FROM PARAMAPP where CODPERFIL = " + idPerfil, null);
-                                cursorbloqclie.moveToFirst();
-                                BloqClie = cursorbloqclie.getString(cursorbloqclie.getColumnIndex("HABCRITSITCLIE"));
-                                cursorbloqclie.close();
-                                bloqueio = adapter.ChamaBloqueioCliente(iPosition);
-                                FlagIntegrado = adapter.ChamaFlagIntegradoCliente(iPosition);
-                            } catch (Exception e) {
-                                e.toString();
-                            }
 
-                            if (FlagIntegrado.equals("1")) {
+                            if (finalFlagIntegrado.equals("1")) {
                                 if (numPedido == null) {
                                     Intent intent = new Intent(getActivity(), CadastroPedidos.class);
                                     Bundle params = new Bundle();
@@ -261,52 +273,43 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                                     startActivity(intent);
                                     getActivity().finish();
                                 }
-                            } else if (BloqClie.equals("S")) {
-                                Boolean ConexOk = Util.checarConexaoCelular(getActivity());
-                                if (ConexOk) {
-                                    Sincronismo.sincronizaClientes(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno), null, null, null);
-                                    Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + CodigoClienteInterno + " AND CODPERFIL = " + idPerfil, null);
-                                    cursorclie.moveToFirst();
-                                    bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
-                                    cursorclie.close();
-                                }
-                                if (bloqueio.equals("01") || bloqueio.equals("1")) {
-                                    if (numPedido == null) {
-                                        Intent intent = new Intent(getActivity(), CadastroPedidos.class);
-                                        Bundle params = new Bundle();
-                                        params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
-                                        params.putString((getString(R.string.intent_codvendedor)), codVendedor);
-                                        params.putString(getString(R.string.intent_numpedido), "0");
-                                        params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
-                                        params.putString(getString(R.string.intent_usuario), usuario);
-                                        params.putString(getString(R.string.intent_senha), senha);
-                                        params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
-                                        params.putString("dataentrega", dataEntrega);
-                                        intent.putExtras(params);
-                                        startActivity(intent);
-                                        getActivity().finish();
-                                    } else {
-                                        Intent intent = new Intent(getActivity(), CadastroPedidos.class);
-                                        Bundle params = new Bundle();
-                                        params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
-                                        params.putString((getString(R.string.intent_codvendedor)), codVendedor);
-                                        params.putString(getString(R.string.intent_numpedido), numPedido);
-                                        params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
-                                        params.putString(getString(R.string.intent_usuario), usuario);
-                                        params.putString(getString(R.string.intent_senha), senha);
-                                        params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
-                                        intent.putExtras(params);
-                                        startActivity(intent);
-                                        getActivity().finish();
-                                    }
+                            }
+                            if (bloqueio.equals("01") || bloqueio.equals("1")) {
+                                if (numPedido == null) {
+                                    Intent intent = new Intent(getActivity(), CadastroPedidos.class);
+                                    Bundle params = new Bundle();
+                                    params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
+                                    params.putString((getString(R.string.intent_codvendedor)), codVendedor);
+                                    params.putString(getString(R.string.intent_numpedido), "0");
+                                    params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
+                                    params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+                                    params.putString("dataentrega", dataEntrega);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    getActivity().finish();
                                 } else {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                                        Util.msg_toast_personal(getActivity(), getString(R.string.customer_without_purchase_permission), Util.ALERTA);
-                                    } else {
-                                        Toast.makeText(getActivity(), getString(R.string.customer_without_purchase_permission), Toast.LENGTH_SHORT).show();
-                                    }
-                                    return;
+                                    Intent intent = new Intent(getActivity(), CadastroPedidos.class);
+                                    Bundle params = new Bundle();
+                                    params.putInt("CLI_CODIGO", Integer.parseInt(CodigoClienteInterno));
+                                    params.putString((getString(R.string.intent_codvendedor)), codVendedor);
+                                    params.putString(getString(R.string.intent_numpedido), numPedido);
+                                    params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                                    params.putString(getString(R.string.intent_usuario), usuario);
+                                    params.putString(getString(R.string.intent_senha), senha);
+                                    params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+                                    intent.putExtras(params);
+                                    startActivity(intent);
+                                    getActivity().finish();
                                 }
+                            } else {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(getActivity(), getString(R.string.customer_without_purchase_permission), Util.ALERTA);
+                                } else {
+                                    Toast.makeText(getActivity(), getString(R.string.customer_without_purchase_permission), Toast.LENGTH_SHORT).show();
+                                }
+                                return;
                             }
                             if (BloqClie.equals("N")) {
                                 if (numPedido == null) {
@@ -342,6 +345,8 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                 }
             });
         }
+        if (eDialog.isShowing())
+            eDialog.dismiss();
     }
 
     @Override
