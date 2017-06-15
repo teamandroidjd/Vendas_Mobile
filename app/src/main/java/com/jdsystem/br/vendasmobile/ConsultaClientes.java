@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -427,17 +428,16 @@ public class ConsultaClientes extends AppCompatActivity
             @Override
             public boolean onClose() {
 
+                ConsultaClientes.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                flag = 0;
+                editQuery = null;
+                searchView.onActionViewCollapsed();
                 dialog = new ProgressDialog(ConsultaClientes.this);
                 dialog.setTitle(getString(R.string.wait));
                 dialog.setMessage(getString(R.string.loading_clients));
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 dialog.setCancelable(false);
                 dialog.show();
-
-                flag = 0;
-                editQuery = null;
-                searchView.onActionViewCollapsed();
-
 
                 Thread thread = new Thread(ConsultaClientes.this);
                 thread.start();

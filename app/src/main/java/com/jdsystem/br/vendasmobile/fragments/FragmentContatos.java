@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
 import com.jdsystem.br.vendasmobile.CadastroClientes;
 import com.jdsystem.br.vendasmobile.CadastroContatos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
@@ -57,6 +58,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
     private int flag;
     int idPerfil;
     SQLiteDatabase DB;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,49 +157,38 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
                 startActivity(intentp);
                 getActivity().finish();
             }
-        }else {
-                if (flag == 0) {
-                    ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
+        } else {
+            if (flag == 0) {
+                ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
 
-                    int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
-                    int CodigoContato = adapterContatos.CodigoContato(position);
-                    int CodigoExtCont = Integer.parseInt(adapterContatos.CodigoContatoExterno(position));
-                    Intent intentp = new Intent(getActivity(), DadosContato.class);
-                    Bundle params = new Bundle();
-                    params.putInt("codCliente", CodigoCliente);
-                    params.putInt(getString(R.string.intent_codcontato), CodigoContato);
-                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                    params.putString(getString(R.string.intent_usuario), usuario);
-                    params.putString(getString(R.string.intent_senha), senha);
-                    params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-                    params.putInt(getString(R.string.intent_codcontato_externo), CodigoExtCont);
-                    intentp.putExtras(params);
-                    startActivity(intentp);
-                    getActivity().finish();
+                int CodigoCliente = adapterContatos.ChamaCodigoContato(position);
+                int CodigoContato = adapterContatos.CodigoContato(position);
+                int CodigoExtCont = 0;
+                try {
+                    CodigoExtCont = Integer.parseInt(adapterContatos.CodigoContatoExterno(position));
+                } catch (Exception e) {
+                    e.toString();
                 }
+                Intent intentp = new Intent(getActivity(), DadosContato.class);
+                Bundle params = new Bundle();
+                params.putInt("codCliente", CodigoCliente);
+                params.putInt(getString(R.string.intent_codcontato), CodigoContato);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+                params.putInt(getString(R.string.intent_codcontato_externo), CodigoExtCont);
+                intentp.putExtras(params);
+                startActivity(intentp);
+                //getActivity().finish();
             }
+        }
 
     }
 
     @Override
     public void onLongClickListener(View view, int position) {
-        if (telaInvocada.equals("CadastroAgenda")) {
-            ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
-
-            int CodigoCliente = adapterContatos.ChamaCodigoContato(position); //Código Externo do Cliente
-            int CodigoContato = adapterContatos.CodigoContato(position);
-            Intent intentp = new Intent(getActivity(), DadosContato.class);
-            Bundle params = new Bundle();
-            params.putInt("codCliente", CodigoCliente);
-            params.putInt(getString(R.string.intent_codcontato), CodigoContato);
-            params.putString(getString(R.string.intent_codvendedor), codVendedor);
-            params.putString(getString(R.string.intent_usuario), usuario);
-            params.putString(getString(R.string.intent_senha), senha);
-            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-            intentp.putExtras(params);
-            startActivity(intentp);
-            getActivity().finish();
-        } else {
+        if (telaInvocada == null) {
             final ListAdapterContatos adapter = (ListAdapterContatos) mRecyclerView.getAdapter();
             final int CodigoContato = adapter.CodigoContato(position);
             final String CodigoContatoExterno = adapter.CodigoContatoExterno(position);
@@ -235,10 +226,11 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
                                             intentp.putExtras(params);
                                             startActivity(intentp);
                                             getActivity().finish();
+                                            telaInvocada = null;
                                         } else {
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                                 Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
-                                            }else{
+                                            } else {
                                                 Toast.makeText(getActivity(), "Não é possível alterar ou excluir contatos já sincronizados!", Toast.LENGTH_SHORT).show();
                                             }
                                             return;
@@ -255,7 +247,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
 
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                                     Util.msg_toast_personal(getActivity(), "Cadastro excluído com sucesso!", Util.ALERTA);
-                                                }else{
+                                                } else {
                                                     Toast.makeText(getContext(), "Cadastro excluído com sucesso!", Toast.LENGTH_SHORT).show();
                                                 }
                                             } catch (Exception e) {
@@ -264,7 +256,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
                                         } else {
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                                 Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
-                                            }else{
+                                            } else {
                                                 Toast.makeText(getContext(), "Não é possível alterar ou excluir clientes já sincronizados!", Toast.LENGTH_SHORT).show();
                                             }
                                             return;
@@ -294,6 +286,7 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
                         .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
+                                telaInvocada = null;
                             }
                         }).
                         show();
@@ -310,11 +303,29 @@ public class FragmentContatos extends Fragment implements RecyclerViewOnClickLis
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     Util.msg_toast_personal(getActivity(), "Opção disponível somente para contatos não sincronizados!", Util.ALERTA);
-                }else{
+                    telaInvocada = null;
+                } else {
                     Toast.makeText(getContext(), "Opção disponível somente para contatos não sincronizados!", Toast.LENGTH_SHORT).show();
+                    telaInvocada = null;
                 }
                 return;
             }
+        } else if (telaInvocada.equals("CadastroAgenda")) {
+            ListAdapterContatos adapterContatos = (ListAdapterContatos) mRecyclerView.getAdapter();
+
+            int CodigoCliente = adapterContatos.ChamaCodigoContato(position); //Código Externo do Cliente
+            int CodigoContato = adapterContatos.CodigoContato(position);
+            Intent intentp = new Intent(getActivity(), DadosContato.class);
+            Bundle params = new Bundle();
+            params.putInt(getString(R.string.intent_codcliente), CodigoCliente);
+            params.putInt(getString(R.string.intent_codcontato), CodigoContato);
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
+            intentp.putExtras(params);
+            startActivity(intentp);
+            //getActivity().finish();
         }
     }
 

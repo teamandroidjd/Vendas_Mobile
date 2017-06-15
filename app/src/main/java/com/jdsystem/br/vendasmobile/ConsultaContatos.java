@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -211,6 +212,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
             @Override
             public boolean onClose() {
                 // flag = 1;
+                ConsultaContatos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 editQuery = null;
                 searchView.onActionViewCollapsed();
                 Thread thread = new Thread(ConsultaContatos.this);

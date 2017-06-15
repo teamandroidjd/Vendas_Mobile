@@ -50,28 +50,21 @@ import java.util.concurrent.ExecutionException;
 
 public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSelectedListener {
 
-    //public static final String DADOS_PG = "DADOS DO PAGAMENTO";
     public static final String CONFIG_HOST = "CONFIG_HOST";
     public SharedPreferences prefs;
-    private EditText conf_txtqtdparcelas, edtdiasvenc;
-    private TextView conf_txvvalorvenda, txvdatavenc, conf_txvlabelparcelas, txvValorRestante;
+    private EditText conf_txtqtdparcelas, conf_txtvalorrecebido, edtdiasvenc;
+    private TextView txvdatavenc, txvValorRestante,conf_txvvalorvenda;
     private Spinner conf_spfpgto;
     FloatingActionButton btnincluirpagamento;
-    private String TIPO_PAGAMENTO = "";
-    private String ChavePedido = "";
+    private String TIPO_PAGAMENTO = "", ChavePedido = "",descformpgto, qtdparcela;
     private Double SUBTOTAL_VENDA;
     private Boolean AtuPedido;
-    private ScrollView vScroll;
-    private HorizontalScrollView hScroll;
-    private float mx, my;
-    private float curX, curY;
     private SqliteConfPagamentoDao confDao;
     private SqliteConfPagamentoBean confBean;
     private List<SqliteConfPagamentoBean> itens_temp = new ArrayList<>();
     private ListView ListView_formapgto;
     private int idPerfil, codformpgto, flag;
-    private String descformpgto, qtdparcela;
-    SQLiteDatabase DB;
+    private SQLiteDatabase DB;
     List<String> DadosList = new ArrayList<String>();
     Toolbar toolbar;
     private AlertDialog.Builder builderformpgto, builderalterexcluiparc;
@@ -85,20 +78,32 @@ public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSe
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
         } catch (Exception e) {
-
+            e.toString();
         }
 
         declaraObjetosListeners();
         carregarpreferencias();
 
-        Intent INTENT_SOBTOTAL_VENDA = getIntent();
+        Intent intent = getIntent();
+        if (intent != null) {
+            Bundle params = intent.getExtras();
+            if (params != null) {
+                SUBTOTAL_VENDA = params.getDouble("SUBTOTAL_VENDA", 0);
+                ChavePedido = params.getString("ChavePedido");
+                AtuPedido = params.getBoolean("AtuPedido", false);
+                conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
+            }
+        }
+        txvValorRestante.setVisibility(View.GONE);
+
+        /*Intent INTENT_SOBTOTAL_VENDA = getIntent();
         SUBTOTAL_VENDA = INTENT_SOBTOTAL_VENDA.getDoubleExtra("SUBTOTAL_VENDA", 0);
         Intent INTENT_CLI_CODIGO = getIntent();
         Integer CLI_CODIGO = INTENT_CLI_CODIGO.getIntExtra("CLI_CODIGO", 0);
         ChavePedido = INTENT_CLI_CODIGO.getStringExtra("ChavePedido");
         AtuPedido = INTENT_CLI_CODIGO.getBooleanExtra("AtuPedido", false);
         conf_txvvalorvenda.setText("Valor Venda: R$ " + new BigDecimal(SUBTOTAL_VENDA.toString()).setScale(2, RoundingMode.HALF_EVEN).toString().replace('.', ','));
-        txvValorRestante.setVisibility(View.GONE);
+        txvValorRestante.setVisibility(View.GONE);*/
 
         carregaformapagamento();
         atualizalistviewparcelas();
@@ -304,7 +309,6 @@ public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSe
     }
 
     private void carregaformapagamento() {
-        SQLiteDatabase DB = new ConfigDB(this).getReadableDatabase();
         Cursor cursorformpgto = DB.rawQuery("SELECT DESCRICAO FROM FORMAPAGAMENTO WHERE STATUS = 'A' AND CODPERFIL = " + idPerfil, null);
         cursorformpgto.moveToFirst();
         DadosList.add("Selecione a forma de pagamento");
@@ -391,106 +395,15 @@ public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSe
         }
     }
 
-    private void declaraPreferencias() {
-        /*int sppg = 0;
-        confBean = new SqliteConfPagamentoDao(getApplicationContext()).busca_CONFPAGAMENTO_sem_chave();
-
-        if (confBean == null) {
-            prefs = getSharedPreferences(DADOS_PG, MODE_PRIVATE);
-            avista_parcelado = prefs.getString("avista_parcelado", null);
-            din_boleto = prefs.getString("din_boleto", null);
-            if (avista_parcelado != null && avista_parcelado != "") {
-                if (avista_parcelado.equals(getString(R.string.confpagamento_avista))) {
-                    sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_avista));
-                    conf_spfpgto.setSelection(sppg);
-
-                }
-                if (avista_parcelado.equals(getString(R.string.confpagamento_parcelado))) {
-                    sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_parcelado));
-                    conf_spfpgto.setSelection(sppg);
-
-                }
-            }
-            if (din_boleto != null && din_boleto != "") {
-                if (din_boleto.equals(getString(R.string.confpagamento_dinheiro))) {
-                    conf_rbdinheiro.setChecked(true);
-                }
-                if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
-                    conf_rbboleto.setChecked(true);
-                }
-            }
-        }
-        if (confBean != null) {
-            qtdparcelas = confBean.getConf_parcelas().toString();
-
-            avista_parcelado = confBean.getConf_tipo_pagamento().toString();
-            if (avista_parcelado.equals(getString(R.string.confpagamento_avista))) {
-                sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_avista));
-                conf_spfpgto.setSelection(sppg);
-
-            }
-            if (avista_parcelado.equals(getString(R.string.confpagamento_parcelado))) {
-                sppg = arrayAdapter.getPosition(getString(R.string.confpagamento_parcelado));
-                conf_spfpgto.setSelection(sppg);
-
-            }
-
-            din_boleto = confBean.getConf_recebeucom_din_chq_car().toString();
-            if (din_boleto.equals(getString(R.string.confpagamento_dinheiro))) {
-                conf_rbdinheiro.setChecked(true);
-            }
-            if (din_boleto.equals(getString(R.string.confpagamento_boleto))) {
-                conf_rbboleto.setChecked(true);
-            }
-        }*/
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float curX, curY;
-
-        switch (event.getAction()) {
-
-            case MotionEvent.ACTION_DOWN:
-                mx = event.getX();
-                my = event.getY();
-                break;
-            case MotionEvent.ACTION_MOVE:
-                curX = event.getX();
-                curY = event.getY();
-                vScroll.scrollBy((int) (mx - curX), (int) (my - curY));
-                hScroll.scrollBy((int) (mx - curX), (int) (my - curY));
-                mx = curX;
-                my = curY;
-                break;
-            case MotionEvent.ACTION_UP:
-                curX = event.getX();
-                curY = event.getY();
-                vScroll.scrollBy((int) (mx - curX), (int) (my - curY));
-                hScroll.scrollBy((int) (mx - curX), (int) (my - curY));
-                break;
-        }
-
-        return true;
-    }
-
     public void salvar_fpgto(View v) {
-
-        if (validar_forma_de_pagamento()) {
-            finish();
-        }
-    }
-
-    private boolean validar_forma_de_pagamento() {
-        boolean fechar = true;
         if (itens_temp.isEmpty()) {
-            fechar = false;
             Util.msg_toast_personal(getBaseContext(), "Informe a forma de pagamento", Util.ALERTA);
+            return;
         }
         // condicao sem entrada
         if (conf_txtqtdparcelas.getText().toString().trim().equals("") || conf_txtqtdparcelas.getText().toString().trim().equals("0")) {
-            fechar = false;
             Util.msg_toast_personal(getBaseContext(), getString(R.string.enter_quntity), Util.ALERTA);
+            return;
         }
         if (AtuPedido) {
             try {
@@ -506,12 +419,13 @@ public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSe
                     BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
                     vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
                     if (vltotal != SUBTOTAL_VENDA) {
-                        fechar = false;
                         Util.msg_toast_personal(getBaseContext(), "Valor total das parcelas difere do valor total do pedido. Verifique!", Util.ALERTA);
+                        return;
+                    }else {
+                        finish();
                     }
                 }
             } catch (Exception e) {
-                fechar = false;
                 e.toString();
 
             }
@@ -533,20 +447,17 @@ public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSe
                     BigDecimal subtotal = new BigDecimal(SUBTOTAL_VENDA).setScale(2, BigDecimal.ROUND_HALF_UP);
                     SUBTOTAL_VENDA = Double.parseDouble(String.valueOf(subtotal));
                     if (vltotal != SUBTOTAL_VENDA) {
-                        fechar = false;
                         Util.msg_toast_personal(getBaseContext(), "Valor total das parcelas difere do valor total do pedido. Verifique!", Util.ALERTA);
+                        return;
+                    }else {
+                        finish();
                     }
                 }
             } catch (Exception e) {
-                fechar = false;
                 e.toString();
 
             }
-
         }
-
-
-        return fechar;
     }
 
     @Override
@@ -1034,7 +945,7 @@ public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSe
         DB = new ConfigDB(this).getReadableDatabase();
         txvValorRestante = (TextView) findViewById(R.id.txvvalortotalrestante);
         conf_txvvalorvenda = (TextView) findViewById(R.id.conf_txvvalorvenda);
-        conf_txvlabelparcelas = (TextView) findViewById(R.id.conf_txvlabelparcelas);
+        //conf_txvlabelparcelas = (TextView) findViewById(R.id.conf_txvlabelparcelas);
         conf_spfpgto = (Spinner) findViewById(R.id.conf_spfpgto);
         conf_spfpgto.setOnItemSelectedListener(this);
         conf_txtqtdparcelas = (EditText) findViewById(R.id.conf_txtqtdparcelas);
@@ -1063,18 +974,6 @@ public class ConfPagamento extends AppCompatActivity implements Spinner.OnItemSe
             public void afterTextChanged(Editable s) {
             }
         });
-    }
-
-    private void mostraCalendario() {
-        SimpleDateFormat dateFormatterBR = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        SimpleDateFormat dateFormatterUSA = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        Calendar newCalendar = Calendar.getInstance();
-        DatePickerDialog datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-            }
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
     @Override
