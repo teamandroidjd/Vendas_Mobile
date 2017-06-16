@@ -284,10 +284,14 @@ public class TH_HorariosXContatos extends Fragment {
                                     if ((horaInicial.getText().toString().equals("")) || (horaInicial.getText().toString().equals(null))) {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                             Util.msg_toast_personal(ctx, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT);
+                                        }else {
+                                            Toast.makeText(ctx, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT).show();
                                         }
                                     } else if ((horaFinal.getText().toString().equals("")) || (horaFinal.getText().toString().equals(null))) {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                             Util.msg_toast_personal(ctx, "Horário final de visita não informado!", Toast.LENGTH_SHORT);
+                                        }else {
+                                            Toast.makeText(ctx, "Horário final de visita não informado!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 } else {
@@ -301,6 +305,9 @@ public class TH_HorariosXContatos extends Fragment {
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                             Util.msg_toast_personal(ctx, "Horário final " +
                                                     "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT);
+                                        }else {
+                                            Toast.makeText(ctx, "Horário final " +
+                                                    "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT).show();
                                         }
                                     } else {
                                         salvarAgenda();

@@ -12,6 +12,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -67,7 +68,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     private int flag;
     private int CodProdExt;
     private String numPedido, vlminimovend, habalteraprecovenda, vendenegativo, habcontrolqtdmin, chavePedido, usuario, senha, codVendedor,
-            urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7, Preco1, Preco2, Preco3, Preco4, Preco5, Precop1, Precop2,sincprod;
+            urlprincipal, tab1, tab2, tab3, tab4, tab5, tab6, tab7, Preco1, Preco2, Preco3, Preco4, Preco5, Precop1, Precop2, sincprod;
     private Spinner spntabpreco;
     private EditText edtprecovend;
     private String PREFS_PRIVATE = "PREFS_PRIVATE", NomeCliente;
@@ -143,7 +144,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     private void declaraobjetos() {
         DB = new ConfigDB(getActivity()).getReadableDatabase();
-        //edtprecovend = (EditText) getActivity().findViewById(R.id.edtprecovenda);
     }
 
     private void carregarparametros() {
@@ -200,7 +200,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
         int scrollPosition = 0;
 
-        // If a listview_parcelas manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {
             scrollPosition =
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
@@ -214,8 +213,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
     @Override
     public void onClickListener(View v, final int position) {
-
-
         String codProd;
         if (flag == 0 && actCadastraContato == 1) {
             flagRun = 1;
@@ -230,48 +227,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
             Thread thread = new Thread(FragmentProdutos.this);
             thread.start();
-            /*
-            ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
-            String CodProd = adapterProdutos.ChamaDados(position);
-            int codIntItem = adapterProdutos.codInternoItem(position);
-
-            try {
-                Cursor cursor = DB.rawQuery("select cod_produto_manual, cod_interno_contato, cod_item " +
-                        "from produtos_contatos_temp " +
-                        "where cod_item = " + codIntItem + " and cod_interno_contato = " + CodContato + " and cod_produto_manual = '" + CodProd + "'", null);
-                cursor.moveToFirst();
-
-                if (cursor.getCount() > 0) {
-                    Util.msg_toast_personal(getContext(), "Este produto já está relacionado à este cliente. " +
-                            "Verifique.", Toast.LENGTH_SHORT);
-                    cursor.close();
-                } else {
-                    //Util.gravarItensContato(CodProd, codIntItem, CodContato, getContext());
-
-                    Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
-                    cursor.close();
-
-                    //String CodProd = adapterProdutos.ChamaDados(position);
-                    Intent intentp = new Intent(getActivity(), CadastroContatos.class);
-                    Bundle params = new Bundle();
-                    params.putString(getString(R.string.intent_codproduto), CodProd);
-                    params.putInt("codProdutoInt", codIntItem);
-                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                    params.putString(getString(R.string.intent_usuario), usuario);
-                    params.putString(getString(R.string.intent_senha), senha);
-                    params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-                    //params.putString(getString(R.string.intent_cad_contato), CodProd);
-                    params.putInt(getString(R.string.intent_codcliente), CodCliente);
-                    params.putString(getString(R.string.intent_nomerazao), NomeCliente);
-                    params.getInt(getString(R.string.intent_codcontato), CodContato);
-                    intentp.putExtras(params);
-                    startActivity(intentp);
-                    getActivity().finish();
-                }
-            } catch (Exception E) {
-                E.toString();
-            }*/
         } else if (flag == 0 && actCadastraContato == 2) {
             ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
@@ -284,13 +240,22 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 cursor.moveToFirst();
 
                 if (cursor.getCount() > 0) {
-                    Util.msg_toast_personal(getContext(), "Este produto já está relacionado à este cliente. " +
-                            "Verifique.", Toast.LENGTH_SHORT);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        Util.msg_toast_personal(getContext(), "Este produto já está relacionado à este cliente. " +
+                                "Verifique.", Toast.LENGTH_SHORT);
+                    } else {
+                        Toast.makeText(getActivity(), "Este produto já está relacionado à este cliente. " +
+                                "Verifique.", Toast.LENGTH_SHORT).show();
+                    }
                     cursor.close();
                 } else {
                     Util.gravarItensContato(CodProd, codIntItem, CodContato, getContext());
 
-                    Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
+                    } else {
+                        Toast.makeText(getActivity(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT).show();
+                    }
                     cursor.close();
 
                     Intent intentp = new Intent(getActivity(), DadosContato.class);
@@ -301,7 +266,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                     params.putString(getString(R.string.intent_usuario), usuario);
                     params.putString(getString(R.string.intent_senha), senha);
                     params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-                    // params.putString(getString(R.string.intent_cad_contato), CodProd);
                     params.putInt(getString(R.string.intent_codcliente), CodCliente);
                     params.putString(getString(R.string.intent_nomerazao), NomeCliente);
                     params.putInt(getString(R.string.intent_codcontato), CodContato);
@@ -313,36 +277,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 E.toString();
             }
         } else if (flag == 0 && numPedido == null) {
-            /*codProd = "";
 
-            iPosition = position;
-            new Thread() {
-                public void run() {
-                    try {
-                        ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
-
-                        String codProd = adapter.ChamaDados(position).trim();
-                        CodProdExt = adapter.ChamaCodItemExt(position);
-                        Intent intentp = new Intent(getActivity(), DadosProduto.class);
-                        Bundle params = new Bundle();
-                        params.putInt(getString(R.string.intent_codproduto), CodProdExt);
-                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                        params.putString(getString(R.string.intent_usuario), usuario);
-                        params.putString(getString(R.string.intent_senha), senha);
-                        params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-                        intentp.putExtras(params);
-                        startActivity(intentp);
-                        getActivity().finish();
-                    } catch (Exception e) {
-                        e.toString();
-                    }
-                    activity.runOnUiThread(new Runnable() {
-                        public void run() {
-
-                        }
-                    });
-                }
-            }.start();*/
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
 
             codProd = adapter.ChamaDados(position).trim();
@@ -356,7 +291,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
             intentp.putExtras(params);
             startActivity(intentp);
-            //getActivity().finish();
 
             //=============EXECUTA A CONSULTA DO ITEM NA INSERÇÃO DO PRODUTO NO CADASTRO DO PEDIDO================
 
@@ -458,18 +392,25 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                         if (cursor.getCount() > 0) {
                             if (eDialog.isShowing()) eDialog.dismiss();
-                            Util.msg_toast_personal(getContext(), "Este produto já está relacionado à este cliente. " +
-                                    "Verifique.", Toast.LENGTH_SHORT);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                Util.msg_toast_personal(getContext(), "Este produto já está relacionado à este cliente. " +
+                                        "Verifique.", Toast.LENGTH_SHORT);
+                            } else {
+                                Toast.makeText(getContext(), "Este produto já está relacionado à este cliente. " +
+                                        "Verifique.", Toast.LENGTH_SHORT).show();
+                            }
                             cursor.close();
                         } else {
-                            //Util.gravarItensContato(CodProd, codIntItem, CodContato, getContext());
 
-                            Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                Util.msg_toast_personal(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT);
+                            } else {
+                                Toast.makeText(getContext(), "Produto relacionado com sucesso!", Toast.LENGTH_SHORT).show();
+                            }
                             cursor.close();
 
                             if (eDialog.isShowing()) eDialog.dismiss();
 
-                            //String CodProd = adapterProdutos.ChamaDados(position);
                             Intent intentp = new Intent(getActivity(), CadastroContatos.class);
                             Bundle params = new Bundle();
                             params.putString(getString(R.string.intent_codproduto), CodProd);
@@ -478,7 +419,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                             params.putString(getString(R.string.intent_usuario), usuario);
                             params.putString(getString(R.string.intent_senha), senha);
                             params.putString(getString(R.string.intent_urlprincipal), urlprincipal);
-                            //params.putString(getString(R.string.intent_cad_contato), CodProd);
                             params.putInt(getString(R.string.intent_codcliente), CodCliente);
                             params.putString(getString(R.string.intent_nomerazao), NomeCliente);
                             params.getInt(getString(R.string.intent_codcontato), CodContato);
@@ -499,7 +439,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
         } else if (flagRun == 2) {
             ListAdapterProdutos adapter = (ListAdapterProdutos) mRecyclerView.getAdapter();
             CodProdExt = adapter.ChamaCodItemExt(iPosition);
-            if(Util.checarConexaoCelular(getActivity())) {
+            if (Util.checarConexaoCelular(getActivity())) {
                 sincprod = Sincronismo.sincronizaProdutos(getActivity(), usuario, senha, CodProdExt, eDialog, null, null);
             }
             handler.post(new Runnable() {
@@ -531,7 +471,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                             CursItens.close();
                                             if (vendenegativo.equals("N") && qtdestoque <= 0) {
                                                 if (eDialog.isShowing()) eDialog.dismiss();
-                                                Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                                } else {
+                                                    Toast.makeText(getActivity(), getString(R.string.item_sem_estoque), Toast.LENGTH_SHORT).show();
+                                                }
                                                 return;
                                             }
                                         } else {
@@ -544,7 +488,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                             CursItens.close();
                                             if (vendenegativo.equals("N") && qtdestoque <= 0) {
                                                 if (eDialog.isShowing()) eDialog.dismiss();
-                                                Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                                } else {
+                                                    Toast.makeText(getActivity(), getString(R.string.item_sem_estoque), Toast.LENGTH_SHORT).show();
+                                                }
                                                 return;
                                             }
                                         }
@@ -557,7 +505,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         CursItens.close();
                                         if (vendenegativo.equals("N") && qtdestoque <= 0) {
                                             if (eDialog.isShowing()) eDialog.dismiss();
-                                            Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                            } else {
+                                                Toast.makeText(getActivity(), getString(R.string.item_sem_estoque), Toast.LENGTH_SHORT).show();
+                                            }
                                             return;
                                         }
                                     }
@@ -765,11 +717,14 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                             Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
 
                                             if (TAMANHO_TEXTO <= 0) {
-                                                Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                                } else {
+                                                    Toast.makeText(getActivity(), "A quantidade não foi informada", Toast.LENGTH_SHORT).show();
+                                                }
                                                 return;
                                             }
                                             SqliteProdutoBean prdBean = new SqliteProdutoBean();
-                                            //Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
                                             String qtdinformada = Util.removeZerosEsquerda(info_txt_quantidadecomprada.getText().toString());
                                             Double QUANTIDADE_DIGITADA = Double.parseDouble(qtdinformada);
 
@@ -779,12 +734,20 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                                             if (QUANTIDADE_DIGITADA > 0) {
                                                 if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > finalQtdestoque) {
-                                                    Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Toast.LENGTH_SHORT).show();
+                                                    }
                                                     getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                                     return;
                                                 }
                                                 if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
-                                                    Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Toast.LENGTH_SHORT).show();
+                                                    }
                                                     getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                                     return;
                                                 }
@@ -804,16 +767,16 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                                     itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
 
                                                     String ValorItem = edtprecovend.getText().toString();
-                                /*BigDecimal vendaitem = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                vendaitem.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                ValorItem = String.valueOf(vendaitem);*/
-
 
                                                     if (!ValorItem.equals("0,0000")) {
                                                         if (habalteraprecovenda.equals("S")) {
                                                             String validapreco = validaprecominimo(ValorItem);
                                                             if (!validapreco.equals("ok")) {
-                                                                Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                                    Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                                } else {
+                                                                    Toast.makeText(getActivity(), "produto com preço de venda abaixo do minimo permitido", Toast.LENGTH_SHORT).show();
+                                                                }
                                                                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                                                                 return;
                                                             }
@@ -826,17 +789,29 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                                         itemDao.insere_item(itemBean1);
                                                         getActivity().finish();
                                                     } else {
-                                                        Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
+                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                            Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
+                                                        } else {
+                                                            Toast.makeText(getActivity(), "produto com preço de venda zerado", Toast.LENGTH_SHORT).show();
+                                                        }
                                                         return;
                                                     }
                                                 } else {
-                                                    Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), "Este produto já foi adicionado", Toast.LENGTH_SHORT).show();
+                                                    }
                                                     return;
                                                 }
                                             } else
 
                                             {
-                                                Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                                } else {
+                                                    Toast.makeText(getActivity(), "A quantidade não foi informada", Toast.LENGTH_SHORT).show();
+                                                }
                                                 return;
                                             }
 
@@ -881,7 +856,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
                                         CursItens.close();
                                         if (vendenegativo.equals("N") && qtdestoque <= 0) {
-                                            Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                            } else {
+                                                Toast.makeText(getActivity(), getString(R.string.item_sem_estoque), Toast.LENGTH_SHORT).show();
+                                            }
                                             return;
                                         }
                                     } else {
@@ -891,7 +870,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
                                         CursItens.close();
                                         if (vendenegativo.equals("N") && qtdestoque <= 0) {
-                                            Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                            } else {
+                                                Toast.makeText(getActivity(), getString(R.string.item_sem_estoque), Toast.LENGTH_SHORT).show();
+                                            }
                                             return;
                                         }
                                     }
@@ -902,7 +885,11 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                     qtdminvend = CursItens.getDouble(CursItens.getColumnIndex("QTDMINVEND"));
                                     CursItens.close();
                                     if (vendenegativo.equals("N") && qtdestoque <= 0) {
-                                        Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), getString(R.string.item_sem_estoque), Util.ALERTA);
+                                        } else {
+                                            Toast.makeText(getActivity(), getString(R.string.item_sem_estoque), Toast.LENGTH_SHORT).show();
+                                        }
                                         return;
                                     }
                                 }
@@ -920,7 +907,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                 if (habalteraprecovenda.equals("N")) {
                                     edtprecovend.setEnabled(false);
                                 }
-                                //final TextView info_txv_precoproduto = (TextView) view.findViewById(R.id.info_txv_precoproduto);
                                 final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
 
                                 spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
@@ -1103,7 +1089,6 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                     edtprecovend.setText(Preco);
                                     info_txt_quantidadecomprada.setText("");
                                 }
-                                //info_txt_quantidadecomprada.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
                                 cursoritem.close();
 
                                 alerta.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
@@ -1113,12 +1098,15 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                         Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
 
                                         if (TAMANHO_TEXTO <= 0) {
-                                            Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                            } else {
+                                                Toast.makeText(getActivity(), "A quantidade não foi informada", Toast.LENGTH_SHORT).show();
+                                            }
                                             return;
                                         }
 
                                         SqliteProdutoBean prdBean = new SqliteProdutoBean();
-                                        //Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
                                         String qtdinformada = Util.removeZerosEsquerda(info_txt_quantidadecomprada.getText().toString());
                                         Double QUANTIDADE_DIGITADA = Double.parseDouble(qtdinformada);
                                         String COD_PRODUTO = info_txv_codproduto.getText().toString();
@@ -1127,11 +1115,19 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
 
                                         if (QUANTIDADE_DIGITADA > 0) {
                                             if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                } else {
+                                                    Toast.makeText(getActivity(), "Quantidade solicitada insatisfeita.Verifique!", Toast.LENGTH_SHORT).show();
+                                                }
                                                 return;
                                             }
                                             if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
-                                                Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                                } else {
+                                                    Toast.makeText(getActivity(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Toast.LENGTH_SHORT).show();
+                                                }
                                                 return;
                                             }
                                             SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
@@ -1151,14 +1147,17 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                                 itemBean1.setVendac_chave(chavePedido);
                                                 itemBean1.setvendad_prd_view("T");
 
-                                                //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
                                                 String ValorItem = edtprecovend.getText().toString();
                                                 ValorItem = ValorItem.trim();
                                                 if (!ValorItem.equals("0,0000")) {
                                                     if (habalteraprecovenda.equals("S")) {
                                                         String validapreco = validaprecominimo(ValorItem);
                                                         if (!validapreco.equals("ok")) {
-                                                            Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                                Util.msg_toast_personal(getActivity(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                            } else {
+                                                                Toast.makeText(getActivity(), "produto com preço de venda abaixo do minimo permitido", Toast.LENGTH_SHORT).show();
+                                                            }
                                                             return;
                                                         }
                                                     }
@@ -1166,22 +1165,32 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                                                     venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
                                                     itemBean1.setVendad_preco_venda(venda);
 
-                                                    //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
                                                     itemBean1.setVendad_total(itemBean1.getSubTotal());
                                                     itemDao.insere_item_na_venda(itemBean1);
-                                                    //atualiza_listview_com_os_itens_pedido();
                                                     getActivity().finish();
                                                 } else {
-                                                    Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getActivity(), "produto com preço de venda zerado", Util.ALERTA);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), "produto com preço de venda zerado", Toast.LENGTH_SHORT).show();
+                                                    }
                                                     return;
                                                 }
                                             } else {
 
-                                                Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getActivity(), "Este produto já foi adicionado", Util.ALERTA);
+                                                } else {
+                                                    Toast.makeText(getActivity(), "Este produto já foi adicionado", Toast.LENGTH_SHORT).show();
+                                                }
                                                 return;
                                             }
                                         } else {
-                                            Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), "A quantidade não foi informada", Util.ALERTA);
+                                            } else {
+                                                Toast.makeText(getActivity(), "A quantidade não foi informada", Toast.LENGTH_SHORT).show();
+                                            }
                                             return;
                                         }
 
@@ -1217,7 +1226,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
                 }
             });
         }
-        if(eDialog.isShowing())
+        if (eDialog.isShowing())
             eDialog.dismiss();
     }
 }

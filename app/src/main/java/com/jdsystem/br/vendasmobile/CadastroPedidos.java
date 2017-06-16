@@ -15,6 +15,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -398,7 +399,11 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 it.putExtra("ChavePedido", Chave_Venda);
                 startActivity(it);
             } else {
-                Util.msg_toast_personal(getBaseContext(), "Adicione itens na venda", Util.PADRAO);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        Util.msg_toast_personal(getBaseContext(), "Adicione itens na venda", Util.PADRAO);
+                }else{
+                    Toast.makeText(this, "Adicione itens na venda", Toast.LENGTH_SHORT).show();
+                }
             }
         }
         // }
@@ -472,7 +477,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
             itens_temp = new SqliteVendaD_TempDao(getApplicationContext()).busca_todos_itens_da_venda();
 
             if (!itens_temp.isEmpty()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
+                Builder builder = new Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Deseja realmente cancelar a venda?")
@@ -506,7 +511,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 AlertDialog alert = builder.create();
                 alert.show();
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
+                Builder builder = new Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Deseja realmente cancelar a venda?")
@@ -552,7 +557,11 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
             BigDecimal valor_recebido = null;
             BigDecimal total_venda = null;
             if (confBean.getConf_valor_recebido() == null) {
-                Util.msg_toast_personal(getBaseContext(), "Você deve refazer o pagamento!", Util.PADRAO);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    Util.msg_toast_personal(getBaseContext(), "Você deve refazer o pagamento!", Util.PADRAO);
+                }else{
+                    Toast.makeText(this, "Você deve refazer o pagamento!", Toast.LENGTH_SHORT).show();
+                }
                 Intent it = new Intent(getBaseContext(), ConfPagamento.class);
                 it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
                 it.putExtra("CLI_CODIGO", CLI_CODIGO);
@@ -583,7 +592,11 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
                 vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
                 if ((total_venda.doubleValue()) != vltotal) {
-                    Util.msg_toast_personal(getBaseContext(), "Valor total do pedido diferente do valor total do pagamento", Util.PADRAO);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        Util.msg_toast_personal(getBaseContext(), "Valor total do pedido diferente do valor total do pagamento", Util.PADRAO);
+                    }else{
+                        Toast.makeText(this, "Valor total do pedido diferente do valor total do pagamento", Toast.LENGTH_SHORT).show();
+                    }
 
                     if (!NumPedido.equals("0")) {
                         Intent it = new Intent(getBaseContext(), ConfPagamento.class);
@@ -599,7 +612,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
             itens_venda = new SqliteVendaDao(getApplicationContext(), sCodVend, true).buscar_itens_vendas_por_numeropedido(Chave_Venda);
             if (!itens_venda.isEmpty()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
+                Builder builder = new Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Deseja realmente cancelar a alteração do pedido?")
@@ -635,7 +648,7 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 AlertDialog alert = builder.create();
                 alert.show();
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(CadastroPedidos.this);
+                Builder builder = new Builder(CadastroPedidos.this);
                 builder.setTitle(R.string.app_namesair);
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage("Não existe produto incluso neste pedido " + NumPedido + ". O mesmo será cancelado. Deseja continuar?")
@@ -969,10 +982,20 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 it.putExtra("ChavePedido", Chave_Venda);
                 startActivity(it);
             } else {
-                Util.msg_toast_personal(getBaseContext(), "Adicione itens na venda", Util.PADRAO);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    Util.msg_toast_personal(getBaseContext(), "Adicione itens na venda", Util.PADRAO);
+                }else {
+                    Toast.makeText(this, "Adicione itens na venda", Toast.LENGTH_SHORT).show();
+                }
+
             }
         } else if (confBean.getConf_valor_recebido() == null) {
-            Util.msg_toast_personal(getBaseContext(), "Você deve refazer o pagamento!", Util.PADRAO);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Util.msg_toast_personal(getBaseContext(), "Você deve refazer o pagamento!", Util.PADRAO);
+            }else {
+                Toast.makeText(this, "Você deve refazer o pagamento!", Toast.LENGTH_SHORT).show();
+            }
+
             Intent it = new Intent(getBaseContext(), ConfPagamento.class);
             it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
             it.putExtra("CLI_CODIGO", CLI_CODIGO);
@@ -1002,8 +1025,11 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
                 vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
                 if ((total_venda.doubleValue()) != vltotal) {
-                    Util.msg_toast_personal(getBaseContext(), "Valor total do pedido diferente do valor total do pagamento", Util.PADRAO);
-
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        Util.msg_toast_personal(getBaseContext(), "Valor total do pedido diferente do valor total do pagamento", Util.PADRAO);
+                    }else {
+                        Toast.makeText(this, "Valor total do pedido diferente do valor total do pagamento", Toast.LENGTH_SHORT).show();
+                    }
 
                     Intent it = new Intent(getBaseContext(), ConfPagamento.class);
                     it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
@@ -1080,7 +1106,11 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                 BigDecimal VALORRECEBIDO = new BigDecimal(vltotal).setScale(2, BigDecimal.ROUND_HALF_UP);
                 vltotal = Double.parseDouble(String.valueOf(VALORRECEBIDO));
                 if ((total_venda.doubleValue()) != vltotal) {
-                    Util.msg_toast_personal(getBaseContext(), "Valor total do pedido diferente do valor total do pagamento", Util.PADRAO);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                        Util.msg_toast_personal(getBaseContext(), "Valor total do pedido diferente do valor total do pagamento", Util.PADRAO);
+                    }else {
+                        Toast.makeText(this, "Valor total do pedido diferente do valor total do pagamento", Toast.LENGTH_SHORT).show();
+                    }
 
                     Intent it = new Intent(getBaseContext(), ConfPagamento.class);
                     it.putExtra("SUBTOTAL_VENDA", TOTAL_DA_VENDA.subtract(calculaDesconto()).doubleValue());
@@ -1441,8 +1471,13 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
 
                                         if (TAMANHO_TEXTO <= 0) {
-                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
-                                            return;
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                                return;
+                                            }else {
+                                                Toast.makeText(CadastroPedidos.this, "A quantidade não foi informada", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
                                         }
                                         SqliteProdutoBean prdBean = new SqliteProdutoBean();
                                         //Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
@@ -1455,12 +1490,22 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
                                         if (QUANTIDADE_DIGITADA > 0) {
                                             if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                                                Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                                return;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    return;
+                                                }else{
+                                                    Toast.makeText(CadastroPedidos.this, "Quantidade solicitada insatisfeita.Verifique!", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
                                             }
                                             if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
-                                                Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
-                                                return;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                                    return;
+                                                }else{
+                                                    Toast.makeText(CadastroPedidos.this, "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
                                             }
 
                                             SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
@@ -1484,8 +1529,13 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                     if (habalteraprecovenda.equals("S")) {
                                                         String validapreco = validaprecominimo(ValorItem);
                                                         if (!validapreco.equals("ok")) {
-                                                            Util.msg_toast_personal(getBaseContext(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
-                                                            return;
+                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                                Util.msg_toast_personal(getBaseContext(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                                return;
+                                                            }else{
+                                                                Toast.makeText(CadastroPedidos.this, "produto com preço de venda abaixo do minimo permitido", Toast.LENGTH_SHORT).show();
+                                                                return;
+                                                            }
                                                         }
                                                     }
                                                     BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -1495,18 +1545,33 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                     itemDao.atualizar_item_na_venda(itemBean1);
                                                     atualiza_listview_e_calcula_total();
                                                 } else {
-                                                    Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
-                                                    return;
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                                        return;
+                                                    }else {
+                                                        Toast.makeText(CadastroPedidos.this, "produto com preço de venda zerado", Toast.LENGTH_SHORT).show();
+                                                        return;
+                                                    }
                                                 }
                                             } else {
-                                                Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
-                                                return;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
+                                                    return;
+                                                }else {
+                                                    Toast.makeText(CadastroPedidos.this, "Este produto já foi adicionado", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
                                             }
 
                                             //}
                                         } else {
-                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
-                                            return;
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                                return;
+                                            }else {
+                                                Toast.makeText(CadastroPedidos.this, "A quantidade não foi informada", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
                                         }
 
 
@@ -1718,8 +1783,13 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                         Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
 
                                         if (TAMANHO_TEXTO <= 0) {
-                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
-                                            return;
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
+                                                return;
+                                            }else {
+                                                Toast.makeText(CadastroPedidos.this, "A quantidade não foi informada", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
                                         }
 
                                         SqliteProdutoBean prdBean = new SqliteProdutoBean();
@@ -1733,12 +1803,22 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
                                         if (QUANTIDADE_DIGITADA > 0) {
                                             if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                                                Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                                return;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
+                                                    return;
+                                                }else {
+                                                    Toast.makeText(CadastroPedidos.this, "Quantidade solicitada insatisfeita.Verifique!", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
                                             }
                                             if (habcontrolqtdmin.equals("S") && QUANTIDADE_DIGITADA < qtdminvend) {
-                                                Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
-                                                return;
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Util.ALERTA);
+                                                    return;
+                                                } else {
+                                                    Toast.makeText(CadastroPedidos.this, "Quantidade solicitada abaixo do mínimo permitido para venda.Verifique!", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
                                             }
 
                                             SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
@@ -1767,8 +1847,13 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                 if (habalteraprecovenda.equals("S")) {
                                                     String validapreco = validaprecominimo(ValorItem);
                                                     if (!validapreco.equals("ok")) {
-                                                        Util.msg_toast_personal(getBaseContext(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
-                                                        return;
+                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                            Util.msg_toast_personal(getBaseContext(), "produto com preço de venda abaixo do minimo permitido", Util.ALERTA);
+                                                            return;
+                                                        }else {
+                                                            Toast.makeText(CadastroPedidos.this, "produto com preço de venda abaixo do minimo permitido", Toast.LENGTH_SHORT).show();
+                                                            return;
+                                                        }
                                                     }
                                                 }
                                                 BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
@@ -1781,17 +1866,22 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                                                 Alterar_Pedido_listview_e_calcula_total();
                                                 //finish();
                                             } else {
-                                                Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado.Verifique!", Util.ALERTA);
+                                                    return;
+                                                }else {
+                                                    Toast.makeText(CadastroPedidos.this, "produto com preço de venda zerado.Verifique!", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
+                                            }
+                                        } else {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada.Verifique", Util.ALERTA);
+                                                return;
+                                            }else {
+                                                Toast.makeText(CadastroPedidos.this, "A quantidade não foi informada.Verifique!", Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
-                                                /*} else {
-                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
-                                                }*/
-
-                                            //}
-                                        } else {
-                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
-                                            return;
                                         }
 
 
@@ -1961,583 +2051,6 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
 
     }
 
-    private void alterarproduto(final AdapterView listview, final int posicao) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Atenção");
-        builder.setMessage("Deseja alterar a quantidade deste produto ?");
-        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        if (NumPedido.equals("0")) {
-                            CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                            SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
-                            new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
-                            if (item != null) {
-                                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                                @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.input_produto_venda, null);
-                                alerta1 = new Builder(CadastroPedidos.this);
-                                alerta1.setCancelable(false);
-                                alerta1.setView(view);
-
-                                final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
-                                final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
-                                final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-                                edtprecovend = (EditText) view.findViewById(R.id.edtprecovenda);
-                                final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
-                                spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
-
-                                spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                        GravaPreferencias(spntabpreco.getSelectedItemPosition());
-
-                                        String spreco = spntabpreco.getSelectedItem().toString();
-
-                                        if (!tab1.equals("")) {
-                                            spreco = spreco.replace(tab1, "");
-                                        }
-                                        if (!tab2.equals("")) {
-                                            spreco = spreco.replace(tab2, "");
-                                        }
-                                        if (!tab3.equals("")) {
-                                            spreco = spreco.replace(tab3, "");
-                                        }
-                                        if (!tab4.equals("")) {
-                                            spreco = spreco.replace(tab4, "");
-                                        }
-                                        if (!tab5.equals("")) {
-                                            spreco = spreco.replace(tab5, "");
-                                        }
-                                        if (!tab6.equals("")) {
-                                            spreco = spreco.replace(tab6, "");
-                                        }
-                                        if (!tab7.equals("")) {
-                                            spreco = spreco.replace(tab7, "");
-                                        }
-                                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                                        edtprecovend.setText(spreco);
-                                    }
-
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> parent) {
-                                    }
-                                });
-
-                                try {
-                                    String codprod = (item.getVendad_prd_codigoTEMP());
-                                    codprod = codprod.trim();
-                                    List<String> DadosListTabPreco = new ArrayList<String>();
-                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
-                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
-                                    CursorParametro.moveToFirst();
-                                    vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
-                                    tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-                                    tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-                                    tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-                                    tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-                                    tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-                                    tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-                                    tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-                                    CursorParametro.close();
-
-                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "'", null);
-                                    produto_cursor.moveToFirst();
-
-                                    qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
-
-                                    String tabelaPadrao = produto_cursor.getString(produto_cursor.getColumnIndex("TABELAPADRAO"));
-                                    /*vlvendapadrao = vlvendapadrao.trim();
-                                    if (!vlvendapadrao.equals("0,0000")) {
-                                        BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
-                                        String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                        Precopadrao = Precopadrao.replace('.', ',');
-                                        DadosListTabPreco.add(tab1 + " R$: " + Precopadrao);
-                                    }*/
-
-                                    if (!tab1.equals("")) {
-                                        String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
-                                        vlvenda1 = vlvenda1.trim();
-                                        if (!vlvenda1.equals("0,0000")) {
-                                            BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
-                                            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco1 = Preco1.replace('.', ',');
-                                            DadosListTabPreco.add(tab1 + " R$: " + Preco1);
-                                        }
-                                    }
-
-                                    if (!tab2.equals("")) {
-                                        String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
-                                        vlvenda2 = vlvenda2.trim();
-                                        if (!vlvenda2.equals("0,0000")) {
-                                            BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
-                                            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco2 = Preco2.replace('.', ',');
-                                            DadosListTabPreco.add(tab2 + " R$: " + Preco2);
-                                        }
-                                    }
-
-                                    if (!tab3.equals("")) {
-                                        String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
-                                        vlvenda3 = vlvenda3.trim();
-                                        if (!vlvenda3.equals("0,0000")) {
-                                            BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
-                                            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco3 = Preco3.replace('.', ',');
-                                            DadosListTabPreco.add(tab3 + " R$: " + Preco3);
-                                        }
-                                    }
-
-                                    if (!tab4.equals("")) {
-                                        String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
-                                        vlvenda4 = vlvenda4.trim();
-                                        if (!vlvenda4.equals("0,0000")) {
-                                            BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
-                                            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco4 = Preco4.replace('.', ',');
-                                            DadosListTabPreco.add(tab4 + " R$: " + Preco4);
-                                        }
-                                    }
-
-                                    if (!tab5.equals("")) {
-                                        String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
-                                        vlvenda5 = vlvenda5.trim();
-                                        if (!vlvenda5.equals("0,0000")) {
-                                            BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
-                                            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco5 = Preco5.replace('.', ',');
-                                            DadosListTabPreco.add(tab5 + " R$: " + Preco5);
-                                        }
-                                    }
-
-                                    if (!tab6.equals("")) {
-                                        String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
-                                        vlvendap1 = vlvendap1.trim();
-                                        if (!vlvendap1.equals("0,0000")) {
-                                            BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
-                                            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Precop1 = Precop1.replace('.', ',');
-                                            DadosListTabPreco.add(tab6 + " R$: " + Precop1);
-                                        }
-                                    }
-
-                                    if (!tab7.equals("")) {
-                                        String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
-                                        vlvendap2 = vlvendap2.trim();
-                                        if (!vlvendap2.equals("0,0000")) {
-                                            BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
-                                            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Precop2 = Precop2.replace('.', ',');
-                                            DadosListTabPreco.add(tab7 + " R$: " + Precop2);
-                                        }
-                                    }
-                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(CadastroPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
-                                    arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    spntabpreco.setAdapter(arrayAdapterTabPreco);
-
-                                    produto_cursor.close();
-                                } catch (Exception E) {
-                                    E.toString();
-
-                                }
-                                info_txv_codproduto.setText(item.getVendad_prd_codigoTEMP());
-                                info_txv_descricaoproduto.setText(item.getVendad_prd_descricaoTEMP());
-                                info_txv_unmedida.setText(item.getVendad_prd_unidadeTEMP());
-
-                                String ValorItem = String.valueOf(item.getVendad_preco_vendaTEMP());
-                                ValorItem = ValorItem.trim();
-                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                Preco = Preco.replace('.', ',');
-                                edtprecovend.setText(Preco);
-
-                                String qtd = String.valueOf(item.getVendad_quantidadeTEMP());
-                                info_txt_quantidadecomprada.setText(qtd);
-                                info_txt_quantidadecomprada.requestFocus();
-                                //info_txt_quantidadecomprada.selectAll();
-
-
-                                alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                        Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
-
-                                        if (TAMANHO_TEXTO > 0) {
-                                            SqliteProdutoBean prdBean = new SqliteProdutoBean();
-                                            Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
-                                            String COD_PRODUTO = info_txv_codproduto.getText().toString();
-                                            String DESCRICAO = info_txv_descricaoproduto.getText().toString();
-                                            String UNIDADE = info_txv_unmedida.getText().toString();
-
-                                            if (QUANTIDADE_DIGITADA > 0) {
-                                                if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                                                    Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                                    return;
-                                                }
-
-                                                SqliteVendaD_TempBean itemBean1 = new SqliteVendaD_TempBean();
-                                                SqliteVendaD_TempBean itemBean2 = new SqliteVendaD_TempBean();
-                                                SqliteVendaD_TempBean itemBean3 = new SqliteVendaD_TempBean();
-                                                SqliteVendaD_TempDao itemDao = new SqliteVendaD_TempDao(getApplicationContext());
-
-                                                itemBean2.setVendad_prd_codigoTEMP(COD_PRODUTO);
-                                                itemBean3 = itemDao.buscar_item_na_venda(itemBean2);
-
-                                                if (itemBean3 != null) {
-                                                    itemBean1.setVendad_prd_codigoTEMP(COD_PRODUTO);
-                                                    itemBean1.setVendad_prd_descricaoTEMP(DESCRICAO);
-                                                    itemBean1.setVendad_prd_unidadeTEMP(UNIDADE);
-                                                    itemBean1.setVendad_quantidadeTEMP(new BigDecimal(QUANTIDADE_DIGITADA));
-
-                                                    //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                                                    String ValorItem = edtprecovend.getText().toString();
-                                                    ValorItem = ValorItem.trim();
-                                                    if (!ValorItem.equals("0,0000")) {
-                                                        BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                                        venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                                        itemBean1.setVendad_preco_vendaTEMP(venda);
-
-                                                        //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
-                                                        itemBean1.setVendad_totalTEMP(itemBean1.getSubTotal());
-                                                        itemDao.atualizar_item_na_venda(itemBean1);
-                                                        atualiza_listview_e_calcula_total();
-                                                        //finish();
-                                                    } else {
-                                                        Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
-                                                        return;
-                                                    }
-                                                } else {
-                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
-                                                    return;
-                                                }
-
-                                                //}
-                                            } else {
-                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
-                                                return;
-                                            }
-
-                                        } else {
-                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
-                                            return;
-                                        }
-                                        CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
-                                    }
-
-                                });
-                                alerta1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    }
-                                });
-                                alerta1.show();
-                            } else {
-                                SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
-                                if (NumPedido.equals("0")) {
-                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
-                                } else {
-                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
-                                }
-                            }
-
-                        } else {
-                            CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                            SqliteVendaDBean item = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
-                            //SqliteVendaD_TempBean item = (SqliteVendaD_TempBean) listview.getItemAtPosition(posicao);
-                            new SqliteVendaDao(getApplicationContext(), sCodVend, true);
-                            //new SqliteVendaD_TempDao(getApplicationContext()).buscar_item_na_venda(item);
-                            if (item != null) {
-                                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                                @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.input_produto_venda, null);
-                                alerta1 = new Builder(CadastroPedidos.this);
-                                alerta1.setCancelable(false);
-                                alerta1.setView(view);
-
-                                final TextView info_txv_codproduto = (TextView) view.findViewById(R.id.info_txv_codproduto);
-                                final TextView info_txv_descricaoproduto = (TextView) view.findViewById(R.id.info_txv_descricaoproduto);
-                                final TextView info_txv_unmedida = (TextView) view.findViewById(R.id.info_txv_unmedida);
-                                edtprecovend = (EditText) view.findViewById(R.id.edtprecovenda);
-                                final EditText info_txt_quantidadecomprada = (EditText) view.findViewById(R.id.info_txt_quantidadecomprada);
-                                spntabpreco = (Spinner) view.findViewById(R.id.spntabpreco);
-
-                                spntabpreco.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                        GravaPreferencias(spntabpreco.getSelectedItemPosition());
-
-                                        String spreco = spntabpreco.getSelectedItem().toString();
-
-                                        if (!tab1.equals("")) {
-                                            spreco = spreco.replace(tab1, "");
-                                        }
-                                        if (!tab2.equals("")) {
-                                            spreco = spreco.replace(tab2, "");
-                                        }
-                                        if (!tab3.equals("")) {
-                                            spreco = spreco.replace(tab3, "");
-                                        }
-                                        if (!tab4.equals("")) {
-                                            spreco = spreco.replace(tab4, "");
-                                        }
-                                        if (!tab5.equals("")) {
-                                            spreco = spreco.replace(tab5, "");
-                                        }
-                                        if (!tab6.equals("")) {
-                                            spreco = spreco.replace(tab6, "");
-                                        }
-                                        if (!tab7.equals("")) {
-                                            spreco = spreco.replace(tab7, "");
-                                        }
-                                        spreco = spreco.replaceAll("[A-Za-z$ãç:/*%]", "").trim();
-                                        edtprecovend.setText(spreco);
-                                    }
-
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> parent) {
-                                    }
-                                });
-
-                                try {
-                                    String codprod = (item.getVendad_prd_codigo());
-                                    codprod = codprod.trim();
-                                    List<String> DadosListTabPreco = new ArrayList<String>();
-                                    DB = new ConfigDB(CadastroPedidos.this).getReadableDatabase();
-                                    Cursor CursorParametro = DB.rawQuery(" SELECT TIPOCRITICQTDITEM,HABITEMNEGATIVO,DESCRICAOTAB1, DESCRICAOTAB2, DESCRICAOTAB3, DESCRICAOTAB4, DESCRICAOTAB5, DESCRICAOTAB6, DESCRICAOTAB7 FROM PARAMAPP", null);
-                                    CursorParametro.moveToFirst();
-                                    vendenegativo = CursorParametro.getString(CursorParametro.getColumnIndex("HABITEMNEGATIVO"));
-                                    tab1 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB1"));
-                                    tab2 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB2"));
-                                    tab3 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB3"));
-                                    tab4 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB4"));
-                                    tab5 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB5"));
-                                    tab6 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB6"));
-                                    tab7 = CursorParametro.getString(CursorParametro.getColumnIndex("DESCRICAOTAB7"));
-                                    CursorParametro.close();
-                                    Cursor produto_cursor = DB.rawQuery("SELECT CODITEMANUAL,QTDESTPROD,TABELAPADRAO,VLVENDA1,VLVENDA2,VLVENDA3,VLVENDA4,VLVENDA5,VLVENDAP1,VLVENDAP2 FROM ITENS WHERE CODITEMANUAL ='" + codprod + "'", null);
-                                    produto_cursor.moveToFirst();
-
-                                    qtdestoque = produto_cursor.getDouble(produto_cursor.getColumnIndex("QTDESTPROD"));
-
-                                    String tabelaPadrao = produto_cursor.getString(produto_cursor.getColumnIndex("TABELAPADRAO"));
-                                    /*vlvendapadrao = vlvendapadrao.trim();
-                                    if (!vlvendapadrao.equals("0,0000")) {
-                                        BigDecimal vendapadrao = new BigDecimal(Double.parseDouble(vlvendapadrao.replace(',', '.')));
-                                        String Precopadrao = vendapadrao.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                        Precopadrao = Precopadrao.replace('.', ',');
-                                        DadosListTabPreco.add(tab1 + " R$: " + Precopadrao);
-                                    }*/
-
-                                    if (!tab1.equals("")) {
-                                        String vlvenda1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA1"));
-                                        vlvenda1 = vlvenda1.trim();
-                                        if (!vlvenda1.equals("0,0000")) {
-                                            BigDecimal venda1 = new BigDecimal(Double.parseDouble(vlvenda1.replace(',', '.')));
-                                            String Preco1 = venda1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco1 = Preco1.replace('.', ',');
-                                            DadosListTabPreco.add(tab1 + " R$: " + Preco1);
-                                        }
-                                    }
-
-                                    if (!tab2.equals("")) {
-                                        String vlvenda2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA2"));
-                                        vlvenda2 = vlvenda2.trim();
-                                        if (!vlvenda2.equals("0,0000")) {
-                                            BigDecimal venda2 = new BigDecimal(Double.parseDouble(vlvenda2.replace(',', '.')));
-                                            String Preco2 = venda2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco2 = Preco2.replace('.', ',');
-                                            DadosListTabPreco.add(tab2 + " R$: " + Preco2);
-                                        }
-                                    }
-
-                                    if (!tab3.equals("")) {
-                                        String vlvenda3 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA3"));
-                                        vlvenda3 = vlvenda3.trim();
-                                        if (!vlvenda3.equals("0,0000")) {
-                                            BigDecimal venda3 = new BigDecimal(Double.parseDouble(vlvenda3.replace(',', '.')));
-                                            String Preco3 = venda3.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco3 = Preco3.replace('.', ',');
-                                            DadosListTabPreco.add(tab3 + " R$: " + Preco3);
-                                        }
-                                    }
-
-                                    if (!tab4.equals("")) {
-                                        String vlvenda4 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA4"));
-                                        vlvenda4 = vlvenda4.trim();
-                                        if (!vlvenda4.equals("0,0000")) {
-                                            BigDecimal venda4 = new BigDecimal(Double.parseDouble(vlvenda4.replace(',', '.')));
-                                            String Preco4 = venda4.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco4 = Preco4.replace('.', ',');
-                                            DadosListTabPreco.add(tab4 + " R$: " + Preco4);
-                                        }
-                                    }
-
-                                    if (!tab5.equals("")) {
-                                        String vlvenda5 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDA5"));
-                                        vlvenda5 = vlvenda5.trim();
-                                        if (!vlvenda5.equals("0,0000")) {
-                                            BigDecimal venda5 = new BigDecimal(Double.parseDouble(vlvenda5.replace(',', '.')));
-                                            String Preco5 = venda5.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Preco5 = Preco5.replace('.', ',');
-                                            DadosListTabPreco.add(tab5 + " R$: " + Preco5);
-                                        }
-                                    }
-
-                                    if (!tab6.equals("")) {
-                                        String vlvendap1 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP1"));
-                                        vlvendap1 = vlvendap1.trim();
-                                        if (!vlvendap1.equals("0,0000")) {
-                                            BigDecimal vendap1 = new BigDecimal(Double.parseDouble(vlvendap1.replace(',', '.')));
-                                            String Precop1 = vendap1.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Precop1 = Precop1.replace('.', ',');
-                                            DadosListTabPreco.add(tab6 + " R$: " + Precop1);
-                                        }
-                                    }
-
-                                    if (!tab7.equals("")) {
-                                        String vlvendap2 = produto_cursor.getString(produto_cursor.getColumnIndex("VLVENDAP2"));
-                                        vlvendap2 = vlvendap2.trim();
-                                        if (!vlvendap2.equals("0,0000")) {
-                                            BigDecimal vendap2 = new BigDecimal(Double.parseDouble(vlvendap2.replace(',', '.')));
-                                            String Precop2 = vendap2.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                            Precop2 = Precop2.replace('.', ',');
-                                            DadosListTabPreco.add(tab7 + " R$: " + Precop2);
-                                        }
-                                    }
-                                    ArrayAdapter<String> arrayAdapterTabPreco = new ArrayAdapter<String>(CadastroPedidos.this, android.R.layout.simple_spinner_dropdown_item, DadosListTabPreco);
-                                    arrayAdapterTabPreco.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                    spntabpreco.setAdapter(arrayAdapterTabPreco);
-
-                                    produto_cursor.close();
-                                } catch (Exception E) {
-                                    E.toString();
-
-                                }
-                                info_txv_codproduto.setText(item.getVendad_prd_codigo());
-                                info_txv_descricaoproduto.setText(item.getVendad_prd_descricao());
-                                info_txv_unmedida.setText(item.getVendad_prd_unidade());
-
-                                String ValorItem = String.valueOf(item.getVendad_preco_venda());
-                                ValorItem = ValorItem.trim();
-                                BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                String Preco = venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString();
-                                Preco = Preco.replace('.', ',');
-                                edtprecovend.setText(Preco);
-
-                                Cursor cursor = DB.rawQuery("select CODITEMANUAL, CHAVEPEDIDO, QTDMENORPED from peditens where CHAVEPEDIDO = '" + Chave_Venda + "'", null);
-                                cursor.moveToFirst();
-                                String qtdpedido = cursor.getString(cursor.getColumnIndex("QTDMENORPED"));
-                                cursor.close();
-
-                                info_txt_quantidadecomprada.setText(qtdpedido);
-                                info_txt_quantidadecomprada.requestFocus();
-
-                                //info_txt_quantidadecomprada.selectAll();
-
-
-                                alerta1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                        Integer TAMANHO_TEXTO = info_txt_quantidadecomprada.getText().toString().length();
-
-                                        if (TAMANHO_TEXTO > 0) {
-                                            SqliteProdutoBean prdBean = new SqliteProdutoBean();
-                                            Double QUANTIDADE_DIGITADA = Double.parseDouble(info_txt_quantidadecomprada.getText().toString());
-                                            String COD_PRODUTO = info_txv_codproduto.getText().toString();
-                                            String DESCRICAO = info_txv_descricaoproduto.getText().toString();
-                                            String UNIDADE = info_txv_unmedida.getText().toString();
-
-                                            if (QUANTIDADE_DIGITADA > 0) {
-                                                if (vendenegativo.equals("N") && QUANTIDADE_DIGITADA > qtdestoque) {
-                                                    Util.msg_toast_personal(getBaseContext(), "Quantidade solicitada insatisfeita.Verifique!", Util.ALERTA);
-                                                    return;
-                                                }
-
-                                                SqliteVendaDBean itemBean1 = new SqliteVendaDBean();
-                                                SqliteVendaDBean itemBean2 = new SqliteVendaDBean();
-                                                SqliteVendaDBean itemBean3 = new SqliteVendaDBean();
-                                                SqliteVendaDao itemDao = new SqliteVendaDao(getApplicationContext(), sCodVend, true);
-
-                                                itemBean2.setVendad_prd_codigo(COD_PRODUTO);
-                                                //itemBean3 = itemDao.altera_item_na_venda(itemBean2);
-
-                                                //if (itemBean3 != null) {
-                                                itemBean1.setVendad_prd_codigo(COD_PRODUTO);
-                                                itemBean1.setVendad_prd_descricao(DESCRICAO);
-                                                itemBean1.setVendad_prd_unidade(UNIDADE);
-                                                itemBean1.setVendad_quantidade(new BigDecimal(QUANTIDADE_DIGITADA));
-
-                                                //String ValorItem = produto_cursor.getString(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO));
-                                                String ValorItem = edtprecovend.getText().toString();
-                                                ValorItem = ValorItem.trim();
-                                                if (!ValorItem.equals("0,0000")) {
-                                                    BigDecimal venda = new BigDecimal(Double.parseDouble(ValorItem.replace(',', '.')));
-                                                    venda.setScale(4, BigDecimal.ROUND_HALF_UP).toString().replace('.', ',');
-                                                    itemBean1.setVendad_preco_venda(venda);
-
-                                                    //itemBean1.setVendad_preco_vendaTEMP(new BigDecimal(produto_cursor.getDouble(produto_cursor.getColumnIndex(prdBean.P_PRECO_PRODUTO))));
-                                                    itemBean1.setVendad_total(itemBean1.getSubTotal());
-                                                    //itemDao.atualizar_alteracao_item_na_venda(itemBean1, Chave_Venda);
-                                                    Alterar_Pedido_listview_e_calcula_total();
-                                                    //finish();
-                                                } else {
-                                                    Util.msg_toast_personal(getBaseContext(), "produto com preço de venda zerado", Util.ALERTA);
-                                                    return;
-                                                }
-                                                /*} else {
-                                                    Util.msg_toast_personal(getBaseContext(), "Este produto já foi adicionado", Util.ALERTA);
-                                                }*/
-
-                                                //}
-                                            } else {
-                                                Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
-                                                return;
-                                            }
-
-                                        } else {
-                                            Util.msg_toast_personal(getApplicationContext(), "A quantidade não foi informada", Util.ALERTA);
-                                            return;
-                                        }
-                                        CadastroPedidos.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); // fecha o teclado quando confirma a alteração  da quantidade.
-                                    }
-
-                                });
-                                alerta1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    }
-                                });
-                                SharedPreferences prefsHost = CadastroPedidos.this.getSharedPreferences(PREFS_PRIVATE, Context.MODE_PRIVATE);
-                                sprecoprincipal = prefsHost.getInt("spreco", 0);
-                                spntabpreco.setSelection(sprecoprincipal);
-                                alerta1.show();
-                            } else {
-                                SqliteVendaDBean item2 = (SqliteVendaDBean) listview.getItemAtPosition(posicao);
-                                if (NumPedido.equals("0")) {
-                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, false).excluir_um_item_da_venda(item2);
-                                } else {
-                                    new SqliteVendaDao(getApplicationContext(), CodVendedor, true).excluir_um_item_da_venda(item2);
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-        );
-        builder.setNegativeButton("Não", new DialogInterface.OnClickListener()
-
-                {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        dlg.dismiss();
-                    }
-                }
-
-        );
-        dlg = builder.create();
-        dlg.show();
-
-    }
 
     public void GravaPreferencias(int preco) {
 
@@ -2752,7 +2265,11 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Util.msg_toast_personal(CadastroPedidos.this, "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(CadastroPedidos.this, "Falha ao enviar pedido. Tente novamente.", Util.PADRAO);
+                                }else {
+                                    Toast.makeText(CadastroPedidos.this, "Falha ao enviar pedido. Tente novamente.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
 
@@ -2796,7 +2313,12 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Util.msg_toast_personal(CadastroPedidos.this, pedidoendiado, Util.PADRAO);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(CadastroPedidos.this, pedidoendiado, Util.PADRAO);
+                                }else {
+                                    Toast.makeText(CadastroPedidos.this, pedidoendiado, Toast.LENGTH_SHORT).show();
+
+                                }
                             }
                         });
 
@@ -2816,7 +2338,11 @@ public class CadastroPedidos extends Activity implements View.OnKeyListener, Vie
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Util.msg_toast_personal(CadastroPedidos.this, sitcliexvend, Util.PADRAO);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                Util.msg_toast_personal(CadastroPedidos.this, sitcliexvend, Util.PADRAO);
+                            }else {
+                                Toast.makeText(CadastroPedidos.this, sitcliexvend, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                 }

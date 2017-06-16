@@ -186,6 +186,10 @@
         possam avalia-lo e assim, com boas avaliações, você
         consiga ainda mais instalações para ele.
     </string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="falha_excluir_perfil">Falha ao tentar excluir os clientes desse perfil</string>
+    <string name="falha_deletar_paramapp">Falha ao tentar excluir os parametros desse perfil</string>
 
 
 </resources>

@@ -40,13 +40,10 @@ import com.jdsystem.br.vendasmobile.domain.Pedidos;
 import com.jdsystem.br.vendasmobile.fragments.FragmentPedido;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ConsultaPedidos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Runnable {
@@ -387,7 +384,7 @@ public class ConsultaPedidos extends AppCompatActivity
     }
 
     public void filtroEmissaoPed(View view) {
-        Intent intent = new Intent(ConsultaPedidos.this, actFiltroPeriodoPedidos.class);
+        Intent intent = new Intent(ConsultaPedidos.this, FiltroPeriodoPedidos.class);
         //finish();
         startActivityForResult(intent, 3);
     }

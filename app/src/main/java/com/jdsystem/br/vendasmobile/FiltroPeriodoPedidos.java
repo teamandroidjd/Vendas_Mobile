@@ -2,6 +2,7 @@ package com.jdsystem.br.vendasmobile;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class actFiltroPeriodoPedidos extends AppCompatActivity {
+public class FiltroPeriodoPedidos extends AppCompatActivity {
 
 
     static final int DATE_DIALOG_ID_Inicio = 999;
@@ -108,7 +109,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
                 month = calendar.get(Calendar.MONTH);
                 dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
-                datePickerDialog = new DatePickerDialog(actFiltroPeriodoPedidos.this, datePickerListener, year, month, dayOfMonth);
+                datePickerDialog = new DatePickerDialog(FiltroPeriodoPedidos.this, datePickerListener, year, month, dayOfMonth);
                 datePickerDialog.getDatePicker().setTag(DATE_DIALOG_ID_Fim);
                 datePickerDialog.setTitle("Data final");
                 datePickerDialog.show();
@@ -122,7 +123,7 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
                 month = calendar.get(Calendar.MONTH);
                 dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
-                datePickerDialog = new DatePickerDialog(actFiltroPeriodoPedidos.this, datePickerListener, year, month, dayOfMonth);
+                datePickerDialog = new DatePickerDialog(FiltroPeriodoPedidos.this, datePickerListener, year, month, dayOfMonth);
                 datePickerDialog.getDatePicker().setTag(DATE_DIALOG_ID_Inicio);
                 datePickerDialog.setTitle("Data inicial");
                 datePickerDialog.show();
@@ -142,10 +143,18 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
 
     public void confirmafiltro(View view) {
         if (DataIni == null) {
-            Util.msg_toast_personal(actFiltroPeriodoPedidos.this, "Informar a data inicial!", Toast.LENGTH_SHORT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Util.msg_toast_personal(FiltroPeriodoPedidos.this, "Informar a data inicial!", Toast.LENGTH_SHORT);
+            }else{
+                Toast.makeText(this, "Informar a data inicial!", Toast.LENGTH_SHORT).show();
+            }
             return;
         } else if (DataFim == null) {
-            Util.msg_toast_personal(actFiltroPeriodoPedidos.this, "Informar a data final", Toast.LENGTH_SHORT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Util.msg_toast_personal(FiltroPeriodoPedidos.this, "Informar a data final", Toast.LENGTH_SHORT);
+            }else {
+                Toast.makeText(this, "Informar a data final", Toast.LENGTH_SHORT).show();
+            }
             return;
         } else if (DataIni.before(DataFim) || (DataIni.equals(DataFim))) {
             Intent returnIntent = new Intent();
@@ -157,7 +166,11 @@ public class actFiltroPeriodoPedidos extends AppCompatActivity {
             setResult(3, returnIntent);
             finish();
         } else {
-            Util.msg_toast_personal(actFiltroPeriodoPedidos.this, getString(R.string.data_inicialfinal_invalida), Toast.LENGTH_SHORT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Util.msg_toast_personal(FiltroPeriodoPedidos.this, getString(R.string.data_inicialfinal_invalida), Toast.LENGTH_SHORT);
+            }else {
+                Toast.makeText(this, getString(R.string.data_inicialfinal_invalida), Toast.LENGTH_SHORT).show();
+            }
         }
 
     }

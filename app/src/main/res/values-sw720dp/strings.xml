@@ -15,4 +15,8 @@
 
     <string name="login">Login</string>
     <string name="search_hint">Pesquisar</string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="falha_excluir_perfil">Falha ao tentar excluir os clientes desse perfil</string>
+    <string name="falha_deletar_paramapp">Falha ao tentar excluir os parametros desse perfil</string>
 </resources>

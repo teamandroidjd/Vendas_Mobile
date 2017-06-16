@@ -95,7 +95,7 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".actFiltroPeriodoPedidos"
+            android:name=".FiltroPeriodoPedidos"
             android:label="Filtro por Emissão"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />

@@ -774,14 +774,20 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
                 });
             }
         }
-
-        if (RetClientes.equals("0")) {
-            sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
-            return sinccliestatic;
-        } else if (RetClientes == null) {
+        try{
+            if (RetClientes.equals("0")) {
+                sinccliestatic = ctxEnvClie.getString(R.string.syn_clients_successfully);
+                return sinccliestatic;
+            } else if (RetClientes == null) {
+                sinccliestatic = ctxEnvClie.getString(R.string.failure_communicate);
+                return sinccliestatic;
+            }
+        }catch (Exception e){
+            e.toString();
             sinccliestatic = ctxEnvClie.getString(R.string.failure_communicate);
             return sinccliestatic;
         }
+
         try {
             JSONObject jsonObj = new JSONObject(RetClientes);
             JSONArray pedidosblq = jsonObj.getJSONArray(TAG_CLIENTESINFO);

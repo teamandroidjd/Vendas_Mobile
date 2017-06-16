@@ -82,13 +82,13 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage(R.string.msg_delete_licença)
                         .setCancelable(false)
-                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 chave = txvlicenca1.getText().toString();
                                 excluirhost(chave);
                             }
                         })
-                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.nao, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
@@ -105,13 +105,13 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage(R.string.msg_delete_licença)
                         .setCancelable(false)
-                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 chave = txvlicenca2.getText().toString();
                                 excluirhost(chave);
                             }
                         })
-                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.nao, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
@@ -130,13 +130,13 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 builder.setIcon(R.drawable.logo_ico);
                 builder.setMessage(R.string.msg_delete_licença)
                         .setCancelable(false)
-                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.sim, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 chave = txvlicenca3.getText().toString();
                                 excluirhost(chave);
                             }
                         })
-                        .setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.nao, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
@@ -168,9 +168,9 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
             } catch (Exception e) {
                 e.toString();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    Util.msg_toast_personal(ConfigWeb.this, "Falha ao tentar excluir os clientes desse perfil", Toast.LENGTH_SHORT);
+                    Util.msg_toast_personal(ConfigWeb.this, getString(R.string.falha_excluir_perfil), Toast.LENGTH_SHORT);
                 }else {
-                    Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os clientes desse perfil", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ConfigWeb.this, getString(R.string.falha_excluir_perfil), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -184,7 +184,7 @@ public class ConfigWeb extends AppCompatActivity implements Runnable {
                 dbparamapp.close();
             } catch (Exception e) {
                 e.toString();
-                Toast.makeText(ConfigWeb.this, "Falha ao tentar excluir os parametros desse perfil", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ConfigWeb.this, R.string.falha_deletar_paramapp, Toast.LENGTH_SHORT).show();
             }
 
             try {

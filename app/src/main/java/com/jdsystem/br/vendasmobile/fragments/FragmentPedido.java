@@ -16,6 +16,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.CadastroPedidos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
@@ -37,7 +39,6 @@ import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.Sincronismo;
 import com.jdsystem.br.vendasmobile.Util.Util;
-import com.jdsystem.br.vendasmobile.adapter.ListAdapter;
 import com.jdsystem.br.vendasmobile.adapter.ListAdapterPedidos;
 import com.jdsystem.br.vendasmobile.domain.Pedidos;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
@@ -111,7 +112,6 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
     public void setRecyclerViewLayoutManager(RecyclerView recyclerView) { // Utilizado para o fast scroll
         int scrollPosition = 0;
 
-        // If a form_pgto_listview_parcelas manager has already been set, get current scroll position.
         if (recyclerView.getLayoutManager() != null) {
             scrollPosition =
                     ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
@@ -182,8 +182,6 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
             final ListAdapterPedidos adapter = (ListAdapterPedidos) mRecyclerView.getAdapter();
             final String Status = adapter.StatusPedido(position);
             final String NomeVendedor = adapter.ChamaNomeVendedor(position);
-            final Boolean ConexOk = Util.checarConexaoCelular(view.getContext());
-            //if (ConexOk == true) {
             final String NumPedido = adapter.ChamaDados(position);
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
@@ -255,9 +253,17 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                             Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                             ((ConsultaPedidos) getActivity()).finish();
                                                             startActivity(intent);
-                                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " cancelado com Sucesso!", Util.PADRAO);
+                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                                Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " cancelado com Sucesso!", Util.PADRAO);
+                                                            } else {
+                                                                Toast.makeText(getActivity(), "Pedido nº " + NumPedido + " cancelado com Sucesso!", Toast.LENGTH_SHORT).show();
+                                                            }
                                                         } else {
-                                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser cancelado, verifique!", Util.PADRAO);
+                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                                Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser cancelado, verifique!", Util.PADRAO);
+                                                            } else {
+                                                                Toast.makeText(getActivity(), "Pedido nº " + NumPedido + " não pode ser cancelado, verifique!", Toast.LENGTH_SHORT).show();
+                                                            }
                                                         }
                                                     }
                                                 })
@@ -271,10 +277,13 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         return;
 
                                     } else {
-                                        Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Somente para Orçamentos!", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Compartilhar")) {
-                                    //String TxtPedido = Sincronismo.RetornaPedido(NumPedido, getContext());
                                     int permissionCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
                                     if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                                         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
@@ -297,7 +306,11 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             startActivity(Intent.createChooser(intentShareFile, "Compartilhar Pedido nº " + NumPedido));
                                         }
                                     } else {
-                                        Util.msg_toast_personal(getActivity(), "Não foi possivel compartilhar o Pedido nº " + NumPedido + ".", Util.PADRAO);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Não foi possivel compartilhar o Pedido nº " + NumPedido + ".", Util.PADRAO);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Não foi possivel compartilhar o Pedido nº " + NumPedido + ".", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Verificar Status")) {
                                     sStatus = Status;
@@ -325,12 +338,24 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                             Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                             ((ConsultaPedidos) getActivity()).finish();
                                             startActivity(intent);
-                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " autorizado a Gerar Venda", Util.PADRAO);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " autorizado a Gerar Venda", Util.PADRAO);
+                                            } else {
+                                                Toast.makeText(getActivity(), "Pedido nº " + NumPedido + " autorizado a Gerar Venda", Toast.LENGTH_SHORT).show();
+                                            }
                                         } else {
-                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser autorizado a Gerar Venda, verifique!", Util.PADRAO);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser autorizado a Gerar Venda, verifique!", Util.PADRAO);
+                                            } else {
+                                                Toast.makeText(getActivity(), "Pedido nº " + NumPedido + " não pode ser autorizado a Gerar Venda, verifique!", Toast.LENGTH_SHORT).show();
+                                            }
                                         }
                                     } else {
-                                        Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Somente para Orçamentos!", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Alterar")) {
                                     if (Status.equals("Orçamento") || Status.equals("Gerar Venda")) {
@@ -347,12 +372,20 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         ((ConsultaPedidos) getActivity()).finish();
                                         startActivityForResult(VendaProd, 1);
                                     } else {
-                                        Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser alterado, o mesmo já foi transmitido. Verifique!", Util.PADRAO);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Pedido nº " + NumPedido + " não pode ser alterado, o mesmo já foi transmitido. Verifique!", Util.PADRAO);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Pedido nº " + NumPedido + " não pode ser alterado, o mesmo já foi transmitido. Verifique!", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }
                                 dialog.cancel();
                             } else {
-                                Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);
+                                } else {
+                                    Toast.makeText(getActivity(), "Você deve escolher uma das opções!!!", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     })
@@ -420,16 +453,28 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                     Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                     ((ConsultaPedidos) getActivity()).finish();
                                                     startActivity(intent);
-                                                    Util.msg_toast_personal(getActivity(), "Pedido nº " + sNumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getActivity(), "Pedido nº " + sNumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), "Pedido nº " + sNumPedido + " sincronizado com Sucesso!", Toast.LENGTH_SHORT).show();
+                                                    }
                                                 } else {
-                                                    Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), pedidoendiado, Toast.LENGTH_SHORT).show();
+                                                    }
                                                     return;
                                                 }
                                             } catch (Exception e) {
                                                 e.toString();
                                             }
                                         } else {
-                                            Util.msg_toast_personal(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Util.PADRAO);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Util.PADRAO);
+                                            } else {
+                                                Toast.makeText(getActivity(), "Falha ao enviar Cliente. Tente novamente.", Toast.LENGTH_SHORT).show();
+                                            }
                                             return;
                                         }
 
@@ -447,13 +492,25 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                                     Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                                     ((ConsultaPedidos) getActivity()).finish();
                                                     startActivity(intent);
-                                                    Util.msg_toast_personal(getActivity(), "Pedido nº " + sNumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getActivity(), "Pedido nº " + sNumPedido + " sincronizado com Sucesso!", Util.PADRAO);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), "Pedido nº " + sNumPedido + " sincronizado com Sucesso!", Toast.LENGTH_SHORT).show();
+                                                    }
                                                 } else {
-                                                    Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                        Util.msg_toast_personal(getActivity(), pedidoendiado, Util.PADRAO);
+                                                    } else {
+                                                        Toast.makeText(getActivity(), pedidoendiado, Toast.LENGTH_SHORT).show();
+                                                    }
                                                     return;
                                                 }
                                             } else {
-                                                Util.msg_toast_personal(getActivity(), sitcliexvend, Util.PADRAO);
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                    Util.msg_toast_personal(getActivity(), sitcliexvend, Util.PADRAO);
+                                                } else {
+                                                    Toast.makeText(getActivity(), sitcliexvend, Toast.LENGTH_SHORT).show();
+                                                }
                                                 return;
                                             }
                                         } catch (Exception e) {
@@ -461,11 +518,19 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                         }
                                     }
                                 } else {
-                                    Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                        Util.msg_toast_personal(getActivity(), "Sem Conexão com a Internet", Util.PADRAO);
+                                    } else {
+                                        Toast.makeText(getActivity(), "Sem Conexão com a Internet", Toast.LENGTH_SHORT).show();
+                                    }
                                     return;
                                 }
                             } else {
-                                Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(getActivity(), "Somente para Orçamentos!", Util.PADRAO);
+                                } else {
+                                    Toast.makeText(getActivity(), "Somente para Orçamentos!", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     });
@@ -481,19 +546,31 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                 if (statusatualizado != null) {
                                     if (statusatualizado.equals("Orçamento")) {
                                         if (eDialog.isShowing()) eDialog.dismiss();
-                                        Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " ainda não foi faturado. Encontra-se com o status de " + statusatualizado + ".", Util.PADRAO);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " ainda não foi faturado. Encontra-se com o status de " + statusatualizado + ".", Util.PADRAO);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Seu Pedido " + NumPedidoExt + " ainda não foi faturado. Encontra-se com o status de " + statusatualizado + ".", Toast.LENGTH_SHORT).show();
+                                        }
                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                         ((ConsultaPedidos) getActivity()).finish();
                                         startActivity(intent);
                                     } else if (statusatualizado.equals("Faturado")) {
                                         if (eDialog.isShowing()) eDialog.dismiss();
-                                        Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " foi faturado!", Util.PADRAO);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Seu Pedido " + NumPedidoExt + " foi faturado!", Util.PADRAO);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Seu Pedido " + NumPedidoExt + " foi faturado!", Toast.LENGTH_SHORT).show();
+                                        }
                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                         ((ConsultaPedidos) getActivity()).finish();
                                         startActivity(intent);
                                     } else if (statusatualizado.equals("")) {
                                         if (eDialog.isShowing()) eDialog.dismiss();
-                                        Util.msg_toast_personal(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua txvempresa.", Util.PADRAO);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua txvempresa.", Util.PADRAO);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Seu Pedido foi cancelado! Para maiores informações, entre em contato com sua txvempresa.", Toast.LENGTH_SHORT).show();
+                                        }
                                         Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                         ((ConsultaPedidos) getActivity()).finish();
                                         startActivity(intent);
@@ -503,11 +580,19 @@ public class FragmentPedido extends Fragment implements RecyclerViewOnClickListe
                                     Intent intent = ((ConsultaPedidos) getActivity()).getIntent();
                                     ((ConsultaPedidos) getActivity()).finish();
                                     startActivity(intent);
-                                    Util.msg_toast_personal(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt + ".", Util.PADRAO);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                        Util.msg_toast_personal(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt + ".", Util.PADRAO);
+                                    } else {
+                                        Toast.makeText(getActivity(), "Não foi possivel atualizar o status de Pedido nº " + NumPedidoExt + ".", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             } else {
                                 if (eDialog.isShowing()) eDialog.dismiss();
-                                Util.msg_toast_personal(getActivity(), "Somente Pedidos Sincronizados", Util.PADRAO);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                    Util.msg_toast_personal(getActivity(), "Somente Pedidos Sincronizados", Util.PADRAO);
+                                } else {
+                                    Toast.makeText(getActivity(), "Somente Pedidos Sincronizados", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     });

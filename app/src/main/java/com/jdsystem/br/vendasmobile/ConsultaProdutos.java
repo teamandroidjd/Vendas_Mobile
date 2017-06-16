@@ -475,7 +475,7 @@ public class ConsultaProdutos extends AppCompatActivity
 
                         dialogECB = new ProgressDialog(ConsultaProdutos.this);
 
-                            new Thread(ConsultaProdutos.this).start();
+                        new Thread(ConsultaProdutos.this).start();
 
                     } else {
                         cursorVerificaProd.close();
@@ -539,39 +539,7 @@ public class ConsultaProdutos extends AppCompatActivity
                     }
                 }
             });
-
-        } else if (flag == 2) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
-                        Bundle params = new Bundle();
-                        if (frag != null) {
-                            frag = null;
-                        }
-                        frag = new FragmentProdutos();
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
-                        params.putInt(getString(R.string.intent_flag), flag);
-                        params.putString(getString(R.string.intent_numpedido), numPedido);
-                        params.putString(getString(R.string.intent_chavepedido), chavePedido);
-                        params.putString(getString(R.string.intent_usuario), usuario);
-                        params.putString(getString(R.string.intent_senha), senha);
-                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
-                        frag.setArguments(params);
-                        ft.commit();
-
-                    } catch (Exception e) {
-                        e.toString();
-                    }
-                }
-            });
-
-        }
-        if (flag == 1) {
+        } else if (flag == 1) {
             try {
                 sincProd = Sincronismo.sincronizaProdutos(ConsultaProdutos.this, usuario, senha, 0, dialog, dialogECB, handler);
                 handler.post(new Runnable() {
@@ -602,10 +570,38 @@ public class ConsultaProdutos extends AppCompatActivity
             } catch (Exception e) {
                 e.toString();
             }
-        }
-        if (dialog.isShowing())
-            dialog.dismiss();
+            if (dialog.isShowing())
+                dialog.dismiss();
+        } else if (flag == 2) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FragmentProdutos frag = (FragmentProdutos) getSupportFragmentManager().findFragmentByTag("mainFragA");
+                        Bundle params = new Bundle();
+                        if (frag != null) {
+                            frag = null;
+                        }
+                        frag = new FragmentProdutos();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                        params.putInt(getString(R.string.intent_flag), flag);
+                        params.putString(getString(R.string.intent_numpedido), numPedido);
+                        params.putString(getString(R.string.intent_chavepedido), chavePedido);
+                        params.putString(getString(R.string.intent_usuario), usuario);
+                        params.putString(getString(R.string.intent_senha), senha);
+                        params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                        frag.setArguments(params);
+                        ft.commit();
 
+                    } catch (Exception e) {
+                        e.toString();
+                    }
+                }
+            });
+        }
     }
 
     @Override

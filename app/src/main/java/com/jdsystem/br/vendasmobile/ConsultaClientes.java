@@ -801,6 +801,9 @@ public class ConsultaClientes extends AppCompatActivity
                 e.toString();
 
             }
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
         } else if (flag == 2) {
             handler.post(new Runnable() {
                 @Override
@@ -828,10 +831,6 @@ public class ConsultaClientes extends AppCompatActivity
                 }
             });
         }
-        if (dialog.isShowing()) {
-            dialog.dismiss();
-        }
-
     }
 
     private void carregarpreferencias() {

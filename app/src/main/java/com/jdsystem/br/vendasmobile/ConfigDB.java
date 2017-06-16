@@ -717,8 +717,6 @@ public class ConfigDB extends SQLiteOpenHelper {
             }catch (Exception e){
                 e.toString();
             }
-
-
             //NOVOS CAMPOS PARA O DB 5
         }
     }

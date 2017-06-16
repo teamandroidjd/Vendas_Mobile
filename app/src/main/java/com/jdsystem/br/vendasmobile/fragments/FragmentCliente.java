@@ -41,8 +41,6 @@ import com.jdsystem.br.vendasmobile.domain.Clientes;
 import com.jdsystem.br.vendasmobile.interfaces.RecyclerViewOnClickListenerHack;
 
 import java.util.List;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 /**
  * Created by WKS22 on 29/11/2016.
@@ -168,7 +166,6 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             params.putString(getString(R.string.intent_nomerazao), nomeRazao);
             intentp.putExtras(params);
             startActivity(intentp);
-            //getActivity().finish();
 
         } else if (flag == 0 && cadContato == 1) {
             String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
@@ -182,10 +179,8 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
             params.putInt(getString(R.string.intent_codcliente), Integer.parseInt(codClieExt));
             params.putString(getString(R.string.intent_telainvocada), telaInvocada);
-            //params.putString(getString(R.string.intent_codcliente), codClieExt);
             params.putString(getString(R.string.intent_nomerazao), nomeRazao);
             params.putInt(getString(R.string.intent_codcontato), CodContato);
-            //params.putString("C",TipoContato);
             intent.putExtras(params);
             startActivity(intent);
             getActivity().finish();
@@ -223,14 +218,18 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                 e.toString();
             }
             if (BloqClie.equals("S") && !FlagIntegrado.equals("1")) {
-                Boolean ConexOk = Util.checarConexaoCelular(getActivity());
-                if (ConexOk) {
+                if (Util.checarConexaoCelular(getActivity())) {
                     Sincronismo.sincronizaClientes(codVendedor, getActivity(), usuario, senha, Integer.parseInt(CodigoClienteExterno), null, null, null);
+                }
+                try {
                     Cursor cursorclie = DB.rawQuery("SELECT BLOQUEIO, CODCLIE_INT FROM CLIENTES WHERE CODCLIE_INT = " + CodigoClienteInterno + " AND CODPERFIL = " + idPerfil, null);
                     cursorclie.moveToFirst();
                     bloqueio = cursorclie.getString(cursorclie.getColumnIndex("BLOQUEIO"));
                     cursorclie.close();
+                } catch (Exception e) {
+                    e.toString();
                 }
+
             }
             final String finalFlagIntegrado = FlagIntegrado;
             handler.post(new Runnable() {
@@ -241,9 +240,6 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                         @Override
                         public void run() {
                             bloqueio = adapter.ChamaBloqueioCliente(iPosition);
-                            //String BloqClie = null;
-                            //String bloqueio = null;
-
 
                             if (finalFlagIntegrado.equals("1")) {
                                 if (numPedido == null) {
@@ -360,7 +356,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Util.msg_toast_personal(getActivity(), clieEnvio, Util.ALERTA);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                Util.msg_toast_personal(getActivity(), clieEnvio, Util.ALERTA);
+                            } else {
+                                Toast.makeText(getActivity(), clieEnvio, Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
 
@@ -370,7 +370,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Util.msg_toast_personal(getActivity(), "Não é possível enviar o clientes. " + clieEnvio + "", Util.ALERTA);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                Util.msg_toast_personal(getActivity(), "Não é possível enviar o clientes. " + clieEnvio + "", Util.ALERTA);
+                            } else {
+                                Toast.makeText(getActivity(), "Não é possível enviar o clientes.", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                     return;
@@ -381,7 +385,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                        } else {
+                            Toast.makeText(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
                 return;
@@ -429,7 +437,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                                         startActivity(intentp);
                                         getActivity().finish();
                                     } else {
-                                        Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Toast.LENGTH_SHORT).show();
+                                        }
                                         return;
                                     }
 
@@ -441,12 +453,20 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                                             Intent intent = ((ConsultaClientes) getActivity()).getIntent();
                                             ((ConsultaClientes) getActivity()).finish();
                                             startActivity(intent);
-                                            Util.msg_toast_personal(getActivity(), "Cadastro excluído com sucesso!", Util.ALERTA);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                                Util.msg_toast_personal(getActivity(), "Cadastro excluído com sucesso!", Util.ALERTA);
+                                            } else {
+                                                Toast.makeText(getActivity(), "Cadastro excluído com sucesso!", Toast.LENGTH_SHORT).show();
+                                            }
                                         } catch (Exception e) {
                                             e.toString();
                                         }
                                     } else {
-                                        Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                                            Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                                        } else {
+                                            Toast.makeText(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Toast.LENGTH_SHORT).show();
+                                        }
                                         return;
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
@@ -482,7 +502,11 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             }
 
         } else {
-            Util.msg_toast_personal(getActivity(), "Opção disponível somente para clientes não sincronizados!", Util.ALERTA);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                Util.msg_toast_personal(getActivity(), "Opção disponível somente para clientes não sincronizados!", Util.ALERTA);
+            } else {
+                Toast.makeText(getActivity(), "Opção disponível somente para clientes não sincronizados!", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
     }

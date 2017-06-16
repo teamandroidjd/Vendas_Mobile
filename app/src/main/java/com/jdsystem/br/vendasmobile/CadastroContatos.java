@@ -1390,10 +1390,14 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
                             if ((horaInicial.getText().toString().equals("")) || (horaInicial.getText().toString().equals(null))) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                     Util.msg_toast_personal(CadastroContatos.this, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT);
+                                }else {
+                                    Toast.makeText(ctx, "Horário inicial de visita não informado!", Toast.LENGTH_SHORT).show();
                                 }
                             } else if ((horaFinal.getText().toString().equals("")) || (horaFinal.getText().toString().equals(null))) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                     Util.msg_toast_personal(CadastroContatos.this, "Horário final de visita não informado!", Toast.LENGTH_SHORT);
+                                }else {
+                                    Toast.makeText(ctx, "Horário final de visita não informado!", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         } else {
@@ -1407,6 +1411,9 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                                     Util.msg_toast_personal(CadastroContatos.this, "Horário final " +
                                             "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT);
+                                }else {
+                                    Toast.makeText(ctx, "Horário final " +
+                                            "de visita maior do que o horário inicial de visita", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 agendaContato = sDiaSemana + ", de " + converteZero(Integer.toString(hora1)) +
@@ -1452,6 +1459,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
             if (cursor.getCount() > 0) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     Util.msg_toast_personal(CadastroContatos.this, getString(R.string.sched_already_exist), Toast.LENGTH_SHORT);
+                }else {
+                    Toast.makeText(ctx, getString(R.string.sched_already_exist), Toast.LENGTH_SHORT).show();
                 }
                 cursor.close();
                 return false;
@@ -1798,6 +1807,8 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                     Util.msg_toast_personal(CadastroContatos.this, "Este cargo já existe cadastrado. Verifique!", Toast.LENGTH_SHORT);
+                }else {
+                    Toast.makeText(ctx, "Este cargo já existe cadastrado. Verifique!", Toast.LENGTH_SHORT).show();
                 }
                 cursor.close();
             } else {
