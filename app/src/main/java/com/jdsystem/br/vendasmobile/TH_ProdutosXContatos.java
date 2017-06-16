@@ -241,10 +241,10 @@ public class TH_ProdutosXContatos extends Fragment {
                     String codProdutoCont = cursor.getString(cursor.getColumnIndex("produtos_contatos.cod_produto_manual"));
                     String descProdCont = cursor.getString(cursor.getColumnIndex("desc"));
                     String itemLista;
-                    if (descProdCont.length() <= 26) {
+                    if (descProdCont.length() <= 28) {
                         itemLista = codProdutoCont + " - " + descProdCont;
                     }else{
-                        itemLista = codProdutoCont + " - " + descProdCont.substring(0,26);
+                        itemLista = codProdutoCont + " - " + descProdCont.substring(0,28);
                     }
 
                     if(itemLista.equals(sItemLista)){

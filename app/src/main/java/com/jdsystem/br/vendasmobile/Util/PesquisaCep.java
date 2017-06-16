@@ -54,7 +54,7 @@ public class PesquisaCep {
             } else
                 return String.valueOf(R.string.no_connection);
         }catch (Exception e){
-            System.out.println("Error" + e);
+            return String.valueOf(R.string.no_connection);
         }
         return RetDadosEndereco;
     }

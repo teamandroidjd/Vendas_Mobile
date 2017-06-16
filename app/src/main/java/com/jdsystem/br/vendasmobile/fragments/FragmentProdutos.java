@@ -228,7 +228,7 @@ public class FragmentProdutos extends Fragment implements RecyclerViewOnClickLis
             eDialog.setCancelable(false);
             eDialog.show();
 
-            Thread thread = new Thread();
+            Thread thread = new Thread(FragmentProdutos.this);
             thread.start();
             /*
             ListAdapterProdutos adapterProdutos = (ListAdapterProdutos) mRecyclerView.getAdapter();
