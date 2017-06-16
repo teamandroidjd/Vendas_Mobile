@@ -53,7 +53,7 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
     public static final String CONFIG_HOST = "CONFIG_HOST";
     int flag, cadContato, CodContato;
     String numPedido, chavePedido, usuario, senha, codVendedor, CodEmpresa, dataEntrega, telaInvocada,
-            urlPrincipal, BloqClie, bloqueio;
+            urlPrincipal, BloqClie, bloqueio, CodigoClienteInterno, CodigoClienteExterno;
     boolean consultaPedido;
     SQLiteDatabase DB;
     int idPerfil, flagRun, iPosition;
@@ -344,16 +344,58 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                     });
                 }
             });
+        } else if (flagRun == 2) {
+            if (CodigoClienteExterno == null) {
+                final String clieEnvio = Sincronismo.sincronizaClientesEnvio(CodigoClienteInterno, getActivity(), usuario, senha, null, null, null);
+                if (!clieEnvio.equals("0")) {
+                    Intent intent = new Intent(getActivity(), ConsultaClientes.class);
+                    Bundle params = new Bundle();
+                    params.putString((getString(R.string.intent_codvendedor)), codVendedor);
+                    params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                    params.putString(getString(R.string.intent_usuario), usuario);
+                    params.putString(getString(R.string.intent_senha), senha);
+                    params.putString(getString(R.string.intent_codigoempresa), CodEmpresa);
+                    intent.putExtras(params);
+                    startActivity(intent);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Util.msg_toast_personal(getActivity(), clieEnvio, Util.ALERTA);
+                        }
+                    });
+
+                } else {
+                    if (eDialog.isShowing())
+                        eDialog.dismiss();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Util.msg_toast_personal(getActivity(), "Não é possível enviar o clientes. " + clieEnvio + "", Util.ALERTA);
+                        }
+                    });
+                    return;
+                }
+            } else {
+                if (eDialog.isShowing())
+                    eDialog.dismiss();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
+                    }
+                });
+                return;
+            }
+            if (eDialog.isShowing())
+                eDialog.dismiss();
         }
-        if (eDialog.isShowing())
-            eDialog.dismiss();
     }
 
     @Override
     public void onLongClickListener(View view, final int position) {
         final ListAdapterClientes adapter = (ListAdapterClientes) mRecyclerView.getAdapter();
-        final String CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(position);
-        final String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
+        CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(position);
+        CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
         String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
         if (CodigoClienteExterno == null) {
 
@@ -408,24 +450,18 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
                                         return;
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
-                                    if (CodigoClienteExterno == null) {
-                                        String clieEnvio = Sincronismo.sincronizaClientesEnvio(CodigoClienteInterno, getActivity(), usuario, senha, null, null, null);
-                                        if (!clieEnvio.equals("0")) {
-                                            Intent intent = ((ConsultaClientes) getActivity()).getIntent();
-                                            ((ConsultaClientes) getActivity()).finish();
-                                            startActivity(intent);
-                                            Util.msg_toast_personal(getActivity(), clieEnvio, Util.ALERTA);
-                                        } else {
-                                            Util.msg_toast_personal(getActivity(), "Não é possível enviar o clientes. " + clieEnvio + "", Util.ALERTA);
-                                            return;
-                                        }
-                                    } else {
-                                        Util.msg_toast_personal(getActivity(), "Não é possível alterar ou excluir clientes já sincronizados!", Util.ALERTA);
-                                        return;
-                                    }
 
+                                    flagRun = 2;
+                                    eDialog = new ProgressDialog(getContext());
+                                    eDialog.setTitle(getString(R.string.wait));
+                                    eDialog.setMessage("Enviando cadastro do cliente...");
+                                    eDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                                    eDialog.setCancelable(false);
+                                    eDialog.show();
+
+                                    Thread thread = new Thread(FragmentCliente.this);
+                                    thread.start();
                                 }
-
                             }
                         }
                     })

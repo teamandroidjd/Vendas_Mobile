@@ -51,7 +51,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
     private static ProgressDialog DialogECB;
     public SharedPreferences prefs;
     String sTipoPessoa, sUF, codVendedor, NomeBairro, NomeCidade, usuario, senha, URLPrincipal, nomeRazao, TelaChamada, codEmpresa,
-            chavepedido, numPedido, atuok, sCEP;
+            chavepedido, numPedido, atuok, sCEP,CodCliente;
     Spinner spCidade, spTipoPessoa, spBairro, spUF;
     int CodCidade, CodCidadeInt, CodBairro, telaInvocada, idPerfil, flag, posicao, codClieExt, codClieInt;
     Boolean PesqCEP, atuBairro, atuCidade;
@@ -382,15 +382,6 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         cep.setOnFocusChangeListener(this);
     }
 
-    public boolean VerificaConexao() {
-        boolean conectado;
-        ConnectivityManager conectivtyManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        conectado = conectivtyManager.getActiveNetworkInfo() != null
-                && conectivtyManager.getActiveNetworkInfo().isAvailable()
-                && conectivtyManager.getActiveNetworkInfo().isConnected();
-        return conectado;
-    }
-
     public void buscacepclie(View view) {
         sCEP = cep.getText().toString().replaceAll("[^0123456789]", "");
         if (sCEP.length() < 8) {
@@ -409,166 +400,6 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
         Thread thread = new Thread(CadastroClientes.this);
         thread.start();
 
-        //cadastraDadosCep(sCEP);
-    }
-
-    public void cadastraDadosCep(String cep) {
-        String Estado = null;
-        String Cidade = null;
-        Boolean AtualizaEst = true;
-        PesqCEP = true;
-
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        SharedPreferences prefsHost = this.getSharedPreferences(ConfigWeb.CONFIG_HOST, MODE_PRIVATE);
-        String URLPrincipal = prefsHost.getString("host", null);
-
-        SoapObject soap = new SoapObject(ConfigConex.NAMESPACE, "PesquisaCEP");
-        soap.addProperty("aCEP", cep);
-        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-        envelope.setOutputSoapObject(soap);
-        HttpTransportSE Envio = new HttpTransportSE(ConfigConex.URLDADOSCEP);
-        String RetDadosEndereco = null;
-
-        try {
-            Boolean ConexOK = Util.checarConexaoCelular(this);
-            if (ConexOK) {
-                int i = 0;
-                do {
-                    if (i > 0) {
-                        Thread.sleep(500);
-                    }
-                    try {
-                        Envio.call("", envelope);
-                    } catch (Exception e) {
-                        DialogECB.dismiss();
-                        e.toString();
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(CadastroClientes.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    try {
-                        SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
-                        RetDadosEndereco = (String) envelope.getResponse();
-                        System.out.println("Response :" + resultsRequestSOAP.toString());
-                    } catch (Exception e) {
-                        e.toString();
-
-                    }
-                    i = i + 1;
-                } while (RetDadosEndereco == null && i <= 6);
-
-            } else {
-                DialogECB.dismiss();
-                Toast.makeText(CadastroClientes.this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
-                return;
-            }
-        } catch (Exception e) {
-            System.out.println("Error" + e);
-        }
-        if (RetDadosEndereco == null) {
-            DialogECB.dismiss();
-            Toast.makeText(CadastroClientes.this, R.string.failure_communicate, Toast.LENGTH_SHORT).show();
-            endereco.setText("");
-            return;
-        } else if (RetDadosEndereco.equals(getString(R.string.zip_code_not_found))) {
-            DialogECB.dismiss();
-            Toast.makeText(CadastroClientes.this, R.string.CEP_not_found_database, Toast.LENGTH_LONG).show();
-            endereco.setText("");
-            return;
-        }
-        try {
-            JSONObject jsonObj = new JSONObject(RetDadosEndereco);
-            JSONArray JEndereco = jsonObj.getJSONArray("cep");
-            int jumpTime = 0;
-            final int totalProgressTime = JEndereco.length();
-            DB = new ConfigDB(this).getReadableDatabase();
-
-            for (int i = 0; i < JEndereco.length(); i++) {
-                while (jumpTime < totalProgressTime) {
-                    JSONObject c = JEndereco.getJSONObject(jumpTime);
-                    jumpTime += 1;
-
-
-                    try {
-                        sUF = c.getString("uf");
-                        NomeCidade = c.getString("cidade");
-                        CodCidade = c.getInt("id_cidade");
-                        //if (codClieInt != 0) {
-                        carregaruf(sUF);
-                        //}
-
-                        NomeCidade = NomeCidade.replaceAll("'", "");
-
-                        //Carregar endereço
-                        String end = c.getString("logradouro");
-                        String tipoend = c.getString("tipo_logradouro");
-                        endereco.setText(tipoend + " " + end);
-                        numero.requestFocus();
-
-                        //Cadastrar Cidades
-                        Cursor CursorCidade = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, CODCIDADE_EXT, UF FROM CIDADES WHERE UF = '" + sUF + "' AND DESCRICAO = '" + NomeCidade + "' AND CODPERFIL = " + idPerfil, null);
-                        if (CursorCidade.getCount() > 0) {
-                            DB.execSQL(" UPDATE CIDADES SET UF = '" + sUF + "', DESCRICAO = '" + NomeCidade + "', CODCIDADE_EXT = " + CodCidade + "" +
-                                    " WHERE DESCRICAO = '" + NomeCidade + "' AND UF = '" + sUF + "' AND CODPERFIL = " + idPerfil);
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + sUF + "' AND DESCRICAO = '" + NomeCidade + "' AND CODPERFIL = " + idPerfil, null);
-                            cursor1.moveToFirst();
-                            CodCidade = (cursor1.getInt(cursor1.getColumnIndex("CODCIDADE")));
-                            cursor1.close();
-                        } else {
-                            DB.execSQL(" INSERT INTO CIDADES (DESCRICAO, UF, CODCIDADE_EXT, CODPERFIL)" +
-                                    " VALUES('" + NomeCidade + "','" + sUF + "'," + CodCidade + ", " + idPerfil + ");");
-                            Cursor cursor1 = DB.rawQuery(" SELECT CODCIDADE, DESCRICAO, UF, CODCIDADE_EXT FROM CIDADES WHERE UF = '" + sUF + "' AND DESCRICAO = '" + NomeCidade + "' AND CODPERFIL = " + idPerfil, null);
-                            cursor1.moveToFirst();
-                            CodCidade = (cursor1.getInt(cursor1.getColumnIndex("CODCIDADE")));
-                            cursor1.close();
-                        }
-                        CursorCidade.close();
-                    } catch (Exception E) {
-                        E.printStackTrace();
-                    }
-                    //Cadastrar Bairros
-                    try {
-                        NomeBairro = c.getString("bairro");
-                        int CodBairroExt = c.getInt("id_bairro");
-                        NomeBairro = NomeBairro.replaceAll("'", "");
-
-                        Cursor CursorBairro = DB.rawQuery(" SELECT CODBAIRRO, DESCRICAO, CODCIDADE FROM BAIRROS WHERE CODCIDADE = " + CodCidade + " AND DESCRICAO = '" + NomeBairro + "' AND CODPERFIL = " + idPerfil, null);
-                        if (CursorBairro.getCount() > 0) {
-                            CursorBairro.moveToFirst();
-                            DB.execSQL(" UPDATE BAIRROS SET CODCIDADE = " + CodCidade + ", DESCRICAO = '" + NomeBairro + "'" +
-                                    " WHERE DESCRICAO = '" + NomeBairro + "' AND CODCIDADE = '" + CodCidade + "' AND CODPERFIL = " + idPerfil);
-                        } else {
-                            DB.execSQL(" INSERT INTO BAIRROS (DESCRICAO, CODCIDADE, CODBAIRRO_EXT, CODPERFIL)" +
-                                    " VALUES('" + NomeBairro + "'," + CodCidade + "," + CodBairroExt + ", " + idPerfil + ");");
-                        }
-                        CursorBairro.close();
-
-                        // Carrega o Estado
-                        String ufconvert = Util.converteUf(sUF);
-                        ArrayAdapter<String> arrayAdapterUF = new ArrayAdapter<String>(CadastroClientes.this, android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.uf));
-                        arrayAdapterUF.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
-                        int pos = arrayAdapterUF.getPosition(ufconvert);
-                        spUF.setSelection(pos);
-
-
-                    } catch (Exception E) {
-                        E.printStackTrace();
-                    }
-
-
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (DialogECB.isShowing())
-            DialogECB.dismiss();
     }
 
     @Override
@@ -765,7 +596,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
 
             Cursor cursor1 = DB.rawQuery(" SELECT CODCLIE_INT, CNPJ_CPF, NOMERAZAO FROM CLIENTES WHERE CNPJ_CPF = '" + CpfCnpj + "' AND CODPERFIL = " + idPerfil + "", null);
             cursor1.moveToFirst();
-            final String CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
+            CodCliente = cursor1.getString(cursor1.getColumnIndex("CODCLIE_INT"));
             cursor1.close();
 
             Toast.makeText(this, "Cliente salvo com sucesso!", Toast.LENGTH_SHORT).show();
@@ -778,50 +609,16 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                         .setCancelable(false)
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                String sitclieenvio;
-                                sitclieenvio = Sincronismo.sincronizaClientesEnvio(CodCliente, CadastroClientes.this, usuario, senha, null, null, null);
-                                if (sitclieenvio.equals(getString(R.string.newcustomers_successfully))) {
-                                    handler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(CadastroClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                                    Bundle params = new Bundle();
-                                    params.putString(getString(R.string.intent_usuario), usuario);
-                                    params.putString(getString(R.string.intent_senha), senha);
-                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                    params.putString(getString(R.string.intent_telainvocada), TelaChamada);
-                                    params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
-                                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
-                                    params.putString(getString(R.string.intent_numpedido), numPedido);
-                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                                    intent.putExtras(params);
-                                    startActivity(intent);
-                                    finish();
+                                DialogECB = new ProgressDialog(CadastroClientes.this);
+                                DialogECB.setTitle(getString(R.string.wait));
+                                DialogECB.setMessage("Enviando cadastro do cliente...");
+                                DialogECB.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                                DialogECB.setIcon(R.drawable.icon_sync);
+                                DialogECB.show();
+                                flag = 4;
 
-                                } else {
-                                    handler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(CadastroClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
-                                    Bundle params = new Bundle();
-                                    params.putString(getString(R.string.intent_usuario), usuario);
-                                    params.putString(getString(R.string.intent_senha), senha);
-                                    params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
-                                    params.putString(getString(R.string.intent_telainvocada), TelaChamada);
-                                    params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
-                                    params.putString(getString(R.string.intent_chavepedido), chavepedido);
-                                    params.putString(getString(R.string.intent_numpedido), numPedido);
-                                    params.putString(getString(R.string.intent_codvendedor), codVendedor);
-                                    intent.putExtras(params);
-                                    startActivity(intent);
-                                    finish();
-                                }
+                                Thread thread = new Thread(CadastroClientes.this);
+                                thread.start();
                             }
                         })
                         .setNegativeButton("Não", new DialogInterface.OnClickListener() {
@@ -849,7 +646,7 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                                             .setCancelable(false)
                                             .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
-                                                    Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                                                    Intent intent = new Intent(getBaseContext(), CadastroPedidos.class);
                                                     Bundle params = new Bundle();
                                                     params.putString(getString(R.string.intent_usuario), usuario);
                                                     params.putString(getString(R.string.intent_senha), senha);
@@ -1127,6 +924,55 @@ public class CadastroClientes extends AppCompatActivity implements Runnable, Vie
                 });
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+            if (DialogECB != null && flag != 0) {
+                DialogECB.dismiss();
+                flag = 0;
+            }
+        }else if(flag == 4){
+            String sitclieenvio = null;
+            sitclieenvio = Sincronismo.sincronizaClientesEnvio(CodCliente, CadastroClientes.this, usuario, senha, null, null, null);
+            if (sitclieenvio.equals(getString(R.string.newcustomers_successfully))) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(CadastroClientes.this, getString(R.string.syn_clients_successfully), Toast.LENGTH_LONG).show();
+                    }
+                });
+                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                Bundle params = new Bundle();
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                intent.putExtras(params);
+                startActivity(intent);
+                finish();
+
+            } else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(CadastroClientes.this, getString(R.string.customer_not_sent), Toast.LENGTH_LONG).show();
+                    }
+                });
+                Intent intent = new Intent(getBaseContext(), ConsultaClientes.class);
+                Bundle params = new Bundle();
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params.putString(getString(R.string.intent_telainvocada), TelaChamada);
+                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                intent.putExtras(params);
+                startActivity(intent);
+                finish();
             }
             if (DialogECB != null && flag != 0) {
                 DialogECB.dismiss();
