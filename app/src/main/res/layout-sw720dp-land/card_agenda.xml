@@ -44,27 +44,14 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/lblAgenda"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/dtagenda"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Agenda"
-                        android:textColor="@color/preto"
+                        android:text="20/10/2017 08:00 hrs"
+                        android:gravity="center"
+                        android:textColor="@color/colorAccent"
                         android:textSize="18sp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/lblNumAgenda"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginLeft="40dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_toEndOf="@+id/lblAgenda"
-                        android:layout_toRightOf="@+id/lblAgenda"
-                        android:text="20"
-                        android:textColor="@color/preto"
-                        android:textSize="18sp"
-                        android:textStyle="normal" />
+                        android:textStyle="normal|bold" />
 
                     <ImageView
                         android:id="@+id/imgStatus"
@@ -81,18 +68,24 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/lblAgenda"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Contato: "
+                        android:text="Agenda"
                         android:textColor="@color/preto"
                         android:textSize="16sp"
-                        android:textStyle="normal" />
+                        android:textStyle="normal|bold" />
 
                     <TextView
-                        android:id="@+id/lblNomeContato"
-                        android:layout_width="match_parent"
+                        android:id="@+id/lblNumAgenda"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ciclano"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toEndOf="@+id/lblAgenda"
+                        android:layout_toRightOf="@+id/lblAgenda"
+                        android:text="20"
                         android:textColor="@color/preto"
                         android:textSize="16sp"
                         android:textStyle="normal|bold" />
@@ -104,26 +97,74 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Data do agendamento: "
-                        android:textColor="@color/preto"
-                        android:textSize="16sp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/dtagenda"
+                        android:id="@+id/lblNomeContato"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="20/10/2017 08:00 hrs"
+                        android:text="Ciclano"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp"
+                        android:textStyle="normal|bold" />
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/llreagendar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/lblr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reagendado para: "
                         android:textColor="@color/preto"
                         android:textSize="16sp"
-                        android:textStyle="normal" />
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/lblreagendado"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@+id/lblAgenda"
+                        android:layout_toRightOf="@+id/lblAgenda"
+                        android:text="20/10/2017 08:00 hrs"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp"
+                        android:textStyle="normal|bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llnovaagenda"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/lbla"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nova agenda: "
+                        android:textColor="@color/preto"
+                        android:textSize="16sp"
+                        android:textStyle="normal|bold" />
+
+                    <TextView
+                        android:id="@+id/lblnovaagenda"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_toEndOf="@+id/lblAgenda"
+                        android:layout_toRightOf="@+id/lblAgenda"
+                        android:text="16"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="16sp"
+                        android:textStyle="normal|bold" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -131,11 +172,10 @@
                         android:id="@+id/lblsituacao"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Agendado / Finalizado / Cancelado"
+                        android:text="Agendado / Finalizado / Cancelado / Reagendado"
                         android:textColor="@color/colorVerde"
                         android:textSize="18sp"
                         android:textStyle="normal|bold" />
-
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

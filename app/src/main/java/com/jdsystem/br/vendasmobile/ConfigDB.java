@@ -367,15 +367,30 @@ public class ConfigDB extends SQLiteOpenHelper {
             " CODEXTERNO       INTEGER" +
             ");");
 
-    private static String SQL_AGENDA = ("CREATE TABLE IF NOT EXISTS AGENDA (" +
-            " CODIGO      INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            " NOMECONTATO VARCHAR(30),                       " +
-            " CODCONTATO  INTEGER,                           " +
-            " STATUS      CHAR(1),                           " +
-            " SITUACAO    CHAR(1),                           " +
-            " CODPERFIL   INTEGER,                           " +
-            " DATAAGEND   DATETIME NOT NULL,                 " +
-            " DESCRICAO   TEXT                               " +
+    private static String SQL_AGENDAS = ("CREATE TABLE IF NOT EXISTS AGENDAS (" +
+            " CODAGENDA_INT        INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " CODAGENDA_EXT        INTEGER,                           " +
+            " CODCLIE              INTEGER,                           " +
+            " CODCONTAT            INTEGER,                           " +
+            " STATUS               CHAR(1),                           " +
+            " SITUACAO             INTEGER,                           " +
+            " CODPERFIL            INTEGER,                           " +
+            " DATA_HORA            DATETIME        NOT NULL,          " +
+            " CODVEND              INTEGER,                           " +
+            " LATITUDE             DOUBLE,                            " +
+            " LONGITUDE            DOUBLE,                            " +
+            " DATA_FINALIZADO      INTEGER,                           " +
+            " COD_REAGENDADO       INTEGER                            " +
+            ");");
+
+    private static String SQL_AGETEXTOS = ("CREATE TABLE IF NOT EXISTS AGETEXTOS (" +
+            " CODAGETEXTOS_INT        INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            " CODAGETEXTOS_EXT        INTEGER,                           " +
+            " CODAGENDA_INT           INTEGER,                           " +
+            " STATUS                  CHAR(1),                           " +
+            " CODPERFIL               INTEGER,                           " +
+            " DATA_HORA               DATETIME        NOT NULL,          " +
+            " TEXTO                   TEXT                               " +
             ");");
 
 
@@ -406,7 +421,8 @@ public class ConfigDB extends SQLiteOpenHelper {
             db.execSQL(SQL_PRODUTOS_CONTATOS_TEMP);
             db.execSQL(SQL_CARGOS);
             db.execSQL(SQL_FORMAPAGAMENTOS);
-            db.execSQL(SQL_AGENDA);
+            db.execSQL(SQL_AGENDAS);
+            db.execSQL(SQL_AGETEXTOS);
         } catch (Exception e) {
             e.toString();
         }
@@ -703,18 +719,41 @@ public class ConfigDB extends SQLiteOpenHelper {
             }catch (Exception e){
                 e.toString();
             }
-            try{
-                db.execSQL("CREATE TABLE IF NOT EXISTS AGENDA (" +
-                        " CODIGO      INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        " NOMECONTATO VARCHAR(30),                       " +
-                        " CODCONTATO  INTEGER,                           " +
-                        " STATUS      CHAR(1),                           " +
-                        " SITUACAO    CHAR(1),                           " +
-                        " CODPERFIL   INTEGER,                           " +
-                        " DATAAGEND   DATETIME NOT NULL,                 " +
-                        " DESCRICAO   TEXT                               " +
+
+            //AGENDAS
+
+            try {
+                db.execSQL("CREATE TABLE IF NOT EXISTS AGENDAS (" +
+                        " CODAGENDA_INT        INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                                " CODAGENDA_EXT        INTEGER,                           " +
+                                " CODCLIE              INTEGER,                           " +
+                                " CODCONTAT            INTEGER,                           " +
+                                " STATUS               CHAR(1),                           " +
+                                " SITUACAO             CHAR(1),                           " +
+                                " CODPERFIL            INTEGER,                           " +
+                                " DATA_HORA            DATETIME        NOT NULL,          " +
+                                " CODVEND              INTEGER,                           " +
+                                " LATITUDE             DOUBLE,                            " +
+                                " LONGITUDE            DOUBLE,                            " +
+                                " DATA_FINALIZADO      INTEGER,                           " +
+                                " COD_REAGENDADO       INTEGER                            " +
+                                ");");
+            } catch (Exception e) {
+                e.toString();
+            }
+
+            //OBS DAS AGENDAS
+            try {
+                db.execSQL("CREATE TABLE IF NOT EXISTS AGETEXTOS (" +
+                        " CODAGETEXTOS_INT        INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        " CODAGETEXTOS_EXT        INTEGER,                           " +
+                        " CODAGENDA_INT           INTEGER,                           " +
+                        " STATUS                  CHAR(1),                           " +
+                        " CODPERFIL               INTEGER,                           " +
+                        " DATA_HORA               DATETIME        NOT NULL,          " +
+                        " TEXTO                   INTEGER                            " +
                         ");");
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.toString();
             }
             //NOVOS CAMPOS PARA O DB 5

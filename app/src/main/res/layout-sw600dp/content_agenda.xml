@@ -20,6 +20,55 @@
         android:gravity="center">
 
         <LinearLayout
+            android:id="@+id/laypesquisa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+                <Spinner
+                    android:id="@+id/spndata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/data_agenda">
+                </Spinner>
+
+                <TextView
+                    android:id="@+id/txtdata"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="20/12/2017"
+                    android:gravity="center"
+                    android:textColor="@color/preto"
+                    android:textSize="28sp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+            <Button
+                android:id="@+id/btnok"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:layout_marginLeft="10dp"
+                android:text="OK"
+                android:textSize="25sp"
+                android:textColor="@color/branco"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center">
+        <LinearLayout
             android:id="@+id/layCima"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,7 +117,9 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/rl_fragment_container"
         android:layout_width="match_parent"

@@ -29,6 +29,7 @@ public class DadosContato extends AppCompatActivity {
     private String URLPrincipal;
     private String usuario;
     private String senha;
+    String telaInvocada;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class DadosContato extends AppCompatActivity {
                 CodCliente = params.getInt(getString(R.string.intent_codcliente));
                 String nomeCliente = params.getString(getString(R.string.intent_nomerazao));
                 CodContato = params.getInt(getString(R.string.intent_codcontato));
+                telaInvocada = params.getString(getString(R.string.intent_telainvocada));
             }
         }
     }
@@ -108,6 +110,7 @@ public class DadosContato extends AppCompatActivity {
         params.putString(getString(R.string.intent_senha), senha);
         params.putInt("codCliente", CodCliente);
         params.putInt(getString(R.string.intent_codcontato), CodContato);
+        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
         intent.putExtras(params);
         startActivity(intent);*/
         finish();

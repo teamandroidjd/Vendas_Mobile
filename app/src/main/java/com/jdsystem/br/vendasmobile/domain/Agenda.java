@@ -6,31 +6,35 @@ package com.jdsystem.br.vendasmobile.domain;
 
 public class Agenda {
 
-    private String Situacao;
+    private Integer Situacao;
     private String NomeContato;
     private String Dataagendamento;
     private String NumAgenda;
     private String Status;
+    private String Novaagenda;
+    private String Dtreagendado;
 
 
     public Agenda() {
     }
 
-    public Agenda(String Situacao, String NomeContato, String Dataagendamento, String NumAgenda, String Status) {
+    public Agenda(Integer Situacao, String NomeContato, String Dataagendamento, String NumAgenda, String Status, String Novaagenda, String Dtreagendado) {
 
         this.Situacao = Situacao;
         this.NomeContato = NomeContato;
         this.Dataagendamento = Dataagendamento;
         this.NumAgenda = NumAgenda;
         this.Status = Status;
+        this.Novaagenda = Novaagenda;
+        this.Dtreagendado = Dtreagendado;
 
     }
 
-    public String getSituacao() {
+    public Integer getSituacao() {
         return Situacao;
     }
 
-    public void setSituacao(String situacao) {
+    public void setSituacao(Integer situacao) {
         Situacao = situacao;
     }
 
@@ -70,5 +74,24 @@ public class Agenda {
         Status = status;
     }
 
+    public String getNovaagenda() {
+
+        return Novaagenda;
+    }
+
+    public void setNovaagenda(String novaagenda) {
+
+        Novaagenda = novaagenda;
+    }
+
+    public String getDtreagendado() {
+
+        return Dtreagendado;
+    }
+
+    public void setDtreagendado(String dtreagendado) {
+
+        Dtreagendado = dtreagendado;
+    }
 
 }

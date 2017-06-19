@@ -36,7 +36,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="Remarcar ou Finalizar"
+                android:text="Remarcar"
+                android:textColor="@color/preto"
+                android:textSize="20sp" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Finalizar"
                 android:textColor="@color/preto"
                 android:textSize="20sp" />
 

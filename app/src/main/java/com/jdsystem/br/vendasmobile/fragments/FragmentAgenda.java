@@ -42,7 +42,7 @@ import java.util.List;
 public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListenerHack {
 
     public static final String CONFIG_HOST = "CONFIG_HOST";
-    String  usuario, senha, Codvendedor, codcont, URLPrincipal;
+    String  usuario, senha, Codvendedor, codcont, URLPrincipal, novaagenda;
     int idPerfil;
     private RecyclerView mRecyclerView;
     private Context context = this.getActivity();
@@ -107,6 +107,22 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
 
     @Override
     public void onClickListener(View view, int position) {
+        final ListAdapterAgenda adapter = (ListAdapterAgenda) mRecyclerView.getAdapter();
+        final String NovaAgenda = adapter.ChamaNovaAgenda(position);
+
+        if (NovaAgenda != null) {
+            Intent CadAgenda = new Intent((ConsultaAgenda) getActivity(), CadastroAgenda.class);
+            Bundle params = new Bundle();
+            params.putString(getString(R.string.intent_novaagenda), NovaAgenda);
+            params.putString(getString(R.string.intent_codvendedor), Codvendedor);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+            CadAgenda.putExtras(params);
+            Intent intent = ((ConsultaAgenda) getActivity()).getIntent();
+            ((ConsultaAgenda) getActivity()).finish();
+            startActivityForResult(CadAgenda, 4);
+        } else {
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.app_namesair);
             builder.setIcon(R.drawable.logo_ico);
@@ -114,13 +130,12 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-
                         }
                     });
-
             AlertDialog alert = builder.create();
             alert.show();
             return;
+        }
     }
 
     @Override
@@ -128,19 +143,17 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
         try {
             final ListAdapterAgenda adapter = (ListAdapterAgenda) mRecyclerView.getAdapter();
             final String Status = adapter.StatusAgenda(position);
-            final String Situacao = adapter.SituacaoAgenda(position);
+            final Integer Situacao = adapter.SituacaoAgenda(position);
             final String NumAgenda = adapter.ChamaDados(position);
             final Boolean ConexOk = Util.checarConexaoCelular(view.getContext());
 
             DB = new ConfigDB(getActivity()).getReadableDatabase();
 
-            final Cursor cursorag = DB.rawQuery("SELECT CODIGO, NOMECONTATO, CODCONTATO, STATUS, CODPERFIL, DATAAGEND, DESCRICAO FROM AGENDA WHERE CODIGO = " + NumAgenda + " AND CODPERFIL = " + idPerfil, null);
+            /*final Cursor cursorag = DB.rawQuery("SELECT CODIGO, NOMECONTATO, CODCONTATO, STATUS, CODPERFIL, DATAAGEND, DESCRICAO FROM AGENDA WHERE CODIGO = " + NumAgenda + " AND CODPERFIL = " + idPerfil, null);
             cursorag.moveToFirst();
             codcont = cursorag.getString(cursorag.getColumnIndex("CODCONTATO"));
             final String dataag = cursorag.getString(cursorag.getColumnIndex("DATAAGEND"));
-            cursorag.close();
-
-            // Neese momento é que a tela com as opções do pedido é criada.
+            cursorag.close();*/
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             @SuppressLint("InflateParams") final View formElementsView = inflater.inflate(R.layout.input_pergunta_agenda, null, false);
@@ -152,6 +165,9 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
                         public void onClick(DialogInterface dialog, int id) {
                             int selectedId = genderRadioGroup.getCheckedRadioButtonId();
                             if (selectedId > 0) {
+                                if (Situacao == 4) {
+                                    Util.msg_toast_personal(getActivity(), "O agendamento nº " + NumAgenda + " já foi reagendado. Favor clicar uma vez no agendamento para ser redirecionado a nova agenda.", Util.PADRAO);
+                                } else {
                                 RadioButton selectedRadioButton = (RadioButton) formElementsView.findViewById(selectedId);
                                 if ((selectedRadioButton.getText().toString().trim()).equals("Sincronizar")) {
                                     if (Status.equals("N")) {
@@ -163,7 +179,7 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
                                             dialogo.setTitle("Aguarde");
                                             dialogo.show();
 
-                                           final String agendaenviada = Sincronismo.SincronizarAgendaEnvio (context, NumAgenda, dialogo);
+                                            final String agendaenviada = Sincronismo.SincronizarAgendaEnvio(context, NumAgenda, null, dialogo);
 
                                             if (agendaenviada.equals("OK")) {
                                                 Util.msg_toast_personal(getActivity(), "Agendamento nº " + NumAgenda + " foi sincronizado com Sucesso!", Util.PADRAO);
@@ -177,7 +193,7 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
                                         Util.msg_toast_personal(getActivity(), "Somente para agendamentos não sincronizados!", Util.PADRAO);
                                     }
                                 } else if ((selectedRadioButton.getText().toString().trim()).equals("Cancelar")) {
-                                    if (Situacao.equals("A")) {
+                                    if (Situacao == 1) {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                         builder.setTitle(R.string.app_namesair);
                                         builder.setIcon(R.drawable.logo_ico);
@@ -208,15 +224,14 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
                                         return;
 
                                     } else {
-                                        if (Situacao.equals("F")) {
+                                        if (Situacao == 2) {
                                             Util.msg_toast_personal(getActivity(), "Agendamento nº " + NumAgenda + " não pode ser cancelado pois o mesmo já foi finalizado. Verifique!", Util.PADRAO);
-
-                                        } else if (Situacao.equals("C")) {
+                                        } else if (Situacao == 3) {
                                             Util.msg_toast_personal(getActivity(), "Agendamento nº " + NumAgenda + " não pode ser cancelado pois o mesmo já está cancelado. Verifique!", Util.PADRAO);
                                         }
                                     }
-                                }  else if ((selectedRadioButton.getText().toString().trim()).equals("Remarcar ou Finalizar")) {
-                                    if (Situacao.equals("A")) {
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Remarcar")) {
+                                    if (Situacao == 1) {
                                         Intent CadAgenda = new Intent((ConsultaAgenda) getActivity(), CadastroAgenda.class);
                                         Bundle params = new Bundle();
                                         params.putString(getString(R.string.intent_numagenda), NumAgenda);
@@ -224,20 +239,44 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
                                         params.putString(getString(R.string.intent_usuario), usuario);
                                         params.putString(getString(R.string.intent_senha), senha);
                                         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                        params.putString(getString(R.string.intent_telainvocada), "Remarcar");
                                         CadAgenda.putExtras(params);
                                         Intent intent = ((ConsultaAgenda) getActivity()).getIntent();
                                         ((ConsultaAgenda) getActivity()).finish();
                                         startActivityForResult(CadAgenda, 1);
                                     } else {
-                                        if (Situacao.equals("F")) {
+                                        if (Situacao == 2) {
                                             Util.msg_toast_personal(getActivity(), "Agendamento nº " + NumAgenda + " não pode ser alterado pois o mesmo já foi finalizado. Verifique!", Util.PADRAO);
 
-                                        } else if (Situacao.equals("C")) {
-                                        Util.msg_toast_personal(getActivity(), "Agendamento nº " + NumAgenda + " não pode ser alterado pois o mesmo já foi cancelado. Verifique!", Util.PADRAO);
+                                        } else if (Situacao == 3) {
+                                            Util.msg_toast_personal(getActivity(), "Agendamento nº " + NumAgenda + " não pode ser alterado pois o mesmo já foi cancelado. Verifique!", Util.PADRAO);
+                                        }
                                     }
+                                } else if ((selectedRadioButton.getText().toString().trim()).equals("Finalizar")) {
+                                    if (Situacao == 1) {
+                                        Intent CadAgenda = new Intent((ConsultaAgenda) getActivity(), CadastroAgenda.class);
+                                        Bundle params = new Bundle();
+                                        params.putString(getString(R.string.intent_numagenda), NumAgenda);
+                                        params.putString(getString(R.string.intent_codvendedor), Codvendedor);
+                                        params.putString(getString(R.string.intent_usuario), usuario);
+                                        params.putString(getString(R.string.intent_senha), senha);
+                                        params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                                        params.putString(getString(R.string.intent_telainvocada), "Finalizar");
+                                        CadAgenda.putExtras(params);
+                                        Intent intent = ((ConsultaAgenda) getActivity()).getIntent();
+                                        ((ConsultaAgenda) getActivity()).finish();
+                                        startActivityForResult(CadAgenda, 1);
+                                    } else {
+                                        if (Situacao == 2) {
+                                            Util.msg_toast_personal(getActivity(), "Agendamento nº " + NumAgenda + " não pode ser finalizado pois o mesmo já foi finalizado. Verifique!", Util.PADRAO);
+
+                                        } else if (Situacao == 3) {
+                                            Util.msg_toast_personal(getActivity(), "Agendamento nº " + NumAgenda + " não pode ser finalizado pois o mesmo já foi cancelado. Verifique!", Util.PADRAO);
+                                        }
                                     }
                                 }
                                 dialog.cancel();
+                            }
                             } else {
                                 Util.msg_toast_personal(getActivity(), "Você deve escolher uma das opções!!!", Util.PADRAO);
                             }
@@ -266,11 +305,11 @@ public class FragmentAgenda extends Fragment implements RecyclerViewOnClickListe
     private void CancelarAgendamento(String NumAgenda) {
         try {
             DB = new ConfigDB(getActivity()).getReadableDatabase();
-            Cursor cursoragenda = DB.rawQuery("SELECT CODIGO, NOMECONTATO, CODCONTATO, SITUACAO, STATUS, CODPERFIL, DATAAGEND, DESCRICAO FROM AGENDA WHERE CODIGO = " + NumAgenda + " AND CODPERFIL = " + idPerfil, null);
+            Cursor cursoragenda = DB.rawQuery("SELECT * FROM AGENDAS WHERE CODAGENDA_INT = " + NumAgenda + " AND CODPERFIL = " + idPerfil, null);
             if (cursoragenda.getCount() > 0) {
                 cursoragenda.moveToFirst();
 
-                DB.execSQL(" UPDATE AGENDA SET SITUACAO = 'C', STATUS = 'N' WHERE CODIGO = '" + NumAgenda + "' AND CODPERFIL = " + idPerfil);
+                DB.execSQL(" UPDATE AGENDA SET SITUACAO = 3, STATUS = 'N' WHERE CODAGENDA_INT = '" + NumAgenda + "' AND CODPERFIL = " + idPerfil);
                 cursoragenda.close();
             }
         } catch (Exception e) {

@@ -1,13 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="61dp"
-        android:background="@drawable/img_fundo_splash"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -18,13 +17,13 @@
             android:layout_height="wrap_content"
             android:text="Contato: 005 - PAULO ROBERTO DOS SANTOS COUITNHO PINHEIRO FERNANDES DA SILVA SAURO SANTOS DA ROCHA"
             android:textColor="#ffffff"
-            android:textSize="25sp"
+            android:textSize="38sp"
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/layhorarios"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="200dp"
         android:padding="5dp"
         android:background="#afd8de"
         android:orientation="vertical">
@@ -33,17 +32,17 @@
             android:id="@+id/txv1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:text="Datas e horários sugeridos pelo contato: "
             android:textColor="@color/preto"
-            android:textSize="25sp" />
+            android:textStyle="bold"
+            android:textSize="35sp" />
 
         <ListView
             android:id="@+id/lv_horarios_contatos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textColor="@color/preto"
-            android:textSize="25sp"
+            android:textColor="@color/colordescClie"
+            android:textSize="35sp"
             android:textStyle="normal" />
 
     </LinearLayout>
@@ -51,7 +50,7 @@
     <LinearLayout
         android:id="@+id/layprodutos"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="200dp"
         android:padding="5dp"
         android:background="#c1c1c1"
         android:orientation="vertical">
@@ -63,14 +62,14 @@
             android:text="Produtos sugeridos pelo contato: "
             android:textColor="@color/preto"
             android:textStyle="bold"
-            android:textSize="25sp" />
+            android:textSize="35sp" />
 
         <ListView
             android:id="@+id/lv_produtos_contatos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="@color/colordescClie"
-            android:textSize="25sp"
+            android:textSize="35sp"
             android:textStyle="normal" />
 
     </LinearLayout>
@@ -83,7 +82,7 @@
         android:textColor="@color/preto"
         android:padding="10dp"
         android:textStyle="bold"
-        android:textSize="25sp" />
+        android:textSize="35sp" />
 
 
     <LinearLayout
@@ -99,9 +98,9 @@
             android:inputType="datetime"
             android:focusable="false"
             android:padding="10dp"
-            android:textColor="@color/preto"
-            android:textSize="25sp"
-            android:textStyle="normal" />
+            android:textColor="@color/colordescClie"
+            android:textSize="35sp"
+            android:textStyle="normal|bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -113,8 +112,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:textSize="25sp"
-            android:textColor="@color/preto"
+            android:textSize="35sp"
+            android:textColor="@color/colordescClie"
             android:hint="Observação"
             android:textStyle="normal|bold"
             android:inputType="textMultiLine" />
@@ -122,7 +121,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
         android:padding="5dp"
         android:background="#7eafa8"
         android:orientation="vertical"
@@ -135,43 +134,49 @@
             android:text="Observações anteriores: "
             android:textColor="@color/preto"
             android:textStyle="bold"
-            android:textSize="25sp" />
+            android:textSize="35sp" />
 
         <ListView
             android:id="@+id/lv_obs_agenda"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="@color/colordescClie"
-            android:textSize="25sp"
+            android:textSize="35sp"
             android:textStyle="normal" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:layout_gravity="bottom"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btncancelar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:text="Cancelar"
+            android:textSize="40dp"
             android:textColor="@color/branco"
-            android:textSize="20dp" />
+            android:gravity="center"
+            android:layout_gravity="center"/>
 
         <Button
             android:id="@+id/btnsalvar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
             android:layout_weight="1"
+            android:layout_width="220dp"
+            android:layout_marginLeft="2dp"
+            android:layout_height="wrap_content"
             android:background="@color/colorAccent"
             android:text="Salvar"
+            android:textSize="40dp"
             android:textColor="@color/branco"
-            android:textSize="20dp"/>
+            android:gravity="center"
+            android:layout_gravity="center"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -25,13 +25,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.jdsystem.br.vendasmobile.CadastroAgenda;
 import com.jdsystem.br.vendasmobile.CadastroClientes;
 import com.jdsystem.br.vendasmobile.CadastroContatos;
 import com.jdsystem.br.vendasmobile.CadastroPedidos;
 import com.jdsystem.br.vendasmobile.ConfigDB;
+import com.jdsystem.br.vendasmobile.ConsultaAgenda;
 import com.jdsystem.br.vendasmobile.ConsultaClientes;
 import com.jdsystem.br.vendasmobile.ConsultaPedidos;
 import com.jdsystem.br.vendasmobile.DadosCliente;
+import com.jdsystem.br.vendasmobile.DadosContato;
 import com.jdsystem.br.vendasmobile.R;
 import com.jdsystem.br.vendasmobile.RecyclerViewFastScroller.VerticalRecyclerViewFastScroller;
 import com.jdsystem.br.vendasmobile.Sincronismo;
@@ -185,6 +188,33 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
             startActivity(intent);
             getActivity().finish();
 
+        } else if (telaInvocada != null) {
+            if (telaInvocada.equals("CadastroAgenda")) {
+                String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
+                Intent intentp = new Intent(getActivity(), CadastroAgenda.class);
+                Bundle params = new Bundle();
+                params.putInt(getString(R.string.intent_codcliente), Integer.parseInt(CodigoClienteInterno));
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                intentp.putExtras(params);
+                startActivity(intentp);
+                getActivity().finish();
+            } else if (telaInvocada.equals("ConsultaAgenda")) {
+                String CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
+                Intent intentp = new Intent(getActivity(), ConsultaAgenda.class);
+                Bundle params = new Bundle();
+                params.putString(getString(R.string.intent_codcliente), CodigoClienteInterno);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+                intentp.putExtras(params);
+                startActivity(intentp);
+                getActivity().finish();
+            }
         } else {
             flagRun = 1;
             iPosition = position;
@@ -405,6 +435,20 @@ public class FragmentCliente extends Fragment implements RecyclerViewOnClickList
         CodigoClienteExterno = adapter.ChamaCodigoClienteExterno(position);
         CodigoClienteInterno = adapter.ChamaCodigoClienteInterno(position);
         String nomeRazao = adapter.ChamaNomeRazaoCliente(position);
+
+        if (telaInvocada.equals("CadastroAgenda")) {
+            Intent intentp = new Intent(getActivity(), DadosContato.class);
+            Bundle params = new Bundle();
+            params.putInt("codCliente", Integer.parseInt(CodigoClienteInterno));
+            params.putString(getString(R.string.intent_codvendedor), codVendedor);
+            params.putString(getString(R.string.intent_usuario), usuario);
+            params.putString(getString(R.string.intent_senha), senha);
+            params.putString(getString(R.string.intent_urlprincipal), urlPrincipal);
+            params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+            intentp.putExtras(params);
+            startActivity(intentp);
+            getActivity().finish();
+        }
         if (CodigoClienteExterno == null) {
 
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

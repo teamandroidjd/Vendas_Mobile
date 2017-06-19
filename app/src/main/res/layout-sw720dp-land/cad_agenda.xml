@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-
         <TextView
             android:id="@+id/txv_contato"
             android:layout_width="wrap_content"
@@ -22,8 +21,9 @@
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/layhorarios"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
         android:padding="5dp"
         android:background="#afd8de"
         android:orientation="vertical">
@@ -34,48 +34,56 @@
             android:layout_height="wrap_content"
             android:text="Datas e horários sugeridos pelo contato: "
             android:textColor="@color/preto"
-            android:textStyle="normal"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+            <ListView
+                android:id="@+id/lv_horarios_contatos"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/preto"
+                android:textSize="15sp"
+                android:textStyle="normal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layprodutos"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="5dp"
+        android:background="#c1c1c1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txv2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Produtos sugeridos pelo contato: "
+            android:textColor="@color/preto"
+            android:textStyle="bold"
             android:textSize="16sp" />
 
         <ListView
-            android:id="@+id/lv_horarios_contatos"
+            android:id="@+id/lv_produtos_contatos"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textColor="@color/preto"
+            android:textColor="@color/colordescClie"
             android:textSize="15sp"
             android:textStyle="normal" />
 
     </LinearLayout>
 
-
-    <RadioGroup
-        android:id="@+id/rgsituacao"
-        android:layout_marginTop="15dp"
+    <TextView
+        android:id="@+id/txv3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
+        android:text="Remarcando / Cadadtrando / Finalizando: "
+        android:textColor="@color/preto"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:textSize="16sp" />
 
-        <RadioButton
-            android:id="@+id/rbagendando"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Agendando"
-            android:textColor="@color/preto"
-            android:textSize="18sp"
-            android:textStyle="normal" />
-
-        <RadioButton
-            android:id="@+id/rbfinalizando"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Finalizando"
-            android:layout_marginLeft="20dp"
-            android:textColor="@color/preto"
-            android:textSize="18sp"
-            android:textStyle="normal"/>
-    </RadioGroup>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -86,30 +94,56 @@
             android:id="@+id/data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:hint="Data e hora"
             android:inputType="datetime"
             android:focusable="false"
             android:padding="10dp"
             android:textColor="@color/preto"
             android:textSize="18sp"
-            android:textStyle="normal" />
+            android:textStyle="normal|bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/EdtOBS"
-            android:padding="10dp"
+    <EditText
+        android:id="@+id/EdtOBS"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:textSize="18sp"
+        android:textColor="@color/preto"
+        android:hint="Observação"
+        android:textStyle="normal|bold"
+        android:inputType="textMultiLine" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="5dp"
+        android:background="#7eafa8"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/txv4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:textSize="18sp"
+            android:text="Observações anteriores: "
             android:textColor="@color/preto"
-            android:hint="Observação"
-            android:textStyle="normal"
-            android:inputType="textMultiLine" />
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <ListView
+            android:id="@+id/lv_obs_agenda"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/colordescClie"
+            android:textSize="15sp"
+            android:textStyle="normal" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -125,7 +159,7 @@
             android:background="@color/colorAccent"
             android:text="Cancelar"
             android:textColor="@color/branco"
-            android:textSize="20dp" />
+            android:textSize="30dp" />
 
         <Button
             android:id="@+id/btnsalvar"
@@ -136,7 +170,7 @@
             android:background="@color/colorAccent"
             android:text="Salvar"
             android:textColor="@color/branco"
-            android:textSize="20dp"/>
+            android:textSize="30dp"/>
     </LinearLayout>
 
 </LinearLayout>

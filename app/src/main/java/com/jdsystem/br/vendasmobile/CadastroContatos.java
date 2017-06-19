@@ -874,6 +874,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
                         params.putString(getString(R.string.intent_senha), senha);
                         params.putInt(getString(R.string.intent_codcliente), CodCliente);
                         params.putString(getString(R.string.intent_nomerazao), NomeCliente);
+                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                         intent.putExtras(params);
                         startActivity(intent);
                         finish();
@@ -891,6 +892,7 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
                         params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
                         params.putString(getString(R.string.intent_usuario), usuario);
                         params.putString(getString(R.string.intent_senha), senha);
+                        params.putString(getString(R.string.intent_telainvocada), telaInvocada);
                         intent.putExtras(params);
                         startActivity(intent);
                         finish();

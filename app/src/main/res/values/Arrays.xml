@@ -17,6 +17,18 @@
         <item>Agendado</item>
         <item>Finalizado</item>
         <item>Cancelado</item>
+        <item>Reagendado</item>
+    </string-array>
+    <string-array name="tipo_agenda">
+        <item>Contato</item>
+        <item>Cliente</item>
+    </string-array>
+    <string-array name="data_agenda">
+        <item>Filtro rápido de data</item>
+        <item>Hoje</item>
+        <item>Na semana</item>
+        <item>No mês</item>
+        <item>Outra data</item>
     </string-array>
     <string-array name="uf">
         <item>Selecione um estado</item>

@@ -169,6 +169,17 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                 startActivity(intent1);
                 finish();
                 break;
+            case 2:
+                Intent intent2 = new Intent(ConsultaContatos.this, ConsultaAgenda.class);
+                Bundle params2 = new Bundle();
+                params2.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params2.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                params2.putString(getString(R.string.intent_usuario), usuario);
+                params2.putString(getString(R.string.intent_senha), senha);
+                intent2.putExtras(params2);
+                startActivity(intent2);
+                finish();
+                break;
         }
     }
 
@@ -332,10 +343,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
     public List<Contatos> carregarcontatos() {
         ArrayList<Contatos> DadosListContatos = new ArrayList<Contatos>();
         if (editQuery == null) {
-
             DB = new ConfigDB(this).getReadableDatabase();
-
-
             try {
                 Cursor cursorContatos = DB.rawQuery("SELECT CONTATO.CODCONTATO_EXT, CONTATO.CODCONTATO_INT, CONTATO.CODPERFIL, CONTATO.NOME, " +
                         "CONTATO.CARGO, CONTATO.EMAIL, CONTATO.TEL1, CONTATO.CODCLIENTE, " +
@@ -460,9 +468,7 @@ public class ConsultaContatos extends AppCompatActivity implements NavigationVie
                 Dialogo.dismiss();
             }
         }
-
         return DadosListContatos;
-
     }
 
     @Override

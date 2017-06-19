@@ -143,6 +143,14 @@
     <string name="intent_codcontato">codContato</string>
     <string name="intent_nomecontato">nomecontato</string>
     <string name="intent_numagenda">numagenda</string>
+    <string name="intent_opcaoagenda">opcaoagenda</string>
+    <string name="intent_antigaagenda">antigaagenda</string>
+    <string name="intent_novaagenda">novaagenda</string>
+    <string name="intent_agendadata">agendadata</string>
+    <string name="intent_outradata">outradata</string>
+    <string name="intent_datahoje">datahoje</string>
+    <string name="intent_datasemana">datasemana</string>
+    <string name="intent_datames">datames</string>
     <string name="intent_codcontato_ext">codContatoExt</string>
     <string name="intent_codcontato_externo">codContatoExterno</string>
 

@@ -72,7 +72,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Agenda"
-                        android:textColor="@color/preto"
+                        android:textColor="@color/colordescClie"
                         android:textSize="25sp"
                         android:textStyle="normal|bold" />
 
@@ -86,7 +86,7 @@
                         android:layout_toEndOf="@+id/lblAgenda"
                         android:layout_toRightOf="@+id/lblAgenda"
                         android:text="20"
-                        android:textColor="@color/preto"
+                        android:textColor="@color/colordescClie"
                         android:textSize="25sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
@@ -106,8 +106,7 @@
                         android:textStyle="normal|bold" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/llreagendar"
+                <LinearLayout android:id="@+id/llreagendar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -117,7 +116,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Reagendado para: "
-                        android:textColor="@color/preto"
+                        android:textColor="@color/colordescClie"
                         android:textSize="25sp"
                         android:textStyle="normal|bold" />
 
@@ -133,6 +132,7 @@
                         android:textSize="25sp"
                         android:textStyle="normal|bold" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/llnovaagenda"
                     android:layout_width="match_parent"
@@ -144,7 +144,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Nova agenda: "
-                        android:textColor="@color/preto"
+                        android:textColor="@color/colordescClie"
                         android:textSize="25sp"
                         android:textStyle="normal|bold" />
 

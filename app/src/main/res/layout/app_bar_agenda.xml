@@ -80,7 +80,7 @@
             android:onClick="filtrocontagenda"
             android:src="@drawable/user"
             fab:fab_colorNormal="@color/colordescClie"
-            fab:fab_label="Contato"
+            fab:fab_label="Contato/Cliente"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton

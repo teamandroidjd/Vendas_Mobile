@@ -573,6 +573,30 @@ public class ConsultaClientes extends AppCompatActivity
                 startActivity(intent3);
                 finish();
                 break;
+            case 3:
+                Intent intent4 = new Intent(ConsultaClientes.this, ConsultaAgenda.class);
+                Bundle params4 = new Bundle();
+                params4.putInt(getString(R.string.intent_flag), flag);
+                params4.putString(getString(R.string.intent_usuario), usuario);
+                params4.putString(getString(R.string.intent_senha), senha);
+                params4.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params4.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                intent4.putExtras(params4);
+                startActivity(intent4);
+                finish();
+                break;
+            case 4:
+                Intent intent5 = new Intent(ConsultaClientes.this, ConsultaAgenda.class);
+                Bundle params5 = new Bundle();
+                params5.putInt(getString(R.string.intent_flag), flag);
+                params5.putString(getString(R.string.intent_usuario), usuario);
+                params5.putString(getString(R.string.intent_senha), senha);
+                params5.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params5.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                intent5.putExtras(params5);
+                startActivity(intent5);
+                finish();
+                break;
         }
     }
 
@@ -829,7 +853,49 @@ public class ConsultaClientes extends AppCompatActivity
                     frag.setArguments(params);
                     ft.commit();
                 }
+
             });
+        } else if (flag == 3) {
+            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
+            Bundle params = new Bundle();
+            if (frag == null) {
+                frag = new FragmentCliente();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                params.putInt(getString(R.string.intent_flag), flag);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                frag.setArguments(params);
+                ft.commit();
+            }
+        } else if (flag == 4) {
+            FragmentCliente frag = (FragmentCliente) getSupportFragmentManager().findFragmentByTag("mainFragA");
+            Bundle params = new Bundle();
+            if (frag == null) {
+                frag = new FragmentCliente();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.rl_fragment_container, frag, "mainFragA");
+                params.putInt(getString(R.string.intent_flag), flag);
+                params.putString(getString(R.string.intent_numpedido), numPedido);
+                params.putString(getString(R.string.intent_chavepedido), chavepedido);
+                params.putString(getString(R.string.intent_usuario), usuario);
+                params.putString(getString(R.string.intent_senha), senha);
+                params.putString(getString(R.string.intent_codvendedor), codVendedor);
+                params.putString(getString(R.string.intent_codigoempresa), codEmpresa);
+                params.putString(getString(R.string.intent_telainvocada), telaInvocada);
+                params.putString(getString(R.string.intent_urlprincipal), URLPrincipal);
+                frag.setArguments(params);
+                ft.commit();
+            }
+        }
+        if (dialog.isShowing()) {
+            dialog.dismiss();
         }
     }
 
