@@ -1,10 +1,13 @@
 package com.jdsystem.br.vendasmobile.Util;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.jdsystem.br.vendasmobile.CadastroContatos;
@@ -20,11 +23,12 @@ import org.ksoap2.transport.HttpTransportSE;
  * Created by WKS22 on 09/06/2017.
  */
 
-public class PesquisaCep {
+public class PesquisaCep extends Activity{
 
     Handler handler;
 
     public String buscarDadosConsultaCep(String cep, final Context context){
+        Resources res = context.getResources();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -42,22 +46,25 @@ public class PesquisaCep {
                 try {
                     Envio.call("", envelope);
                 } catch (Exception e) {
-                    return String.valueOf(R.string.failure_communicate);
+                    return res.getString(R.string.failure_communicate);
                 }
                 try {
                     SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                     RetDadosEndereco = (String) envelope.getResponse();
                     System.out.println("Response :" + resultsRequestSOAP.toString());
                 } catch (Exception e) {
-                    return String.valueOf(R.string.failed_return);
+                    return res.getString(R.string.failed_return);
                 }
             } else
-                return String.valueOf(R.string.no_connection);
+                return res.getString(R.string.no_connection);
         }catch (Exception e){
-            return String.valueOf(R.string.no_connection);
+            e.toString();
         }
         return RetDadosEndereco;
     }
 
+    public static void cadastraCidade(){
+
+    }
 
 }
