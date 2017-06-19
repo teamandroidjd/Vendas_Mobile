@@ -5051,7 +5051,7 @@ public class Sincronismo extends AppCompatActivity implements Runnable, Navigati
         return true;
     }
 
-    public static String SincronizarAgendaEnvio(final Context ctxAgEnv, String NumAgenda, final ProgressDialog dialog) {
+    public static String SincronizarAgendaEnvio(final Context ctxAgEnv, String NumAgenda, String ultAgenda, final ProgressDialog dialog) {
 
         SharedPreferences prefsHost = ctxAgEnv.getSharedPreferences(CONFIG_HOST, MODE_PRIVATE);
         URLPrincipal = prefsHost.getString("host", null);
