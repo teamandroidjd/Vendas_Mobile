@@ -1739,4 +1739,6 @@ public class CadastroContatos extends AppCompatActivity implements Runnable/*, A
             razaosocial.setText(savedInstanceState.getString(getString(R.string.bundle_razao_social)));
         }
     }
+
+    //.
 }
