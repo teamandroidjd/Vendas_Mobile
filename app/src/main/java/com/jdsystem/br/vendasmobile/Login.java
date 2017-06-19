@@ -74,7 +74,6 @@ public class Login extends AppCompatActivity implements Runnable {
     private Handler handler = new Handler();
     private String codVendedor = "0";
 
-
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         Window window = getWindow();
